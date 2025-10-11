@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('categories', function (Blueprint $table) {
             $table->id()->index()->unsigned();
             $table->string('name')->index();
-            $table->string('parentId')->nullable()->default(null);
+            $table->unsignedInteger('parentId')->nullable()->default(null);
             $table->string('language')->default(null);
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
