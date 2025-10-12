@@ -3,38 +3,39 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class Product extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $fillable = [
-        'fullname',
-        'email',
-        'phone',
-        'password',
+        'category_id',
+        'name',
+        'specifications',
+        'description',
         'image',
         'status',
+        'parentId',
         'language',
-        'birthday',
-    ];
-
-    protected $hidden = [
-        'password',
     ];
 
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'category_id' => 'integer',
+            'specifications' => 'array',
             'status' => 'boolean',
+            'parentId' => 'integer',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function carts()
@@ -42,8 +43,8 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
-    public function orders()
+    public function orderDetails()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(OrderDetail::class);
     }
 }
