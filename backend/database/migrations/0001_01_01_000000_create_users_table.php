@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id()->index()->unsigned();
             $table->string('fullname')->index();
             $table->string('email')->index()->unique();
-            $table->string('phone')->index();
+            $table->string('phone')->nullable()->index();
             $table->string('password');
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);

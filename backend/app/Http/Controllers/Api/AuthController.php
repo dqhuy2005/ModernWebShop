@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\AppBaseController;
+use App\Services\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+
+class AuthController extends AppBaseController
+{
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'fullname' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'nullable|string|max:20',
+            'password' => 'required|string|min:6|confirmed',
+            'language' => 'nullable|string|max:10',
+            'birthday' => 'nullable|date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendValidationErrorWithDetails($validator->errors()->toArray());
+        }
+
+        try {
+            $this->authService->register($request->all());
+
+            // Auto login after registration
+            $credentials = $request->only('email', 'password');
+            $loginResult = $this->authService->attemptLogin(
+                $credentials['email'],
+                $credentials['password'],
+                $request->ip(),
+                $request->userAgent()
+            );
+
+            if (!$loginResult) {
+                return $this->sendError('Registration successful but login failed', 500);
+            }
+
+            return $this->sendResponse($loginResult, 'User registered successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Registration failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendValidationErrorWithDetails($validator->errors()->toArray());
+        }
+
+        try {
+            $result = $this->authService->attemptLogin(
+                $request->email,
+                $request->password,
+                $request->ip(),
+                $request->userAgent()
+            );
+
+            if (!$result) {
+                return $this->sendError('Invalid credentials', 401);
+            }
+
+            return $this->sendResponse($result, 'Login successful');
+        } catch (\Exception $e) {
+            return $this->sendError('Login failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function refresh(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'refresh_token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendValidationErrorWithDetails($validator->errors()->toArray());
+        }
+
+        try {
+            $result = $this->authService->refreshAccessToken(
+                $request->refresh_token,
+                $request->ip(),
+                $request->userAgent()
+            );
+
+            if (!$result) {
+                return $this->sendError('Invalid or expired refresh token', 401);
+            }
+
+            return $this->sendResponse($result, 'Token refreshed successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Token refresh failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $refreshToken = $request->input('refresh_token');
+            $this->authService->logout($refreshToken);
+
+            return $this->sendResponse(null, 'Logged out successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Logout failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Get authenticated user profile
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function me(Request $request)
+    {
+        try {
+            $user = $this->authService->getUserFromToken();
+
+            if (!$user) {
+                return $this->sendError('User not found', 404);
+            }
+
+            return $this->sendResponse($user, 'User profile retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Failed to get user profile: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Revoke all refresh tokens for the authenticated user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function revokeAllTokens(Request $request)
+    {
+        try {
+            $user = $this->authService->getUserFromToken();
+
+            if (!$user) {
+                return $this->sendError('User not found', 404);
+            }
+
+            $this->authService->revokeAllRefreshTokens($user->id);
+
+            return $this->sendResponse(null, 'All refresh tokens revoked successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Failed to revoke tokens: ' . $e->getMessage(), 500);
+        }
+    }
+}
