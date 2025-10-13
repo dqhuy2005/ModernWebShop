@@ -35,7 +35,6 @@ class AuthController extends AppBaseController
         try {
             $this->authService->register($request->all());
 
-            // Auto login after registration
             $credentials = $request->only('email', 'password');
             $loginResult = $this->authService->attemptLogin(
                 $credentials['email'],
@@ -122,33 +121,35 @@ class AuthController extends AppBaseController
         }
     }
 
-    /**
-     * Get authenticated user profile
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function me(Request $request)
     {
         try {
-            $user = $this->authService->getUserFromToken();
+            if (!auth('api')->check()) {
+                return $this->sendError('Access token expired or invalid. Please login again.', 403);
+            }
+
+            $user = auth('api')->user();
 
             if (!$user) {
                 return $this->sendError('User not found', 404);
             }
 
+            if ($user->status === 0) {
+                return $this->sendError('User account is inactive', 403);
+            }
+
             return $this->sendResponse($user, 'User profile retrieved successfully');
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return $this->sendError('Access token expired or invalid. Please login again.', 403);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return $this->sendError('Access token expired or invalid. Please login again.', 403);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return $this->sendError('Access token expired or invalid. Please login again.', 403);
         } catch (\Exception $e) {
             return $this->sendError('Failed to get user profile: ' . $e->getMessage(), 500);
         }
     }
 
-    /**
-     * Revoke all refresh tokens for the authenticated user
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function revokeAllTokens(Request $request)
     {
         try {

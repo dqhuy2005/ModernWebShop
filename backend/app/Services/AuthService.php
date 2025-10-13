@@ -26,7 +26,6 @@ class AuthService
         $refreshToken = $this->generateRefreshToken($user, $ipAddress, $userAgent);
 
         return [
-            'user' => $user,
             'access_token' => $token,
             'refresh_token' => $refreshToken->token,
             'token_type' => 'bearer',
@@ -63,13 +62,8 @@ class AuthService
 
         $newAccessToken = auth('api')->login($user);
 
-        $refreshToken->revoke();
-        $newRefreshToken = $this->generateRefreshToken($user, $ipAddress, $userAgent);
-
         return [
-            'user' => $user,
             'access_token' => $newAccessToken,
-            'refresh_token' => $newRefreshToken->token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ];
