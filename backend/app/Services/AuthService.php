@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\RefreshToken;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log as logger;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -71,16 +72,36 @@ class AuthService
 
     public function logout($refreshTokenString = null)
     {
-        auth('api')->logout();
-
-        if ($refreshTokenString) {
-            $refreshToken = RefreshToken::where('token', $refreshTokenString)->first();
-            if ($refreshToken) {
-                $refreshToken->revoke();
+        // Try to invalidate JWT token, but don't fail if token is expired/invalid
+        try {
+            if (auth('api')->check()) {
+                auth('api')->logout();
             }
+        } catch (\Exception $e) {
+            logger::error('JWT logout skipped: ' . $e->getMessage());
         }
 
-        return true;
+        // Revoke the refresh token
+        if ($refreshTokenString) {
+            $refreshToken = RefreshToken::where('token', $refreshTokenString)->first();
+
+            if (!$refreshToken) {
+                logger::warning('Refresh token not found: ' . $refreshTokenString);
+                return false;
+            }
+
+            if ($refreshToken->is_revoked) {
+                logger::info('Refresh token already revoked');
+                return false;
+            }
+
+            $refreshToken->update(['is_revoked' => true]);
+            logger::info('Refresh token revoked successfully');
+            return true;
+        }
+
+        logger::warning('No refresh token provided for logout');
+        return false;
     }
 
     public function revokeAllRefreshTokens($userId)

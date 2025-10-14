@@ -6,6 +6,7 @@ use App\Http\Controllers\AppBaseController;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log as logger;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends AppBaseController
@@ -111,10 +112,17 @@ class AuthController extends AppBaseController
 
     public function logout(Request $request)
     {
+        logger::info('Initiating logout process');
+
         try {
             $refreshToken = $request->input('refresh_token');
-            $this->authService->logout($refreshToken);
+            $result = $this->authService->logout($refreshToken);
 
+            logger::info('Logout result: ' . ($result ? 'success' : 'failure'));
+
+            if (!$result) {
+                return $this->sendError('Logout failed', 500);
+            }
             return $this->sendResponse(null, 'Logged out successfully');
         } catch (\Exception $e) {
             return $this->sendError('Logout failed: ' . $e->getMessage(), 500);

@@ -35,14 +35,9 @@ class RefreshToken extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function isExpired()
-    {
-        return Carbon::now()->greaterThan($this->expires_at);
-    }
-
     public function isValid()
     {
-        return !$this->is_revoked && !$this->isExpired();
+        return !$this->is_revoked && $this->expires_at->isFuture();
     }
 
     public function revoke()
@@ -54,7 +49,7 @@ class RefreshToken extends Model
     public function scopeValid($query)
     {
         return $query->where('is_revoked', false)
-                    ->where('expires_at', '>', Carbon::now());
+            ->where('expires_at', '>', Carbon::now());
     }
 
     public function scopeExpired($query)
