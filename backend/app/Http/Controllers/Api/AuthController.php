@@ -24,7 +24,7 @@ class AuthController extends AppBaseController
             'fullname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
             'language' => 'nullable|string|max:10',
             'birthday' => 'nullable|date',
         ]);
@@ -36,19 +36,7 @@ class AuthController extends AppBaseController
         try {
             $this->authService->register($request->all());
 
-            $credentials = $request->only('email', 'password');
-            $loginResult = $this->authService->attemptLogin(
-                $credentials['email'],
-                $credentials['password'],
-                $request->ip(),
-                $request->userAgent()
-            );
-
-            if (!$loginResult) {
-                return $this->sendError('Registration successful but login failed', 500);
-            }
-
-            return $this->sendResponse($loginResult, 'User registered successfully');
+            return $this->sendResponse(null, 'User registered successfully');
         } catch (\Exception $e) {
             return $this->sendError('Registration failed: ' . $e->getMessage(), 500);
         }
@@ -121,7 +109,7 @@ class AuthController extends AppBaseController
             logger::info('Logout result: ' . ($result ? 'success' : 'failure'));
 
             if (!$result) {
-                return $this->sendError('Logout failed', 500);
+                return $this->sendError('Logout failed: Refresh token not found or already revoked', 400);
             }
             return $this->sendResponse(null, 'Logged out successfully');
         } catch (\Exception $e) {

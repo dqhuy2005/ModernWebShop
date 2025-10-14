@@ -25,11 +25,17 @@ class AppBaseController extends Controller
 
     public function sendValidationErrorWithDetails($errors): JsonResponse
     {
-        $errorMessage = 'Validation failed: ' . implode(', ', $errors);
-        return Response::json([
+        $formattedErrors = [];
+        foreach ($errors as $field => $messages) {
+            $formattedErrors[$field] = is_array($messages) ? $messages : [$messages];
+        }
+
+        return response()->json([
             'success' => false,
-            'message' => $errorMessage,
-            'errors' => $errors
+            'message' => 'Validation failed',
+            'data' => [
+                'errors' => $formattedErrors
+            ]
         ], 422);
     }
 
