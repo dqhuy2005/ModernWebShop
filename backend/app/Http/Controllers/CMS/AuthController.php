@@ -21,7 +21,6 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validate input
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|min:6',
@@ -42,16 +41,16 @@ class AuthController extends Controller
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-
             $user = Auth::user();
-            if ($user->status === 0) {
+
+            if ($user->status == 0) {
                 Auth::logout();
                 return redirect()->back()
                     ->with('error', 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.')
                     ->withInput();
             }
 
+            $request->session()->regenerate();
             return redirect()->intended(route('cms.dashboard'));
         }
 

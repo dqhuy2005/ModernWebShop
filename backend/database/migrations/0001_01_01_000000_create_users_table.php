@@ -21,9 +21,9 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->string('language')->default('en');
             $table->string('birthday')->nullable();
+            $table->rememberToken();
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
-            //$table->rememberToken();
         });
 
         Schema::create('sessions', function (Blueprint $table) {

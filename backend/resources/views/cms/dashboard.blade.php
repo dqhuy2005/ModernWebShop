@@ -91,7 +91,7 @@
             </div>
 
             <div class="welcome-card">
-                <h2>Chào mừng, {{ Auth::user()->name }}!</h2>
+                <h2>Chào mừng, {{ Auth::user()->fullname }}!</h2>
                 <p>Email: {{ Auth::user()->email }}</p>
                 <p style="margin-top: 20px;">Đây là trang Dashboard của CMS.</p>
             </div>
