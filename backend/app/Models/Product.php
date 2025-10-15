@@ -16,8 +16,10 @@ class Product extends Model
         'description',
         'image',
         'status',
-        'parentId',
+        'parent_id',
         'language',
+        'views',
+        'is_hot',
     ];
 
     protected function casts(): array
@@ -26,11 +28,34 @@ class Product extends Model
             'category_id' => 'integer',
             'specifications' => 'array',
             'status' => 'boolean',
-            'parentId' => 'integer',
+            'parent_id' => 'integer',
+            'views' => 'integer',
+            'is_hot' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
+
+    public function scopeParentOnly($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    public function scopeHot($query)
+    {
+        return $query->where('is_hot', true);
+    }
+
+    public function scopeMostViewed($query, $limit = 10)
+    {
+        return $query->orderBy('views', 'desc')->limit($limit);
     }
 
     public function category()

@@ -11,14 +11,14 @@ class Category extends Model
 
     protected $fillable = [
         'name',
-        'parentId',
+        'parent_id',
         'language',
     ];
 
     protected function casts(): array
     {
         return [
-            'parentId' => 'integer',
+            'parent_id' => 'integer',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -28,5 +28,25 @@ class Category extends Model
     public function products()
     {
         return $this->hasMany(Product::class, 'category_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function scopeParent($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    public function scopeChild($query)
+    {
+        return $query->whereNotNull('parent_id');
     }
 }
