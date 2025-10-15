@@ -18,8 +18,10 @@ return new class extends Migration {
             $table->string('description')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);
-            $table->unsignedInteger('parentId')->nullable()->default(null);
+            $table->unsignedInteger('parent_id')->nullable()->default(null);
             $table->string('language')->nullable()->default(null);
+            $table->integer('views')->nullable()->default(0);
+            $table->boolean('is_hot')->nullable()->default(false);
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
         });

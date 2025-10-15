@@ -20,7 +20,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 1,
                 'name' => 'Laptop',
-                'parentId' => null,
+                'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -28,7 +28,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 2,
                 'name' => 'PC Components',
-                'parentId' => null,
+                'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -36,7 +36,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 3,
                 'name' => 'Peripherals',
-                'parentId' => null,
+                'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -44,7 +44,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 4,
                 'name' => 'Storage',
-                'parentId' => null,
+                'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -52,7 +52,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 5,
                 'name' => 'Networking',
-                'parentId' => null,
+                'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -62,7 +62,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 6,
                 'name' => 'Gaming Laptop',
-                'parentId' => 1,
+                'parent_id' => 1,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -70,7 +70,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 7,
                 'name' => 'Business Laptop',
-                'parentId' => 1,
+                'parent_id' => 1,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -78,7 +78,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 8,
                 'name' => 'Ultrabook',
-                'parentId' => 1,
+                'parent_id' => 1,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -88,7 +88,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 9,
                 'name' => 'Processor (CPU)',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -96,7 +96,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 10,
                 'name' => 'Graphics Card (GPU)',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -104,7 +104,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 11,
                 'name' => 'Motherboard',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -112,7 +112,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 12,
                 'name' => 'RAM',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -120,7 +120,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 13,
                 'name' => 'Power Supply (PSU)',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -128,7 +128,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 14,
                 'name' => 'PC Case',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -136,7 +136,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 15,
                 'name' => 'Cooling System',
-                'parentId' => 2,
+                'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -146,7 +146,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 16,
                 'name' => 'Keyboard',
-                'parentId' => 3,
+                'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -154,7 +154,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 17,
                 'name' => 'Mouse',
-                'parentId' => 3,
+                'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -162,7 +162,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 18,
                 'name' => 'Monitor',
-                'parentId' => 3,
+                'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -170,7 +170,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 19,
                 'name' => 'Headset',
-                'parentId' => 3,
+                'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -178,7 +178,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 20,
                 'name' => 'Webcam',
-                'parentId' => 3,
+                'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -188,7 +188,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 21,
                 'name' => 'SSD',
-                'parentId' => 4,
+                'parent_id' => 4,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -196,7 +196,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 22,
                 'name' => 'HDD',
-                'parentId' => 4,
+                'parent_id' => 4,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -204,7 +204,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 23,
                 'name' => 'External Storage',
-                'parentId' => 4,
+                'parent_id' => 4,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -214,7 +214,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 24,
                 'name' => 'Router',
-                'parentId' => 5,
+                'parent_id' => 5,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -222,7 +222,7 @@ class CategorySeeder extends Seeder
             [
                 'id' => 25,
                 'name' => 'Network Adapter',
-                'parentId' => 5,
+                'parent_id' => 5,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
