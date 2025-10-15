@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\RefreshToken;
+
+class RefreshTokenRepository extends BaseRepository
+{
+    public function model()
+    {
+        return RefreshToken::class;
+    }
+
+    public function findBuild()
+    {
+        return $this->with(['carts', 'orders']);
+    }
+}

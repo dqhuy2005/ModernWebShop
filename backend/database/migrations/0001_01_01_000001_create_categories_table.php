@@ -14,10 +14,9 @@ return new class extends Migration {
             $table->id()->index()->unsigned();
             $table->string('name')->index();
             $table->unsignedInteger('parentId')->nullable()->default(null);
-            $table->string('language')->default(null);
+            $table->string('language')->nullable()->default(null);
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
-            //$table->rememberToken();
         });
     }
 

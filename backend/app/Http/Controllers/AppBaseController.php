@@ -44,8 +44,4 @@ class AppBaseController extends Controller
         return Response::json($data, $code);
     }
 
-    public function firstArray(array $input)
-    {
-        return reset($input);
-    }
 }

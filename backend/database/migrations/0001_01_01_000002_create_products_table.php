@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);
             $table->unsignedInteger('parentId')->nullable()->default(null);
-            $table->string('language')->default(null);
+            $table->string('language')->nullable()->default(null);
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
         });
