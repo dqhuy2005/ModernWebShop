@@ -101,7 +101,6 @@ class CategoryController extends AppBaseController
                 return $this->sendError('Category not found', 404);
             }
 
-            // Prevent setting category as its own parent
             if ($request->has('parent_id') && $request->parent_id == $id) {
                 return $this->sendError('Category cannot be its own parent', 422);
             }
