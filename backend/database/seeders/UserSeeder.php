@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     {
         User::create([
             'fullname' => 'Admin User',
-            'email' => 'admin@example.com',
+            'email' => 'admin@gmail.com',
             'phone' => '1234567890',
             'password' => Hash::make('12345@54321'),
             'status' => true,
@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'fullname' => 'John Doe',
-            'email' => 'john@example.com',
+            'email' => 'john@gmail.com',
             'phone' => '0987654321',
             'password' => Hash::make('12345@54321'),
             'status' => true,
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'fullname' => 'Nguyen Van A',
-            'email' => 'nguyenvana@example.com',
+            'email' => 'nguyenvana@gmail.com',
             'phone' => '0909123456',
             'password' => Hash::make('12345@54321'),
             'status' => true,

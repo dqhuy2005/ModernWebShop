@@ -102,6 +102,7 @@ class ProductController extends AppBaseController
             'status' => 'boolean',
             'parent_id' => 'nullable|integer|exists:products,id',
             'language' => 'nullable|string|max:10',
+            'views' => 'integer|min:0',
             'is_hot' => 'boolean',
         ]);
 

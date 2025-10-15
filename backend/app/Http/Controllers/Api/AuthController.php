@@ -100,17 +100,14 @@ class AuthController extends AppBaseController
 
     public function logout(Request $request)
     {
-        logger::info('Initiating logout process');
-
         try {
             $refreshToken = $request->input('refresh_token');
             $result = $this->authService->logout($refreshToken);
 
-            logger::info('Logout result: ' . ($result ? 'success' : 'failure'));
-
             if (!$result) {
                 return $this->sendError('Logout failed: Refresh token not found or already revoked', 400);
             }
+
             return $this->sendResponse(null, 'Logged out successfully');
         } catch (\Exception $e) {
             return $this->sendError('Logout failed: ' . $e->getMessage(), 500);

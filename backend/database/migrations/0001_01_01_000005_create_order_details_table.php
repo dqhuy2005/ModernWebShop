@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->integer('total_price')->nullable()->default(0);
             $table->json('product_specifications')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             // Foreign key
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
