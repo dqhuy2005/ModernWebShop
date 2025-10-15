@@ -64,12 +64,11 @@ class ProductController extends AppBaseController
     public function getMostViewed(Request $request)
     {
         try {
-            $limit = $request->query('limit', 10);
+            $limit = $request->query('limit', default: 10);
 
             $products = Product::with('category')
                 ->active()
-                ->orderBy('views', 'desc')
-                ->limit($limit)
+                ->mostViewed($limit)
                 ->get();
 
             return $this->sendResponse($products, 'Most viewed products retrieved successfully');

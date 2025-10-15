@@ -60,6 +60,8 @@ class Product extends Model
         return $query->orderBy('views', 'desc')->limit($limit);
     }
 
+    // Relationships
+
     public function category()
     {
         return $this->belongsTo(Category::class);
