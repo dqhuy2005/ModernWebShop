@@ -1,7 +1,7 @@
 <header class="admin-header bg-white shadow-sm">
     <nav class="navbar navbar-expand-lg navbar-light px-4">
         <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard') }}">
-            <i class="fas fa-store"></i> Admin Panel
+            <i class="fas fa-store"></i> CMS - ModernWebShop
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
@@ -10,11 +10,11 @@
 
         <div class="collapse navbar-collapse" id="adminNavbar">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="{{ route('home') }}" target="_blank">
                         <i class="fas fa-external-link-alt"></i> Xem trang chủ
                     </a>
-                </li>
+                </li> --}}
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="adminUserDropdown" role="button"
@@ -27,11 +27,11 @@
                                 <i class="fas fa-user-cog"></i> Tài khoản
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a class="dropdown-item" href="#">
                                 <i class="fas fa-cog"></i> Cài đặt
                             </a>
-                        </li>
+                        </li> --}}
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form action="{{ route('admin.logout') }}" method="POST">

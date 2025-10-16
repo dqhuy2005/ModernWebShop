@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CMS\AuthController as CMSAuthController;
+use App\Http\Controllers\CMS\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,6 +23,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
     });
+
+    Route::resource('products', ProductController::class);
 });
 
 Route::get('password/reset', function () {
