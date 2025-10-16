@@ -30,7 +30,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Total Products</h6>
-                            <h4 class="mb-0">{{ $products->total() ?? 0 }}</h4>
+                            <h4 class="mb-0">{{ $totalProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
                 var form = document.createElement('form');
-                form.method = 'DELETE';
+                form.method = 'PUT';
                 form.action = '/admin/products/' + productId;
 
                 var methodInput = document.createElement('input');

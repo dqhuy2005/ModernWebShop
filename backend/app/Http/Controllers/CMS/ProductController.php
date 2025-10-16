@@ -60,7 +60,7 @@ class ProductController extends Controller
                 ->orderBy('name')
                 ->get();
 
-            $totalProducts = $products->total();
+            $totalProducts = Product::count();
             $activeProducts = Product::where('status', true)->count();
             $inactiveProducts = Product::where('status', false)->count();
             $hotProducts = Product::where('is_hot', true)->count();
@@ -86,15 +86,14 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // Validation
         $validator = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'status' => 'boolean',
-            'is_hot' => 'boolean',
+            'status' => 'nullable|boolean',
+            'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
         ]);
 
@@ -105,7 +104,20 @@ class ProductController extends Controller
         }
 
         try {
-            $data = $request->all();
+            $data = $request->except(['image', 'specifications', 'action']);
+
+            $data['status'] = $request->has('status') ? 1 : 0;
+            $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
+
+            if ($request->has('specifications')) {
+                $specs = [];
+                foreach ($request->specifications as $spec) {
+                    if (!empty($spec['key']) && !empty($spec['value'])) {
+                        $specs[$spec['key']] = $spec['value'];
+                    }
+                }
+                $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
+            }
 
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
@@ -115,6 +127,12 @@ class ProductController extends Controller
             }
 
             $product = Product::create($data);
+
+            if ($request->input('action') === 'save_and_continue') {
+                return redirect()
+                    ->route('admin.products.create')
+                    ->with('success', 'Product created successfully! You can add another one.');
+            }
 
             return redirect()
                 ->route('admin.products.show', $product->id)
@@ -168,8 +186,8 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'status' => 'boolean',
-            'is_hot' => 'boolean',
+            'status' => 'nullable|boolean',
+            'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
         ]);
 
@@ -181,7 +199,20 @@ class ProductController extends Controller
 
         try {
             $product = Product::findOrFail($id);
-            $data = $request->all();
+            $data = $request->except(['image', 'specifications', '_method', '_token']);
+
+            $data['status'] = $request->has('status') ? 1 : 0;
+            $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
+
+            if ($request->has('specifications')) {
+                $specs = [];
+                foreach ($request->specifications as $spec) {
+                    if (!empty($spec['key']) && !empty($spec['value'])) {
+                        $specs[$spec['key']] = $spec['value'];
+                    }
+                }
+                $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
+            }
 
             if ($request->hasFile('image')) {
                 if ($product->image && Storage::disk('public')->exists($product->image)) {
@@ -194,7 +225,6 @@ class ProductController extends Controller
                 $data['image'] = $imagePath;
             }
 
-            // Update product
             $product->update($data);
 
             return redirect()
@@ -212,12 +242,10 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
 
-            // Delete image
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }
 
-            // Soft delete
             $product->delete();
 
             return redirect()

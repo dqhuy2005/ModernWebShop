@@ -80,23 +80,6 @@
 
     <!-- Main Content -->
     <main class="admin-content">
-        <!-- Breadcrumb -->
-        @if(isset($breadcrumbs))
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb">
-                @foreach($breadcrumbs as $breadcrumb)
-                    @if($loop->last)
-                        <li class="breadcrumb-item active" aria-current="page">{{ $breadcrumb['name'] }}</li>
-                    @else
-                        <li class="breadcrumb-item">
-                            <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['name'] }}</a>
-                        </li>
-                    @endif
-                @endforeach
-            </ol>
-        </nav>
-        @endif
-
         <!-- Flash Messages -->
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -142,9 +125,6 @@
 
     <!-- Chart.js (for dashboard charts) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
-
-    <!-- Custom Admin JS -->
-    {{-- @vite(['resources/js/app.js']) --}}
 
     <script>
         // Initialize DataTables

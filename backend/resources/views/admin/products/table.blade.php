@@ -61,7 +61,6 @@
                                 <td>
                                     @if ($product->category)
                                         <span class="badge bg-info">
-                                            <i class="fas fa-folder me-1"></i>
                                             {{ $product->category->name }}
                                         </span>
                                     @else
@@ -95,7 +94,7 @@
 
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
-                                        <a href="#"
+                                        <a href="{{ route('admin.products.show', $product->id) }}"
                                             class="btn btn-sm btn-info" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -125,7 +124,7 @@
                             Per page:
                         </label>
                         <select name="per_page" id="per_page_bottom" class="form-select form-select-sm"
-                                style="width: 75px;" onchange="changePerPage(this.value)">
+                            style="width: 75px;" onchange="changePerPage(this.value)">
                             <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
                             <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
                             <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
