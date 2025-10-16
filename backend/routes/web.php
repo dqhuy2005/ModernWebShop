@@ -17,42 +17,43 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
     });
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'role.restriction'])->group(function () {
         Route::get('dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
 
         Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
-    });
 
+        // Products Management
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/', [ProductController::class, 'index'])->name('index');
+            Route::get('create', [ProductController::class, 'create'])->name('create');
+            Route::post('/', [ProductController::class, 'store'])->name('store');
+            Route::get('{product}', [ProductController::class, 'show'])->name('show');
+            Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');
+            Route::put('{product}', [ProductController::class, 'update'])->name('update');
+            Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy');
 
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('index');
-        Route::get('create', [ProductController::class, 'create'])->name('create');
-        Route::post('/', [ProductController::class, 'store'])->name('store');
-        Route::get('{product}', [ProductController::class, 'show'])->name('show');
-        Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');
-        Route::put('{product}', [ProductController::class, 'update'])->name('update');
-        Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy');
+            // AJAX routes
+            Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
+            Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
+        });
 
-        // AJAX routes
-        Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
-        Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
-    });
+        // Users Management
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('create', [UserController::class, 'create'])->name('create');
+            Route::post('/', [UserController::class, 'store'])->name('store');
+            Route::get('{user}', [UserController::class, 'show'])->name('show');
+            Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
 
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('create', [UserController::class, 'create'])->name('create');
-        Route::post('/', [UserController::class, 'store'])->name('store');
-        Route::get('{user}', [UserController::class, 'show'])->name('show');
-        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
-        Route::put('{user}', [UserController::class, 'update'])->name('update');
-        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
-
-        // AJAX routes
-        Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
-        Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
-        Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+            // AJAX routes
+            Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
+            Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
+            Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+        });
     });
 });
 

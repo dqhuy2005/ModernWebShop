@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'admin' => \App\Http\Middleware\CheckAdmin::class,
             'user' => \App\Http\Middleware\CheckUser::class,
+            'role.restriction' => \App\Http\Middleware\RoleRouteRestriction::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
