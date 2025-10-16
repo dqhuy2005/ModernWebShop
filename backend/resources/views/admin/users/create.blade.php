@@ -23,17 +23,14 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                {{-- Avatar Upload Section --}}
                 <div class="mb-4 pb-3 border-bottom">
                     <label class="form-label fw-bold">
                         <i class="fas fa-image me-2"></i>User Avatar
                     </label>
 
-                    {{-- Hidden File Input --}}
                     <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
                         name="image" accept="image/*" onchange="previewImage(event)">
 
-                    {{-- Custom Upload Button --}}
                     <div id="upload-area" class="text-center">
                         <button type="button" class="btn btn-outline-primary btn-lg" onclick="$('#image').click()">
                             <i class="fas fa-cloud-upload-alt me-2"></i>Select Avatar
@@ -41,7 +38,6 @@
                         <p class="text-muted mt-2 mb-0 small">Accepted: JPG, PNG, GIF, WEBP. Max: 2MB</p>
                     </div>
 
-                    {{-- Image Preview --}}
                     <div id="image-preview" class="text-center mt-3 d-none">
                         <div class="preview-container">
                             <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
@@ -186,14 +182,12 @@
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
-                // Validate file size (2MB = 2 * 1024 * 1024 bytes)
                 if (file.size > 2 * 1024 * 1024) {
                     toastr.error('File size must not exceed 2MB!');
                     $('#image').val('');
                     return;
                 }
 
-                // Validate file type
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                 if (!allowedTypes.includes(file.type)) {
                     toastr.error('Only JPG, PNG, GIF, and WEBP images are allowed!');
