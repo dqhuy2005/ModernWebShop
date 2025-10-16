@@ -24,11 +24,6 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle me-2"></i>Product Information
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="category_id" class="form-label">
@@ -112,25 +107,17 @@
                                 <input class="form-check-input" type="checkbox" role="switch" id="is_hot" name="is_hot"
                                     value="1" {{ old('is_hot') ? 'checked' : '' }}>
                                 <label class="form-check-label" for="is_hot">
-                                    <i class="fas fa-fire text-warning me-1"></i>Mark as Hot
+                                    Mark as Hot
                                 </label>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-image me-2"></i>Product Image
-                        </h5>
-                    </div>
-                    <div class="card-body">
                         <div class="mb-3">
-                            <input type="file" class="form-control @error('image') is-invalid @enderror"
-                                id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                            <label for="image" class="form-label">
+                                Product Image
+                            </label>
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
+                                name="image" accept="image/*" onchange="previewImage(event)">
                             @error('image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -147,22 +134,18 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary" name="action" value="save">
-                                <i class="fas fa-save me-2"></i>Save Product
-                            </button>
-                            <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
-                                <i class="fas fa-plus me-2"></i>Save & Add Another
-                            </button>
-                            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-end col-lg-12 gap-3">
+                <button type="submit" class="btn btn-primary" name="action" value="save">
+                    <i class="fas fa-save me-2"></i>Save
+                </button>
+                <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
+                    <i class="fas fa-plus me-2"></i>Save & Add Another
+                </button>
+                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
             </div>
         </div>
     </form>

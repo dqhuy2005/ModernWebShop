@@ -150,7 +150,6 @@ class ProductController extends Controller
             $product = Product::with(['category', 'carts', 'orderDetails'])
                 ->findOrFail($id);
 
-            // Get related products from same category
             $relatedProducts = Product::where('category_id', $product->category_id)
                 ->where('id', '!=', $product->id)
                 ->where('status', 1)

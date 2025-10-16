@@ -3,27 +3,26 @@
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                   href="{{ route('admin.dashboard') }}">
+                    href="{{ route('admin.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
 
             <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="#">
+                    <i class="fas fa-user"></i>
+                    <span>User</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
-                   href="{{ route('admin.products.index') }}">
+                    href="{{ route('admin.products.index') }}">
                     <i class="fas fa-box"></i>
                     <span>Product</span>
                 </a>
             </li>
-
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
-                   href="{{ route('admin.categories.index') }}">
-                    <i class="fas fa-list"></i>
-                    <span>Quản lý danh mục</span>
-                </a>
-            </li> --}}
 
             {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"
@@ -67,60 +66,60 @@
 </aside>
 
 <style>
-.admin-sidebar {
-    width: 250px;
-    min-height: calc(100vh - 60px);
-    position: fixed;
-    top: 60px;
-    left: 0;
-    overflow-y: auto;
-    z-index: 100;
-}
+    .admin-sidebar {
+        width: 250px;
+        min-height: calc(100vh - 60px);
+        position: fixed;
+        top: 60px;
+        left: 0;
+        overflow-y: auto;
+        z-index: 100;
+    }
 
-.admin-sidebar .nav-link {
-    color: rgba(255, 255, 255, 0.8);
-    padding: 12px 20px;
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
-}
+    .admin-sidebar .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
 
-.admin-sidebar .nav-link:hover {
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left-color: #0d6efd;
-}
+    .admin-sidebar .nav-link:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-left-color: #0d6efd;
+    }
 
-.admin-sidebar .nav-link.active {
-    color: #fff;
-    background-color: rgba(13, 110, 253, 0.3);
-    border-left-color: #0d6efd;
-}
+    .admin-sidebar .nav-link.active {
+        color: #fff;
+        background-color: rgba(13, 110, 253, 0.3);
+        border-left-color: #0d6efd;
+    }
 
-.admin-sidebar .nav-link i {
-    width: 20px;
-    margin-right: 10px;
-}
+    .admin-sidebar .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
 
-.nav-section-title {
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
+    .nav-section-title {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
 
-/* Scrollbar styling */
-.admin-sidebar::-webkit-scrollbar {
-    width: 6px;
-}
+    /* Scrollbar styling */
+    .admin-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
 
-.admin-sidebar::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
+    .admin-sidebar::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
 
-.admin-sidebar::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 3px;
-}
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 3px;
+    }
 
-.admin-sidebar::-webkit-scrollbar-thumb:hover {
-    background: #777;
-}
+    .admin-sidebar::-webkit-scrollbar-thumb:hover {
+        background: #777;
+    }
 </style>
