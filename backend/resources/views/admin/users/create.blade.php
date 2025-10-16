@@ -21,158 +21,162 @@
     <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data" id="userForm">
         @csrf
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card mb-4">
-                    <div class="card-body">
+        <div class="card mb-4">
+            <div class="card-body">
+                {{-- Avatar Upload Section --}}
+                <div class="mb-4 pb-3 border-bottom">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-image me-2"></i>User Avatar
+                    </label>
 
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    User Avatar
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <input type="file" class="form-control @error('image') is-invalid @enderror"
-                                        id="image" name="image" accept="image/*" onchange="previewImage(event)">
-                                    @error('image')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="text-muted">
-                                        Accepted: JPG, PNG, GIF, WEBP. Max: 2MB
-                                    </small>
-                                </div>
+                    {{-- Hidden File Input --}}
+                    <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
+                        name="image" accept="image/*" onchange="previewImage(event)">
 
-                                <div id="image-preview" class="text-center d-none">
-                                    <img src="" alt="Preview" class="img-fluid rounded-circle"
-                                        style="max-height: 150px; border: 3px solid #e9ecef;">
-                                    <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
-                                        <i class="fas fa-times me-1"></i>Remove
-                                    </button>
-                                </div>
-                            </div>
+                    {{-- Custom Upload Button --}}
+                    <div id="upload-area" class="text-center">
+                        <button type="button" class="btn btn-outline-primary btn-lg" onclick="$('#image').click()">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>Select Avatar
+                        </button>
+                        <p class="text-muted mt-2 mb-0 small">Accepted: JPG, PNG, GIF, WEBP. Max: 2MB</p>
+                    </div>
+
+                    {{-- Image Preview --}}
+                    <div id="image-preview" class="text-center mt-3 d-none">
+                        <div class="preview-container">
+                            <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
                         </div>
+                        <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
+                            <i class="fas fa-trash-alt me-1"></i>Remove Avatar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2" onclick="$('#image').click()">
+                            <i class="fas fa-sync-alt me-1"></i>Change Avatar
+                        </button>
+                    </div>
 
+                    @error('image')
+                        <div class="text-danger mt-2 small">{{ $message }}</div>
+                    @enderror
+                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="fullname" class="form-label fw-bold">
-                                    Full Name <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control @error('fullname') is-invalid @enderror"
-                                    id="fullname" name="fullname" value="{{ old('fullname') }}"
-                                    placeholder="Enter full name..." required>
-                                @error('fullname')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="fullname" class="form-label fw-bold">
+                            Full Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control @error('fullname') is-invalid @enderror" id="fullname"
+                            name="fullname" value="{{ old('fullname') }}" placeholder="Enter full name..." required>
+                        @error('fullname')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label fw-bold">
-                                    Email <span class="text-danger">*</span>
-                                </label>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                    id="email" name="email" value="{{ old('email') }}"
-                                    placeholder="Enter email address..." required>
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label fw-bold">
+                            Email <span class="text-danger">*</span>
+                        </label>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
+                            name="email" value="{{ old('email') }}" placeholder="Enter email address..." required>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label fw-bold">Phone</label>
-                                <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                                    id="phone" name="phone" value="{{ old('phone') }}"
-                                    placeholder="Enter phone number...">
-                                @error('phone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label fw-bold">Phone</label>
+                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                            name="phone" value="{{ old('phone') }}" placeholder="Enter phone number...">
+                        @error('phone')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="birthday" class="form-label fw-bold">Birthday</label>
-                                <input type="date" class="form-control @error('birthday') is-invalid @enderror"
-                                    id="birthday" name="birthday" value="{{ old('birthday') }}">
-                                @error('birthday')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="birthday" class="form-label fw-bold">Birthday</label>
+                        <input type="date" class="form-control @error('birthday') is-invalid @enderror" id="birthday"
+                            name="birthday" value="{{ old('birthday') }}">
+                        @error('birthday')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label fw-bold">
-                                    Password <span class="text-danger">*</span>
-                                </label>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    id="password" name="password" placeholder="Enter password..." required>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label fw-bold">
+                            Password <span class="text-danger">*</span>
+                        </label>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                            name="password" placeholder="Enter password..." required>
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="password_confirmation" class="form-label fw-bold">
-                                    Confirm Password <span class="text-danger">*</span>
-                                </label>
-                                <input type="password" class="form-control" id="password_confirmation"
-                                    name="password_confirmation" placeholder="Confirm password..." required>
-                            </div>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="password_confirmation" class="form-label fw-bold">
+                            Confirm Password <span class="text-danger">*</span>
+                        </label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                            placeholder="Confirm password..." required>
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="role_id" class="form-label fw-bold">
-                                    Role <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select @error('role_id') is-invalid @enderror" id="role_id"
-                                    name="role_id" required>
-                                    <option value="">-- Select Role --</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}"
-                                            {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                                            {{ $role->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('role_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="role_id" class="form-label fw-bold">
+                            Role <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select @error('role_id') is-invalid @enderror" id="role_id" name="role_id"
+                            required>
+                            <option value="">-- Select Role --</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('role_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label fw-bold">Status</label>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="status"
-                                        name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="status">
-                                        Active
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="language" class="form-label fw-bold">Language</label>
+                        <select class="form-select" id="language" name="language">
+                            <option value="vi" {{ old('language') === 'vi' ? 'selected' : '' }}>Vietnamese</option>
+                            <option value="en" {{ old('language') === 'en' ? 'selected' : '' }}>English</option>
+                        </select>
+                    </div>
+                </div>
 
-                        <div class="row">
-
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Status</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="status"
+                                name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="status">
+                                Active
+                            </label>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="d-flex justify-content-end col-lg-12 gap-3">
-                <button type="submit" class="btn btn-primary" name="action" value="save">
-                    <i class="fas fa-save me-2"></i>Save
-                </button>
-                <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
-                    <i class="fas fa-plus me-2"></i>Save & Add Another
-                </button>
-                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times me-2"></i>Cancel
-                </a>
-            </div>
+        <div class="d-flex justify-content-end gap-2 mb-4">
+            <button type="submit" class="btn btn-primary" name="action" value="save">
+                <i class="fas fa-save me-2"></i>Save User
+            </button>
+            <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
+                <i class="fas fa-plus me-2"></i>Save & Add Another
+            </button>
+            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i>Cancel
+            </a>
         </div>
     </form>
 @endsection
@@ -182,10 +186,27 @@
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
+                // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+                if (file.size > 2 * 1024 * 1024) {
+                    toastr.error('File size must not exceed 2MB!');
+                    $('#image').val('');
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    toastr.error('Only JPG, PNG, GIF, and WEBP images are allowed!');
+                    $('#image').val('');
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     $('#image-preview img').attr('src', e.target.result);
+                    $('#upload-area').addClass('d-none');
                     $('#image-preview').removeClass('d-none');
+                    toastr.success('Avatar selected successfully!');
                 };
                 reader.readAsDataURL(file);
             }
@@ -194,7 +215,9 @@
         function removeImage() {
             $('#image').val('');
             $('#image-preview').addClass('d-none');
+            $('#upload-area').removeClass('d-none');
             $('#image-preview img').attr('src', '');
+            toastr.info('Avatar removed');
         }
 
         $('#userForm').on('submit', function(e) {
@@ -245,8 +268,20 @@
             border-bottom: 2px solid #e9ecef;
         }
 
-        #image-preview img {
-            border: 3px solid #dee2e6;
+        .preview-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        .preview-image {
+            max-height: 200px;
+            max-width: 200px;
+            border: 2px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        #image-preview {
+            animation: fadeIn 0.4s ease;
         }
     </style>
 @endpush
