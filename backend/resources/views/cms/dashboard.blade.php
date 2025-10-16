@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - CMS ModernWebShop</title>
+    <title>Dashboard - Admin ModernWebShop</title>
     <style>
         * {
             margin: 0;
@@ -77,7 +77,7 @@
 <body>
     <div class="dashboard-container">
         <div class="sidebar">
-            <h2>CMS ModernWebShop</h2>
+            <h2>Admin ModernWebShop</h2>
             <nav>
                 <!-- Add navigation items here -->
             </nav>
@@ -86,7 +86,7 @@
         <div class="main-content">
             <div class="header">
                 <h1>Dashboard</h1>
-                <form action="{{ route('cms.logout') }}" method="POST" style="display: inline;">
+                <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="logout-btn">Đăng xuất</button>
                 </form>
@@ -95,7 +95,7 @@
             <div class="welcome-card">
                 <h2>Chào mừng, {{ Auth::user()->fullname }}!</h2>
                 <p>Email: {{ Auth::user()->email }}</p>
-                <p style="margin-top: 20px;">Đây là trang Dashboard của CMS.</p>
+                <p style="margin-top: 20px;">Đây là trang Dashboard của admin.</p>
             </div>
         </div>
     </div>

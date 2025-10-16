@@ -13,10 +13,10 @@ class AuthenticationTest extends TestCase
 
     public function test_login_page_can_be_rendered(): void
     {
-        $response = $this->get('/cms/login');
+        $response = $this->get('/admin/login');
 
         $response->assertStatus(200);
-        $response->assertViewIs('cms.login');
+        $response->assertViewIs('admin.login');
         $response->assertSee('Chào mừng trở lại!');
         $response->assertSee('Email hoặc Số Điện Thoại');
         $response->assertSee('Mật khẩu');
@@ -24,10 +24,10 @@ class AuthenticationTest extends TestCase
 
     public function test_register_page_can_be_rendered(): void
     {
-        $response = $this->get('/cms/register');
+        $response = $this->get('/admin/register');
 
         $response->assertStatus(200);
-        $response->assertViewIs('cms.register');
+        $response->assertViewIs('admin.register');
         $response->assertSee('Tạo tài khoản');
     }
 
@@ -40,12 +40,12 @@ class AuthenticationTest extends TestCase
             'status' => 1,
         ]);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect('/cms/dashboard');
+        $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticatedAs($user);
     }
 
@@ -57,7 +57,7 @@ class AuthenticationTest extends TestCase
             'status' => 1,
         ]);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'wrong@example.com',
             'password' => 'password123',
         ]);
@@ -75,7 +75,7 @@ class AuthenticationTest extends TestCase
             'status' => 1,
         ]);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
@@ -93,7 +93,7 @@ class AuthenticationTest extends TestCase
             'status' => 0, // Inactive
         ]);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
@@ -105,7 +105,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_requires_email(): void
     {
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => '',
             'password' => 'password123',
         ]);
@@ -116,7 +116,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_requires_valid_email_format(): void
     {
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'not-an-email',
             'password' => 'password123',
         ]);
@@ -127,7 +127,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_requires_password(): void
     {
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => '',
         ]);
@@ -138,7 +138,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_requires_password_minimum_length(): void
     {
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => '12345', // Less than 6 characters
         ]);
@@ -151,46 +151,46 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create(['status' => 1]);
 
-        $response = $this->actingAs($user)->get('/cms/login');
+        $response = $this->actingAs($user)->get('/admin/login');
 
-        $response->assertRedirect('/cms/dashboard');
+        $response->assertRedirect('/admin/dashboard');
     }
 
     public function test_authenticated_user_cannot_access_register_page(): void
     {
         $user = User::factory()->create(['status' => 1]);
 
-        $response = $this->actingAs($user)->get('/cms/register');
+        $response = $this->actingAs($user)->get('/admin/register');
 
-        $response->assertRedirect('/cms/dashboard');
+        $response->assertRedirect('/admin/dashboard');
     }
 
     public function test_user_can_logout(): void
     {
         $user = User::factory()->create(['status' => 1]);
 
-        $response = $this->actingAs($user)->post('/cms/logout');
+        $response = $this->actingAs($user)->post('/admin/logout');
 
-        $response->assertRedirect('/cms/login');
+        $response->assertRedirect('/admin/login');
         $response->assertSessionHas('success', 'Đăng xuất thành công!');
         $this->assertGuest();
     }
 
     public function test_guest_cannot_access_dashboard(): void
     {
-        $response = $this->get('/cms/dashboard');
+        $response = $this->get('/admin/dashboard');
 
-        $response->assertRedirect('/cms/login');
+        $response->assertRedirect('/admin/login');
     }
 
     public function test_authenticated_user_can_access_dashboard(): void
     {
         $user = User::factory()->create(['status' => 1]);
 
-        $response = $this->actingAs($user)->get('/cms/dashboard');
+        $response = $this->actingAs($user)->get('/admin/dashboard');
 
         $response->assertStatus(200);
-        $response->assertViewIs('cms.dashboard');
+        $response->assertViewIs('admin.dashboard');
         $response->assertSee($user->fullname);
         $response->assertSee($user->email);
     }
@@ -203,12 +203,12 @@ class AuthenticationTest extends TestCase
             'status' => 1,
         ]);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect('/cms/dashboard');
+        $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticatedAs($user);
 
         // Session should be regenerated
@@ -217,14 +217,14 @@ class AuthenticationTest extends TestCase
 
     public function test_user_can_register_with_valid_data(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'newuser@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
 
-        $response->assertRedirect('/cms/login');
+        $response->assertRedirect('/admin/login');
 
         $this->assertDatabaseHas('users', [
             'fullname' => 'Test User',
@@ -238,7 +238,7 @@ class AuthenticationTest extends TestCase
 
     public function test_register_requires_name(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => '',
             'email' => 'test@example.com',
             'password' => 'password123',
@@ -251,7 +251,7 @@ class AuthenticationTest extends TestCase
 
     public function test_register_requires_email(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => '',
             'password' => 'password123',
@@ -264,7 +264,7 @@ class AuthenticationTest extends TestCase
 
     public function test_register_requires_valid_email_format(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'not-an-email',
             'password' => 'password123',
@@ -282,7 +282,7 @@ class AuthenticationTest extends TestCase
             'email' => 'existing@example.com',
         ]);
 
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'existing@example.com',
             'password' => 'password123',
@@ -295,7 +295,7 @@ class AuthenticationTest extends TestCase
 
     public function test_register_requires_password(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'test@example.com',
             'password' => '',
@@ -308,7 +308,7 @@ class AuthenticationTest extends TestCase
 
     public function test_register_requires_password_minimum_length(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'test@example.com',
             'password' => '12345',
@@ -321,7 +321,7 @@ class AuthenticationTest extends TestCase
 
     public function test_register_requires_password_confirmation(): void
     {
-        $response = $this->post('/cms/register', [
+        $response = $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password123',
@@ -336,7 +336,7 @@ class AuthenticationTest extends TestCase
     {
         $plainPassword = 'password123';
 
-        $this->post('/cms/register', [
+        $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'test@example.com',
             'password' => $plainPassword,
@@ -351,7 +351,7 @@ class AuthenticationTest extends TestCase
 
     public function test_newly_registered_user_has_active_status(): void
     {
-        $this->post('/cms/register', [
+        $this->post('/admin/register', [
             'fullname' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password123',
@@ -371,13 +371,13 @@ class AuthenticationTest extends TestCase
             'status' => 1,
         ]);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
             'remember' => true,
         ]);
 
-        $response->assertRedirect('/cms/dashboard');
+        $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticatedAs($user);
 
         // Check if remember token is set
@@ -394,7 +394,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Attempt 1
-        $response1 = $this->post('/cms/login', [
+        $response1 = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
@@ -402,7 +402,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
 
         // Attempt 2
-        $response2 = $this->post('/cms/login', [
+        $response2 = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
@@ -410,7 +410,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
 
         // Attempt 3 - should still allow
-        $response3 = $this->post('/cms/login', [
+        $response3 = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
@@ -425,21 +425,21 @@ class AuthenticationTest extends TestCase
         $this->actingAs($user);
         $this->assertAuthenticated();
 
-        $response = $this->post('/cms/logout');
+        $response = $this->post('/admin/logout');
 
-        $response->assertRedirect('/cms/login');
+        $response->assertRedirect('/admin/login');
         $this->assertGuest();
 
         // Try to access dashboard again
-        $dashboardResponse = $this->get('/cms/dashboard');
-        $dashboardResponse->assertRedirect('/cms/login');
+        $dashboardResponse = $this->get('/admin/dashboard');
+        $dashboardResponse->assertRedirect('/admin/login');
     }
 
     public function test_login_requires_csrf_token(): void
     {
         $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
@@ -451,7 +451,7 @@ class AuthenticationTest extends TestCase
 
     public function test_old_input_is_retained_on_validation_failure(): void
     {
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => '', // Invalid
         ]);
@@ -472,15 +472,15 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Try to access dashboard (will redirect to login)
-        $this->get('/cms/dashboard');
+        $this->get('/admin/dashboard');
 
         // Now login
-        $response = $this->post('/cms/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
 
         // Should redirect to dashboard (intended page)
-        $response->assertRedirect('/cms/dashboard');
+        $response->assertRedirect('/admin/dashboard');
     }
 }

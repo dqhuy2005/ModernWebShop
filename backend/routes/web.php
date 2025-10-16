@@ -5,11 +5,9 @@ use App\Http\Controllers\CMS\AuthController as CMSAuthController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
-// CMS Routes
-Route::prefix('cms')->name('cms.')->group(function () {
-    // Guest routes (not authenticated)
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('login', [CMSAuthController::class, 'showLoginForm'])->name('login');
         Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
@@ -17,17 +15,15 @@ Route::prefix('cms')->name('cms.')->group(function () {
         Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
     });
 
-    // Authenticated routes
     Route::middleware('auth')->group(function () {
         Route::get('dashboard', function () {
-            return view('cms.dashboard');
+            return view('admin.dashboard');
         })->name('dashboard');
-        
+
         Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
     });
 });
 
-// Password reset routes (optional)
 Route::get('password/reset', function () {
     return 'Password reset form';
 })->name('password.request');

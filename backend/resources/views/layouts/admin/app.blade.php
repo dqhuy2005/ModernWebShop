@@ -13,21 +13,21 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- DataTables CSS (for table management) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 
     <!-- Custom Admin CSS -->
-    @vite(['resources/css/app.css'])
-    
+    {{-- @vite(['resources/css/app.css']) --}}
+
     <style>
         body {
             background-color: #f8f9fa;
         }
-        
+
         .admin-header {
             height: 60px;
             position: fixed;
@@ -36,39 +36,39 @@
             right: 0;
             z-index: 1000;
         }
-        
+
         .admin-content {
             margin-left: 250px;
             margin-top: 60px;
             padding: 30px;
             min-height: calc(100vh - 60px);
         }
-        
+
         @media (max-width: 768px) {
             .admin-content {
                 margin-left: 0;
             }
         }
-        
+
         .page-header {
             margin-bottom: 30px;
         }
-        
+
         .card {
             box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
             border: none;
             margin-bottom: 20px;
         }
-        
+
         .stat-card {
             transition: transform 0.2s;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
     </style>
-    
+
     @stack('styles')
 </head>
 <body>
@@ -132,20 +132,20 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    
+
     <!-- Chart.js (for dashboard charts) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
 
     <!-- Custom Admin JS -->
-    @vite(['resources/js/app.js'])
-    
+    {{-- @vite(['resources/js/app.js']) --}}
+
     <script>
         // Initialize DataTables
         $(document).ready(function() {
@@ -163,7 +163,7 @@
             $('.alert').fadeOut('slow');
         }, 5000);
     </script>
-    
+
     @stack('scripts')
 </body>
 </html>

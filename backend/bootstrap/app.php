@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*') || $request->expectsJson()) {
                 return null;
             }
-            return route('cms.login');
+            return route('admin.login');
         });
 
         $middleware->alias([

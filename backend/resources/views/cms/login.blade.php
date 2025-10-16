@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Đăng nhập CMS - ModernWebShop</title>
+    <title>Đăng nhập Admin - ModernWebShop</title>
     <style>
         * {
             margin: 0;
@@ -338,7 +338,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('cms.login.post') }}" method="POST" class="cms-login-form" id="loginForm">
+                <form action="{{ route('admin.login.post') }}" method="POST" class="cms-login-form" id="loginForm">
                     @csrf
 
                     <div class="cms-form-group">
@@ -367,7 +367,7 @@
                     </button>
 
                     <div class="cms-register-prompt">
-                        Cần một tài khoản? <a href="{{ route('cms.register') }}" class="cms-register-link">Đăng ký</a>
+                        Cần một tài khoản? <a href="{{ route('admin.register') }}" class="cms-register-link">Đăng ký</a>
                     </div>
                 </form>
             </div>

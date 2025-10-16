@@ -56,25 +56,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(RefreshToken::class);
     }
 
-    /**
-     * Get the role that belongs to the user
-     */
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
-    /**
-     * Check if user has admin role
-     */
     public function isAdmin(): bool
     {
         return $this->role && $this->role->isAdmin();
     }
 
-    /**
-     * Check if user has user role
-     */
     public function isUser(): bool
     {
         return $this->role && $this->role->isUser();

@@ -4,84 +4,84 @@
             <i class="fas fa-bars me-2"></i> Menu
         </h5>
     </div>
-    
+
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                    href="{{ route('admin.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" 
+
+            {{-- <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
                    href="{{ route('admin.products.index') }}">
                     <i class="fas fa-box"></i>
                     <span>Quản lý sản phẩm</span>
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
                    href="{{ route('admin.categories.index') }}">
                     <i class="fas fa-list"></i>
                     <span>Quản lý danh mục</span>
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"
                    href="{{ route('admin.orders.index') }}">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Quản lý đơn hàng</span>
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
                    href="{{ route('admin.users.index') }}">
                     <i class="fas fa-users"></i>
                     <span>Quản lý người dùng</span>
                 </a>
             </li>
-            
+
             <li class="nav-item mt-3">
                 <div class="nav-section-title px-3 py-2 text-muted small">
                     <i class="fas fa-chart-line"></i> BÁO CÁO & THỐNG KÊ
                 </div>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
                    href="{{ route('admin.reports.index') }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}"
                    href="{{ route('admin.analytics.index') }}">
                     <i class="fas fa-analytics"></i>
                     <span>Phân tích</span>
                 </a>
             </li>
-            
+
             <li class="nav-item mt-3">
                 <div class="nav-section-title px-3 py-2 text-muted small">
                     <i class="fas fa-cog"></i> CÀI ĐẶT
                 </div>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" 
+                <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
                    href="{{ route('admin.settings') }}">
                     <i class="fas fa-sliders-h"></i>
                     <span>Cấu hình hệ thống</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </nav>
 </aside>

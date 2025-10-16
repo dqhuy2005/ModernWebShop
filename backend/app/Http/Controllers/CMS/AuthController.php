@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('cms.dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('cms.login');
@@ -51,7 +51,12 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
-            return redirect()->intended(route('cms.dashboard'));
+
+            if ($user->role && $user->isAdmin()) {
+                return redirect()->intended(route('admin.dashboard'));
+            } else if ($user->role && $user->isUser()) {
+                return redirect()->intended(route('home'));
+            }
         }
 
         return redirect()->back()
@@ -66,7 +71,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('cms.login')
+        return redirect()->route('admin.login')
             ->with('success', 'Đăng xuất thành công!');
     }
 
@@ -104,7 +109,7 @@ class AuthController extends Controller
             'status' => 1,
         ]);
 
-        return redirect()->route('cms.login')
+        return redirect()->route('admin.login')
             ->with('success', 'Đăng ký thành công!');
     }
 }

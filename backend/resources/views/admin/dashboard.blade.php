@@ -116,7 +116,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-table me-1"></i> Đơn hàng gần đây</span>
-                <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-primary">
+                <a href="#" class="btn btn-sm btn-primary">
                     Xem tất cả
                 </a>
             </div>

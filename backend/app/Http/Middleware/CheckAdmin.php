@@ -19,7 +19,7 @@ class CheckAdmin
                 ], 401);
             }
 
-            return redirect()->route('cms.login')->with('error', 'Vui lòng đăng nhập để tiếp tục.');
+            return redirect()->route('admin.login')->with('error', 'Vui lòng đăng nhập để tiếp tục.');
         }
 
         $user = auth('api')->user();
