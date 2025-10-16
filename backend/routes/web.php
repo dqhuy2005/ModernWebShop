@@ -32,6 +32,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');
         Route::put('{product}', [ProductController::class, 'update'])->name('update');
         Route::delete('{product}/delete', [ProductController::class, 'destroy'])->name('delete');
+
+        // AJAX routes
+        Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
     });
 });
 

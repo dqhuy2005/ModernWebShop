@@ -30,7 +30,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Total Products</h6>
-                            <h4 class="mb-0">{{ $products->total() }}</h4>
+                            <h4 class="mb-0">{{ $products->total() ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0">{{ $products->where('status', true)->count() }}</h4>
+                            <h4 class="mb-0">{{ $activeProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0">{{ $products->where('status', false)->count() }}</h4>
+                            <h4 class="mb-0">{{ $inactiveProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Hot Products</h6>
-                            <h4 class="mb-0">{{ $products->where('is_hot', true)->count() }}</h4>
+                            <h4 class="mb-0">{{ $hotProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,6 @@
 
 @push('scripts')
     <script>
-        // Toggle Status
         function toggleStatus(productId) {
             if (confirm('Are you sure you want to change the status of this product?')) {
                 $.ajax({
@@ -133,7 +132,6 @@
                     if (response.success) {
                         toastr.success(response.message);
 
-                        // Update button appearance
                         if (response.is_hot) {
                             $(button).removeClass('btn-outline-warning').addClass('btn-warning');
                             $(button).html('<i class="fas fa-fire"></i>');
@@ -175,18 +173,14 @@
             }
         }
 
-        // Select All Checkbox
-        $('#checkAll').on('change', function() {
-            $('.product-checkbox').prop('checked', $(this).prop('checked'));
-        });
+        // Change Per Page
+        function changePerPage(value) {
+            let url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+            url.searchParams.set('page', 1);
+            window.location.href = url.toString();
+        }
 
-        // Update "Check All" state
-        $('.product-checkbox').on('change', function() {
-            let allChecked = $('.product-checkbox:checked').length === $('.product-checkbox').length;
-            $('#checkAll').prop('checked', allChecked);
-        });
-
-        // Initialize DataTable if not using pagination
         @if (!request()->has('per_page') || request('per_page') == 'all')
             $(document).ready(function() {
                 $('.datatable').DataTable({
@@ -242,6 +236,30 @@
             height: 50px;
             object-fit: cover;
             border-radius: 4px;
+        }
+
+        /* Pagination Wrapper */
+        nav[aria-label="Products pagination"] {
+            display: flex;
+            justify-content: center;
+        }
+
+        nav[aria-label="Products pagination"] .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-link {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            nav[aria-label="Products pagination"] .pagination {
+                gap: 2px;
+            }
         }
     </style>
 @endpush

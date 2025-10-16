@@ -17,7 +17,7 @@ class ProductController extends Controller
         try {
             $query = Product::with('category');
 
-            if ($request->has('search') && !empty($request->search)) {
+            if ($request->filled('search')) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -25,29 +25,47 @@ class ProductController extends Controller
                 });
             }
 
-            if ($request->has('category_id') && !empty($request->category_id)) {
+            if ($request->filled('category_id')) {
                 $query->where('category_id', $request->category_id);
             }
 
-            if ($request->has('status')) {
-                $query->where('status', $request->status);
+            if ($request->has('status') && $request->status !== '') {
+                $query->where('status', (bool) $request->status);
             }
 
-            if ($request->has('is_hot')) {
-                $query->where('is_hot', $request->is_hot);
+            if ($request->has('is_hot') && $request->is_hot !== '') {
+                $query->where('is_hot', (bool) $request->is_hot);
             }
 
-            $sortBy = $request->get('sort_by', 'created_at');
+            $sortBy = $request->get('sort_by', 'updated_at');
             $sortOrder = $request->get('sort_order', 'desc');
+
+            $allowedSortFields = ['id', 'name', 'created_at', 'updated_at', 'views', 'category_id'];
+            if (!in_array($sortBy, $allowedSortFields)) {
+                $sortBy = 'updated_at';
+            }
+
             $query->orderBy($sortBy, $sortOrder);
 
             $perPage = $request->get('per_page', 15);
-            $products = $query->paginate($perPage);
 
-            $categories = Category::select('id', 'name')->orderBy('name')
+            $allowedPerPage = [15, 25, 50, 100];
+            if (!in_array($perPage, $allowedPerPage)) {
+                $perPage = 15;
+            }
+
+            $products = $query->paginate($perPage)->withQueryString();
+
+            $categories = Category::select('id', 'name')
+                ->orderBy('name')
                 ->get();
 
-            return view('admin.products.index', compact('products', 'categories'));
+            $totalProducts = $products->total();
+            $activeProducts = Product::where('status', true)->count();
+            $inactiveProducts = Product::where('status', false)->count();
+            $hotProducts = Product::where('is_hot', true)->count();
+
+            return view('admin.products.index', compact('products', 'categories', 'totalProducts', 'activeProducts', 'inactiveProducts', 'hotProducts'));
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load products: ' . $e->getMessage());
         }
@@ -269,52 +287,6 @@ class ProductController extends Controller
             }
 
             return back()->with('error', 'Failed to toggle status: ' . $e->getMessage());
-        }
-    }
-
-    public function bulkDelete(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'exists:products,id',
-        ]);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->with('error', 'Invalid product IDs');
-        }
-
-        try {
-            $products = Product::whereIn('id', $request->ids)->get();
-
-            foreach ($products as $product) {
-                // Delete image
-                if ($product->image && Storage::disk('public')->exists($product->image)) {
-                    Storage::disk('public')->delete($product->image);
-                }
-                $product->delete();
-            }
-
-            $count = count($request->ids);
-
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => "{$count} products deleted successfully!",
-                ]);
-            }
-
-            return back()->with('success', "{$count} products deleted successfully!");
-        } catch (\Exception $e) {
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to delete products: ' . $e->getMessage(),
-                ], 500);
-            }
-
-            return back()->with('error', 'Failed to delete products: ' . $e->getMessage());
         }
     }
 

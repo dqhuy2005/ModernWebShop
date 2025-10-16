@@ -97,19 +97,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label for="per_page" class="form-label">
-                        <i class="fas fa-list me-1"></i>Per Page
-                    </label>
-                    <select name="per_page" id="per_page" class="form-select">
-                        <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
-                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                    </select>
-                </div>
-
-                <div class="col-md-5">
+                <div class="col-md-7">
                     <label class="form-label d-block">&nbsp;</label>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">

@@ -18,9 +18,6 @@
                 <table class="table table-hover align-middle" id="productsTable">
                     <thead class="table-light">
                         <tr>
-                            <th width="3%">
-                                <input type="checkbox" id="checkAll" class="form-check-input">
-                            </th>
                             <th width="5%">ID</th>
                             <th width="8%">Image</th>
                             <th width="20%">Product Name</th>
@@ -34,18 +31,10 @@
                     <tbody>
                         @foreach ($products as $product)
                             <tr id="product-{{ $product->id }}">
-                                {{-- Checkbox --}}
                                 <td>
-                                    <input type="checkbox" class="form-check-input product-checkbox"
-                                        value="{{ $product->id }}">
+                                    <strong>{{ $product->id }}</strong>
                                 </td>
 
-                                {{-- ID --}}
-                                <td>
-                                    <strong>#{{ $product->id }}</strong>
-                                </td>
-
-                                {{-- Image --}}
                                 <td>
                                     @if ($product->image)
                                         <img src="#" alt="Image Product" class="product-image">
@@ -57,7 +46,6 @@
                                     @endif
                                 </td>
 
-                                {{-- Product Name --}}
                                 <td>
                                     <div>
                                         <strong>{{ Str::limit($product->name, 40) }}</strong>
@@ -70,7 +58,6 @@
                                     </div>
                                 </td>
 
-                                {{-- Category --}}
                                 <td>
                                     @if ($product->category)
                                         <span class="badge bg-info">
@@ -82,7 +69,6 @@
                                     @endif
                                 </td>
 
-                                {{-- Views --}}
                                 <td class="text-center">
                                     <span class="badge bg-primary">
                                         <i class="fas fa-eye me-1"></i>
@@ -90,7 +76,6 @@
                                     </span>
                                 </td>
 
-                                {{-- Status Toggle --}}
                                 <td class="text-center">
                                     <div class="form-check form-switch d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" role="switch"
@@ -99,7 +84,6 @@
                                     </div>
                                 </td>
 
-                                {{-- Hot Status Toggle --}}
                                 <td class="text-center">
                                     <button type="button"
                                         class="btn btn-sm {{ $product->is_hot ? 'btn-warning' : 'btn-outline-warning' }}"
@@ -134,19 +118,27 @@
             </div>
 
             {{-- Pagination --}}
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <div>
-                    <p class="text-muted mb-0">
-                        Showing {{ $products->firstItem() }} to {{ $products->lastItem() }}
-                        of {{ $products->total() }} results
-                    </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="per_page_bottom" class="text-muted mb-0" style="white-space: nowrap;">
+                            Per page:
+                        </label>
+                        <select name="per_page" id="per_page_bottom" class="form-select form-select-sm"
+                                style="width: 75px;" onchange="changePerPage(this.value)">
+                            <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    {{ $products->appends(request()->query())->links() }}
-                </div>
+
+                <nav aria-label="Products pagination">
+                    {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </nav>
             </div>
         @else
-            {{-- Empty State --}}
             <div class="text-center py-5">
                 <div class="mb-3">
                     <i class="fas fa-box-open fa-4x text-muted"></i>
@@ -156,11 +148,11 @@
                     @if (request()->hasAny(['search', 'category_id', 'status', 'is_hot']))
                         No products match your search criteria. Try adjusting your filters.
                     @else
-                        Start by creating your first product.
+                        Start by creating your product.
                     @endif
                 </p>
                 <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Create First Product
+                    <i class="fas fa-plus me-2"></i>Create Product
                 </a>
             </div>
         @endif
@@ -226,15 +218,49 @@
 
         .page-link {
             color: #0d6efd;
+            padding: 0.375rem 0.75rem;
+            text-decoration: none;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            margin: 0 2px;
+            transition: all 0.2s ease;
         }
 
         .page-link:hover {
-            color: #0a58ca;
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
         }
 
         .page-item.active .page-link {
             background-color: #0d6efd;
             border-color: #0d6efd;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dee2e6;
+            opacity: 0.5;
+        }
+
+        .page-item:first-child .page-link {
+            border-top-left-radius: 0.375rem;
+            border-bottom-left-radius: 0.375rem;
+        }
+
+        .page-item:last-child .page-link {
+            border-top-right-radius: 0.375rem;
+            border-bottom-right-radius: 0.375rem;
+        }
+
+        /* Per Page Selector */
+        .form-select-sm {
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
         }
 
         /* Empty State */
