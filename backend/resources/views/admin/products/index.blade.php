@@ -12,7 +12,7 @@
             </div>
             <div>
                 <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Add New Product
+                    <i class="fas fa-plus me-2"></i>Add
                 </a>
             </div>
         </div>
