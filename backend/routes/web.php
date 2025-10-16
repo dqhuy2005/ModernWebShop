@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CMS\AuthController as CMSAuthController;
 use App\Http\Controllers\CMS\ProductController;
+use App\Http\Controllers\CMS\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // AJAX routes
         Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
+    });
+
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('{user}', [UserController::class, 'show'])->name('show');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+
+        // AJAX routes
+        Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
+        Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
     });
 });
 

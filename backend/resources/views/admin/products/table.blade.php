@@ -128,9 +128,6 @@
                     Start by creating your product.
                 @endif
             </p>
-            <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Create Product
-            </a>
         </div>
     @endif
 </div>
@@ -158,12 +155,6 @@
             border-radius: 8px;
             border: 2px solid #e9ecef;
             transition: transform 0.2s ease;
-        }
-
-        /* Switch Toggle */
-        .form-check-input:checked {
-            background-color: #198754;
-            border-color: #198754;
         }
 
         /* Button Group */

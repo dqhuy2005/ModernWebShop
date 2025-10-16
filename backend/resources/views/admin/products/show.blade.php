@@ -18,7 +18,7 @@
                     <i class="fas fa-trash me-2"></i>Delete
                 </button>
                 <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                    <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
             </div>
         </div>
