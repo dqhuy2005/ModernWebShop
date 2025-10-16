@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,18 +56,24 @@
         }
 
         @keyframes gradientShift {
-            0%, 100% {
+
+            0%,
+            100% {
                 background-position: 0% 50%;
             }
+
             50% {
                 background-position: 100% 50%;
             }
         }
 
         @keyframes floatBubbles {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translate(0, 0);
             }
+
             50% {
                 transform: translate(50px, 50px);
             }
@@ -90,6 +97,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -133,9 +141,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
         }
 
         /* Form Styles */
@@ -256,7 +274,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsive Design */
@@ -286,6 +306,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="cms-login-container">
         <div class="cms-login-background"></div>
@@ -295,22 +316,22 @@
                 <h1 class="cms-login-title">Chào mừng trở lại!</h1>
                 <p class="cms-login-subtitle">Rất vui mừng khi được gặp lại bạn!</p>
 
-                @if(session('error'))
+                @if (session('error'))
                     <div class="alert alert-error">
                         {{ session('error') }}
                     </div>
                 @endif
 
-                @if(session('success'))
+                @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
                     </div>
                 @endif
 
-                @if($errors->any())
+                @if ($errors->any())
                     <div class="alert alert-error">
                         <ul style="margin: 0; padding-left: 20px;">
-                            @foreach($errors->all() as $error)
+                            @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
@@ -324,30 +345,18 @@
                         <label for="email" class="cms-form-label">
                             Email hoặc Số Điện Thoại <span class="required">*</span>
                         </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value="{{ old('email') }}"
-                            class="cms-form-input @error('email') error @enderror"
-                            required
-                            autocomplete="email"
-                            autofocus
-                        />
+                        <input type="email" id="email" name="email" value="{{ old('email') }}"
+                            class="cms-form-input @error('email') error @enderror" required autocomplete="email"
+                            autofocus />
                     </div>
 
                     <div class="cms-form-group">
                         <label for="password" class="cms-form-label">
                             Mật khẩu <span class="required">*</span>
                         </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="cms-form-input @error('password') error @enderror"
-                            required
-                            autocomplete="current-password"
-                        />
+                        <input type="password" id="password" name="password"
+                            class="cms-form-input @error('password') error @enderror" required
+                            autocomplete="current-password" />
                         <a href="{{ route('password.request') }}" class="cms-forgot-link">
                             Quên mật khẩu?
                         </a>
@@ -385,4 +394,5 @@
         }, 5000);
     </script>
 </body>
+
 </html>

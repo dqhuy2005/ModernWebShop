@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,8 +41,15 @@
         }
 
         @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .cms-login-card {
@@ -61,6 +69,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -165,6 +174,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="cms-login-container">
         <div class="cms-login-background"></div>
@@ -174,10 +184,10 @@
                 <h1 class="cms-login-title">Tạo tài khoản</h1>
                 <p class="cms-login-subtitle">Chào mừng bạn đến với ModernWebShop!</p>
 
-                @if($errors->any())
+                @if ($errors->any())
                     <div class="alert alert-error">
                         <ul style="margin: 0; padding-left: 20px;">
-                            @foreach($errors->all() as $error)
+                            @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
@@ -191,54 +201,31 @@
                         <label for="name" class="cms-form-label">
                             Tên <span class="required">*</span>
                         </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="fullname"
-                            value="{{ old('fullname') }}"
-                            class="cms-form-input"
-                            required
-                        />
+                        <input type="text" id="name" name="fullname" value="{{ old('fullname') }}"
+                            class="cms-form-input" required />
                     </div>
 
                     <div class="cms-form-group">
                         <label for="email" class="cms-form-label">
                             Email <span class="required">*</span>
                         </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value="{{ old('email') }}"
-                            class="cms-form-input"
-                            required
-                        />
+                        <input type="email" id="email" name="email" value="{{ old('email') }}"
+                            class="cms-form-input" required />
                     </div>
 
                     <div class="cms-form-group">
                         <label for="password" class="cms-form-label">
                             Mật khẩu <span class="required">*</span>
                         </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="cms-form-input"
-                            required
-                        />
+                        <input type="password" id="password" name="password" class="cms-form-input" required />
                     </div>
 
                     <div class="cms-form-group">
                         <label for="password_confirmation" class="cms-form-label">
                             Xác nhận mật khẩu <span class="required">*</span>
                         </label>
-                        <input
-                            type="password"
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            class="cms-form-input"
-                            required
-                        />
+                        <input type="password" id="password_confirmation" name="password_confirmation"
+                            class="cms-form-input" required />
                     </div>
 
                     <button type="submit" class="cms-login-button">
@@ -253,4 +240,5 @@
         </div>
     </div>
 </body>
+
 </html>
