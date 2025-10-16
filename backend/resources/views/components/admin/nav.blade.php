@@ -13,7 +13,7 @@
                 <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
                    href="{{ route('admin.products.index') }}">
                     <i class="fas fa-box"></i>
-                    <span>Quản lý sản phẩm</span>
+                    <span>Product</span>
                 </a>
             </li>
 

@@ -28,8 +28,6 @@
                             <th width="8%" class="text-center">Views</th>
                             <th width="8%" class="text-center">Status</th>
                             <th width="8%" class="text-center">Hot</th>
-                            <th width="10%">Language</th>
-                            <th width="10%">Created</th>
                             <th width="8%" class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -111,31 +109,9 @@
                                     </button>
                                 </td>
 
-                                {{-- Language --}}
-                                <td>
-                                    @if ($product->language)
-                                        <span class="badge bg-dark">
-                                            {{ strtoupper($product->language) }}
-                                        </span>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-
-                                {{-- Created Date --}}
-                                <td>
-                                    <small>
-                                        <i class="far fa-calendar me-1"></i>
-                                        {{ $product->created_at->format('d/m/Y') }}
-                                        <br>
-                                        <i class="far fa-clock me-1"></i>
-                                        {{ $product->created_at->format('H:i') }}
-                                    </small>
-                                </td>
-
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.products.show', $product->id) }}"
+                                        <a href="#"
                                             class="btn btn-sm btn-info" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>

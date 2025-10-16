@@ -1,4 +1,3 @@
-{{-- Search & Filter Form --}}
 <div class="card mb-4">
     <div class="card-header">
         <h5 class="card-title mb-0">
@@ -8,7 +7,6 @@
     <div class="card-body">
         <form action="{{ route('admin.products.index') }}" method="GET" id="filterForm">
             <div class="row g-3">
-                {{-- Search --}}
                 <div class="col-md-4">
                     <label for="search" class="form-label">
                         <i class="fas fa-search me-1"></i>Search
@@ -17,7 +15,6 @@
                         placeholder="Search by product name or description..." value="{{ request('search') }}">
                 </div>
 
-                {{-- Category Filter --}}
                 <div class="col-md-3">
                     <label for="category_id" class="form-label">
                         <i class="fas fa-folder me-1"></i>Category
@@ -33,7 +30,6 @@
                     </select>
                 </div>
 
-                {{-- Status Filter --}}
                 <div class="col-md-2">
                     <label for="status" class="form-label">
                         <i class="fas fa-toggle-on me-1"></i>Status
@@ -49,7 +45,6 @@
                     </select>
                 </div>
 
-                {{-- Hot Filter --}}
                 <div class="col-md-2">
                     <label for="is_hot" class="form-label">
                         <i class="fas fa-fire me-1"></i>Hot
@@ -64,21 +59,8 @@
                         </option>
                     </select>
                 </div>
-
-                {{-- Language Filter --}}
-                <div class="col-md-1">
-                    <label for="language" class="form-label">
-                        <i class="fas fa-language me-1"></i>Lang
-                    </label>
-                    <select name="language" id="language" class="form-select">
-                        <option value="">All</option>
-                        <option value="vi" {{ request('language') === 'vi' ? 'selected' : '' }}>VI</option>
-                        <option value="en" {{ request('language') === 'en' ? 'selected' : '' }}>EN</option>
-                    </select>
-                </div>
             </div>
 
-            {{-- Sort Options --}}
             <div class="row g-3 mt-2">
                 <div class="col-md-3">
                     <label for="sort_by" class="form-label">
@@ -127,7 +109,6 @@
                     </select>
                 </div>
 
-                {{-- Action Buttons --}}
                 <div class="col-md-5">
                     <label class="form-label d-block">&nbsp;</label>
                     <div class="d-flex gap-2">
@@ -137,12 +118,6 @@
                         <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
                             <i class="fas fa-redo me-2"></i>Reset
                         </a>
-                        <button type="button" class="btn btn-danger" onclick="bulkDelete()">
-                            <i class="fas fa-trash me-2"></i>Bulk Delete
-                        </button>
-                        <button type="button" class="btn btn-success" onclick="exportProducts()">
-                            <i class="fas fa-file-export me-2"></i>Export
-                        </button>
                     </div>
                 </div>
             </div>
@@ -155,13 +130,7 @@
         // Auto submit on filter change (optional)
         $('#category_id, #status, #is_hot, #language, #sort_by, #sort_order, #per_page').on('change', function() {
             // Uncomment to auto-submit on change
-            // $('#filterForm').submit();
+            $('#filterForm').submit();
         });
-
-        // Export function
-        function exportProducts() {
-            let params = new URLSearchParams(window.location.search);
-            window.location.href = '{{ route('admin.products.index') }}?' + params.toString() + '&export=excel';
-        }
     </script>
 @endpush

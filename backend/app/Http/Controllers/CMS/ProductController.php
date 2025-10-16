@@ -56,7 +56,7 @@ class ProductController extends Controller
     public function create()
     {
         try {
-            $categories = Category::where('status', true)
+            $categories = Category::select('id', 'name')
                 ->orderBy('name')
                 ->get();
 
@@ -132,7 +132,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
 
-            $categories = Category::where('status', true)
+            $categories = Category::select('id', 'name')
                 ->orderBy('name')
                 ->get();
 

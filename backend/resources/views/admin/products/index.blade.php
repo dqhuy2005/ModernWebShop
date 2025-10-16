@@ -7,14 +7,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-box me-2"></i>Product Management
+                    <i class="fas fa-box me-2"></i>Product Management : {{ $products->total() }}
                 </h1>
-                <nav aria-label="breadcrumb" class="d-none d-md-block mt-2">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Products</li>
-                    </ol>
-                </nav>
             </div>
             <div>
                 <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
@@ -107,7 +101,7 @@
         function toggleStatus(productId) {
             if (confirm('Are you sure you want to change the status of this product?')) {
                 $.ajax({
-                    url: '/cms/products/' + productId + '/toggle-status',
+                    url: '/admin/products/' + productId + '/toggle-status',
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -130,7 +124,7 @@
         // Toggle Hot Status
         function toggleHot(productId, button) {
             $.ajax({
-                url: '/cms/products/' + productId + '/toggle-hot',
+                url: '/admin/products/' + productId + '/toggle-hot',
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}'
@@ -161,8 +155,8 @@
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
                 var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/cms/products/' + productId;
+                form.method = 'DELETE';
+                form.action = '/admin/products/' + productId;
 
                 var methodInput = document.createElement('input');
                 methodInput.type = 'hidden';
@@ -178,42 +172,6 @@
 
                 document.body.appendChild(form);
                 form.submit();
-            }
-        }
-
-        // Bulk Delete
-        function bulkDelete() {
-            let checkedBoxes = $('.product-checkbox:checked');
-            if (checkedBoxes.length === 0) {
-                toastr.warning('Please select at least one product to delete!');
-                return;
-            }
-
-            if (confirm('Are you sure you want to delete ' + checkedBoxes.length + ' selected products?')) {
-                let ids = [];
-                checkedBoxes.each(function() {
-                    ids.push($(this).val());
-                });
-
-                $.ajax({
-                    url: '/cms/products/bulk-delete',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        ids: ids
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            location.reload();
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(xhr) {
-                        toastr.error('Failed to delete products!');
-                    }
-                });
             }
         }
 
