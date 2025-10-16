@@ -16,6 +16,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'fullname',
         'email',
+        'role_id',
         'phone',
         'password',
         'image',
@@ -55,6 +56,38 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(RefreshToken::class);
     }
 
+    /**
+     * Get the role that belongs to the user
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Check if user has admin role
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role && $this->role->isAdmin();
+    }
+
+    /**
+     * Check if user has user role
+     */
+    public function isUser(): bool
+    {
+        return $this->role && $this->role->isUser();
+    }
+
+    /**
+     * Get user role name
+     */
+    public function getRoleName(): string
+    {
+        return $this->role ? $this->role->name : 'No Role';
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -65,6 +98,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email' => $this->email,
             'fullname' => $this->fullname,
+            'role' => $this->role ? $this->role->slug : null,
         ];
     }
 }

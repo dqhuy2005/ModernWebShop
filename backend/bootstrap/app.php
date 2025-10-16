@@ -18,9 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
             }
             return route('cms.login');
         });
-        
+
         $middleware->alias([
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'admin' => \App\Http\Middleware\CheckAdmin::class,
+            'user' => \App\Http\Middleware\CheckUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

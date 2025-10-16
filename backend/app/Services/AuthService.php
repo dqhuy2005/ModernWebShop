@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Role;
 use App\Models\RefreshToken;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log as logger;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
@@ -22,7 +22,7 @@ class AuthService
             return null;
         }
 
-        $user = auth('api')->user();
+        $user = auth('api')->user()->load('role');
 
         $refreshToken = $this->generateRefreshToken($user, $ipAddress, $userAgent);
 
@@ -30,7 +30,13 @@ class AuthService
             'access_token' => $token,
             'refresh_token' => $refreshToken->token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60 * 24
+            'expires_in' => auth('api')->factory()->getTTL() * 60 * 24,
+            'user' => [
+                'id' => $user->id,
+                'fullname' => $user->fullname,
+                'email' => $user->email,
+                'role' => $user->role ? $user->role->slug : null,
+            ]
         ];
     }
 
@@ -115,7 +121,11 @@ class AuthService
     public function getUserFromToken()
     {
         try {
-            return auth('api')->user();
+            $user = auth('api')->user();
+            if ($user) {
+                $user->load('role');
+            }
+            return $user;
         } catch (\Exception $e) {
             return null;
         }
@@ -123,15 +133,20 @@ class AuthService
 
     public function register(array $data)
     {
+        $userRole = Role::where('slug', Role::USER)->first();
+
         $user = User::create([
             'fullname' => $data['fullname'],
             'email' => $data['email'],
+            'role_id' => $userRole ? $userRole->id : null,
             'phone' => $data['phone'] ?? null,
             'password' => Hash::make($data['password']),
             'status' => true,
             'language' => $data['language'] ?? 'en',
             'birthday' => $data['birthday'] ?? null,
         ]);
+
+        $user->load('role');
 
         return $user;
     }
