@@ -1,184 +1,167 @@
-<div class="card">
-    <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-table me-2"></i>Users List
-            </h5>
-            <div class="text-muted">
-                <small>
-                    Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }}
-                    of {{ $users->total() }} entries
-                </small>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
-        @if ($users->count() > 0)
-            <div class="table-responsive">
-                <table class="table table-hover align-middle" id="usersTable">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="5%">ID</th>
-                            <th width="8%">Avatar</th>
-                            <th width="20%">Full Name</th>
-                            <th width="15%">Email</th>
-                            <th width="12%">Phone</th>
-                            <th width="10%">Role</th>
-                            <th width="8%" class="text-center">Status</th>
-                            <th width="12%" class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($users as $user)
-                            <tr id="user-{{ $user->id }}" class="{{ $user->deleted_at ? 'table-warning' : '' }}">
-                                <td>
-                                    <strong>{{ $user->id }}</strong>
-                                </td>
+<div class="card-body">
+    @if ($users->count() > 0)
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="usersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="8%">Avatar</th>
+                        <th width="20%">Full Name</th>
+                        <th width="15%">Email</th>
+                        <th width="12%">Phone</th>
+                        <th width="10%">Role</th>
+                        <th width="8%" class="text-center">Status</th>
+                        <th width="12%" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($users as $user)
+                        <tr id="user-{{ $user->id }}" class="{{ $user->deleted_at ? 'table-warning' : '' }}">
+                            <td>
+                                <strong>{{ $user->id }}</strong>
+                            </td>
 
-                                <td>
-                                    @if ($user->image)
-                                        <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->fullname }}"
-                                            class="user-avatar">
-                                    @else
-                                        <div
-                                            class="user-avatar bg-light d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-user text-muted"></i>
-                                        </div>
-                                    @endif
-                                </td>
-
-                                <td>
-                                    <div>
-                                        <strong>{{ $user->fullname }}</strong>
-                                        @if ($user->deleted_at)
-                                            <br>
-                                            <small class="text-danger">
-                                                <i class="fas fa-trash me-1"></i>Deleted
-                                            </small>
-                                        @endif
+                            <td>
+                                @if ($user->image)
+                                    <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->fullname }}"
+                                        class="user-avatar">
+                                @else
+                                    <div class="user-avatar bg-light d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-user text-muted"></i>
                                     </div>
-                                </td>
+                                @endif
+                            </td>
 
-                                <td>
-                                    <a href="mailto:{{ $user->email }}" class="text-decoration-none">
-                                        {{ $user->email }}
+                            <td>
+                                <div>
+                                    <strong>{{ $user->fullname }}</strong>
+                                    @if ($user->deleted_at)
+                                        <br>
+                                        <small class="text-danger">
+                                            <i class="fas fa-trash me-1"></i>Deleted
+                                        </small>
+                                    @endif
+                                </div>
+                            </td>
+
+                            <td>
+                                <a href="mailto:{{ $user->email }}" class="text-decoration-none">
+                                    {{ $user->email }}
+                                </a>
+                            </td>
+
+                            <td>
+                                @if ($user->phone)
+                                    <a href="tel:{{ $user->phone }}" class="text-decoration-none">
+                                        {{ $user->phone }}
                                     </a>
-                                </td>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
 
-                                <td>
-                                    @if ($user->phone)
-                                        <a href="tel:{{ $user->phone }}" class="text-decoration-none">
-                                            {{ $user->phone }}
+                            <td>
+                                @if ($user->role)
+                                    <span class="badge bg-{{ $user->role->slug === 'admin' ? 'danger' : 'info' }}">
+                                        <i
+                                            class="fas fa-user-{{ $user->role->slug === 'admin' ? 'shield' : 'circle' }} me-1"></i>
+                                        {{ $user->role->name }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">No Role</span>
+                                @endif
+                            </td>
+
+                            <td class="text-center">
+                                @if ($user->deleted_at)
+                                    <span class="badge bg-secondary">Deleted</span>
+                                @else
+                                    <div class="form-check form-switch d-flex justify-content-center">
+                                        <input class="form-check-input" type="checkbox" role="switch"
+                                            id="status-{{ $user->id }}" {{ $user->status ? 'checked' : '' }}
+                                            onchange="toggleStatus({{ $user->id }})" style="cursor: pointer;">
+                                    </div>
+                                @endif
+                            </td>
+
+                            <td class="text-center">
+                                @if ($user->deleted_at)
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ route('admin.users.show', $user->id) }}"
+                                            class="btn btn-sm btn-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
 
-                                <td>
-                                    @if ($user->role)
-                                        <span class="badge bg-{{ $user->role->slug === 'admin' ? 'danger' : 'info' }}">
-                                            <i
-                                                class="fas fa-user-{{ $user->role->slug === 'admin' ? 'shield' : 'circle' }} me-1"></i>
-                                            {{ $user->role->name }}
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary">No Role</span>
-                                    @endif
-                                </td>
+                                        <button type="button" class="btn btn-sm btn-success"
+                                            onclick="restoreUser({{ $user->id }})" title="Restore">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
 
-                                <td class="text-center">
-                                    @if ($user->deleted_at)
-                                        <span class="badge bg-secondary">Deleted</span>
-                                    @else
-                                        <div class="form-check form-switch d-flex justify-content-center">
-                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                id="status-{{ $user->id }}" {{ $user->status ? 'checked' : '' }}
-                                                onchange="toggleStatus({{ $user->id }})" style="cursor: pointer;">
-                                        </div>
-                                    @endif
-                                </td>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="forceDeleteUser({{ $user->id }})" title="Delete Permanently">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                @else
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ route('admin.users.show', $user->id) }}"
+                                            class="btn btn-sm btn-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
 
-                                <td class="text-center">
-                                    @if ($user->deleted_at)
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.users.show', $user->id) }}"
-                                                class="btn btn-sm btn-info" title="View Details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
+                                        <a href="{{ route('admin.users.edit', $user->id) }}"
+                                            class="btn btn-sm btn-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
 
-                                            <button type="button" class="btn btn-sm btn-success"
-                                                onclick="restoreUser({{ $user->id }})" title="Restore">
-                                                <i class="fas fa-undo"></i>
-                                            </button>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="deleteUser({{ $user->id }})" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-                                            <button type="button" class="btn btn-sm btn-danger"
-                                                onclick="forceDeleteUser({{ $user->id }})"
-                                                title="Delete Permanently">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    @else
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.users.show', $user->id) }}"
-                                                class="btn btn-sm btn-info" title="View Details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-
-                                            <a href="{{ route('admin.users.edit', $user->id) }}"
-                                                class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <button type="button" class="btn btn-sm btn-danger"
-                                                onclick="deleteUser({{ $user->id }})" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <label for="per_page_bottom" class="text-muted mb-0" style="white-space: nowrap;">
-                            Per page:
-                        </label>
-                        <select name="per_page" id="per_page_bottom" class="form-select form-select-sm"
-                            style="width: 75px;" onchange="changePerPage(this.value)">
-                            <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
-                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                        </select>
-                    </div>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="per_page_bottom" class="text-muted mb-0" style="white-space: nowrap;">
+                        Per page:
+                    </label>
+                    <select name="per_page" id="per_page_bottom" class="form-select form-select-sm" style="width: 75px;"
+                        onchange="changePerPage(this.value)">
+                        <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
+                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                    </select>
                 </div>
+            </div>
 
-                <nav aria-label="Users pagination">
-                    {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
-                </nav>
+            <nav aria-label="Users pagination">
+                {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </nav>
+        </div>
+    @else
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="fas fa-users fa-4x text-muted"></i>
             </div>
-        @else
-            <div class="text-center py-5">
-                <div class="mb-3">
-                    <i class="fas fa-users fa-4x text-muted"></i>
-                </div>
-                <h5 class="text-muted">No Users Found</h5>
-                <p class="text-muted mb-4">
-                    @if (request()->has('search'))
-                        No users match your search criteria. Try adjusting your search.
-                    @else
-                        Start by creating your first user.
-                    @endif
-                </p>
-            </div>
-        @endif
-    </div>
+            <h5 class="text-muted">No Users Found</h5>
+            <p class="text-muted mb-4">
+                @if (request()->has('search'))
+                    No users match your search criteria. Try adjusting your search.
+                @else
+                    Start by creating your first user.
+                @endif
+            </p>
+        </div>
+    @endif
 </div>
 
 @push('styles')

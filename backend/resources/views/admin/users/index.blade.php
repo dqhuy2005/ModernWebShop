@@ -30,7 +30,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Total Users</h6>
-                            <h4 class="mb-0">{{ $users->total() }}</h4>
+                            <h4 class="mb-0">{{ $totalUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0">{{ $users->where('status', true)->where('deleted_at', null)->count() }}</h4>
+                            <h4 class="mb-0">{{ $activeUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0">{{ $users->where('status', false)->where('deleted_at', null)->count() }}</h4>
+                            <h4 class="mb-0">{{ $inactiveUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Deleted</h6>
-                            <h4 class="mb-0">{{ $users->whereNotNull('deleted_at')->count() }}</h4>
+                            <h4 class="mb-0">{{ $deletedUsers }}</h4>
                         </div>
                     </div>
                 </div>

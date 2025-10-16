@@ -53,7 +53,12 @@ class UserController extends Controller
 
             $roles = Role::select('id', 'name', 'slug')->get();
 
-            return view('admin.users.index', compact('users', 'roles'));
+            $totalUsers = User::count();
+            $activeUsers = User::where('status', true)->count();
+            $inactiveUsers = User::where('status', false)->count();
+            $deletedUsers = User::onlyTrashed()->count();
+
+            return view('admin.users.index', compact('users', 'roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'deletedUsers'));
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load users: ' . $e->getMessage());
         }

@@ -22,17 +22,42 @@
         @csrf
 
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle me-2"></i>User Information
-                        </h5>
-                    </div>
                     <div class="card-body">
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    User Avatar
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <input type="file" class="form-control @error('image') is-invalid @enderror"
+                                        id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                                    @error('image')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">
+                                        Accepted: JPG, PNG, GIF, WEBP. Max: 2MB
+                                    </small>
+                                </div>
+
+                                <div id="image-preview" class="text-center d-none">
+                                    <img src="" alt="Preview" class="img-fluid rounded-circle"
+                                        style="max-height: 150px; border: 3px solid #e9ecef;">
+                                    <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
+                                        <i class="fas fa-times me-1"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="fullname" class="form-label">
+                                <label for="fullname" class="form-label fw-bold">
                                     Full Name <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control @error('fullname') is-invalid @enderror"
@@ -44,7 +69,7 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label">
+                                <label for="email" class="form-label fw-bold">
                                     Email <span class="text-danger">*</span>
                                 </label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror"
@@ -58,7 +83,7 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label">Phone</label>
+                                <label for="phone" class="form-label fw-bold">Phone</label>
                                 <input type="tel" class="form-control @error('phone') is-invalid @enderror"
                                     id="phone" name="phone" value="{{ old('phone') }}"
                                     placeholder="Enter phone number...">
@@ -68,7 +93,7 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="birthday" class="form-label">Birthday</label>
+                                <label for="birthday" class="form-label fw-bold">Birthday</label>
                                 <input type="date" class="form-control @error('birthday') is-invalid @enderror"
                                     id="birthday" name="birthday" value="{{ old('birthday') }}">
                                 @error('birthday')
@@ -79,7 +104,7 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label">
+                                <label for="password" class="form-label fw-bold">
                                     Password <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
@@ -90,100 +115,63 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="password_confirmation" class="form-label">
+                                <label for="password_confirmation" class="form-label fw-bold">
                                     Confirm Password <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" class="form-control" id="password_confirmation"
                                     name="password_confirmation" placeholder="Confirm password..." required>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="role_id" class="form-label fw-bold">
+                                    Role <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select @error('role_id') is-invalid @enderror" id="role_id"
+                                    name="role_id" required>
+                                    <option value="">-- Select Role --</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}"
+                                            {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('role_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Status</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="status"
+                                        name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="status">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-cog me-2"></i>Settings
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="role_id" class="form-label">
-                                Role <span class="text-danger">*</span>
-                            </label>
-                            <select class="form-select @error('role_id') is-invalid @enderror" id="role_id"
-                                name="role_id" required>
-                                <option value="">-- Select Role --</option>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}"
-                                        {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                                        {{ $role->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('role_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Status</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="status"
-                                    name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="status">
-                                    Active
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-image me-2"></i>User Avatar
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <input type="file" class="form-control @error('image') is-invalid @enderror"
-                                id="image" name="image" accept="image/*" onchange="previewImage(event)">
-                            @error('image')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">
-                                Accepted: JPG, PNG, GIF, WEBP. Max: 2MB
-                            </small>
-                        </div>
-
-                        <div id="image-preview" class="text-center d-none">
-                            <img src="" alt="Preview" class="img-fluid rounded-circle"
-                                style="max-height: 150px; border: 3px solid #e9ecef;">
-                            <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
-                                <i class="fas fa-times me-1"></i>Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary" name="action" value="save">
-                                <i class="fas fa-save me-2"></i>Save
-                            </button>
-                            <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
-                                <i class="fas fa-plus me-2"></i>Save & Add Another
-                            </button>
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-end col-lg-12 gap-3">
+                <button type="submit" class="btn btn-primary" name="action" value="save">
+                    <i class="fas fa-save me-2"></i>Save
+                </button>
+                <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
+                    <i class="fas fa-plus me-2"></i>Save & Add Another
+                </button>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
             </div>
         </div>
     </form>
