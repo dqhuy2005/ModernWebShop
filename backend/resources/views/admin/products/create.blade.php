@@ -157,7 +157,6 @@
     <script>
         let specIndex = 1;
 
-        // Add Specification Row
         $('#add-specification').on('click', function() {
             const newRow = `
             <div class="row g-2 mb-2 specification-row">
@@ -178,12 +177,10 @@
             specIndex++;
         });
 
-        // Remove Specification Row
         $(document).on('click', '.remove-spec', function() {
             $(this).closest('.specification-row').remove();
         });
 
-        // Image Preview
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -196,18 +193,15 @@
             }
         }
 
-        // Remove Image
         function removeImage() {
             $('#image').val('');
             $('#image-preview').addClass('d-none');
             $('#image-preview img').attr('src', '');
         }
 
-        // Form Validation
         $('#productForm').on('submit', function(e) {
             let isValid = true;
 
-            // Check required fields
             if (!$('#name').val().trim()) {
                 isValid = false;
                 $('#name').addClass('is-invalid');

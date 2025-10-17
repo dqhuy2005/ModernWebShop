@@ -1,16 +1,12 @@
-{{-- Main Header --}}
+
 <header class="main-header">
-    {{-- Top Bar (Contact Info) - Removed as requested --}}
-    
-    {{-- Navigation Bar --}}
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            {{-- Brand Logo --}}
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
                 <span class="text-danger">Electro</span><span class="text-warning">.</span>
             </a>
 
-            {{-- Search Bar --}}
             <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4">
                 <form action="{{ route('products.search') }}" method="GET" class="d-flex w-100">
                     <select class="form-select form-select-sm" name="category" style="max-width: 150px;">
@@ -25,19 +21,17 @@
                 </form>
             </div>
 
-            {{-- Right Side Icons --}}
             <div class="d-flex align-items-center gap-3">
-                {{-- Account Dropdown --}}
                 <div class="dropdown">
-                    <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown" 
+                    <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown"
                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user me-1"></i>
                         <small>My Account</small>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                         @auth
-                            <li><a class="dropdown-item" href="{{ route('profile') }}">Profile</a></li>
-                            <li><a class="dropdown-item" href="{{ route('orders.index') }}">My Orders</a></li>
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" href="#">My Orders</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
@@ -52,7 +46,6 @@
                     </ul>
                 </div>
 
-                {{-- Wishlist --}}
                 <a href="{{ route('wishlist.index') }}" class="text-white text-decoration-none position-relative">
                     <i class="fas fa-heart"></i>
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
@@ -61,7 +54,6 @@
                     <br><small>Your Wishlist</small>
                 </a>
 
-                {{-- Cart --}}
                 <a href="{{ route('cart.index') }}" class="text-white text-decoration-none position-relative">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
@@ -71,14 +63,12 @@
                 </a>
             </div>
 
-            {{-- Mobile Toggle --}}
             <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
     </nav>
 
-    {{-- Main Menu --}}
     <div class="main-menu bg-white border-bottom">
         <div class="container">
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -111,23 +101,23 @@
     .main-header .navbar {
         padding: 1rem 0;
     }
-    
+
     .main-header .navbar-brand {
         font-size: 1.8rem;
     }
-    
+
     .search-wrapper {
         max-width: 600px;
     }
-    
+
     .main-menu {
         padding: 0.5rem 0;
     }
-    
+
     .main-menu .nav-link {
         padding: 0.5rem 1rem;
     }
-    
+
     .main-menu .nav-link:hover {
         color: #dc3545 !important;
     }

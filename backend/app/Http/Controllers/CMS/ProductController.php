@@ -109,14 +109,17 @@ class ProductController extends Controller
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
 
-            if ($request->has('specifications')) {
+            // Handle specifications properly
+            if ($request->has('specifications') && is_array($request->specifications)) {
                 $specs = [];
                 foreach ($request->specifications as $spec) {
-                    if (!empty($spec['key']) && !empty($spec['value'])) {
+                    if (is_array($spec) && !empty($spec['key']) && !empty($spec['value'])) {
                         $specs[$spec['key']] = $spec['value'];
                     }
                 }
                 $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
+            } else {
+                $data['specifications'] = null;
             }
 
             if ($request->hasFile('image')) {
@@ -203,14 +206,18 @@ class ProductController extends Controller
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
 
-            if ($request->has('specifications')) {
+            // Handle specifications properly
+            if ($request->has('specifications') && is_array($request->specifications)) {
                 $specs = [];
                 foreach ($request->specifications as $spec) {
-                    if (!empty($spec['key']) && !empty($spec['value'])) {
+                    if (is_array($spec) && !empty($spec['key']) && !empty($spec['value'])) {
                         $specs[$spec['key']] = $spec['value'];
                     }
                 }
                 $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
+            } else {
+                // If no specifications provided, set to null
+                $data['specifications'] = null;
             }
 
             if ($request->hasFile('image')) {

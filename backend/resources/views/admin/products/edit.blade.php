@@ -62,7 +62,16 @@
                             </label>
                             <div id="specifications-container">
                                 @php
-                                    $specs = old('specifications', $product->specifications ?? []);
+                                    // Parse specifications correctly
+                                    $specs = old('specifications');
+                                    if (!$specs && $product->specifications) {
+                                        // If specifications is a JSON string, decode it
+                                        if (is_string($product->specifications)) {
+                                            $specs = json_decode($product->specifications, true);
+                                        } else {
+                                            $specs = $product->specifications;
+                                        }
+                                    }
                                     $specCount = 0;
                                 @endphp
 
@@ -72,13 +81,13 @@
                                             <div class="col-5">
                                                 <input type="text" class="form-control"
                                                     name="specifications[{{ $specCount }}][key]"
-                                                    value="{{ is_array($value) ? $value['key'] ?? $key : $key }}"
+                                                    value="{{ is_array($value) ? ($value['key'] ?? $key) : $key }}"
                                                     placeholder="Key">
                                             </div>
                                             <div class="col-6">
                                                 <input type="text" class="form-control"
                                                     name="specifications[{{ $specCount }}][value]"
-                                                    value="{{ is_array($value) ? $value['value'] ?? '' : $value }}"
+                                                    value="{{ is_array($value) ? ($value['value'] ?? '') : $value }}"
                                                     placeholder="Value">
                                             </div>
                                             <div class="col-1">

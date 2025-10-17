@@ -38,6 +38,7 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
     Route::get('register', [CMSAuthController::class, 'showRegisterForm'])->name('register');
     Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
+    Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

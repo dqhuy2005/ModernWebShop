@@ -178,16 +178,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="language" class="form-label fw-bold">Language</label>
-                        <select class="form-select" id="language" name="language">
-                            <option value="vi" {{ old('language', $user->language) === 'vi' ? 'selected' : '' }}>
-                                Vietnamese</option>
-                            <option value="en" {{ old('language', $user->language) === 'en' ? 'selected' : '' }}>
-                                English</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="row">
@@ -207,7 +197,7 @@
 
         <div class="d-flex justify-content-end gap-2 mb-4">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save me-2"></i>Update User
+                <i class="fas fa-save me-2"></i>Update
             </button>
             <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
                 <i class="fas fa-times me-2"></i>Cancel

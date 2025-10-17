@@ -86,7 +86,7 @@
         <div class="main-content">
             <div class="header">
                 <h1>Dashboard</h1>
-                <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">
+                <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="logout-btn">Đăng xuất</button>
                 </form>

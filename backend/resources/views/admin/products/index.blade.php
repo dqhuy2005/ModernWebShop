@@ -107,14 +107,27 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            toastr.success(response.message);
+                            // Check if toastr is defined
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success(response.message);
+                            } else {
+                                alert(response.message);
+                            }
                             location.reload();
                         } else {
-                            toastr.error(response.message);
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(response.message);
+                            } else {
+                                alert(response.message);
+                            }
                         }
                     },
                     error: function(xhr) {
-                        toastr.error('Failed to update status!');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Failed to update status!');
+                        } else {
+                            alert('Failed to update status!');
+                        }
                     }
                 });
             }
@@ -130,21 +143,34 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        toastr.success(response.message);
+                        // Check if toastr is defined
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message);
+                        } else {
+                            alert(response.message);
+                        }
 
                         if (response.is_hot) {
                             $(button).removeClass('btn-outline-warning').addClass('btn-warning');
                             $(button).html('<i class="fas fa-fire"></i>');
                         } else {
                             $(button).removeClass('btn-warning').addClass('btn-outline-warning');
-                            $(button).html('<i class="far fa-fire"></i>');
+                            $(button).html('<i class="fas fa-fire"></i>');
                         }
                     } else {
-                        toastr.error(response.message);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message);
+                        } else {
+                            alert(response.message);
+                        }
                     }
                 },
                 error: function(xhr) {
-                    toastr.error('Failed to toggle hot status!');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to toggle hot status!');
+                    } else {
+                        alert('Failed to toggle hot status!');
+                    }
                 }
             });
         }
@@ -153,7 +179,7 @@
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
                 var form = document.createElement('form');
-                form.method = 'PUT';
+                form.method = 'POST';
                 form.action = '/admin/products/' + productId;
 
                 var methodInput = document.createElement('input');

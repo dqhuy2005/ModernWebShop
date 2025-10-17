@@ -43,12 +43,6 @@
                             <td>
                                 <div>
                                     <strong>{{ $user->fullname }}</strong>
-                                    @if ($user->deleted_at)
-                                        <br>
-                                        <small class="text-danger">
-                                            <i class="fas fa-trash me-1"></i>Deleted
-                                        </small>
-                                    @endif
                                 </div>
                             </td>
 

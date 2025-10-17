@@ -128,7 +128,7 @@
                 </div>
             </div>
 
-            @if ($product->specifications)
+            @if ($product->specifications && (is_array($product->specifications) ? count($product->specifications) > 0 : !empty($product->specifications)))
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
@@ -146,17 +146,30 @@
                                 </thead>
 
                                 @php
-                                    $product->specifications = json_decode($product->specifications, true);
+                                    // Parse specifications safely
+                                    $specs = $product->specifications;
+                                    if (is_string($specs)) {
+                                        $specs = json_decode($specs, true);
+                                    }
+                                    if (!is_array($specs)) {
+                                        $specs = [];
+                                    }
                                 @endphp
 
                                 <tbody>
-                                    @foreach ($product->specifications as $key => $value)
+                                    @forelse ($specs as $key => $value)
                                         <tr>
-                                            <td class="fw-bold">{{ is_array($value) ? $value['key'] ?? $key : $key }}
+                                            <td class="fw-bold">{{ is_array($value) ? ($value['key'] ?? $key) : $key }}
                                             </td>
-                                            <td>{{ is_array($value) ? $value['value'] ?? '' : $value }}</td>
+                                            <td>{{ is_array($value) ? ($value['value'] ?? '') : $value }}</td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted">
+                                                <em>No specifications available</em>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -305,14 +318,27 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            toastr.success(response.message);
+                            // Check if toastr is defined
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success(response.message);
+                            } else {
+                                alert(response.message);
+                            }
                             location.reload();
                         } else {
-                            toastr.error(response.message);
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(response.message);
+                            } else {
+                                alert(response.message);
+                            }
                         }
                     },
                     error: function(xhr) {
-                        toastr.error('Failed to update status!');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Failed to update status!');
+                        } else {
+                            alert('Failed to update status!');
+                        }
                     }
                 });
             }
@@ -328,14 +354,27 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        toastr.success(response.message);
+                        // Check if toastr is defined
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message);
+                        } else {
+                            alert(response.message);
+                        }
                         location.reload();
                     } else {
-                        toastr.error(response.message);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message);
+                        } else {
+                            alert(response.message);
+                        }
                     }
                 },
                 error: function(xhr) {
-                    toastr.error('Failed to toggle hot status!');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to toggle hot status!');
+                    } else {
+                        alert('Failed to toggle hot status!');
+                    }
                 }
             });
         }
@@ -366,7 +405,11 @@
 
         // Duplicate Product
         function duplicateProduct(productId) {
-            toastr.info('Duplicate feature coming soon!');
+            if (typeof toastr !== 'undefined') {
+                toastr.info('Duplicate feature coming soon!');
+            } else {
+                alert('Duplicate feature coming soon!');
+            }
         }
     </script>
 @endpush

@@ -168,7 +168,7 @@
 
             <div class="d-flex justify-content-end gap-2 mb-4">
                 <button type="submit" class="btn btn-primary" name="action" value="save">
-                    <i class="fas fa-save me-2"></i>Save User
+                    <i class="fas fa-save me-2"></i>Save
                 </button>
                 <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
                     <i class="fas fa-plus me-2"></i>Save & Add Another
