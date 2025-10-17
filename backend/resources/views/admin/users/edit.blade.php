@@ -37,27 +37,34 @@
                         <i class="fas fa-image me-2"></i>{{ $user->image ? 'Change Avatar' : 'Upload Avatar' }}
                     </label>
 
-                    <input type="file" class="d-none @error('image') is-invalid @enderror"
-                        id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                    <input type="file" class="d-none @error('image') is-invalid @enderror" id="image" name="image"
+                        accept="image/*" onchange="previewImage(event)">
 
                     <div id="upload-area" class="text-center">
                         <button type="button" class="btn btn-outline-primary btn-lg" onclick="$('#image').click()">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
+                            <i
+                                class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
                         </button>
                         <p class="text-muted mt-2 mb-0 small">Accepted: JPG, PNG, GIF, WEBP. Max: 2MB</p>
                     </div>
 
                     <div id="image-preview" class="text-center mt-3 d-none">
-                        <p class="text-success mb-2"><strong><i class="fas fa-check-circle me-1"></i>New Avatar Preview:</strong></p>
-                        <div class="preview-container">
-                            <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
+                        <p class="text-success mb-2"><strong><i class="fas fa-check-circle me-1"></i>New Avatar
+                                Preview:</strong></p>
+                        <div class="row">
+                            <div class="preview-container col-md-12">
+                                <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-center">
+                                <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
+                                    <i class="fas fa-trash-alt me-1"></i>Remove Avatar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2"
+                                    onclick="$('#image').click()">
+                                    <i class="fas fa-sync-alt me-1"></i>Change Avatar
+                                </button>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
-                            <i class="fas fa-trash-alt me-1"></i>Remove Avatar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2" onclick="$('#image').click()">
-                            <i class="fas fa-sync-alt me-1"></i>Change Avatar
-                        </button>
                     </div>
 
                     @error('image')
@@ -70,9 +77,9 @@
                         <label for="fullname" class="form-label fw-bold">
                             Full Name <span class="text-danger">*</span>
                         </label>
-                        <input type="text" class="form-control @error('fullname') is-invalid @enderror"
-                            id="fullname" name="fullname" value="{{ old('fullname', $user->fullname) }}"
-                            placeholder="Enter full name..." required>
+                        <input type="text" class="form-control @error('fullname') is-invalid @enderror" id="fullname"
+                            name="fullname" value="{{ old('fullname', $user->fullname) }}" placeholder="Enter full name..."
+                            required>
                         @error('fullname')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -82,9 +89,9 @@
                         <label for="email" class="form-label fw-bold">
                             Email <span class="text-danger">*</span>
                         </label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror"
-                            id="email" name="email" value="{{ old('email', $user->email) }}"
-                            placeholder="Enter email address..." required>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
+                            name="email" value="{{ old('email', $user->email) }}" placeholder="Enter email address..."
+                            required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -94,9 +101,9 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="phone" class="form-label fw-bold">Phone</label>
-                        <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                            id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
-                            placeholder="Enter phone number...">
+                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                            name="phone" value="{{ old('phone', $user->phone) }}" placeholder="Enter phone number..."
+                            pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
                         @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -104,8 +111,8 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="birthday" class="form-label fw-bold">Birthday</label>
-                        <input type="date" class="form-control @error('birthday') is-invalid @enderror"
-                            id="birthday" name="birthday" value="{{ old('birthday', $user->birthday) }}">
+                        <input type="date" class="form-control @error('birthday') is-invalid @enderror" id="birthday"
+                            name="birthday" value="{{ old('birthday', $user->birthday) }}">
                         @error('birthday')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -138,20 +145,35 @@
                         <label for="role_id" class="form-label fw-bold">
                             Role <span class="text-danger">*</span>
                         </label>
-                        <select class="form-select @error('role_id') is-invalid @enderror" id="role_id"
-                            name="role_id" required @if ($user->id === auth()->id()) disabled @endif>
+                        <select class="form-select @error('role_id') is-invalid @enderror" id="role_id" name="role_id"
+                            required @if ($user->id === auth()->id() || strtolower($user->role->name ?? '') === 'admin') disabled @endif>
                             <option value="">-- Select Role --</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}"
-                                    {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
-                                    {{ $role->name }}
-                                </option>
+                                @if (strtolower($role->name) !== 'admin' || $user->role_id == $role->id)
+                                    <option value="{{ $role->id }}"
+                                        {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
+                                        {{ $role->name }}
+                                        @if (strtolower($role->name) === 'admin')
+                                            (Super Admin - Cannot be changed)
+                                        @endif
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
+
                         @if ($user->id === auth()->id())
                             <input type="hidden" name="role_id" value="{{ $user->role_id }}">
-                            <small class="text-muted">You cannot change your own role.</small>
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>You cannot change your own role.
+                            </small>
+                        @elseif(strtolower($user->role->name ?? '') === 'admin')
+                            <input type="hidden" name="role_id" value="{{ $user->role_id }}">
+                            <small class="text-danger">
+                                <i class="fas fa-shield-alt me-1"></i>Admin role cannot be changed. Only one super admin
+                                allowed.
+                            </small>
                         @endif
+
                         @error('role_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -160,8 +182,10 @@
                     <div class="col-md-6 mb-3">
                         <label for="language" class="form-label fw-bold">Language</label>
                         <select class="form-select" id="language" name="language">
-                            <option value="vi" {{ old('language', $user->language) === 'vi' ? 'selected' : '' }}>Vietnamese</option>
-                            <option value="en" {{ old('language', $user->language) === 'en' ? 'selected' : '' }}>English</option>
+                            <option value="vi" {{ old('language', $user->language) === 'vi' ? 'selected' : '' }}>
+                                Vietnamese</option>
+                            <option value="en" {{ old('language', $user->language) === 'en' ? 'selected' : '' }}>
+                                English</option>
                         </select>
                     </div>
                 </div>

@@ -127,10 +127,12 @@
                         </div>
 
                         <div id="image-preview" class="text-center d-none">
-                            <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
-                            <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
-                                <i class="fas fa-times me-1"></i>Remove
-                            </button>
+                            <div class="row">
+                                <img src="" alt="Preview" class="img-fluid col-md-12 rounded" style="max-height: 200px;">
+                                <button type="button" class="btn btn-sm btn-danger col-md-12 mt-2" onclick="removeImage()">
+                                    <i class="fas fa-times me-1"></i>Remove
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

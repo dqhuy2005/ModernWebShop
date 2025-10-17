@@ -11,6 +11,9 @@
                 </h1>
             </div>
             <div>
+                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning">
+                    <i class="fas fa-edit me-2"></i></i>Edit
+                </a>
                 <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
@@ -98,24 +101,6 @@
                                     @if ($user->role)
                                         <span class="badge {{ $user->role->id == 1 ? 'bg-danger' : 'bg-info' }}">
                                             {{ $user->role->name }}
-                                        </span>
-                                    @else
-                                        <span class="text-muted">N/A</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">
-                                    <i class="fas fa-globe me-2"></i>Language:
-                                </th>
-                                <td>
-                                    @if ($user->language === 'vi')
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-flag me-1"></i>Vietnamese
-                                        </span>
-                                    @elseif($user->language === 'en')
-                                        <span class="badge bg-primary">
-                                            <i class="fas fa-flag me-1"></i>English
                                         </span>
                                     @else
                                         <span class="text-muted">N/A</span>

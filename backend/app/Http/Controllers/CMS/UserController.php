@@ -18,8 +18,20 @@ class UserController extends Controller
         try {
             $query = User::with('role');
 
-            if ($request->has('show_deleted') && $request->show_deleted == '1') {
-                $query->onlyTrashed();
+            if ($request->filled('status')) {
+                switch ($request->status) {
+                    case 'active':
+                        $query->where('status', true)->whereNull('deleted_at');
+                        break;
+                    case 'inactive':
+                        $query->where('status', false)->whereNull('deleted_at');
+                        break;
+                    case 'deleted':
+                        $query->onlyTrashed();
+                        break;
+                    default:
+                        $query->withTrashed();
+                }
             } else {
                 $query->withTrashed();
             }
@@ -33,12 +45,12 @@ class UserController extends Controller
                 });
             }
 
-            $sortBy = $request->get('sort_by', 'created_at');
+            $sortBy = $request->get('sort_by', 'id');
             $sortOrder = $request->get('sort_order', 'desc');
 
             $allowedSortFields = ['id', 'fullname', 'email', 'created_at', 'updated_at'];
             if (!in_array($sortBy, $allowedSortFields)) {
-                $sortBy = 'created_at';
+                $sortBy = 'id';
             }
 
             $query->orderBy($sortBy, $sortOrder);
@@ -82,6 +94,21 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
 
             $data['status'] = $request->has('status') ? 1 : 0;
+
+            if (!isset($data['role_id'])) {
+                $userRole = Role::where('slug', 'user')->first();
+                if ($userRole) {
+                    $data['role_id'] = $userRole->id;
+                }
+            } else {
+                $selectedRole = Role::find($data['role_id']);
+                if ($selectedRole && strtolower($selectedRole->name) === 'admin') {
+                    $userRole = Role::where('slug', 'user')->first();
+                    if ($userRole) {
+                        $data['role_id'] = $userRole->id;
+                    }
+                }
+            }
 
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
@@ -144,6 +171,19 @@ class UserController extends Controller
             }
 
             $data['status'] = $request->has('status') ? 1 : 0;
+
+            if (isset($data['role_id'])) {
+                $currentRole = Role::find($user->role_id);
+                $newRole = Role::find($data['role_id']);
+
+                if ($currentRole && strtolower($currentRole->name) === 'admin') {
+                } elseif ($newRole && strtolower($newRole->name) === 'admin') {
+                    $userRole = Role::where('slug', 'user')->first();
+                    if ($userRole) {
+                        $data['role_id'] = $userRole->id;
+                    }
+                }
+            }
 
             if ($request->hasFile('image')) {
                 if ($user->image && Storage::disk('public')->exists($user->image)) {

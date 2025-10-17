@@ -23,13 +23,13 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <div class="mb-4 pb-3 border-bottom">
+                <div class="mb-4 pb-3">
                     <label class="form-label fw-bold">
                         <i class="fas fa-image me-2"></i>User Avatar
                     </label>
 
-                    <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
-                        name="image" accept="image/*" onchange="previewImage(event)">
+                    <input type="file" class="d-none @error('image') is-invalid @enderror" id="image" name="image"
+                        accept="image/*" onchange="previewImage(event)">
 
                     <div id="upload-area" class="text-center">
                         <button type="button" class="btn btn-outline-primary btn-lg" onclick="$('#image').click()">
@@ -38,142 +38,145 @@
                         <p class="text-muted mt-2 mb-0 small">Accepted: JPG, PNG, GIF, WEBP. Max: 2MB</p>
                     </div>
 
-                    <div id="image-preview" class="text-center mt-3 d-none">
-                        <div class="preview-container">
-                            <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
+                    <div id="image-preview" class="text-center my-3 d-none">
+                        <div class="row">
+                            <div class="preview-container col-md-12">
+                                <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
+                            </div>
+
+                            <div class="col-md-12 d-flex justify-content-center">
+                                <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
+                                    <i class="fas fa-trash-alt me-1"></i>Remove Avatar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2"
+                                    onclick="$('#image').click()">
+                                    <i class="fas fa-sync-alt me-1"></i>Change Avatar
+                                </button>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
-                            <i class="fas fa-trash-alt me-1"></i>Remove Avatar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2" onclick="$('#image').click()">
-                            <i class="fas fa-sync-alt me-1"></i>Change Avatar
-                        </button>
-                    </div>
 
-                    @error('image')
-                        <div class="text-danger mt-2 small">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="fullname" class="form-label fw-bold">
-                            Full Name <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control @error('fullname') is-invalid @enderror" id="fullname"
-                            name="fullname" value="{{ old('fullname') }}" placeholder="Enter full name..." required>
-                        @error('fullname')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                        @error('image')
+                            <div class="text-danger mt-2 small">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="email" class="form-label fw-bold">
-                            Email <span class="text-danger">*</span>
-                        </label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                            name="email" value="{{ old('email') }}" placeholder="Enter email address..." required>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
+                    <div class="mb-4 pb-3 border-bottom"></div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="phone" class="form-label fw-bold">Phone</label>
-                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
-                            name="phone" value="{{ old('phone') }}" placeholder="Enter phone number...">
-                        @error('phone')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="birthday" class="form-label fw-bold">Birthday</label>
-                        <input type="date" class="form-control @error('birthday') is-invalid @enderror" id="birthday"
-                            name="birthday" value="{{ old('birthday') }}">
-                        @error('birthday')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="password" class="form-label fw-bold">
-                            Password <span class="text-danger">*</span>
-                        </label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                            name="password" placeholder="Enter password..." required>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="password_confirmation" class="form-label fw-bold">
-                            Confirm Password <span class="text-danger">*</span>
-                        </label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
-                            placeholder="Confirm password..." required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="role_id" class="form-label fw-bold">
-                            Role <span class="text-danger">*</span>
-                        </label>
-                        <select class="form-select @error('role_id') is-invalid @enderror" id="role_id" name="role_id"
-                            required>
-                            <option value="">-- Select Role --</option>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                                    {{ $role->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('role_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="language" class="form-label fw-bold">Language</label>
-                        <select class="form-select" id="language" name="language">
-                            <option value="vi" {{ old('language') === 'vi' ? 'selected' : '' }}>Vietnamese</option>
-                            <option value="en" {{ old('language') === 'en' ? 'selected' : '' }}>English</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label class="form-label fw-bold">Status</label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="status"
-                                name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="status">
-                                Active
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fullname" class="form-label fw-bold">
+                                Full Name <span class="text-danger">*</span>
                             </label>
+                            <input type="text" class="form-control @error('fullname') is-invalid @enderror"
+                                id="fullname" name="fullname" value="{{ old('fullname') }}"
+                                placeholder="Enter full name..." required>
+                            @error('fullname')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label fw-bold">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
+                                name="email" value="{{ old('email') }}" placeholder="Enter email address..." required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label fw-bold">Phone</label>
+                            <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                                name="phone" value="{{ old('phone') }}" placeholder="Enter phone number..."
+                                pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
+                            @error('phone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="birthday" class="form-label fw-bold">Birthday</label>
+                            <input type="date" class="form-control @error('birthday') is-invalid @enderror"
+                                id="birthday" name="birthday" value="{{ old('birthday') }}">
+                            @error('birthday')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label fw-bold">
+                                Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                id="password" name="password" placeholder="Enter password..." required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="password_confirmation" class="form-label fw-bold">
+                                Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="password_confirmation"
+                                name="password_confirmation" placeholder="Confirm password..." required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="role_id" class="form-label fw-bold">
+                                Role <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('role_id') is-invalid @enderror" id="role_id"
+                                name="role_id" required>
+                                @foreach ($roles as $role)
+                                    @if (strtolower($role->name) !== 'admin')
+                                        <option value="{{ $role->id }}"
+                                            {{ old('role_id', $role->id) == $role->id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            @error('role_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Status</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="status"
+                                    name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="status">
+                                    Active
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="d-flex justify-content-end gap-2 mb-4">
-            <button type="submit" class="btn btn-primary" name="action" value="save">
-                <i class="fas fa-save me-2"></i>Save User
-            </button>
-            <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
-                <i class="fas fa-plus me-2"></i>Save & Add Another
-            </button>
-            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                <i class="fas fa-times me-2"></i>Cancel
-            </a>
-        </div>
+            <div class="d-flex justify-content-end gap-2 mb-4">
+                <button type="submit" class="btn btn-primary" name="action" value="save">
+                    <i class="fas fa-save me-2"></i>Save User
+                </button>
+                <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
+                    <i class="fas fa-plus me-2"></i>Save & Add Another
+                </button>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
+            </div>
     </form>
 @endsection
 

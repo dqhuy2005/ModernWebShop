@@ -4,9 +4,17 @@
             <table class="table table-hover align-middle" id="usersTable">
                 <thead class="table-light">
                     <tr>
-                        <th width="5%">ID</th>
+                        <th width="5%"
+                            class="sortable {{ request('sort_by') === 'id' ? request('sort_order', 'desc') : '' }}"
+                            onclick="sortTable('id')">
+                            ID
+                        </th>
                         <th width="8%">Avatar</th>
-                        <th width="20%">Full Name</th>
+                        <th width="20%"
+                            class="sortable {{ request('sort_by') === 'fullname' ? request('sort_order', 'desc') : '' }}"
+                            onclick="sortTable('fullname')">
+                            Full Name
+                        </th>
                         <th width="15%">Email</th>
                         <th width="12%">Phone</th>
                         <th width="10%">Role</th>

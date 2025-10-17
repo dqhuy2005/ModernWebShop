@@ -133,7 +133,8 @@ class UpdateUserRequest extends FormRequest
             'password.regex' => 'Mật khẩu phải chứa ít nhất 1 chữ cái, 1 số và 1 ký tự đặc biệt (@#$%^&*...).',
 
             // Phone messages
-            'phone.regex' => 'Số điện thoại chỉ được chứa số và phải có từ 8-15 chữ số.',
+            'phone.string' => 'Số điện thoại phải là chuỗi ký tự.',
+            'phone.regex' => 'Số điện thoại chỉ được phép nhập số (0-9) và phải có từ 8 đến 15 chữ số.',
 
             // Birthday messages
             'birthday.date' => 'Ngày sinh không hợp lệ.',
