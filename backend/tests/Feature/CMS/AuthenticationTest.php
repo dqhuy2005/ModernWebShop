@@ -16,7 +16,7 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/admin/login');
 
         $response->assertStatus(200);
-        $response->assertViewIs('admin.login');
+        $response->assertViewIs('login');
         $response->assertSee('Chào mừng trở lại!');
         $response->assertSee('Email hoặc Số Điện Thoại');
         $response->assertSee('Mật khẩu');
@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/admin/register');
 
         $response->assertStatus(200);
-        $response->assertViewIs('admin.register');
+        $response->assertViewIs('register');
         $response->assertSee('Tạo tài khoản');
     }
 

@@ -71,7 +71,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')
+        return redirect()->route('login')
             ->with('success', 'Đăng xuất thành công!');
     }
 
@@ -109,7 +109,7 @@ class AuthController extends Controller
             'status' => 1,
         ]);
 
-        return redirect()->route('admin.login')
+        return redirect()->route('login')
             ->with('success', 'Đăng ký thành công!');
     }
 }

@@ -338,7 +338,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.login.post') }}" method="POST" class="cms-login-form" id="loginForm">
+                <form action="{{ route('login.post') }}" method="POST" class="cms-login-form" id="loginForm">
                     @csrf
 
                     <div class="cms-form-group">
@@ -367,7 +367,7 @@
                     </button>
 
                     <div class="cms-register-prompt">
-                        Cần một tài khoản? <a href="{{ route('admin.register') }}" class="cms-register-link">Đăng ký</a>
+                        Cần một tài khoản? <a href="{{ route('register') }}" class="cms-register-link">Đăng ký</a>
                     </div>
                 </form>
             </div>

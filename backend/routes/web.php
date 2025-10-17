@@ -6,17 +6,41 @@ use App\Http\Controllers\CMS\ProductController;
 use App\Http\Controllers\CMS\UserController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('user.home');
 })->name('home');
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware('guest')->group(function () {
-        Route::get('login', [CMSAuthController::class, 'showLoginForm'])->name('login');
-        Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
-        Route::get('register', [CMSAuthController::class, 'showRegisterForm'])->name('register');
-        Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
-    });
+Route::get('/hot-deals', function () {
+    return view('user.hot-deals');
+})->name('hot-deals');
 
+Route::get('/categories/{slug}', function ($slug) {
+    return view('user.category', compact('slug'));
+})->name('categories.show');
+
+Route::get('/products/search', function () {
+    return redirect()->route('home');
+})->name('products.search');
+
+Route::get('/cart', function () {
+    return view('user.cart');
+})->name('cart.index');
+
+Route::get('/wishlist', function () {
+    return view('user.wishlist');
+})->name('wishlist.index');
+
+Route::post('/newsletter/subscribe', function () {
+    return redirect()->back()->with('success', 'Successfully subscribed to newsletter!');
+})->name('newsletter.subscribe');
+
+Route::middleware('guest')->group(function () {
+    Route::get('login', [CMSAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
+    Route::get('register', [CMSAuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'role.restriction'])->group(function () {
         Route::get('dashboard', function () {
             return view('admin.dashboard');
