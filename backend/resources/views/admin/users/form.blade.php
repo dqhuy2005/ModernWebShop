@@ -7,12 +7,11 @@
     <div class="card-body">
         <form action="{{ route('admin.users.index') }}" method="GET" id="searchForm">
             <div class="row g-3 align-items-center">
-                {{-- Search Input --}}
                 <div class="col-md-8">
                     <div class="position-relative">
                         <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                         <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                            placeholder="Search by name, email, or phone... (Press Enter)" value="{{ request('search') }}"
+                            placeholder="Search by name, email, or phone..." value="{{ request('search') }}"
                             style="height: 45px;">
                         @if (request('search'))
                             <button type="button"
@@ -24,7 +23,6 @@
                     </div>
                 </div>
 
-                {{-- Status Filter --}}
                 <div class="col-md-4">
                     <select name="status" id="status_filter" class="form-select" style="height: 45px;" onchange="$('#searchForm').submit()">
                         <option value="">All Status</option>
@@ -41,12 +39,10 @@
                 </div>
             </div>
 
-            {{-- Hidden sort inputs --}}
             <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by', 'id') }}">
             <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order', 'desc') }}">
         </form>
 
-        {{-- Active Filters Display --}}
         @if (request('search') || request('status'))
             <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
                 <small class="text-muted">Active filters:</small>
@@ -83,7 +79,7 @@
     <script>
         // Submit form on Enter key
         $('#search').on('keypress', function(e) {
-            if (e.which === 13) { // Enter key
+            if (e.which === 13) {
                 e.preventDefault();
                 $('#searchForm').submit();
             }
@@ -108,7 +104,7 @@
         function sortTable(column) {
             const currentSortBy = $('#hidden_sort_by').val();
             const currentSortOrder = $('#hidden_sort_order').val();
-            
+
             // Toggle order if same column, else default to desc
             if (currentSortBy === column) {
                 $('#hidden_sort_order').val(currentSortOrder === 'asc' ? 'desc' : 'asc');
@@ -116,7 +112,7 @@
                 $('#hidden_sort_by').val(column);
                 $('#hidden_sort_order').val('desc');
             }
-            
+
             $('#searchForm').submit();
         }
     </script>

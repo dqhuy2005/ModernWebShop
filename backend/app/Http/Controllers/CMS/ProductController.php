@@ -40,7 +40,7 @@ class ProductController extends Controller
             $sortBy = $request->get('sort_by', 'updated_at');
             $sortOrder = $request->get('sort_order', 'desc');
 
-            $allowedSortFields = ['id', 'name', 'created_at', 'updated_at', 'views', 'category_id'];
+            $allowedSortFields = ['id', 'name', 'created_at', 'updated_at', 'category_id'];
             if (!in_array($sortBy, $allowedSortFields)) {
                 $sortBy = 'updated_at';
             }
