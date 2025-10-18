@@ -91,17 +91,64 @@
 
     @include('admin.users.form')
 
-    @include('admin.users.table')
+    <div id="users-table-container">
+        @include('admin.users.table')
+    </div>
 
 @endsection
 
 @push('scripts')
     <script>
+        function loadPage(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                beforeSend: function() {
+                    $('#users-table-container').addClass('loading');
+                },
+                success: function(response) {
+                    $('#users-table-container').html($(response).find('#users-table-container').html());
+
+                    window.history.pushState({}, '', url);
+
+                    $('html, body').animate({
+                        scrollTop: $('#users-table-container').offset().top - 100
+                    }, 300);
+
+                    attachPaginationHandlers();
+                },
+                error: function() {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to load page');
+                    } else {
+                        alert('Failed to load page');
+                    }
+                },
+                complete: function() {
+                    $('#users-table-container').removeClass('loading');
+                }
+            });
+        }
+
+        function attachPaginationHandlers() {
+            $(document).on('click', '#users-table-container nav[aria-label="Users pagination"] a.page-link', function(e) {
+                e.preventDefault();
+                const url = $(this).attr('href');
+                if (url && !$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
+                    loadPage(url);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            attachPaginationHandlers();
+        });
+
         function changePerPage(value) {
             let url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
             url.searchParams.set('page', 1);
-            window.location.href = url.toString();
+            loadPage(url.toString());
         }
 
         function toggleStatus(userId) {
@@ -339,6 +386,16 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
+        }
+
+        /* Loading state for AJAX pagination */
+        #users-table-container {
+            transition: opacity 0.3s ease;
+        }
+
+        #users-table-container.loading {
+            opacity: 0.5;
+            pointer-events: none;
         }
     </style>
 @endpush

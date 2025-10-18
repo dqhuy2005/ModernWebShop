@@ -91,12 +91,55 @@
 
     @include('admin.products.form')
 
-    @include('admin.products.table')
+    <div id="products-table-container">
+        @include('admin.products.table')
+    </div>
 
 @endsection
 
 @push('scripts')
     <script>
+        function loadPage(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                beforeSend: function() {
+                    $('#products-table-container').addClass('loading');
+                },
+                success: function(response) {
+                    $('#products-table-container').html($(response).find('#products-table-container').html());
+
+                    window.history.pushState({}, '', url);
+
+                    attachPaginationHandlers();
+                },
+                error: function() {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to load page');
+                    } else {
+                        alert('Failed to load page');
+                    }
+                },
+                complete: function() {
+                    $('#products-table-container').removeClass('loading');
+                }
+            });
+        }
+
+        function attachPaginationHandlers() {
+            $(document).on('click', '#products-table-container nav[aria-label="Products pagination"] a.page-link', function(e) {
+                e.preventDefault();
+                const url = $(this).attr('href');
+                if (url && !$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
+                    loadPage(url);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            attachPaginationHandlers();
+        });
+
         function toggleStatus(productId) {
             if (confirm('Are you sure you want to change the status of this product?')) {
                 const row = $('#product-' + productId);
@@ -109,21 +152,18 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            // Check if toastr is defined
                             if (typeof toastr !== 'undefined') {
                                 toastr.success(response.message);
                             } else {
                                 alert(response.message);
                             }
 
-                            // Update checkbox state in the row
                             if (response.status === 1 || response.status === true) {
                                 row.find("input[type='checkbox']").prop('checked', true);
                             } else {
                                 row.find("input[type='checkbox']").prop('checked', false);
                             }
 
-                            // Update counts from response
                             if (response.counts) {
                                 $('#totalProductsCount').text(response.counts.total);
                                 $('#activeProductsCount').text(response.counts.active);
@@ -149,7 +189,6 @@
             }
         }
 
-        // Toggle Hot Status
         function toggleHot(productId, button) {
             $.ajax({
                 url: '/admin/products/' + productId + '/toggle-hot',
@@ -159,14 +198,12 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Check if toastr is defined
                         if (typeof toastr !== 'undefined') {
                             toastr.success(response.message);
                         } else {
                             alert(response.message);
                         }
 
-                        // Update button appearance
                         if (response.is_hot) {
                             $(button).removeClass('btn-outline-warning').addClass('btn-warning');
                             $(button).html('<i class="fas fa-fire"></i>');
@@ -175,7 +212,6 @@
                             $(button).html('<i class="fas fa-fire"></i>');
                         }
 
-                        // Update counts from response
                         if (response.counts) {
                             $('#totalProductsCount').text(response.counts.total);
                             $('#activeProductsCount').text(response.counts.active);
@@ -200,7 +236,6 @@
             });
         }
 
-        // Delete Product
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
                 var form = document.createElement('form');
@@ -224,12 +259,11 @@
             }
         }
 
-        // Change Per Page
         function changePerPage(value) {
             let url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
             url.searchParams.set('page', 1);
-            window.location.href = url.toString();
+            loadPage(url.toString());
         }
 
         @if (!request()->has('per_page') || request('per_page') == 'all')
@@ -311,6 +345,16 @@
             nav[aria-label="Products pagination"] .pagination {
                 gap: 2px;
             }
+        }
+
+        /* Loading state for AJAX pagination */
+        #products-table-container {
+            transition: opacity 0.3s ease;
+        }
+
+        #products-table-container.loading {
+            opacity: 0.5;
+            pointer-events: none;
         }
     </style>
 @endpush
