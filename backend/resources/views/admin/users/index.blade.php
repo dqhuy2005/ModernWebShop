@@ -99,56 +99,35 @@
 
 @push('scripts')
     <script>
-        function loadPage(url) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                beforeSend: function() {
-                    $('#users-table-container').addClass('loading');
+        // Initialize AJAX Pagination
+        let userPagination;
+
+        $(document).ready(function() {
+            userPagination = new AjaxPagination({
+                containerId: 'users-table-container',
+                paginationSelector: 'nav[aria-label="Users pagination"]',
+                onCountsUpdate: function(counts) {
+                    // Update count cards if counts are provided
+                    if (counts.total !== undefined) $('#totalUsersCount').text(counts.total);
+                    if (counts.active !== undefined) $('#activeUsersCount').text(counts.active);
+                    if (counts.inactive !== undefined) $('#inactiveUsersCount').text(counts.inactive);
+                    if (counts.deleted !== undefined) $('#deletedUsersCount').text(counts.deleted);
                 },
-                success: function(response) {
-                    $('#users-table-container').html($(response).find('#users-table-container').html());
-
-                    window.history.pushState({}, '', url);
-
-                    $('html, body').animate({
-                        scrollTop: $('#users-table-container').offset().top - 100
-                    }, 300);
-
-                    attachPaginationHandlers();
-                },
-                error: function() {
+                onError: function(xhr) {
                     if (typeof toastr !== 'undefined') {
                         toastr.error('Failed to load page');
                     } else {
                         alert('Failed to load page');
                     }
-                },
-                complete: function() {
-                    $('#users-table-container').removeClass('loading');
                 }
             });
-        }
-
-        function attachPaginationHandlers() {
-            $(document).on('click', '#users-table-container nav[aria-label="Users pagination"] a.page-link', function(e) {
-                e.preventDefault();
-                const url = $(this).attr('href');
-                if (url && !$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
-                    loadPage(url);
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            attachPaginationHandlers();
         });
 
         function changePerPage(value) {
             let url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
             url.searchParams.set('page', 1);
-            loadPage(url.toString());
+            userPagination.loadPage(url.toString());
         }
 
         function toggleStatus(userId) {

@@ -99,45 +99,31 @@
 
 @push('scripts')
     <script>
-        function loadPage(url) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                beforeSend: function() {
-                    $('#products-table-container').addClass('loading');
-                },
-                success: function(response) {
-                    $('#products-table-container').html($(response).find('#products-table-container').html());
+        let productPagination;
 
-                    window.history.pushState({}, '', url);
-
-                    attachPaginationHandlers();
+        $(document).ready(function() {
+            productPagination = new AjaxPagination({
+                containerId: 'products-table-container',
+                paginationSelector: 'nav[aria-label="Products pagination"]',
+                onCountsUpdate: function(counts) {
+                    if (counts.total !== undefined) $('#totalProductsCount').text(counts.total);
+                    if (counts.active !== undefined) $('#activeProductsCount').text(counts.active);
+                    if (counts.inactive !== undefined) $('#inactiveProductsCount').text(counts.inactive);
+                    if (counts.hot !== undefined) $('#hotProductsCount').text(counts.hot);
                 },
-                error: function() {
+                onAfterLoad: function(response) {
+                    if (typeof initLazyLoading === 'function') {
+                        initLazyLoading();
+                    }
+                },
+                onError: function(xhr) {
                     if (typeof toastr !== 'undefined') {
                         toastr.error('Failed to load page');
                     } else {
                         alert('Failed to load page');
                     }
-                },
-                complete: function() {
-                    $('#products-table-container').removeClass('loading');
                 }
             });
-        }
-
-        function attachPaginationHandlers() {
-            $(document).on('click', '#products-table-container nav[aria-label="Products pagination"] a.page-link', function(e) {
-                e.preventDefault();
-                const url = $(this).attr('href');
-                if (url && !$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
-                    loadPage(url);
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            attachPaginationHandlers();
         });
 
         function toggleStatus(productId) {

@@ -16,7 +16,6 @@
     <div class="card-body">
         <form action="{{ route('admin.products.index') }}" method="GET" id="searchForm">
             <div class="row g-3 align-items-center">
-                {{-- Search Input --}}
                 <div class="col-md-12">
                     <div class="position-relative">
                         <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
@@ -34,7 +33,6 @@
                 </div>
             </div>
 
-            {{-- Hidden inputs for filters and sorting --}}
             <input type="hidden" name="category_id" id="hidden_category_id" value="{{ request('category_id') }}">
             <input type="hidden" name="status" id="hidden_status" value="{{ request('status') }}">
             <input type="hidden" name="is_hot" id="hidden_is_hot" value="{{ request('is_hot') }}">
@@ -42,7 +40,6 @@
             <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order', 'desc') }}">
         </form>
 
-        {{-- Active Filters Display --}}
         @if (request('search') || request('category_id') || request('status') !== null || request('is_hot') !== null)
             <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
                 <small class="text-muted">Active filters:</small>
@@ -98,7 +95,6 @@
     </div>
 </div>
 
-{{-- Filter Modal --}}
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -160,21 +156,18 @@
 
 @push('scripts')
     <script>
-        // Submit form on Enter key
         $('#search').on('keypress', function(e) {
-            if (e.which === 13) { // Enter key
+            if (e.which === 13) {
                 e.preventDefault();
                 $('#searchForm').submit();
             }
         });
 
-        // Clear search
         function clearSearch() {
             $('#search').val('');
             $('#searchForm').submit();
         }
 
-        // Apply filters from modal
         function applyFilters() {
             $('#hidden_category_id').val($('#modal_category_id').val());
             $('#hidden_status').val($('#modal_status').val());
@@ -182,7 +175,6 @@
             $('#searchForm').submit();
         }
 
-        // Reset filters
         function resetFilters() {
             $('#modal_category_id').val('');
             $('#modal_status').val('');
@@ -194,12 +186,10 @@
             $('#searchForm').submit();
         }
 
-        // Sort table by column
         function sortTable(column) {
             const currentSortBy = $('#hidden_sort_by').val();
             const currentSortOrder = $('#hidden_sort_order').val();
 
-            // Toggle sort order if clicking the same column
             if (currentSortBy === column) {
                 $('#hidden_sort_order').val(currentSortOrder === 'asc' ? 'desc' : 'asc');
             } else {

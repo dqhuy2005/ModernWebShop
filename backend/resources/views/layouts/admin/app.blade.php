@@ -22,6 +22,9 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <!-- Custom Pagination CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom-pagination.css') }}">
+
     <!-- Custom Admin CSS -->
     {{-- @vite(['resources/css/app.css']) --}}
 
@@ -129,6 +132,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- AJAX Pagination Manager -->
+    <script src="{{ asset('js/ajax-pagination.js') }}"></script>
 
     <script>
         // Initialize DataTables

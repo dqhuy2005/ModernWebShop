@@ -23,13 +23,49 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $statuses = [true, true, true, false]; // 75% active, 25% inactive
+        
         return [
             'fullname' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => fake()->optional(0.8)->numerify('##########'), // 80% have phone
             'password' => static::$password ??= Hash::make('password'),
-            'status' => 1,
-            'language' => 'en',
+            'status' => fake()->randomElement($statuses),
+            'language' => fake()->randomElement(['en', 'vi']),
+            'role_id' => 2, // Default user role (not admin)
+            'created_at' => fake()->dateTimeBetween('-2 years', 'now'),
+            'updated_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
+    }
+
+    /**
+     * Indicate that the user is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => false,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is soft deleted.
+     */
+    public function deleted(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'deleted_at' => fake()->dateTimeBetween('-6 months', 'now'),
+        ]);
     }
 
     /**

@@ -103,7 +103,6 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
                 <div class="d-flex align-items-center gap-2">
@@ -121,7 +120,7 @@
             </div>
 
             <nav aria-label="Products pagination">
-                {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
+                {{ $products->appends(request()->query())->links('vendor.pagination.custom-bootstrap-5') }}
             </nav>
         </div>
     @else

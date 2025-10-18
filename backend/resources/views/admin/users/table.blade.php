@@ -146,7 +146,7 @@
             </div>
 
             <nav aria-label="Users pagination">
-                {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+                {{ $users->appends(request()->query())->links('vendor.pagination.custom-bootstrap-5') }}
             </nav>
         </div>
     @else
