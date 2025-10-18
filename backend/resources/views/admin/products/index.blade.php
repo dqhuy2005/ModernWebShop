@@ -108,7 +108,8 @@
                 onCountsUpdate: function(counts) {
                     if (counts.total !== undefined) $('#totalProductsCount').text(counts.total);
                     if (counts.active !== undefined) $('#activeProductsCount').text(counts.active);
-                    if (counts.inactive !== undefined) $('#inactiveProductsCount').text(counts.inactive);
+                    if (counts.inactive !== undefined) $('#inactiveProductsCount').text(counts
+                    .inactive);
                     if (counts.hot !== undefined) $('#hotProductsCount').text(counts.hot);
                 },
                 onAfterLoad: function(response) {
@@ -125,6 +126,13 @@
                 }
             });
         });
+
+        function changePerPage(value) {
+            let url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+            url.searchParams.set('page', 1);
+            productPagination.loadPage(url.toString());
+        }
 
         function toggleStatus(productId) {
             if (confirm('Are you sure you want to change the status of this product?')) {
@@ -243,13 +251,6 @@
                 document.body.appendChild(form);
                 form.submit();
             }
-        }
-
-        function changePerPage(value) {
-            let url = new URL(window.location.href);
-            url.searchParams.set('per_page', value);
-            url.searchParams.set('page', 1);
-            loadPage(url.toString());
         }
 
         @if (!request()->has('per_page') || request('per_page') == 'all')
