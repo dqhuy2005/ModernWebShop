@@ -9,7 +9,6 @@ class Role extends Model
 {
     use HasFactory;
 
-    // Constants cho role slugs
     const ADMIN = 'admin';
     const USER = 'user';
 

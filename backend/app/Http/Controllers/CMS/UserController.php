@@ -17,7 +17,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = User::with('role');
+            $baseQuery = $this->buildBaseUserQuery($request);
+
+            $totalUsers = (clone $baseQuery)->count();
+            $activeUsers = (clone $baseQuery)->where('status', true)->whereNull('deleted_at')->count();
+            $inactiveUsers = (clone $baseQuery)->where('status', false)->whereNull('deleted_at')->count();
+            $deletedUsers = (clone $baseQuery)->onlyTrashed()->count();
+
+            $query = (clone $baseQuery);
 
             if ($request->filled('status')) {
                 switch ($request->status) {
@@ -31,19 +38,8 @@ class UserController extends Controller
                         $query->onlyTrashed();
                         break;
                     default:
-                        $query->withTrashed();
+                        break;
                 }
-            } else {
-                $query->withTrashed();
-            }
-
-            if ($request->filled('search')) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('fullname', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%");
-                });
             }
 
             $sortBy = $request->get('sort_by', 'id');
@@ -65,11 +61,6 @@ class UserController extends Controller
             $users = $query->paginate($perPage)->withQueryString();
 
             $roles = Role::select('id', 'name', 'slug')->get();
-
-            $totalUsers = User::withTrashed()->count();
-            $activeUsers = User::where('status', true)->count();
-            $inactiveUsers = User::where('status', false)->count();
-            $deletedUsers = User::onlyTrashed()->count();
 
             return view('admin.users.index', compact('users', 'roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'deletedUsers'));
         } catch (\Exception $e) {
@@ -221,14 +212,15 @@ class UserController extends Controller
             $user->delete();
 
             if (request()->ajax()) {
+                $base = $this->buildBaseUserQuery(request());
                 return response()->json([
                     'success' => true,
                     'message' => 'User deleted successfully! You can restore it later.',
                     'counts' => [
-                        'total' => User::withTrashed()->count(),
-                        'active' => User::where('status', true)->count(),
-                        'inactive' => User::where('status', false)->count(),
-                        'deleted' => User::onlyTrashed()->count(),
+                        'total' => (clone $base)->count(),
+                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $base)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -248,14 +240,16 @@ class UserController extends Controller
             $user->restore();
 
             if (request()->ajax()) {
+                $base = $this->buildBaseUserQuery(request());
                 return response()->json([
                     'success' => true,
                     'message' => 'User restored successfully!',
+                    'status' => $user->status,
                     'counts' => [
-                        'total' => User::withTrashed()->count(),
-                        'active' => User::where('status', true)->count(),
-                        'inactive' => User::where('status', false)->count(),
-                        'deleted' => User::onlyTrashed()->count(),
+                        'total' => (clone $base)->count(),
+                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $base)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -282,14 +276,15 @@ class UserController extends Controller
             $user->forceDelete();
 
             if (request()->ajax()) {
+                $base = $this->buildBaseUserQuery(request());
                 return response()->json([
                     'success' => true,
                     'message' => 'User permanently deleted!',
                     'counts' => [
-                        'total' => User::withTrashed()->count(),
-                        'active' => User::where('status', true)->count(),
-                        'inactive' => User::where('status', false)->count(),
-                        'deleted' => User::onlyTrashed()->count(),
+                        'total' => (clone $base)->count(),
+                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $base)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -324,15 +319,16 @@ class UserController extends Controller
             $status = $user->status ? 'active' : 'inactive';
 
             if (request()->ajax()) {
+                $base = $this->buildBaseUserQuery(request());
                 return response()->json([
                     'success' => true,
                     'message' => "User marked as {$status} successfully!",
                     'status' => $user->status,
                     'counts' => [
-                        'total' => User::withTrashed()->count(),
-                        'active' => User::where('status', true)->count(),
-                        'inactive' => User::where('status', false)->count(),
-                        'deleted' => User::onlyTrashed()->count(),
+                        'total' => (clone $base)->count(),
+                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $base)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -348,5 +344,25 @@ class UserController extends Controller
 
             return back()->with('error', 'Failed to toggle status: ' . $e->getMessage());
         }
+    }
+
+    protected function buildBaseUserQuery(Request $request)
+    {
+        $baseQuery = User::withTrashed()->with('role');
+
+        $baseQuery->whereDoesntHave('role', function ($q) {
+            $q->where('slug', Role::ADMIN);
+        });
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $baseQuery->where(function ($q) use ($search) {
+                $q->where('fullname', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        return $baseQuery;
     }
 }

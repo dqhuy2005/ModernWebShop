@@ -223,10 +223,11 @@
                             </div>
                         `);
 
+                        const isChecked = (response.status === 1 || response.status === true) ? 'checked' : '';
                         row.find('td').eq(6).html(`
                             <div class="form-check form-switch d-flex justify-content-center">
                                 <input class="form-check-input" type="checkbox" role="switch"
-                                    id="status-${userId}" checked onchange="toggleStatus(${userId})" style="cursor: pointer;">
+                                    id="status-${userId}" ${isChecked} onchange="toggleStatus(${userId})" style="cursor: pointer;">
                             </div>
                         `);
 
