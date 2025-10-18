@@ -77,7 +77,6 @@
 
 @push('scripts')
     <script>
-        // Submit form on Enter key
         $('#search').on('keypress', function(e) {
             if (e.which === 13) {
                 e.preventDefault();
@@ -85,27 +84,23 @@
             }
         });
 
-        // Clear search
         function clearSearch() {
             $('#search').val('');
             $('#searchForm').submit();
         }
 
-        // Auto-submit on search input (debounced)
-        let searchTimeout;
-        $('#search').on('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(function() {
-                $('#searchForm').submit();
-            }, 800);
-        });
+        // let searchTimeout;
+        // $('#search').on('input', function() {
+        //     clearTimeout(searchTimeout);
+        //     searchTimeout = setTimeout(function() {
+        //         $('#searchForm').submit();
+        //     }, 800);
+        // });
 
-        // Sort functionality (called from table headers)
         function sortTable(column) {
             const currentSortBy = $('#hidden_sort_by').val();
             const currentSortOrder = $('#hidden_sort_order').val();
 
-            // Toggle order if same column, else default to desc
             if (currentSortBy === column) {
                 $('#hidden_sort_order').val(currentSortOrder === 'asc' ? 'desc' : 'asc');
             } else {
