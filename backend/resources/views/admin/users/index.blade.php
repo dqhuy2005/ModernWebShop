@@ -30,7 +30,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Total Users</h6>
-                            <h4 class="mb-0">{{ $totalUsers }}</h4>
+                            <h4 class="mb-0" id="totalUsersCount">{{ $totalUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0">{{ $activeUsers }}</h4>
+                            <h4 class="mb-0" id="activeUsersCount">{{ $activeUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0">{{ $inactiveUsers }}</h4>
+                            <h4 class="mb-0" id="inactiveUsersCount">{{ $inactiveUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Deleted</h6>
-                            <h4 class="mb-0">{{ $deletedUsers }}</h4>
+                            <h4 class="mb-0" id="deletedUsersCount">{{ $deletedUsers }}</h4>
                         </div>
                     </div>
                 </div>
@@ -105,89 +105,193 @@
         }
 
         function toggleStatus(userId) {
-            if (confirm('Are you sure you want to change the status of this user?')) {
-                $.ajax({
-                    url: '/admin/users/' + userId + '/toggle-status',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            location.reload();
+            if (!confirm('Are you sure you want to change the status of this user?')) return;
+
+            $.ajax({
+                url: '/admin/users/' + userId + '/toggle-status',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const row = $('#user-' + userId);
+                        if (response.status === 1 || response.status === true) {
+                            row.find("input[type='checkbox']").prop('checked', true);
                         } else {
-                            toastr.error(response.message);
+                            row.find("input[type='checkbox']").prop('checked', false);
                         }
-                    },
-                    error: function(xhr) {
-                        toastr.error('Failed to update status!');
+
+                        if (response.counts) {
+                            $('#totalUsersCount').text(response.counts.total);
+                            $('#activeUsersCount').text(response.counts.active);
+                            $('#inactiveUsersCount').text(response.counts.inactive);
+                            $('#deletedUsersCount').text(response.counts.deleted);
+                        }
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message || 'Status updated');
+                        }
+                    } else if (!response.success) {
+                        toastr.error(response.message);
                     }
-                });
-            }
+                },
+                error: function(xhr) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to update status!');
+                    } else {
+                        alert('Failed to update status!');
+                    }
+                }
+            });
         }
 
         function deleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user? You can restore it later.')) {
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/admin/users/' + userId;
+            if (!confirm('Are you sure you want to delete this user? You can restore it later.')) return;
 
-                var methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                methodInput.value = 'DELETE';
-                form.appendChild(methodInput);
+            $.ajax({
+                url: '/admin/users/' + userId,
+                method: 'POST',
+                data: {
+                    _method: 'DELETE',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    const row = $('#user-' + userId);
+                    row.addClass('table-warning');
+                    row.find('td').last().html(`
+                        <div class="btn-group" role="group">
+                            <a href="/admin/users/${userId}" class="btn btn-sm btn-info" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-success" onclick="restoreUser(${userId})" title="Restore">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="forceDeleteUser(${userId})" title="Delete Permanently">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `);
 
-                var tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = '_token';
-                tokenInput.value = '{{ csrf_token() }}';
-                form.appendChild(tokenInput);
+                    row.find('td').eq(6).html('<span class="badge bg-secondary">Deleted</span>');
 
-                document.body.appendChild(form);
-                form.submit();
-            }
+                    if (response.counts) {
+                        $('#totalUsersCount').text(response.counts.total);
+                        $('#activeUsersCount').text(response.counts.active);
+                        $('#inactiveUsersCount').text(response.counts.inactive);
+                        $('#deletedUsersCount').text(response.counts.deleted);
+                    }
+
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(response.message || 'User deleted');
+                    }
+                },
+                error: function(xhr) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to delete user!');
+                    } else {
+                        alert('Failed to delete user!');
+                    }
+                }
+            });
         }
 
         function restoreUser(userId) {
-            if (confirm('Are you sure you want to restore this user?')) {
-                $.ajax({
-                    url: '/admin/users/' + userId + '/restore',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        toastr.success('User restored successfully!');
-                        location.reload();
-                    },
-                    error: function(xhr) {
-                        toastr.error('Failed to restore user!');
+            if (!confirm('Are you sure you want to restore this user?')) return;
+
+            $.ajax({
+                url: '/admin/users/' + userId + '/restore',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const row = $('#user-' + userId);
+                        row.removeClass('table-warning');
+                        row.find('td').last().html(`
+                            <div class="btn-group" role="group">
+                                <a href="/admin/users/${userId}" class="btn btn-sm btn-info" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="/admin/users/${userId}/edit" class="btn btn-sm btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(${userId})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `);
+
+                        row.find('td').eq(6).html(`
+                            <div class="form-check form-switch d-flex justify-content-center">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="status-${userId}" checked onchange="toggleStatus(${userId})" style="cursor: pointer;">
+                            </div>
+                        `);
+
+                        if (response.counts) {
+                            $('#totalUsersCount').text(response.counts.total);
+                            $('#activeUsersCount').text(response.counts.active);
+                            $('#inactiveUsersCount').text(response.counts.inactive);
+                            $('#deletedUsersCount').text(response.counts.deleted);
+                        }
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message || 'User restored');
+                        }
+                    } else {
+                        if (typeof toastr !== 'undefined') toastr.error(response.message ||
+                            'Failed to restore');
                     }
-                });
-            }
+                },
+                error: function(xhr) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to restore user!');
+                    } else {
+                        alert('Failed to restore user!');
+                    }
+                }
+            });
         }
 
         function forceDeleteUser(userId) {
-            if (confirm('Are you sure you want to PERMANENTLY delete this user? This action CANNOT be undone!')) {
-                if (confirm('This will delete ALL user data permanently. Are you absolutely sure?')) {
-                    $.ajax({
-                        url: '/admin/users/' + userId + '/force-delete',
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            toastr.success('User permanently deleted!');
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            toastr.error('Failed to delete user!');
+            if (!confirm('Are you sure you want to PERMANENTLY delete this user? This action CANNOT be undone!')) return;
+            if (!confirm('This will delete ALL user data permanently. Are you absolutely sure?')) return;
+
+            $.ajax({
+                url: '/admin/users/' + userId + '/force-delete',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#user-' + userId).remove();
+
+                        if (response.counts) {
+                            $('#totalUsersCount').text(response.counts.total);
+                            $('#activeUsersCount').text(response.counts.active);
+                            $('#inactiveUsersCount').text(response.counts.inactive);
+                            $('#deletedUsersCount').text(response.counts.deleted);
                         }
-                    });
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message || 'User permanently deleted');
+                        }
+                    } else {
+                        if (typeof toastr !== 'undefined') toastr.error(response.message ||
+                            'Failed to delete permanently');
+                    }
+                },
+                error: function(xhr) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to delete user!');
+                    } else {
+                        alert('Failed to delete user!');
+                    }
                 }
-            }
+            });
         }
     </script>
 @endpush

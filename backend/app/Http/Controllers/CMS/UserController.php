@@ -10,6 +10,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -65,7 +66,7 @@ class UserController extends Controller
 
             $roles = Role::select('id', 'name', 'slug')->get();
 
-            $totalUsers = User::count();
+            $totalUsers = User::withTrashed()->count();
             $activeUsers = User::where('status', true)->count();
             $inactiveUsers = User::where('status', false)->count();
             $deletedUsers = User::onlyTrashed()->count();
@@ -213,11 +214,24 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            if ($user->id === auth()->id()) {
+            if ($user->id === Auth::id()) {
                 return back()->with('error', 'You cannot delete yourself!');
             }
 
             $user->delete();
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User deleted successfully! You can restore it later.',
+                    'counts' => [
+                        'total' => User::withTrashed()->count(),
+                        'active' => User::where('status', true)->count(),
+                        'inactive' => User::where('status', false)->count(),
+                        'deleted' => User::onlyTrashed()->count(),
+                    ],
+                ]);
+            }
 
             return redirect()
                 ->route('admin.users.index')
@@ -233,9 +247,20 @@ class UserController extends Controller
             $user = User::withTrashed()->findOrFail($id);
             $user->restore();
 
-            return redirect()
-                ->route('admin.users.show', $id)
-                ->with('success', 'User restored successfully!');
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User restored successfully!',
+                    'counts' => [
+                        'total' => User::withTrashed()->count(),
+                        'active' => User::where('status', true)->count(),
+                        'inactive' => User::where('status', false)->count(),
+                        'deleted' => User::onlyTrashed()->count(),
+                    ],
+                ]);
+            }
+
+            return back()->with('success', 'User restored successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to restore user: ' . $e->getMessage());
         }
@@ -246,7 +271,7 @@ class UserController extends Controller
         try {
             $user = User::withTrashed()->findOrFail($id);
 
-            if ($user->id === auth()->id()) {
+            if ($user->id === Auth::id()) {
                 return back()->with('error', 'You cannot delete yourself!');
             }
 
@@ -255,6 +280,19 @@ class UserController extends Controller
             }
 
             $user->forceDelete();
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User permanently deleted!',
+                    'counts' => [
+                        'total' => User::withTrashed()->count(),
+                        'active' => User::where('status', true)->count(),
+                        'inactive' => User::where('status', false)->count(),
+                        'deleted' => User::onlyTrashed()->count(),
+                    ],
+                ]);
+            }
 
             return redirect()
                 ->route('admin.users.index')
@@ -268,6 +306,18 @@ class UserController extends Controller
     {
         try {
             $user = User::withTrashed()->findOrFail($id);
+
+            if ($user->id === Auth::id()) {
+                if (request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You cannot change your own status!',
+                    ], 403);
+                }
+
+                return back()->with('error', 'You cannot change your own status!');
+            }
+
             $user->status = !$user->status;
             $user->save();
 
@@ -278,6 +328,12 @@ class UserController extends Controller
                     'success' => true,
                     'message' => "User marked as {$status} successfully!",
                     'status' => $user->status,
+                    'counts' => [
+                        'total' => User::withTrashed()->count(),
+                        'active' => User::where('status', true)->count(),
+                        'inactive' => User::where('status', false)->count(),
+                        'deleted' => User::onlyTrashed()->count(),
+                    ],
                 ]);
             }
 

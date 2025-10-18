@@ -20,6 +20,8 @@
     <!-- DataTables CSS (for table management) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <!-- Custom Admin CSS -->
     {{-- @vite(['resources/css/app.css']) --}}
 
@@ -125,6 +127,8 @@
 
     <!-- Chart.js (for dashboard charts) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script>
         // Initialize DataTables
