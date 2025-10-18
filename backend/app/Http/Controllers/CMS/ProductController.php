@@ -15,37 +15,30 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Product::with('category');
+            $baseQuery = $this->buildBaseProductQuery($request);
 
-            if ($request->filled('search')) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            }
+            $totalProducts = (clone $baseQuery)->count();
+            $activeProducts = (clone $baseQuery)->where('status', true)->count();
+            $inactiveProducts = (clone $baseQuery)->where('status', false)->count();
+            $hotProducts = (clone $baseQuery)->where('is_hot', true)->count();
 
-            if ($request->filled('category_id')) {
-                $query->where('category_id', $request->category_id);
-            }
+            $listingQuery = clone $baseQuery;
 
-            if ($request->has('status') && $request->status !== '') {
-                $query->where('status', (bool) $request->status);
-            }
-
-            if ($request->has('is_hot') && $request->is_hot !== '') {
-                $query->where('is_hot', (bool) $request->is_hot);
-            }
-
-            $sortBy = $request->get('sort_by', 'updated_at');
+            $sortBy = $request->get('sort_by', 'id');
             $sortOrder = $request->get('sort_order', 'desc');
 
-            $allowedSortFields = ['id', 'name', 'created_at', 'updated_at', 'category_id'];
+            $allowedSortFields = ['id', 'name', 'created_at', 'updated_at'];
             if (!in_array($sortBy, $allowedSortFields)) {
-                $sortBy = 'updated_at';
+                $sortBy = 'id';
             }
 
-            $query->orderBy($sortBy, $sortOrder);
+            if ($request->get('sort_by') === 'category_id') {
+                $listingQuery->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                    ->select('products.*', 'categories.name as category_name')
+                    ->orderBy('categories.name', $sortOrder);
+            } else {
+                $listingQuery->orderBy($sortBy, $sortOrder);
+            }
 
             $perPage = $request->get('per_page', 15);
 
@@ -54,16 +47,11 @@ class ProductController extends Controller
                 $perPage = 15;
             }
 
-            $products = $query->paginate($perPage)->withQueryString();
+            $products = $listingQuery->paginate($perPage)->withQueryString();
 
             $categories = Category::select('id', 'name')
                 ->orderBy('name')
                 ->get();
-
-            $totalProducts = Product::count();
-            $activeProducts = Product::where('status', true)->count();
-            $inactiveProducts = Product::where('status', false)->count();
-            $hotProducts = Product::where('is_hot', true)->count();
 
             return view('admin.products.index', compact('products', 'categories', 'totalProducts', 'activeProducts', 'inactiveProducts', 'hotProducts'));
         } catch (\Exception $e) {
@@ -109,7 +97,6 @@ class ProductController extends Controller
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
 
-            // Handle specifications properly
             if ($request->has('specifications') && is_array($request->specifications)) {
                 $specs = [];
                 foreach ($request->specifications as $spec) {
@@ -206,7 +193,6 @@ class ProductController extends Controller
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
 
-            // Handle specifications properly
             if ($request->has('specifications') && is_array($request->specifications)) {
                 $specs = [];
                 foreach ($request->specifications as $spec) {
@@ -216,7 +202,6 @@ class ProductController extends Controller
                 }
                 $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
             } else {
-                // If no specifications provided, set to null
                 $data['specifications'] = null;
             }
 
@@ -271,12 +256,19 @@ class ProductController extends Controller
 
             $status = $product->is_hot ? 'hot' : 'normal';
 
-            // Check if it's an AJAX request
             if (request()->ajax()) {
+                $base = $this->buildBaseProductQuery(request());
+
                 return response()->json([
                     'success' => true,
                     'message' => "Product marked as {$status} successfully!",
                     'is_hot' => $product->is_hot,
+                    'counts' => [
+                        'total' => (clone $base)->count(),
+                        'active' => (clone $base)->where('status', true)->count(),
+                        'inactive' => (clone $base)->where('status', false)->count(),
+                        'hot' => (clone $base)->where('is_hot', true)->count(),
+                    ],
                 ]);
             }
 
@@ -302,12 +294,19 @@ class ProductController extends Controller
 
             $status = $product->status ? 'active' : 'inactive';
 
-            // Check if it's an AJAX request
             if (request()->ajax()) {
+                $base = $this->buildBaseProductQuery(request());
+
                 return response()->json([
                     'success' => true,
                     'message' => "Product marked as {$status} successfully!",
                     'status' => $product->status,
+                    'counts' => [
+                        'total' => (clone $base)->count(),
+                        'active' => (clone $base)->where('status', true)->count(),
+                        'inactive' => (clone $base)->where('status', false)->count(),
+                        'hot' => (clone $base)->where('is_hot', true)->count(),
+                    ],
                 ]);
             }
 
@@ -341,7 +340,6 @@ class ProductController extends Controller
         try {
             $product = Product::withTrashed()->findOrFail($id);
 
-            // Delete image
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -354,5 +352,32 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to permanently delete product: ' . $e->getMessage());
         }
+    }
+
+    protected function buildBaseProductQuery(Request $request)
+    {
+        $query = Product::with('category')->withTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', (bool) $request->status);
+        }
+
+        if ($request->filled('is_hot')) {
+            $query->where('is_hot', (bool) $request->is_hot);
+        }
+
+        return $query;
     }
 }

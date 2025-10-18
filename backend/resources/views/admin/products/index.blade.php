@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-box me-2"></i>Product Management : {{ $products->total() }}
+                    <i class="fas fa-box me-2"></i>Product Management : {{ $products->total() ?? 0 }}
                 </h1>
             </div>
             <div>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Total Products</h6>
-                            <h4 class="mb-0">{{ $totalProducts ?? 0 }}</h4>
+                            <h4 class="mb-0" id="totalProductsCount">{{ $totalProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0">{{ $activeProducts ?? 0 }}</h4>
+                            <h4 class="mb-0" id="activeProductsCount">{{ $activeProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0">{{ $inactiveProducts ?? 0 }}</h4>
+                            <h4 class="mb-0" id="inactiveProductsCount">{{ $inactiveProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Hot Products</h6>
-                            <h4 class="mb-0">{{ $hotProducts ?? 0 }}</h4>
+                            <h4 class="mb-0" id="hotProductsCount">{{ $hotProducts ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -99,6 +99,8 @@
     <script>
         function toggleStatus(productId) {
             if (confirm('Are you sure you want to change the status of this product?')) {
+                const row = $('#product-' + productId);
+
                 $.ajax({
                     url: '/admin/products/' + productId + '/toggle-status',
                     method: 'POST',
@@ -113,7 +115,21 @@
                             } else {
                                 alert(response.message);
                             }
-                            location.reload();
+
+                            // Update checkbox state in the row
+                            if (response.status === 1 || response.status === true) {
+                                row.find("input[type='checkbox']").prop('checked', true);
+                            } else {
+                                row.find("input[type='checkbox']").prop('checked', false);
+                            }
+
+                            // Update counts from response
+                            if (response.counts) {
+                                $('#totalProductsCount').text(response.counts.total);
+                                $('#activeProductsCount').text(response.counts.active);
+                                $('#inactiveProductsCount').text(response.counts.inactive);
+                                $('#hotProductsCount').text(response.counts.hot);
+                            }
                         } else {
                             if (typeof toastr !== 'undefined') {
                                 toastr.error(response.message);
@@ -150,12 +166,21 @@
                             alert(response.message);
                         }
 
+                        // Update button appearance
                         if (response.is_hot) {
                             $(button).removeClass('btn-outline-warning').addClass('btn-warning');
                             $(button).html('<i class="fas fa-fire"></i>');
                         } else {
                             $(button).removeClass('btn-warning').addClass('btn-outline-warning');
                             $(button).html('<i class="fas fa-fire"></i>');
+                        }
+
+                        // Update counts from response
+                        if (response.counts) {
+                            $('#totalProductsCount').text(response.counts.total);
+                            $('#activeProductsCount').text(response.counts.active);
+                            $('#inactiveProductsCount').text(response.counts.inactive);
+                            $('#hotProductsCount').text(response.counts.hot);
                         }
                     } else {
                         if (typeof toastr !== 'undefined') {

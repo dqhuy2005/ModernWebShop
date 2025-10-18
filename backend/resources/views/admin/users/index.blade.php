@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-users me-2"></i>User Management : {{ $users->total() }}
+                    <i class="fas fa-users me-2"></i>User Management : {{ $users->total() ?? 0 }}
                 </h1>
             </div>
             <div>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Total Users</h6>
-                            <h4 class="mb-0" id="totalUsersCount">{{ $totalUsers }}</h4>
+                            <h4 class="mb-0" id="totalUsersCount">{{ $totalUsers ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0" id="activeUsersCount">{{ $activeUsers }}</h4>
+                            <h4 class="mb-0" id="activeUsersCount">{{ $activeUsers ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0" id="inactiveUsersCount">{{ $inactiveUsers }}</h4>
+                            <h4 class="mb-0" id="inactiveUsersCount">{{ $inactiveUsers ?? 0 }}</h4>
                         </div>
                     </div>
                 </div>
