@@ -137,16 +137,9 @@ class ProductController extends Controller
     public function show($id)
     {
         try {
-            $product = Product::with(['category', 'carts', 'orderDetails'])
-                ->findOrFail($id);
+            $product = Product::with('category')->findOrFail($id);
 
-            $relatedProducts = Product::where('category_id', $product->category_id)
-                ->where('id', '!=', $product->id)
-                ->where('status', 1)
-                ->limit(4)
-                ->get();
-
-            return view('admin.products.show', compact('product', 'relatedProducts'));
+            return view('admin.products.show', compact('product'));
         } catch (\Exception $e) {
             return back()->with('error', 'Product not found: ' . $e->getMessage());
         }
@@ -356,7 +349,7 @@ class ProductController extends Controller
 
     protected function buildBaseProductQuery(Request $request)
     {
-        $query = Product::with('category')->withTrashed();
+        $query = Product::with('category');
 
         if ($request->filled('search')) {
             $search = $request->search;

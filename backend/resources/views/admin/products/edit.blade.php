@@ -81,13 +81,13 @@
                                             <div class="col-5">
                                                 <input type="text" class="form-control"
                                                     name="specifications[{{ $specCount }}][key]"
-                                                    value="{{ is_array($value) ? ($value['key'] ?? $key) : $key }}"
+                                                    value="{{ is_array($value) ? $value['key'] ?? $key : $key }}"
                                                     placeholder="Key">
                                             </div>
                                             <div class="col-6">
                                                 <input type="text" class="form-control"
                                                     name="specifications[{{ $specCount }}][value]"
-                                                    value="{{ is_array($value) ? ($value['value'] ?? '') : $value }}"
+                                                    value="{{ is_array($value) ? $value['value'] ?? '' : $value }}"
                                                     placeholder="Value">
                                             </div>
                                             <div class="col-1">
@@ -167,9 +167,6 @@
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="is_hot"
                                     name="is_hot" value="1" {{ old('is_hot', $product->is_hot) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="is_hot">
-                                    <i class="fas fa-fire text-warning me-1"></i>Mark as Hot
-                                </label>
                             </div>
                         </div>
                     </div>
@@ -206,26 +203,24 @@
                         </div>
 
                         <div id="image-preview" class="text-center d-none">
-                            <label class="form-label d-block">New Image Preview</label>
-                            <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
-                            <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
-                                <i class="fas fa-times me-1"></i>Remove
-                            </button>
+                            <div class="d-flex flex-column align-items-center">
+                                <label class="form-label d-block">New Image Preview</label>
+                                <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
+                                <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
+                                    <i class="fas fa-times me-1"></i>Remove
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Update Product
-                            </button>
-                            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </a>
-                        </div>
-                    </div>
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Update
+                    </button>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
                 </div>
             </div>
         </div>

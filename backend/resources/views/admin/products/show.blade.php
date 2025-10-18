@@ -123,6 +123,22 @@
                                     </td>
                                 </tr>
                             @endif
+                            <tr>
+                                <td class="fw-bold">Created At:</td>
+                                <td>
+                                    <i class="fas fa-calendar-plus text-success me-2"></i>
+                                    <strong>{{ $product->created_at->format('d M Y, H:i') }}</strong>
+                                    <span class="text-muted ms-2">({{ $product->created_at->diffForHumans() }})</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Last Updated:</td>
+                                <td>
+                                    <i class="fas fa-calendar-edit text-warning me-2"></i>
+                                    <strong>{{ $product->updated_at->format('d M Y, H:i') }}</strong>
+                                    <span class="text-muted ms-2">({{ $product->updated_at->diffForHumans() }})</span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -176,44 +192,6 @@
                     </div>
                 </div>
             @endif
-
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-clock me-2"></i>Timestamps
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="me-3">
-                                    <i class="fas fa-plus-circle fa-2x text-success"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">Created At</small>
-                                    <strong>{{ $product->created_at->format('d M Y, H:i') }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ $product->created_at->diffForHumans() }}</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="me-3">
-                                    <i class="fas fa-edit fa-2x text-warning"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block">Last Updated</small>
-                                    <strong>{{ $product->updated_at->format('d M Y, H:i') }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ $product->updated_at->diffForHumans() }}</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="col-lg-4">
@@ -235,150 +213,12 @@
                     @endif
                 </div>
             </div>
-
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-bolt me-2"></i>Quick Actions
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-{{ $product->status ? 'success' : 'secondary' }}"
-                            onclick="toggleStatus({{ $product->id }})">
-                            <i class="fas fa-toggle-{{ $product->status ? 'on' : 'off' }} me-2"></i>
-                            {{ $product->status ? 'Active' : 'Inactive' }}
-                        </button>
-
-                        <button type="button" class="btn btn-{{ $product->is_hot ? 'warning' : 'outline-warning' }}"
-                            onclick="toggleHot({{ $product->id }}, this)">
-                            <i class="fas fa-fire me-2"></i>
-                            {{ $product->is_hot ? 'Hot Product' : 'Mark as Hot' }}
-                        </button>
-
-                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary">
-                            <i class="fas fa-edit me-2"></i>Edit Product
-                        </a>
-
-                        <button type="button" class="btn btn-info" onclick="duplicateProduct({{ $product->id }})">
-                            <i class="fas fa-copy me-2"></i>Duplicate
-                        </button>
-
-                        <button type="button" class="btn btn-danger" onclick="deleteProduct({{ $product->id }})">
-                            <i class="fas fa-trash me-2"></i>Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-chart-bar me-2"></i>Statistics
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                        <div>
-                            <i class="fas fa-shopping-cart text-primary me-2"></i>
-                            <span>In Carts</span>
-                        </div>
-                        <strong>{{ $product->carts->count() }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                        <div>
-                            <i class="fas fa-receipt text-success me-2"></i>
-                            <span>Orders</span>
-                        </div>
-                        <strong>{{ $product->orderDetails->count() }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <i class="fas fa-eye text-info me-2"></i>
-                            <span>Total Views</span>
-                        </div>
-                        <strong>{{ number_format($product->views ?? 0) }}</strong>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
     <script>
-        // Toggle Status
-        function toggleStatus(productId) {
-            if (confirm('Are you sure you want to change the status of this product?')) {
-                $.ajax({
-                    url: '/admin/products/' + productId + '/toggle-status',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Check if toastr is defined
-                            if (typeof toastr !== 'undefined') {
-                                toastr.success(response.message);
-                            } else {
-                                alert(response.message);
-                            }
-                            location.reload();
-                        } else {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.error(response.message);
-                            } else {
-                                alert(response.message);
-                            }
-                        }
-                    },
-                    error: function(xhr) {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error('Failed to update status!');
-                        } else {
-                            alert('Failed to update status!');
-                        }
-                    }
-                });
-            }
-        }
-
-        // Toggle Hot Status
-        function toggleHot(productId, button) {
-            $.ajax({
-                url: '/admin/products/' + productId + '/toggle-hot',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Check if toastr is defined
-                        if (typeof toastr !== 'undefined') {
-                            toastr.success(response.message);
-                        } else {
-                            alert(response.message);
-                        }
-                        location.reload();
-                    } else {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error(response.message);
-                        } else {
-                            alert(response.message);
-                        }
-                    }
-                },
-                error: function(xhr) {
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error('Failed to toggle hot status!');
-                    } else {
-                        alert('Failed to toggle hot status!');
-                    }
-                }
-            });
-        }
-
         // Delete Product
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
@@ -400,15 +240,6 @@
 
                 document.body.appendChild(form);
                 form.submit();
-            }
-        }
-
-        // Duplicate Product
-        function duplicateProduct(productId) {
-            if (typeof toastr !== 'undefined') {
-                toastr.info('Duplicate feature coming soon!');
-            } else {
-                alert('Duplicate feature coming soon!');
             }
         }
     </script>

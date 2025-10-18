@@ -106,9 +106,6 @@
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="is_hot" name="is_hot"
                                     value="1" {{ old('is_hot') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="is_hot">
-                                    Mark as Hot
-                                </label>
                             </div>
                         </div>
 
