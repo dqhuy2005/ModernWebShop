@@ -9,7 +9,6 @@
                 <h1 class="h3 mb-0">
                     <i class="fas fa-plus-circle me-2"></i>Create New Order
                 </h1>
-                <p class="text-muted mb-0">Add a new order to the system</p>
             </div>
             <div>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">

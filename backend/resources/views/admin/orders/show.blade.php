@@ -14,7 +14,7 @@
                 </span>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-warning">
+                <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-warning {{ $order->status === 'cancelled' ? 'd-none' : '' }}">
                     <i class="fas fa-edit me-1"></i>Edit
                 </a>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">
@@ -25,7 +25,6 @@
     </div>
 
     <div class="row">
-        <!-- Order Information -->
         <div class="col-lg-8">
             <div class="card mb-4">
                 <div class="card-header">
@@ -63,7 +62,6 @@
                 </div>
             </div>
 
-            <!-- Products Table -->
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Products</h5>
@@ -118,7 +116,6 @@
             </div>
         </div>
 
-        <!-- Order Summary -->
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header bg-light">

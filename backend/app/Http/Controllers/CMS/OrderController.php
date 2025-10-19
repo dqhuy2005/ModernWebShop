@@ -30,7 +30,7 @@ class OrderController extends Controller
                 $warnings[] = [
                     'type' => 'warning',
                     'message' => 'Số lượng sản phẩm không khớp! Đã lưu: ' . $order->total_items .
-                                ', Tính toán: ' . $calculatedItems
+                        ', Tính toán: ' . $calculatedItems
                 ];
             }
 
@@ -72,10 +72,10 @@ class OrderController extends Controller
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('id', 'like', "%{$search}%")
-                      ->orWhereHas('user', function ($userQuery) use ($search) {
-                          $userQuery->where('fullname', 'like', "%{$search}%")
-                                   ->orWhere('email', 'like', "%{$search}%");
-                      });
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('fullname', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
                 });
             }
 
@@ -86,7 +86,6 @@ class OrderController extends Controller
             $perPage = $request->get('per_page', 15);
             $orders = $query->paginate($perPage)->withQueryString();
 
-            // Calculate all statistics
             $totalOrders = Order::count();
             $pendingOrders = Order::where('status', 'pending')->count();
             $confirmedOrders = Order::where('status', 'confirmed')->count();
@@ -95,7 +94,6 @@ class OrderController extends Controller
             $completedOrders = Order::where('status', 'completed')->count();
             $cancelledOrders = Order::where('status', 'cancelled')->count();
 
-            // Check if AJAX request
             if ($request->ajax()) {
                 return view('admin.orders.table', compact(
                     'orders',
@@ -300,40 +298,40 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
-            $order->delete();
-
-            // Calculate statistics for AJAX response
-            $statistics = [
-                'total' => Order::count(),
-                'pending' => Order::where('status', 'pending')->count(),
-                'confirmed' => Order::where('status', 'confirmed')->count(),
-                'processing' => Order::where('status', 'processing')->count(),
-                'shipping' => Order::where('status', 'shipping')->count(),
-                'completed' => Order::where('status', 'completed')->count(),
-                'cancelled' => Order::where('status', 'cancelled')->count(),
-            ];
+            $order->status = Order::STATUS_CANCELLED;
+            $order->update();
 
             if ($request->ajax()) {
+                $statistics = [
+                    'total' => Order::count(),
+                    'pending' => Order::where('status', 'pending')->count(),
+                    'confirmed' => Order::where('status', 'confirmed')->count(),
+                    'processing' => Order::where('status', 'processing')->count(),
+                    'shipping' => Order::where('status', 'shipping')->count(),
+                    'completed' => Order::where('status', 'completed')->count(),
+                    'cancelled' => Order::where('status', 'cancelled')->count(),
+                ];
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'Order deleted successfully!',
+                    'message' => 'Order cancelled successfully!',
                     'counts' => $statistics
                 ]);
             }
 
             return redirect()
                 ->route('admin.orders.index')
-                ->with('success', 'Order deleted successfully!');
+                ->with('success', 'Order cancelled successfully!');
 
         } catch (\Exception $e) {
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to delete order: ' . $e->getMessage()
+                    'message' => 'Failed to cancel order: ' . $e->getMessage()
                 ], 500);
             }
 
-            return back()->with('error', 'Failed to delete order: ' . $e->getMessage());
+            return back()->with('error', 'Failed to cancel order: ' . $e->getMessage());
         }
     }
 
@@ -343,18 +341,17 @@ class OrderController extends Controller
             $order = Order::withTrashed()->findOrFail($id);
             $order->restore();
 
-            // Calculate statistics for AJAX response
-            $statistics = [
-                'total' => Order::count(),
-                'pending' => Order::where('status', 'pending')->count(),
-                'confirmed' => Order::where('status', 'confirmed')->count(),
-                'processing' => Order::where('status', 'processing')->count(),
-                'shipping' => Order::where('status', 'shipping')->count(),
-                'completed' => Order::where('status', 'completed')->count(),
-                'cancelled' => Order::where('status', 'cancelled')->count(),
-            ];
-
             if ($request->ajax()) {
+                $statistics = [
+                    'total' => Order::count(),
+                    'pending' => Order::where('status', 'pending')->count(),
+                    'confirmed' => Order::where('status', 'confirmed')->count(),
+                    'processing' => Order::where('status', 'processing')->count(),
+                    'shipping' => Order::where('status', 'shipping')->count(),
+                    'completed' => Order::where('status', 'completed')->count(),
+                    'cancelled' => Order::where('status', 'cancelled')->count(),
+                ];
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Order restored successfully!',
