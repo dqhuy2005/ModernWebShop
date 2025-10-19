@@ -33,6 +33,8 @@ class ProductSeeder extends Seeder
                     'ports' => ['USB-C', 'USB 3.2', 'HDMI 2.1', 'RJ45', '3.5mm Audio'],
                     'warranty' => '2 years',
                 ]),
+                'price' => 45900000, // 45,900,000 VND
+                'currency' => 'VND',
                 'image' => 'asus-rog-strix-g15.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -56,6 +58,8 @@ class ProductSeeder extends Seeder
                     'ports' => ['Thunderbolt 4', 'USB 3.2', 'HDMI 2.1', 'SD Card Reader'],
                     'warranty' => '3 years',
                 ]),
+                'price' => 89900000, // 89,900,000 VND
+                'currency' => 'VND',
                 'image' => 'msi-raider-ge78.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -79,6 +83,8 @@ class ProductSeeder extends Seeder
                     'ports' => ['USB-C', 'USB 3.2', 'HDMI 2.1', 'Ethernet'],
                     'warranty' => '2 years',
                 ]),
+                'price' => 64500000, // 64,500,000 VND
+                'currency' => 'VND',
                 'image' => 'lenovo-legion-pro-7i.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -105,6 +111,8 @@ class ProductSeeder extends Seeder
                     'warranty' => '3 years',
                     'security' => ['TPM 2.0', 'Fingerprint Reader', 'IR Camera'],
                 ]),
+                'price' => 28900000, // 28,900,000 VND
+                'currency' => 'VND',
                 'image' => 'dell-latitude-5540.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -129,6 +137,8 @@ class ProductSeeder extends Seeder
                     'warranty' => '3 years',
                     'security' => ['TPM 2.0', 'Fingerprint', 'IR Camera', 'Privacy Screen'],
                 ]),
+                'price' => 42900000, // 42,900,000 VND
+                'currency' => 'VND',
                 'image' => 'hp-elitebook-840.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -154,6 +164,8 @@ class ProductSeeder extends Seeder
                     'ports' => ['USB-C Thunderbolt 4 x2'],
                     'warranty' => '1 year',
                 ]),
+                'price' => 36900000, // 36,900,000 VND
+                'currency' => 'VND',
                 'image' => 'dell-xps-13-plus.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -177,6 +189,8 @@ class ProductSeeder extends Seeder
                     'ports' => ['Thunderbolt 4 x2', '3.5mm Audio', 'MagSafe 3'],
                     'warranty' => '1 year',
                 ]),
+                'price' => 32900000, // 32,900,000 VND
+                'currency' => 'VND',
                 'image' => 'macbook-air-m2.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -202,6 +216,8 @@ class ProductSeeder extends Seeder
                     'memory_support' => 'DDR5-5600, DDR4-3200',
                     'pcie' => 'PCIe 5.0',
                 ]),
+                'price' => 18900000, // 18,900,000 VND
+                'currency' => 'VND',
                 'image' => 'intel-i9-14900k.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -225,6 +241,8 @@ class ProductSeeder extends Seeder
                     'memory_support' => 'DDR5-5200',
                     'pcie' => 'PCIe 5.0',
                 ]),
+                'price' => 19500000, // 19,500,000 VND
+                'currency' => 'VND',
                 'image' => 'amd-ryzen-9-7950x.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -248,6 +266,8 @@ class ProductSeeder extends Seeder
                     'memory_support' => 'DDR5-5600, DDR4-3200',
                     'pcie' => 'PCIe 5.0',
                 ]),
+                'price' => 8900000, // 8,900,000 VND
+                'currency' => 'VND',
                 'image' => 'intel-i5-13600k.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -274,6 +294,8 @@ class ProductSeeder extends Seeder
                     'outputs' => ['HDMI 2.1', 'DisplayPort 1.4a x3'],
                     'features' => ['Ray Tracing', 'DLSS 3', 'AV1 Encode/Decode'],
                 ]),
+                'price' => 52900000, // 52,900,000 VND
+                'currency' => 'VND',
                 'image' => 'rtx-4090.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -298,6 +320,8 @@ class ProductSeeder extends Seeder
                     'outputs' => ['HDMI 2.1', 'DisplayPort 2.1 x2'],
                     'features' => ['Ray Tracing', 'FSR 3', 'AV1 Encode/Decode'],
                 ]),
+                'price' => 28900000, // 28,900,000 VND
+                'currency' => 'VND',
                 'image' => 'rx-7900-xtx.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -322,6 +346,8 @@ class ProductSeeder extends Seeder
                     'outputs' => ['HDMI 2.1', 'DisplayPort 1.4a x3'],
                     'features' => ['Ray Tracing', 'DLSS 3', 'Reflex'],
                 ]),
+                'price' => 22900000, // 22,900,000 VND
+                'currency' => 'VND',
                 'image' => 'rtx-4070-ti.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -347,6 +373,8 @@ class ProductSeeder extends Seeder
                     'networking' => ['2.5Gb Ethernet', 'WiFi 6E', 'Bluetooth 5.3'],
                     'audio' => 'SupremeFX 7.1 Surround Sound',
                 ]),
+                'price' => 18900000, // 18,900,000 VND
+                'currency' => 'VND',
                 'image' => 'asus-rog-z790-hero.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -370,6 +398,8 @@ class ProductSeeder extends Seeder
                     'networking' => ['2.5Gb Ethernet', 'WiFi 6E', 'Bluetooth 5.3'],
                     'audio' => 'Realtek ALC4080',
                 ]),
+                'price' => 7900000, // 7,900,000 VND
+                'currency' => 'VND',
                 'image' => 'msi-b650-tomahawk.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -395,6 +425,8 @@ class ProductSeeder extends Seeder
                     'xmp' => 'Intel XMP 3.0',
                     'expo' => 'AMD EXPO',
                 ]),
+                'price' => 5900000, // 5,900,000 VND
+                'currency' => 'VND',
                 'image' => 'corsair-dominator-ddr5.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -418,6 +450,8 @@ class ProductSeeder extends Seeder
                     'xmp' => 'Intel XMP 3.0',
                     'expo' => 'AMD EXPO',
                 ]),
+                'price' => 11900000, // 11,900,000 VND
+                'currency' => 'VND',
                 'image' => 'gskill-trident-z5.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -445,6 +479,8 @@ class ProductSeeder extends Seeder
                     'warranty' => '5 years',
                     'tbw' => '1200 TB',
                 ]),
+                'price' => 7900000, // 7,900,000 VND
+                'currency' => 'VND',
                 'image' => 'samsung-990-pro.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -471,6 +507,8 @@ class ProductSeeder extends Seeder
                     'warranty' => '5 years',
                     'tbw' => '600 TB',
                 ]),
+                'price' => 3900000, // 3,900,000 VND
+                'currency' => 'VND',
                 'image' => 'wd-black-sn850x.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -497,6 +535,8 @@ class ProductSeeder extends Seeder
                     'software' => 'Corsair iCUE',
                     'warranty' => '2 years',
                 ]),
+                'price' => 3900000, // 3,900,000 VND
+                'currency' => 'VND',
                 'image' => 'corsair-k70-rgb.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -521,6 +561,8 @@ class ProductSeeder extends Seeder
                     'software' => 'Logitech G HUB',
                     'warranty' => '2 years',
                 ]),
+                'price' => 5900000, // 5,900,000 VND
+                'currency' => 'VND',
                 'image' => 'logitech-g915-tkl.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -546,6 +588,8 @@ class ProductSeeder extends Seeder
                     'feet' => 'PTFE',
                     'warranty' => '2 years',
                 ]),
+                'price' => 3500000, // 3,500,000 VND
+                'currency' => 'VND',
                 'image' => 'logitech-gpro-superlight.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -569,6 +613,8 @@ class ProductSeeder extends Seeder
                     'switches' => 'Razer Optical Gen-3',
                     'warranty' => '2 years',
                 ]),
+                'price' => 3900000, // 3,900,000 VND
+                'currency' => 'VND',
                 'image' => 'razer-deathadder-v3.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -595,6 +641,8 @@ class ProductSeeder extends Seeder
                     'speakers' => 'No',
                     'warranty' => '3 years',
                 ]),
+                'price' => 26900000, // 26,900,000 VND
+                'currency' => 'VND',
                 'image' => 'lg-27gr95qe.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -619,6 +667,8 @@ class ProductSeeder extends Seeder
                     'stand' => 'Height/Tilt/Swivel/Pivot',
                     'warranty' => '3 years',
                 ]),
+                'price' => 29900000, // 29,900,000 VND
+                'currency' => 'VND',
                 'image' => 'asus-pg27aqdm.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -648,6 +698,8 @@ class ProductSeeder extends Seeder
                     ],
                     'warranty' => '10 years',
                 ]),
+                'price' => 5900000, // 5,900,000 VND
+                'currency' => 'VND',
                 'image' => 'corsair-rm1000x.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -674,6 +726,8 @@ class ProductSeeder extends Seeder
                     'usb' => ['USB 3.2 Gen 2 Type-C', 'USB 3.0 x2'],
                     'dimensions' => '476 x 272 x 466mm',
                 ]),
+                'price' => 4900000, // 4,900,000 VND
+                'currency' => 'VND',
                 'image' => 'lian-li-o11-evo.jpg',
                 'status' => true,
                 'parent_id' => null,
@@ -698,6 +752,8 @@ class ProductSeeder extends Seeder
                     'socket_support' => ['Intel LGA 1700/1200/115x', 'AMD AM5/AM4'],
                     'warranty' => '6 years',
                 ]),
+                'price' => 6900000, // 6,900,000 VND
+                'currency' => 'VND',
                 'image' => 'nzxt-kraken-x73.jpg',
                 'status' => true,
                 'parent_id' => null,

@@ -1,213 +1,143 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Chi tiết đơn hàng #' . $order->id . ' - Admin Panel')
+@section('title', 'Order #' . $order->id . ' - Admin Panel')
 
 @section('content')
     <div class="page-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-file-invoice me-2"></i>Chi tiết đơn hàng #{{ $order->id }}
+                    <i class="fas fa-file-invoice me-2"></i>Order #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
                 </h1>
+                <span class="badge bg-{{ $order->status_badge_color }} mt-2 px-3 py-2">
+                    {{ $order->status_label }}
+                </span>
             </div>
-            <div>
+            <div class="d-flex gap-2">
+                <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-warning">
+                    <i class="fas fa-edit me-1"></i>Edit
+                </a>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    <i class="fas fa-arrow-left me-1"></i>Back
                 </a>
             </div>
         </div>
     </div>
 
-    {{-- Warning Messages --}}
-    @if (isset($warnings) && count($warnings) > 0)
-        @foreach ($warnings as $warning)
-            <div class="alert alert-{{ $warning['type'] }} alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                <strong>{{ $warning['message'] }}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endforeach
-    @endif
-
     <div class="row">
-        {{-- Thông tin đơn hàng --}}
+        <!-- Order Information -->
         <div class="col-lg-8">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-box me-2"></i>Thông tin đơn hàng
-                    </h5>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Information</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <p class="mb-1 text-muted">
-                                <i class="fas fa-hashtag me-2"></i>Mã đơn hàng:
-                            </p>
-                            <p class="fw-bold">#ORD-{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Customer</label>
+                            <div class="fw-bold">{{ $order->user->fullname }}</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <p class="mb-1 text-muted">
-                                <i class="fas fa-info-circle me-2"></i>Trạng thái:
-                            </p>
-                            <p>
-                                <span class="badge bg-{{ $order->status_badge_color }} fs-6 px-3 py-2">
-                                    {{ $order->status_label }}
-                                </span>
-                            </p>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Email</label>
+                            <div class="fw-bold">{{ $order->user->email }}</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <p class="mb-1 text-muted">
-                                <i class="fas fa-calendar me-2"></i>Ngày tạo:
-                            </p>
-                            <p class="fw-bold">{{ $order->created_at->format('d/m/Y H:i') }}</p>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Phone</label>
+                            <div class="fw-bold">{{ $order->user->phone ?? 'N/A' }}</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <p class="mb-1 text-muted">
-                                <i class="fas fa-user me-2"></i>Người tạo:
-                            </p>
-                            <p class="fw-bold">{{ $order->user->name ?? 'N/A' }}</p>
-                            @if ($order->user && $order->user->email)
-                                <p class="text-muted small">{{ $order->user->email }}</p>
-                            @endif
+                        <div class="col-md-6">
+                            <label class="text-muted small">Order Date</label>
+                            <div class="fw-bold">{{ $order->created_at->format('d/m/Y H:i') }}</div>
                         </div>
-                        @if ($order->address)
-                            <div class="col-12 mb-3">
-                                <p class="mb-1 text-muted">
-                                    <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ giao hàng:
-                                </p>
-                                <p class="fw-bold">{{ $order->address }}</p>
-                            </div>
-                        @endif
+                        <div class="col-12">
+                            <label class="text-muted small">Delivery Address</label>
+                            <div class="fw-bold">{{ $order->address ?? 'No address' }}</div>
+                        </div>
                         @if ($order->note)
                             <div class="col-12">
-                                <p class="mb-1 text-muted">
-                                    <i class="fas fa-sticky-note me-2"></i>Ghi chú:
-                                </p>
-                                <p class="fst-italic">{{ $order->note }}</p>
+                                <label class="text-muted small">Note</label>
+                                <div class="text-muted fst-italic">{{ $order->note }}</div>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Danh sách sản phẩm --}}
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-shopping-cart me-2"></i>Danh sách sản phẩm
-                    </h5>
+            <!-- Products Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Products</h5>
                 </div>
                 <div class="card-body p-0">
-                    @if ($order->orderDetails && $order->orderDetails->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th>Product</th>
+                                    <th width="10%" class="text-center">Qty</th>
+                                    <th width="15%" class="text-end">Unit Price</th>
+                                    <th width="15%" class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($order->orderDetails as $index => $detail)
                                     <tr>
-                                        <th width="5%" class="text-center">#</th>
-                                        <th width="35%">Sản phẩm</th>
-                                        <th width="20%" class="text-end">Đơn giá</th>
-                                        <th width="15%" class="text-center">Số lượng</th>
-                                        <th width="25%" class="text-end">Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($order->orderDetails as $index => $item)
-                                        <tr>
-                                            <td class="text-center align-middle">{{ $index + 1 }}</td>
-                                            <td class="align-middle">
-                                                <div class="d-flex align-items-center">
-                                                    @if ($item->product && $item->product->image)
-                                                        <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                            alt="{{ $item->product_name }}" class="rounded me-3"
-                                                            style="width: 50px; height: 50px; object-fit: cover;">
-                                                    @else
-                                                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
-                                                            style="width: 50px; height: 50px;">
-                                                            <i class="fas fa-image text-muted"></i>
-                                                        </div>
-                                                    @endif
-                                                    <div>
-                                                        <p class="mb-0 fw-bold">{{ $item->product_name }}</p>
-                                                        @if ($item->product_specifications)
-                                                            <small class="text-muted">
-                                                                @foreach ($item->product_specifications as $key => $value)
-                                                                    <span class="badge bg-secondary me-1">{{ $key }}:
-                                                                        {{ $value }}</span>
-                                                                @endforeach
-                                                            </small>
-                                                        @endif
+                                        <td class="align-middle">{{ $index + 1 }}</td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                @if ($detail->product && $detail->product->image)
+                                                    <img src="{{ asset('storage/' . $detail->product->image) }}"
+                                                        alt="{{ $detail->product_name }}" class="rounded me-2"
+                                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                                @else
+                                                    <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center"
+                                                        style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-image text-muted"></i>
                                                     </div>
+                                                @endif
+                                                <div>
+                                                    <div class="fw-bold">{{ $detail->product_name }}</div>
+                                                    <small class="text-muted">ID: #{{ $detail->product_id }}</small>
                                                 </div>
-                                            </td>
-                                            <td class="text-end align-middle">
-                                                <span class="text-primary fw-bold">{{ $item->formatted_unit_price }} ₫</span>
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                <span class="badge bg-light text-dark fs-6 px-3">{{ $item->quantity }}</span>
-                                            </td>
-                                            <td class="text-end align-middle">
-                                                <span class="text-success fw-bold fs-6">{{ $item->formatted_total_price }}
-                                                    ₫</span>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="p-5 text-center text-muted">
-                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                            <p class="mb-0">Đơn hàng này không có sản phẩm nào.</p>
-                        </div>
-                    @endif
+                                            </div>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge bg-primary">{{ $detail->quantity }}</span>
+                                        </td>
+                                        <td class="text-end align-middle">{{ $detail->formatted_unit_price }}</td>
+                                        <td class="text-end align-middle">
+                                            <strong class="text-success">{{ $detail->formatted_total_price }}</strong>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- Tổng kết --}}
+        <!-- Order Summary -->
         <div class="col-lg-4">
-            <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-calculator me-2"></i>Tổng kết đơn hàng
-                    </h5>
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Summary</h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Tổng số lượng:</span>
-                            <span class="fw-bold">{{ $order->total_items }} sản phẩm</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Tổng tiền hàng:</span>
-                            <span class="fw-bold text-primary">{{ $order->formatted_total_amount }}</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold">TỔNG CỘNG:</h5>
-                            <h4 class="mb-0 fw-bold text-success">{{ $order->formatted_total_amount }}</h4>
-                        </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Total Products:</span>
+                        <span class="fw-bold">{{ $order->orderDetails->count() }}</span>
                     </div>
-
-                    @if (!$isIntegrityValid)
-                        <div class="alert alert-danger mb-0">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <small>Dữ liệu đơn hàng có vấn đề! Vui lòng kiểm tra lại.</small>
-                        </div>
-                    @else
-                        <div class="alert alert-success mb-0">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <small>Dữ liệu đơn hàng hợp lệ</small>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="card-footer bg-light">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Trang này chỉ xem, không thể chỉnh sửa
-                    </small>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Total Items:</span>
+                        <span class="fw-bold">{{ $order->total_items }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">TOTAL:</h5>
+                        <h4 class="mb-0 text-success">{{ $order->formatted_total_amount }}</h4>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,19 +151,19 @@
         }
 
         .card-header {
-            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0.75rem 1rem;
         }
 
-        .table-hover tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.05);
+        .card-header h5 {
+            font-size: 1rem;
+            font-weight: 600;
         }
 
-        .badge {
-            font-weight: 500;
-        }
-
-        .shadow-sm {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        .table-sm td,
+        .table-sm th {
+            padding: 0.5rem;
         }
 
         @media (max-width: 991px) {

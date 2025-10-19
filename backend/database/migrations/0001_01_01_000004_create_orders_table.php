@@ -22,7 +22,6 @@ return new class extends Migration {
                 'shipping',     // Đang giao hàng
                 'shipped',      // Đã giao
                 'completed',    // Hoàn thành
-                'delivered',    // Đã giao (alias)
                 'cancelled',    // Đã hủy
                 'refunded'      // Đã hoàn tiền
             ])->default('pending')->index();

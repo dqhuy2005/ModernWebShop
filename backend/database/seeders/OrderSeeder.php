@@ -16,7 +16,7 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $users = User::whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))->get();
         $products = Product::all();
 
         if ($users->isEmpty() || $products->isEmpty()) {

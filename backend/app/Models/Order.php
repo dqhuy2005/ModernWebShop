@@ -73,15 +73,15 @@ class Order extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            self::STATUS_PENDING => 'Chờ xử lý',
-            self::STATUS_CONFIRMED => 'Đã xác nhận',
-            self::STATUS_PROCESSING => 'Đang xử lý',
-            self::STATUS_SHIPPING => 'Đang giao hàng',
-            self::STATUS_SHIPPED => 'Đã giao',
-            self::STATUS_COMPLETED => 'Hoàn thành',
-            self::STATUS_DELIVERED => 'Đã giao',
-            self::STATUS_CANCELLED => 'Đã hủy',
-            self::STATUS_REFUNDED => 'Đã hoàn tiền',
+            self::STATUS_PENDING => 'PENDING',
+            self::STATUS_CONFIRMED => 'CONFIRMED',
+            self::STATUS_PROCESSING => 'PROCESSING',
+            self::STATUS_SHIPPING => 'SHIPPING',
+            self::STATUS_SHIPPED => 'SHIPPED',
+            self::STATUS_COMPLETED => 'COMPLETED',
+            self::STATUS_DELIVERED => 'DELIIVERED',
+            self::STATUS_CANCELLED => 'CANCELLED',
+            self::STATUS_REFUNDED => 'REFUNDED',
             default => ucfirst($this->status),
         };
     }
