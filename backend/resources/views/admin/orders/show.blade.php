@@ -120,7 +120,7 @@
 
         <!-- Order Summary -->
         <div class="col-lg-4">
-            <div class="card sticky-top" style="top: 20px;">
+            <div class="card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Summary</h5>
                 </div>
@@ -164,13 +164,6 @@
         .table-sm td,
         .table-sm th {
             padding: 0.5rem;
-        }
-
-        @media (max-width: 991px) {
-            .sticky-top {
-                position: relative !important;
-                top: 0 !important;
-            }
         }
     </style>
 @endpush

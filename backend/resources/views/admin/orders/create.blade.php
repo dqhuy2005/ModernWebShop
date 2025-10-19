@@ -24,7 +24,6 @@
 
         <div class="row">
             <div class="col-lg-8">
-                <!-- Order Information -->
                 <div class="card mb-4">
                     <div class="card-header bg-light">
                         <h5 class="card-title mb-0">
@@ -36,8 +35,8 @@
                             <label for="user_id" class="form-label">
                                 Customer <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id"
-                                name="user_id" required>
+                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id" name="user_id"
+                                required>
                                 <option value="">-- Select Customer --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
@@ -79,8 +78,7 @@
                                 Delivery Address
                             </label>
                             <input type="text" class="form-control @error('address') is-invalid @enderror" id="address"
-                                name="address" value="{{ old('address') }}"
-                                placeholder="Enter delivery address...">
+                                name="address" value="{{ old('address') }}" placeholder="Enter delivery address...">
                             @error('address')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -99,7 +97,6 @@
                     </div>
                 </div>
 
-                <!-- Products -->
                 <div class="card mb-4">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
@@ -123,9 +120,8 @@
                 </div>
             </div>
 
-            <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="card sticky-top" style="top: 20px;">
+                <div class="card">
                     <div class="card-header bg-light">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-calculator me-2"></i>Order Summary
@@ -162,7 +158,6 @@
         </div>
     </form>
 
-    <!-- Multi-Select Product Modal -->
     <div class="modal fade" id="productModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -186,8 +181,7 @@
                             <label class="list-group-item list-group-item-action product-item" style="cursor: pointer;">
                                 <div class="d-flex align-items-center">
                                     <input type="checkbox" class="form-check-input me-3 product-checkbox"
-                                        data-id="{{ $product->id }}"
-                                        data-name="{{ $product->name }}"
+                                        data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-price="{{ $product->price }}"
                                         data-category="{{ $product->category->name ?? 'N/A' }}"
                                         data-image="{{ $product->image }}">
@@ -203,7 +197,8 @@
                                     @endif
                                     <div class="flex-grow-1">
                                         <h6 class="mb-0">{{ $product->name }}</h6>
-                                        <small class="text-muted">{{ $product->category->name ?? 'Uncategorized' }}</small>
+                                        <small
+                                            class="text-muted">{{ $product->category->name ?? 'Uncategorized' }}</small>
                                     </div>
                                     <div class="text-end">
                                         <span class="fw-bold text-primary">{{ $product->formatted_price }}</span>
@@ -240,6 +235,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);

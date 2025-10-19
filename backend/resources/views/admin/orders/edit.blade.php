@@ -48,8 +48,8 @@
                             <label for="user_id" class="form-label">
                                 Customer <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id"
-                                name="user_id" required>
+                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id" name="user_id"
+                                required>
                                 <option value="">-- Select Customer --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}"
@@ -157,8 +157,8 @@
                                         <div class="col-md-3">
                                             <label class="form-label small mb-1">Quantity</label>
                                             <input type="number" class="form-control form-control-sm quantity-input"
-                                                name="products[{{ $index }}][quantity]" value="{{ $detail->quantity }}"
-                                                min="1" max="9999"
+                                                name="products[{{ $index }}][quantity]"
+                                                value="{{ $detail->quantity }}" min="1" max="9999"
                                                 data-price="{{ $detail->product->price ?? 0 }}" required>
                                         </div>
                                         <div class="col-md-3 text-end">
@@ -190,7 +190,7 @@
 
             <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="card sticky-top" style="top: 20px;">
+                <div class="card">
                     <div class="card-header bg-light">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-calculator me-2"></i>Order Summary
@@ -253,8 +253,7 @@
                             <label class="list-group-item list-group-item-action product-item" style="cursor: pointer;">
                                 <div class="d-flex align-items-center">
                                     <input type="checkbox" class="form-check-input me-3 product-checkbox"
-                                        data-id="{{ $product->id }}"
-                                        data-name="{{ $product->name }}"
+                                        data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-price="{{ $product->price }}"
                                         data-category="{{ $product->category->name ?? 'N/A' }}"
                                         data-image="{{ $product->image }}">
@@ -270,7 +269,8 @@
                                     @endif
                                     <div class="flex-grow-1">
                                         <h6 class="mb-0">{{ $product->name }}</h6>
-                                        <small class="text-muted">{{ $product->category->name ?? 'Uncategorized' }}</small>
+                                        <small
+                                            class="text-muted">{{ $product->category->name ?? 'Uncategorized' }}</small>
                                     </div>
                                     <div class="text-end">
                                         <span class="fw-bold text-primary">{{ $product->formatted_price }}</span>
