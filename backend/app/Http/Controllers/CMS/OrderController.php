@@ -17,7 +17,7 @@ class OrderController extends Controller
     {
         try {
             $order = Order::with([
-                'user:id,fullname,email',
+                'user:id,fullname,email,phone',
                 'orderDetails.product:id,name,image'
             ])->findOrFail($id);
 
@@ -58,7 +58,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Order::with(['user:id,fullname,email']);
+            $query = Order::with(['user:id,fullname,email,phone']);
 
             if ($request->status === 'deleted') {
                 $query->onlyTrashed();

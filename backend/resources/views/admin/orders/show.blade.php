@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="text-muted small">Email</label>
-                            <div class="fw-bold">{{ $order->user->email }}</div>
+                            <div class="fw-bold">{{ $order->user->email ?? 'N/A' }}</div>
                         </div>
                         <div class="col-md-6">
                             <label class="text-muted small">Phone</label>

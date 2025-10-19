@@ -24,8 +24,9 @@
 
         <div class="row">
             <div class="col-lg-8">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-primary text-white">
+                <!-- Order Information -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-info-circle me-2"></i>Order Information
                         </h5>
@@ -33,7 +34,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="user_id" class="form-label">
-                                <i class="fas fa-user me-1"></i>Customer <span class="text-danger">*</span>
+                                Customer <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('user_id') is-invalid @enderror" id="user_id"
                                 name="user_id" required>
@@ -51,7 +52,7 @@
 
                         <div class="mb-3">
                             <label for="status" class="form-label">
-                                <i class="fas fa-flag me-1"></i>Status <span class="text-danger">*</span>
+                                Status <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status"
                                 required>
@@ -75,7 +76,7 @@
 
                         <div class="mb-3">
                             <label for="address" class="form-label">
-                                <i class="fas fa-map-marker-alt me-1"></i>Delivery Address
+                                Delivery Address
                             </label>
                             <input type="text" class="form-control @error('address') is-invalid @enderror" id="address"
                                 name="address" value="{{ old('address') }}"
@@ -85,9 +86,9 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-0">
                             <label for="note" class="form-label">
-                                <i class="fas fa-sticky-note me-1"></i>Order Note
+                                Order Note
                             </label>
                             <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note" rows="3"
                                 placeholder="Add any special instructions or notes...">{{ old('note') }}</textarea>
@@ -98,21 +99,22 @@
                     </div>
                 </div>
 
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <!-- Products -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-shopping-cart me-2"></i>Products
                         </h5>
-                        <button type="button" class="btn btn-sm btn-light" id="addProductBtn">
-                            <i class="fas fa-plus me-1"></i>Add Product
+                        <button type="button" class="btn btn-sm btn-primary" id="addProductBtn">
+                            <i class="fas fa-plus me-1"></i>Select Products
                         </button>
                     </div>
                     <div class="card-body">
                         <div id="productsContainer">
                         </div>
                         <div id="emptyState" class="text-center text-muted py-5">
-                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                            <p>No products added yet. Click "Add Product" to get started.</p>
+                            <i class="fas fa-inbox fa-3x mb-3 opacity-25"></i>
+                            <p>No products added yet. Click "Select Products" to add items.</p>
                         </div>
                         @error('products')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -121,9 +123,10 @@
                 </div>
             </div>
 
+            <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="card shadow-sm sticky-top" style="top: 20px;">
-                    <div class="card-header bg-success text-white">
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header bg-light">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-calculator me-2"></i>Order Summary
                         </h5>
@@ -146,9 +149,9 @@
                         </div>
                     </div>
 
-                    <div class="card-footer">
+                    <div class="card-footer bg-light">
                         <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                            <i class="fas fa-save me-2"></i>Create
+                            <i class="fas fa-save me-2"></i>Create Order
                         </button>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary w-100 mt-2">
                             <i class="fas fa-times me-2"></i>Cancel
@@ -159,24 +162,36 @@
         </div>
     </form>
 
+    <!-- Multi-Select Product Modal -->
     <div class="modal fade" id="productModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-search me-2"></i>Select Product
+                        <i class="fas fa-search me-2"></i>Select Products
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control mb-3" id="productSearch" placeholder="Search products...">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <input type="text" class="form-control me-2" id="productSearch"
+                            placeholder="Search products..." style="max-width: 400px;">
+                        <span class="text-muted">
+                            <span id="selectedCount">0</span> selected
+                        </span>
+                    </div>
+
                     <div class="list-group" id="productList" style="max-height: 400px; overflow-y: auto;">
                         @foreach ($products as $product)
-                            <a href="#" class="list-group-item list-group-item-action product-item"
-                                data-id="{{ $product->id }}" data-name="{{ $product->name }}"
-                                data-price="{{ $product->price }}" data-category="{{ $product->category->name ?? 'N/A' }}"
-                                data-image="{{ $product->image }}">
+                            <label class="list-group-item list-group-item-action product-item" style="cursor: pointer;">
                                 <div class="d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-input me-3 product-checkbox"
+                                        data-id="{{ $product->id }}"
+                                        data-name="{{ $product->name }}"
+                                        data-price="{{ $product->price }}"
+                                        data-category="{{ $product->category->name ?? 'N/A' }}"
+                                        data-image="{{ $product->image }}">
+
                                     @if ($product->image)
                                         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                             class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
@@ -194,9 +209,15 @@
                                         <span class="fw-bold text-primary">{{ $product->formatted_price }}</span>
                                     </div>
                                 </div>
-                            </a>
+                            </label>
                         @endforeach
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmSelection">
+                        <i class="fas fa-check me-1"></i>Add Selected Products
+                    </button>
                 </div>
             </div>
         </div>
@@ -211,6 +232,7 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 10px;
+            border: 1px solid #e9ecef;
         }
 
         @keyframes fadeIn {
@@ -218,7 +240,6 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -226,11 +247,22 @@
         }
 
         .product-item:hover {
-            background-color: rgba(0, 123, 255, 0.1);
+            background-color: rgba(0, 123, 255, 0.05);
         }
 
-        .sticky-top {
-            z-index: 100;
+        .product-item input[type="checkbox"]:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-header h5 {
+            font-size: 1rem;
+            font-weight: 600;
         }
     </style>
 @endpush
@@ -241,9 +273,6 @@
         const selectedProducts = new Set();
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
 
-        // Product data from backend
-        const products = @json($products);
-
         // Add Product Button
         $('#addProductBtn').on('click', function() {
             productModal.show();
@@ -253,8 +282,9 @@
         $('#productSearch').on('input', function() {
             const searchTerm = $(this).val().toLowerCase();
             $('.product-item').each(function() {
-                const productName = $(this).data('name').toLowerCase();
-                const category = $(this).data('category').toLowerCase();
+                const checkbox = $(this).find('.product-checkbox');
+                const productName = checkbox.data('name').toLowerCase();
+                const category = checkbox.data('category').toLowerCase();
                 if (productName.includes(searchTerm) || category.includes(searchTerm)) {
                     $(this).show();
                 } else {
@@ -263,24 +293,45 @@
             });
         });
 
-        // Select Product from Modal
-        $(document).on('click', '.product-item', function(e) {
-            e.preventDefault();
-            const productId = $(this).data('id');
+        // Update selected count
+        $(document).on('change', '.product-checkbox', function() {
+            updateSelectedCount();
+        });
 
-            if (selectedProducts.has(productId)) {
-                toastr.warning('This product is already added!');
+        function updateSelectedCount() {
+            const count = $('.product-checkbox:checked').length;
+            $('#selectedCount').text(count);
+        }
+
+        // Confirm Selection
+        $('#confirmSelection').on('click', function() {
+            const selectedCheckboxes = $('.product-checkbox:checked');
+
+            if (selectedCheckboxes.length === 0) {
+                toastr.warning('Please select at least one product!');
                 return;
             }
 
-            const productName = $(this).data('name');
-            const productPrice = $(this).data('price');
-            const productImage = $(this).data('image');
+            selectedCheckboxes.each(function() {
+                const productId = $(this).data('id');
 
-            addProductRow(productId, productName, productPrice, productImage);
-            selectedProducts.add(productId);
+                if (!selectedProducts.has(productId)) {
+                    const productName = $(this).data('name');
+                    const productPrice = $(this).data('price');
+                    const productImage = $(this).data('image');
+
+                    addProductRow(productId, productName, productPrice, productImage);
+                    selectedProducts.add(productId);
+                }
+            });
+
+            // Uncheck all and reset
+            $('.product-checkbox').prop('checked', false);
+            updateSelectedCount();
             productModal.hide();
             updateSummary();
+
+            toastr.success(`Added ${selectedCheckboxes.length} product(s) successfully!`);
         });
 
         // Add Product Row
@@ -305,16 +356,16 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label small">Quantity</label>
-                            <input type="number" class="form-control quantity-input" name="products[${productIndex}][quantity]"
+                            <label class="form-label small mb-1">Quantity</label>
+                            <input type="number" class="form-control form-control-sm quantity-input" name="products[${productIndex}][quantity]"
                                 value="1" min="1" max="9999" data-price="${price}" required>
                         </div>
                         <div class="col-md-3 text-end">
-                            <label class="form-label small">Subtotal</label>
+                            <label class="form-label small mb-1">Subtotal</label>
                             <div class="fw-bold text-success subtotal">${formatPrice(price)} ₫</div>
                         </div>
                         <div class="col-md-1 text-end">
-                            <button type="button" class="btn btn-danger btn-sm remove-product" data-product-id="${id}">
+                            <button type="button" class="btn btn-danger btn-sm remove-product" data-product-id="${id}" title="Remove">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
@@ -388,6 +439,12 @@
                 toastr.error('Please select a customer!');
                 return false;
             }
+        });
+
+        // Close modal when clicking outside
+        $('#productModal').on('hidden.bs.modal', function() {
+            $('.product-checkbox').prop('checked', false);
+            updateSelectedCount();
         });
     </script>
 @endpush
