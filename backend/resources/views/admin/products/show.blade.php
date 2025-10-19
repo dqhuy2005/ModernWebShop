@@ -5,8 +5,8 @@
 @section('content')
     <div class="page-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h3 mb-0">
+            <div class="border-header">
+                <h1 class="h3 mb-0 border-header-name">
                     <i class="fas fa-box me-2"></i>Product Detail: {{ $product->name }}
                 </h1>
             </div>
@@ -247,6 +247,9 @@
 
 @push('styles')
     <style>
+        .border-header .border-header-name {
+            max-width: 1200px;
+        }
         .card {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
             border: 1px solid #e9ecef;

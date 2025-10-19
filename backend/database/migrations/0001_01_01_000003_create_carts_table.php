@@ -19,11 +19,9 @@ return new class extends Migration {
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
 
-            // Foreign key
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
-            // Unique constraint to prevent duplicate cart items
             $table->unique(['user_id', 'product_id']);
         });
     }

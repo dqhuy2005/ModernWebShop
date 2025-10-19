@@ -13,8 +13,9 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id()->index()->unsigned();
             $table->unsignedBigInteger('user_id')->index();
-            $table->decimal('total_amount', 10, 2);
-            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])->default('pending')->index();
+            $table->unsignedBigInteger('total_amount')->default(0)->comment('Tổng tiền (VNĐ)');
+            $table->unsignedInteger('total_items')->default(0)->comment('Tổng số lượng sản phẩm');
+            $table->enum('status', ['pending', 'confirmed', 'processing', 'shipping', 'shipped', 'completed', 'delivered', 'cancelled', 'refunded'])->default('pending')->index();
             $table->string(column: 'address')->nullable();
             $table->longText(column: 'note')->nullable();
             $table->timestamps();

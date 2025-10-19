@@ -79,10 +79,17 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
+            'price' => 'required|integer|min:0|max:999999999',
+            'currency' => 'nullable|string|max:10',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
+        ], [
+            'price.required' => 'Giá sản phẩm là bắt buộc',
+            'price.integer' => 'Giá phải là số nguyên',
+            'price.min' => 'Giá phải là số dương',
+            'price.max' => 'Giá vượt quá giới hạn cho phép (999.999.999 ₫)',
         ]);
 
         if ($validator->fails()) {
@@ -96,6 +103,7 @@ class ProductController extends Controller
 
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
+            $data['currency'] = $request->input('currency', 'VND');
 
             if ($request->has('specifications') && is_array($request->specifications)) {
                 $specs = [];
@@ -167,10 +175,17 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
+            'price' => 'required|integer|min:0|max:999999999',
+            'currency' => 'nullable|string|max:10',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
+        ], [
+            'price.required' => 'Giá sản phẩm là bắt buộc',
+            'price.integer' => 'Giá phải là số nguyên',
+            'price.min' => 'Giá phải là số dương',
+            'price.max' => 'Giá vượt quá giới hạn cho phép (999.999.999 ₫)',
         ]);
 
         if ($validator->fails()) {
@@ -185,6 +200,7 @@ class ProductController extends Controller
 
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
+            $data['currency'] = $request->input('currency', 'VND');
 
             if ($request->has('specifications') && is_array($request->specifications)) {
                 $specs = [];

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CMS\AuthController as CMSAuthController;
 use App\Http\Controllers\CMS\ProductController;
 use App\Http\Controllers\CMS\UserController;
+use App\Http\Controllers\CMS\OrderController;
 
 Route::get('/', function () {
     return view('user.home');
@@ -78,6 +79,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
             Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
             Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+        });
+
+        // Orders Management
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('index');
+            Route::get('{order}', [OrderController::class, 'show'])->name('show');
         });
     });
 });

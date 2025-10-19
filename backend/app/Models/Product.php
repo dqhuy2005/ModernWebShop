@@ -17,6 +17,8 @@ class Product extends Model
         'specifications',
         'description',
         'image',
+        'price',
+        'currency',
         'status',
         'parent_id',
         'language',
@@ -29,6 +31,7 @@ class Product extends Model
         return [
             'category_id' => 'integer',
             'specifications' => 'array',
+            'price' => 'integer',
             'status' => 'boolean',
             'parent_id' => 'integer',
             'views' => 'integer',
@@ -58,6 +61,30 @@ class Product extends Model
     public function scopeMostViewed($query, $limit = 10)
     {
         return $query->orderBy('views', 'desc')->limit($limit);
+    }
+
+    // Accessors & Mutators
+    
+    /**
+     * Format giá theo chuẩn Việt Nam: 150.000 ₫
+     */
+    public function getFormattedPriceAttribute(): string
+    {
+        if ($this->price === 0 || $this->price === null) {
+            return 'Liên hệ';
+        }
+        return number_format($this->price, 0, ',', '.') . ' ₫';
+    }
+
+    /**
+     * Format giá với đơn vị tiền tệ đầy đủ
+     */
+    public function getFormattedPriceWithCurrencyAttribute(): string
+    {
+        if ($this->price === 0 || $this->price === null) {
+            return 'Liên hệ';
+        }
+        return number_format($this->price, 0, ',', '.') . ' ' . strtoupper($this->currency ?? 'VND');
     }
 
     // Relationships

@@ -25,13 +25,13 @@
                 </a>
             </li>
 
-            {{-- <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"
                    href="{{ route('admin.orders.index') }}">
                     <i class="fas fa-shopping-cart"></i>
-                    <span>Quản lý đơn hàng</span>
+                    <span>Orders</span>
                 </a>
-            </li> --}}
+            </li>
 
             {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"

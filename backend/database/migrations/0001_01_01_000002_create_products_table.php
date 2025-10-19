@@ -14,8 +14,10 @@ return new class extends Migration {
             $table->id()->index()->unsigned();
             $table->unsignedBigInteger('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('name')->index();
+            $table->unsignedBigInteger('price')->default(0)->after('description')->index();
+            $table->string('currency', 10)->default('VND')->after('price')->index();
             $table->json('specifications')->nullable();
-            $table->string('description')->nullable();
+            $table->longText('description')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);
             $table->unsignedInteger('parent_id')->nullable()->default(null);

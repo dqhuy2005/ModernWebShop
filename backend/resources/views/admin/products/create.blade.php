@@ -56,8 +56,31 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="price" class="form-label">
+                                <i class="fas fa-tag me-1"></i>Price (VNĐ) <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control @error('price') is-invalid @enderror"
+                                    id="price_display"
+                                    placeholder="Nhập giá sản phẩm..."
+                                    value="{{ old('price') ? number_format(old('price'), 0, ',', '.') : '' }}">
+                                <input type="hidden" id="price" name="price" value="{{ old('price', 0) }}">
+                                <span class="input-group-text">₫</span>
+                                @error('price')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <small class="text-muted">
+                                Giá tối đa: 999.999.999 ₫. Nhập 0 để hiển thị "Liên hệ"
+                            </small>
+                            <div id="price-preview" class="mt-2 d-none">
+                                <strong>Hiển thị:</strong> <span id="price-formatted" class="text-primary"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
+                            <textarea class="form-control @error('description') is-invalid @enderror" id="editor" name="description"
                                 rows="5" placeholder="Enter product description...">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -125,8 +148,10 @@
 
                         <div id="image-preview" class="text-center d-none">
                             <div class="row">
-                                <img src="" alt="Preview" class="img-fluid col-md-12 rounded" style="max-height: 200px;">
-                                <button type="button" class="btn btn-sm btn-danger col-md-12 mt-2" onclick="removeImage()">
+                                <img src="" alt="Preview" class="img-fluid col-md-12 rounded"
+                                    style="max-height: 200px;">
+                                <button type="button" class="btn btn-sm btn-danger col-md-12 mt-2"
+                                    onclick="removeImage()">
                                     <i class="fas fa-times me-1"></i>Remove
                                 </button>
                             </div>
@@ -154,6 +179,71 @@
     <script>
         let specIndex = 1;
 
+        // ===== PRICE FORMATTING =====
+        function formatPrice(value) {
+            // Loại bỏ tất cả ký tự không phải số
+            const numericValue = value.replace(/[^0-9]/g, '');
+
+            if (!numericValue) {
+                return '';
+            }
+
+            // Format với dấu phân cách
+            return new Intl.NumberFormat('vi-VN').format(parseInt(numericValue));
+        }
+
+        function validatePrice(value) {
+            const price = parseInt(value.replace(/[^0-9]/g, ''));
+
+            if (isNaN(price)) {
+                return { valid: false, error: 'Giá phải là số' };
+            }
+
+            if (price < 0) {
+                return { valid: false, error: 'Giá phải là số dương' };
+            }
+
+            if (price > 999999999) {
+                return { valid: false, error: 'Giá vượt quá giới hạn (999.999.999 ₫)' };
+            }
+
+            return { valid: true, value: price };
+        }
+
+        function displayFormattedPrice(price) {
+            if (price === 0 || !price) {
+                return 'Liên hệ';
+            }
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+
+        $('#price_display').on('input', function() {
+            const value = $(this).val();
+            const formatted = formatPrice(value);
+
+            $(this).val(formatted);
+
+            const validation = validatePrice(formatted);
+
+            if (validation.valid) {
+                $('#price').val(validation.value);
+                $('#price-formatted').text(displayFormattedPrice(validation.value));
+                $('#price-preview').removeClass('d-none');
+                $(this).removeClass('is-invalid').addClass('is-valid');
+            } else if (formatted === '') {
+                $('#price').val(0);
+                $('#price-preview').addClass('d-none');
+                $(this).removeClass('is-invalid is-valid');
+            } else {
+                $(this).removeClass('is-valid').addClass('is-invalid');
+                $('#price-preview').addClass('d-none');
+            }
+        });
+
+        // ===== SPECIFICATIONS =====
         $('#add-specification').on('click', function() {
             const newRow = `
             <div class="row g-2 mb-2 specification-row">
@@ -178,6 +268,7 @@
             $(this).closest('.specification-row').remove();
         });
 
+        // ===== IMAGE PREVIEW =====
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -196,6 +287,7 @@
             $('#image-preview img').attr('src', '');
         }
 
+        // ===== FORM VALIDATION =====
         $('#productForm').on('submit', function(e) {
             let isValid = true;
 
@@ -207,6 +299,13 @@
             if (!$('#category_id').val()) {
                 isValid = false;
                 $('#category_id').addClass('is-invalid');
+            }
+
+            const priceValue = parseInt($('#price').val());
+            if (isNaN(priceValue) || priceValue < 0) {
+                isValid = false;
+                $('#price_display').addClass('is-invalid');
+                toastr.error('Vui lòng nhập giá sản phẩm hợp lệ!');
             }
 
             if (!isValid) {
