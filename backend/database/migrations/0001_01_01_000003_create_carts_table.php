@@ -11,17 +11,19 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('carts', function (Blueprint $table) {
-            $table->id()->index()->unsigned();
+            $table->id();
             $table->unsignedBigInteger('user_id')->index();
             $table->unsignedBigInteger('product_id')->index();
-            $table->integer('quantity')->nullable()->default(1);
-            $table->integer('price')->nullable()->default(0);
+            $table->unsignedInteger('quantity')->default(1);
+            $table->unsignedBigInteger('price')->default(0)->comment('Giá tại thời điểm thêm vào giỏ (VNĐ)');
             $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
 
+            // Foreign keys
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
+            // Unique constraint: một user chỉ có một item của một product trong giỏ
             $table->unique(['user_id', 'product_id']);
         });
     }

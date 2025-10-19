@@ -11,15 +11,25 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id()->index()->unsigned();
+            $table->id();
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedBigInteger('total_amount')->default(0)->comment('Tổng tiền (VNĐ)');
-            $table->unsignedInteger('total_items')->default(0)->comment('Tổng số lượng sản phẩm');
-            $table->enum('status', ['pending', 'confirmed', 'processing', 'shipping', 'shipped', 'completed', 'delivered', 'cancelled', 'refunded'])->default('pending')->index();
-            $table->string(column: 'address')->nullable();
-            $table->longText(column: 'note')->nullable();
+            $table->unsignedBigInteger('total_amount')->default(0);
+            $table->unsignedInteger('total_items')->default(0);
+            $table->enum('status', [
+                'pending',      // Chờ xử lý
+                'confirmed',    // Đã xác nhận
+                'processing',   // Đang xử lý
+                'shipping',     // Đang giao hàng
+                'shipped',      // Đã giao
+                'completed',    // Hoàn thành
+                'delivered',    // Đã giao (alias)
+                'cancelled',    // Đã hủy
+                'refunded'      // Đã hoàn tiền
+            ])->default('pending')->index();
+            $table->text('address')->nullable();
+            $table->text('note')->nullable();
             $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
 
             // Foreign key
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -11,12 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->id()->index()->unsigned();
+            $table->id();
             $table->string('name')->index();
-            $table->unsignedInteger('parent_id')->nullable()->default(null);
-            $table->string('language')->nullable()->default(null);
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->string('language', 10)->nullable();
             $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
+
+            // Index for parent_id lookup
+            $table->index('parent_id');
         });
     }
 

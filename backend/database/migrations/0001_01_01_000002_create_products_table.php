@@ -11,21 +11,27 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id()->index()->unsigned();
-            $table->unsignedBigInteger('category_id')->constrained('categories')->onDelete('cascade');
+            $table->id();
+            $table->unsignedBigInteger('category_id')->index();
             $table->string('name')->index();
-            $table->unsignedBigInteger('price')->default(0)->after('description')->index();
-            $table->string('currency', 10)->default('VND')->after('price')->index();
-            $table->json('specifications')->nullable();
             $table->longText('description')->nullable();
+            $table->json('specifications')->nullable();
+            $table->unsignedBigInteger('price')->default(0);
+            $table->string('currency', 10)->default('VND');
             $table->string('image')->nullable();
-            $table->boolean('status')->default(true);
-            $table->unsignedInteger('parent_id')->nullable()->default(null);
-            $table->string('language')->nullable()->default(null);
-            $table->integer('views')->nullable()->default(0);
-            $table->boolean('is_hot')->nullable()->default(false);
+            $table->boolean('status')->default(true)->index();
+            $table->unsignedInteger('parent_id')->nullable();
+            $table->string('language', 10)->nullable();
+            $table->unsignedInteger('views')->default(0);
+            $table->boolean('is_hot')->default(false)->index();
             $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
+
+            // Foreign keys
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+
+            // Indexes
+            $table->index('price');
         });
     }
 
