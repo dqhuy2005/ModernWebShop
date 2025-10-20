@@ -79,6 +79,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
             Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
             Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+
+            // Import/Export routes
+            Route::get('export', [UserController::class, 'export'])->name('export');
+            Route::get('import-template', [UserController::class, 'downloadTemplate'])->name('import-template');
+            Route::post('import', [UserController::class, 'import'])->name('import');
         });
 
         // Orders Management
@@ -91,6 +96,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('{order}', [OrderController::class, 'update'])->name('update');
             Route::delete('{order}', [OrderController::class, 'destroy'])->name('destroy');
             Route::post('{order}/restore', [OrderController::class, 'restore'])->name('restore');
+
+            // Export route
+            Route::get('export', [OrderController::class, 'export'])->name('export');
         });
     });
 });

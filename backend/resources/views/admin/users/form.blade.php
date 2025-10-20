@@ -39,8 +39,8 @@
                 </div>
             </div>
 
-            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by', 'id') }}">
-            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order', 'desc') }}">
+            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
+            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
         </form>
 
         @if (request('search') || request('status'))

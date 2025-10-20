@@ -35,7 +35,6 @@
                         <button type="button" class="btn btn-outline-primary btn-lg" onclick="$('#image').click()">
                             <i class="fas fa-cloud-upload-alt me-2"></i>Select Avatar
                         </button>
-                        <p class="text-muted mt-2 mb-0 small">Accepted: JPG, PNG, GIF, WEBP. Max: 2MB</p>
                     </div>
 
                     <div id="image-preview" class="text-center my-3 d-none">

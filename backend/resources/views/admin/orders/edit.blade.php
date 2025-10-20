@@ -211,7 +211,7 @@
 
                     <div class="card-footer bg-light">
                         <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                            <i class="fas fa-save me-2"></i>Update Order
+                            <i class="fas fa-save me-2"></i>Update
                         </button>
                         <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-secondary w-100 mt-2">
                             <i class="fas fa-times me-2"></i>Cancel

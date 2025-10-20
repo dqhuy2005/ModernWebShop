@@ -146,7 +146,7 @@
 
                     <div class="card-footer bg-light">
                         <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                            <i class="fas fa-save me-2"></i>Create Order
+                            <i class="fas fa-save me-2"></i>Create
                         </button>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary w-100 mt-2">
                             <i class="fas fa-times me-2"></i>Cancel

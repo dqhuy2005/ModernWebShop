@@ -2,61 +2,97 @@
 
 namespace App\Http\Controllers\CMS;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Product;
 use App\Models\Category;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class ProductController extends Controller
+class ProductController extends BaseController
 {
     public function index(Request $request)
     {
         try {
-            $baseQuery = $this->buildBaseProductQuery($request);
+            $query = Product::query();
 
-            $totalProducts = (clone $baseQuery)->count();
-            $activeProducts = (clone $baseQuery)->where('status', true)->count();
-            $inactiveProducts = (clone $baseQuery)->where('status', false)->count();
-            $hotProducts = (clone $baseQuery)->where('is_hot', true)->count();
+            $this->applyProductFilters($query, $request);
 
-            $listingQuery = clone $baseQuery;
+            $totalProducts = (clone $query)->count();
+            $activeProducts = (clone $query)->where('status', true)->count();
+            $inactiveProducts = (clone $query)->where('status', false)->count();
+            $hotProducts = (clone $query)->where('is_hot', true)->count();
 
-            $sortBy = $request->get('sort_by', 'id');
-            $sortOrder = $request->get('sort_order', 'desc');
-
-            $allowedSortFields = ['id', 'name', 'created_at', 'updated_at'];
-            if (!in_array($sortBy, $allowedSortFields)) {
-                $sortBy = 'id';
-            }
+            $this->applySorting(
+                $query,
+                $request,
+                'id',
+                'desc',
+                ['id', 'name', 'price', 'created_at', 'updated_at', 'category_id']
+            );
 
             if ($request->get('sort_by') === 'category_id') {
-                $listingQuery->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                $query->leftJoin('categories', 'products.category_id', '=', 'categories.id')
                     ->select('products.*', 'categories.name as category_name')
-                    ->orderBy('categories.name', $sortOrder);
-            } else {
-                $listingQuery->orderBy($sortBy, $sortOrder);
+                    ->orderBy('categories.name', $request->get('sort_order', 'desc'));
             }
 
             $perPage = $request->get('per_page', 15);
-
             $allowedPerPage = [15, 25, 50, 100];
             if (!in_array($perPage, $allowedPerPage)) {
                 $perPage = 15;
             }
 
-            $products = $listingQuery->paginate($perPage)->withQueryString();
+            $products = $query->with('category')->paginate($perPage)->withQueryString();
 
-            $categories = Category::select('id', 'name')
-                ->orderBy('name')
-                ->get();
+            $categories = Category::select('id', 'name')->orderBy('name')->get();
 
-            return view('admin.products.index', compact('products', 'categories', 'totalProducts', 'activeProducts', 'inactiveProducts', 'hotProducts'));
+            return view('admin.products.index', compact(
+                'products',
+                'categories',
+                'totalProducts',
+                'activeProducts',
+                'inactiveProducts',
+                'hotProducts'
+            ));
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load products: ' . $e->getMessage());
         }
+    }
+
+    protected function applyProductFilters($query, Request $request)
+    {
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', (bool) $request->status);
+        }
+
+        if ($request->filled('is_hot')) {
+            $query->where('is_hot', (bool) $request->is_hot);
+        }
+
+        if ($request->filled('price_min')) {
+            $query->where('price', '>=', $request->price_min);
+        }
+
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->price_max);
+        }
+
+        return $query;
     }
 
     public function create()
@@ -118,10 +154,15 @@ class ProductController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time() . '_' . Str::slug($request->name) . '.' . $image->getClientOriginalExtension();
-                $imagePath = $image->storeAs('products', $imageName, 'public');
-                $data['image'] = $imagePath;
+                $imageService = new ImageService();
+
+                if (!$imageService->validateImage($request->file('image'))) {
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
+                }
+
+                $data['image'] = $imageService->uploadProductImage($request->file('image'));
             }
 
             $product = Product::create($data);
@@ -215,14 +256,18 @@ class ProductController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                if ($product->image && Storage::disk('public')->exists($product->image)) {
-                    Storage::disk('public')->delete($product->image);
+                $imageService = new ImageService();
+
+                if (!$imageService->validateImage($request->file('image'))) {
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
                 }
 
-                $image = $request->file('image');
-                $imageName = time() . '_' . Str::slug($request->name) . '.' . $image->getClientOriginalExtension();
-                $imagePath = $image->storeAs('products', $imageName, 'public');
-                $data['image'] = $imagePath;
+                $data['image'] = $imageService->uploadProductImage(
+                    $request->file('image'),
+                    $product->image
+                );
             }
 
             $product->update($data);
@@ -242,8 +287,9 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
 
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
-                Storage::disk('public')->delete($product->image);
+            if ($product->image) {
+                $imageService = new ImageService();
+                $imageService->deleteImage($product->image);
             }
 
             $product->delete();
@@ -266,17 +312,18 @@ class ProductController extends Controller
             $status = $product->is_hot ? 'hot' : 'normal';
 
             if (request()->ajax()) {
-                $base = $this->buildBaseProductQuery(request());
+                $query = Product::query();
+                $this->applyProductFilters($query, request());
 
                 return response()->json([
                     'success' => true,
                     'message' => "Product marked as {$status} successfully!",
                     'is_hot' => $product->is_hot,
                     'counts' => [
-                        'total' => (clone $base)->count(),
-                        'active' => (clone $base)->where('status', true)->count(),
-                        'inactive' => (clone $base)->where('status', false)->count(),
-                        'hot' => (clone $base)->where('is_hot', true)->count(),
+                        'total' => (clone $query)->count(),
+                        'active' => (clone $query)->where('status', true)->count(),
+                        'inactive' => (clone $query)->where('status', false)->count(),
+                        'hot' => (clone $query)->where('is_hot', true)->count(),
                     ],
                 ]);
             }
@@ -304,17 +351,18 @@ class ProductController extends Controller
             $status = $product->status ? 'active' : 'inactive';
 
             if (request()->ajax()) {
-                $base = $this->buildBaseProductQuery(request());
+                $query = Product::query();
+                $this->applyProductFilters($query, request());
 
                 return response()->json([
                     'success' => true,
                     'message' => "Product marked as {$status} successfully!",
                     'status' => $product->status,
                     'counts' => [
-                        'total' => (clone $base)->count(),
-                        'active' => (clone $base)->where('status', true)->count(),
-                        'inactive' => (clone $base)->where('status', false)->count(),
-                        'hot' => (clone $base)->where('is_hot', true)->count(),
+                        'total' => (clone $query)->count(),
+                        'active' => (clone $query)->where('status', true)->count(),
+                        'inactive' => (clone $query)->where('status', false)->count(),
+                        'hot' => (clone $query)->where('is_hot', true)->count(),
                     ],
                 ]);
             }
@@ -363,30 +411,4 @@ class ProductController extends Controller
         }
     }
 
-    protected function buildBaseProductQuery(Request $request)
-    {
-        $query = Product::with('category');
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', (bool) $request->status);
-        }
-
-        if ($request->filled('is_hot')) {
-            $query->where('is_hot', (bool) $request->is_hot);
-        }
-
-        return $query;
-    }
 }

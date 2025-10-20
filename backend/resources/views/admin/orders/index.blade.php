@@ -10,7 +10,13 @@
                     <i class="fas fa-shopping-cart me-2"></i>Order Management : {{ $orders->total() ?? 0 }}
                 </h1>
             </div>
-            <div>
+            <div class="d-flex gap-2">
+                <!-- Export Button -->
+                <a href="{{ route('admin.orders.export') }}" class="btn btn-success">
+                    <i class="fas fa-file-export me-2"></i>Export CSV
+                </a>
+
+                <!-- Add Order Button -->
                 <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Add
                 </a>

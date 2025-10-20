@@ -1,26 +1,3 @@
-/**
- * Clean Form Submission Utility
- *
- * Automatically removes empty parameters from form submissions
- * to keep URLs clean and readable
- *
- * Usage:
- * 1. Add class "clean-form" to your form
- * 2. That's it! The script will handle the rest automatically
- *
- * Example:
- * <form action="/admin/orders" method="GET" class="clean-form">
- *     <input type="text" name="search">
- *     <input type="text" name="status">
- *     <button type="submit">Search</button>
- * </form>
- *
- * Result:
- * - If search is empty: /admin/orders?status=pending
- * - If both are empty: /admin/orders
- * - If both have values: /admin/orders?search=test&status=pending
- */
-
 (function ($) {
     "use strict";
 

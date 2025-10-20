@@ -10,7 +10,15 @@
                     <i class="fas fa-users me-2"></i>User Management : {{ $users->total() ?? 0 }}
                 </h1>
             </div>
-            <div>
+            <div class="d-flex gap-2">
+                <a href="{{ route('admin.users.export') }}" class="btn btn-success">
+                    <i class="fas fa-file-export me-2"></i>Export CSV
+                </a>
+
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="fas fa-file-import me-2"></i>Import CSV
+                </button>
+
                 <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Add
                 </a>
@@ -376,3 +384,61 @@
         }
     </style>
 @endpush
+
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">
+                    <i class="fas fa-file-import me-2"></i>Import Users from CSV
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.users.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Instructions:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Download the template below to see the required format</li>
+                            <li>Fill in your user data following the template structure</li>
+                            <li>Upload the completed CSV file</li>
+                            <li>Maximum file size: 2MB</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <a href="{{ route('admin.users.import-template') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-download me-1"></i>Download CSV Template
+                        </a>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="csv_file" class="form-label fw-bold">Select CSV File</label>
+                        <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        <small class="text-muted">Accepted format: CSV (*.csv)</small>
+                    </div>
+
+                    @if(session('import_errors'))
+                        <div class="alert alert-warning">
+                            <strong>Import Errors:</strong>
+                            <ul class="mb-0 mt-2" style="max-height: 200px; overflow-y: auto;">
+                                @foreach(session('import_errors') as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload me-1"></i>Upload & Import
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

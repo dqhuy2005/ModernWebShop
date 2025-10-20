@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\User;
 use App\Models\Product;
+use App\Services\CsvService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -414,5 +415,16 @@ class OrderController extends Controller
 
             return back()->with('error', 'Failed to restore order: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Export orders to CSV
+     */
+    public function export(CsvService $csvService)
+    {
+        $csv = $csvService->exportOrders();
+        $filename = 'orders_export_' . date('Y-m-d_His') . '.csv';
+        
+        return response($csv, 200, $csvService->getDownloadHeaders($filename));
     }
 }

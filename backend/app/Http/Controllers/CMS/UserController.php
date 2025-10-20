@@ -2,29 +2,34 @@
 
 namespace App\Http\Controllers\CMS;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\CsvService;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     public function index(Request $request)
     {
         try {
-            $baseQuery = $this->buildBaseUserQuery($request);
+            $query = User::withTrashed()->with('role')
+                ->whereDoesntHave('role', function ($q) {
+                    $q->where('slug', Role::ADMIN);
+                });
 
-            $totalUsers = (clone $baseQuery)->count();
-            $activeUsers = (clone $baseQuery)->where('status', true)->whereNull('deleted_at')->count();
-            $inactiveUsers = (clone $baseQuery)->where('status', false)->whereNull('deleted_at')->count();
-            $deletedUsers = (clone $baseQuery)->onlyTrashed()->count();
+            $this->applyUserFilters($query, $request);
 
-            $query = (clone $baseQuery);
+            $totalUsers = (clone $query)->count();
+            $activeUsers = (clone $query)->where('status', true)->whereNull('deleted_at')->count();
+            $inactiveUsers = (clone $query)->where('status', false)->whereNull('deleted_at')->count();
+            $deletedUsers = (clone $query)->onlyTrashed()->count();
 
             if ($request->filled('status')) {
                 switch ($request->status) {
@@ -37,20 +42,16 @@ class UserController extends Controller
                     case 'deleted':
                         $query->onlyTrashed();
                         break;
-                    default:
-                        break;
                 }
             }
 
-            $sortBy = $request->get('sort_by', 'id');
-            $sortOrder = $request->get('sort_order', 'desc');
-
-            $allowedSortFields = ['id', 'fullname', 'email', 'created_at', 'updated_at'];
-            if (!in_array($sortBy, $allowedSortFields)) {
-                $sortBy = 'id';
-            }
-
-            $query->orderBy($sortBy, $sortOrder);
+            $this->applySorting(
+                $query,
+                $request,
+                'id',
+                'desc',
+                ['id', 'fullname', 'email', 'phone', 'created_at', 'updated_at']
+            );
 
             $perPage = $request->get('per_page', 15);
             $allowedPerPage = [15, 25, 50, 100];
@@ -62,10 +63,35 @@ class UserController extends Controller
 
             $roles = Role::select('id', 'name', 'slug')->get();
 
-            return view('admin.users.index', compact('users', 'roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'deletedUsers'));
+            return view('admin.users.index', compact(
+                'users',
+                'roles',
+                'totalUsers',
+                'activeUsers',
+                'inactiveUsers',
+                'deletedUsers'
+            ));
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load users: ' . $e->getMessage());
         }
+    }
+
+    protected function applyUserFilters($query, Request $request)
+    {
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('fullname', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role_id')) {
+            $query->where('role_id', $request->role_id);
+        }
+
+        return $query;
     }
 
     public function create()
@@ -103,10 +129,15 @@ class UserController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time() . '_' . str_replace(' ', '_', $request->fullname) . '.' . $image->getClientOriginalExtension();
-                $imagePath = $image->storeAs('users', $imageName, 'public');
-                $data['image'] = $imagePath;
+                $imageService = new ImageService();
+
+                if (!$imageService->validateImage($request->file('image'))) {
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Invalid avatar image. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
+                }
+
+                $data['image'] = $imageService->uploadAvatar($request->file('image'));
             }
 
             $user = User::create($data);
@@ -178,14 +209,18 @@ class UserController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                if ($user->image && Storage::disk('public')->exists($user->image)) {
-                    Storage::disk('public')->delete($user->image);
+                $imageService = new ImageService();
+
+                if (!$imageService->validateImage($request->file('image'))) {
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Invalid avatar image. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
                 }
 
-                $image = $request->file('image');
-                $imageName = time() . '_' . str_replace(' ', '_', $request->fullname) . '.' . $image->getClientOriginalExtension();
-                $imagePath = $image->storeAs('users', $imageName, 'public');
-                $data['image'] = $imagePath;
+                $data['image'] = $imageService->uploadAvatar(
+                    $request->file('image'),
+                    $user->image
+                );
             }
 
             $user->update($data);
@@ -212,15 +247,20 @@ class UserController extends Controller
             $user->delete();
 
             if (request()->ajax()) {
-                $base = $this->buildBaseUserQuery(request());
+                $query = User::withTrashed()->with('role')
+                    ->whereDoesntHave('role', function ($q) {
+                        $q->where('slug', Role::ADMIN);
+                    });
+                $this->applyUserFilters($query, request());
+
                 return response()->json([
                     'success' => true,
                     'message' => 'User deleted successfully! You can restore it later.',
                     'counts' => [
-                        'total' => (clone $base)->count(),
-                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $base)->onlyTrashed()->count(),
+                        'total' => (clone $query)->count(),
+                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $query)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -240,16 +280,21 @@ class UserController extends Controller
             $user->restore();
 
             if (request()->ajax()) {
-                $base = $this->buildBaseUserQuery(request());
+                $query = User::withTrashed()->with('role')
+                    ->whereDoesntHave('role', function ($q) {
+                        $q->where('slug', Role::ADMIN);
+                    });
+                $this->applyUserFilters($query, request());
+
                 return response()->json([
                     'success' => true,
                     'message' => 'User restored successfully!',
                     'status' => $user->status,
                     'counts' => [
-                        'total' => (clone $base)->count(),
-                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $base)->onlyTrashed()->count(),
+                        'total' => (clone $query)->count(),
+                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $query)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -269,22 +314,28 @@ class UserController extends Controller
                 return back()->with('error', 'You cannot delete yourself!');
             }
 
-            if ($user->image && Storage::disk('public')->exists($user->image)) {
-                Storage::disk('public')->delete($user->image);
+            if ($user->image) {
+                $imageService = new ImageService();
+                $imageService->deleteImage($user->image);
             }
 
             $user->forceDelete();
 
             if (request()->ajax()) {
-                $base = $this->buildBaseUserQuery(request());
+                $query = User::withTrashed()->with('role')
+                    ->whereDoesntHave('role', function ($q) {
+                        $q->where('slug', Role::ADMIN);
+                    });
+                $this->applyUserFilters($query, request());
+
                 return response()->json([
                     'success' => true,
                     'message' => 'User permanently deleted!',
                     'counts' => [
-                        'total' => (clone $base)->count(),
-                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $base)->onlyTrashed()->count(),
+                        'total' => (clone $query)->count(),
+                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $query)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -319,16 +370,21 @@ class UserController extends Controller
             $status = $user->status ? 'active' : 'inactive';
 
             if (request()->ajax()) {
-                $base = $this->buildBaseUserQuery(request());
+                $query = User::withTrashed()->with('role')
+                    ->whereDoesntHave('role', function ($q) {
+                        $q->where('slug', Role::ADMIN);
+                    });
+                $this->applyUserFilters($query, request());
+
                 return response()->json([
                     'success' => true,
                     'message' => "User marked as {$status} successfully!",
                     'status' => $user->status,
                     'counts' => [
-                        'total' => (clone $base)->count(),
-                        'active' => (clone $base)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $base)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $base)->onlyTrashed()->count(),
+                        'total' => (clone $query)->count(),
+                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
+                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
+                        'deleted' => (clone $query)->onlyTrashed()->count(),
                     ],
                 ]);
             }
@@ -346,23 +402,69 @@ class UserController extends Controller
         }
     }
 
-    protected function buildBaseUserQuery(Request $request)
+
+
+    /**
+     * Export users to CSV
+     */
+    public function export(CsvService $csvService)
     {
-        $baseQuery = User::withTrashed()->with('role');
+        $csv = $csvService->exportUsers();
+        $filename = 'users_export_' . date('Y-m-d_His') . '.csv';
 
-        $baseQuery->whereDoesntHave('role', function ($q) {
-            $q->where('slug', Role::ADMIN);
-        });
+        return response($csv, 200, $csvService->getDownloadHeaders($filename));
+    }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $baseQuery->where(function ($q) use ($search) {
-                $q->where('fullname', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            });
+    /**
+     * Download CSV template for import
+     */
+    public function downloadTemplate(CsvService $csvService)
+    {
+        $csv = $csvService->generateUserTemplate();
+        $filename = 'users_import_template.csv';
+
+        return response($csv, 200, $csvService->getDownloadHeaders($filename));
+    }
+
+    /**
+     * Import users from CSV
+     */
+    public function import(Request $request, CsvService $csvService)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        try {
+            $file = $request->file('csv_file');
+            $filePath = $file->getRealPath();
+
+            $result = $csvService->importUsers($filePath);
+
+            if ($result['success'] > 0) {
+                $message = "Successfully imported {$result['success']} user(s).";
+
+                if ($result['failed'] > 0) {
+                    $message .= " {$result['failed']} user(s) failed.";
+                }
+
+                session()->flash('success', $message);
+
+                if (!empty($result['errors'])) {
+                    session()->flash('import_errors', $result['errors']);
+                }
+            } else {
+                session()->flash('error', 'No users were imported. Please check your CSV file.');
+
+                if (!empty($result['errors'])) {
+                    session()->flash('import_errors', $result['errors']);
+                }
+            }
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Import failed: ' . $e->getMessage());
         }
 
-        return $baseQuery;
+        return redirect()->route('admin.users.index');
     }
 }

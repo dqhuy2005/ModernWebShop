@@ -22,28 +22,14 @@
         @csrf
 
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-8">
                 <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Product Information
+                        </h5>
+                    </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label for="category_id" class="form-label fw-bold">
-                                Category <span class="text-danger">*</span>
-                            </label>
-                            <select class="form-select @error('category_id') is-invalid @enderror" id="category_id"
-                                name="category_id" required>
-                                <option value="">-- Select Category --</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('category_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="mb-3">
                             <label for="name" class="form-label fw-bold">
                                 Product Name <span class="text-danger">*</span>
@@ -61,8 +47,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control @error('price') is-invalid @enderror"
-                                    id="price_display"
-                                    placeholder="Nhập giá sản phẩm..."
+                                    id="price_display" placeholder="Enter price..."
                                     value="{{ old('price') ? number_format(old('price'), 0, ',', '.') : '' }}">
                                 <input type="hidden" id="price" name="price" value="{{ old('price', 0) }}">
                                 <span class="input-group-text">₫</span>
@@ -74,7 +59,7 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label fw-bold">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" id="editor" name="description"
+                            <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                                 rows="5" placeholder="Enter product description...">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -106,12 +91,42 @@
                                 <i class="fas fa-plus me-1"></i>Add Specification
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-cog me-2"></i>Settings
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label fw-bold">
+                                Category <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('category_id') is-invalid @enderror" id="category_id"
+                                name="category_id" required>
+                                <option value="">-- Select Category --</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}"
+                                        {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Status</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="status" name="status"
-                                    value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" role="switch" id="status"
+                                    name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="status">
                                     Active
                                 </label>
@@ -121,49 +136,52 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Hot Product</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="is_hot" name="is_hot"
-                                    value="1" {{ old('is_hot') ? 'checked' : '' }}>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="image" class="form-label fw-bold">
-                                Product Image
-                            </label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
-                                name="image" accept="image/*" onchange="previewImage(event)">
-                            @error('image')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">
-                                Accepted: JPG, PNG, GIF, WEBP. Max: 2MB
-                            </small>
-                        </div>
-
-                        <div id="image-preview" class="text-center d-none">
-                            <div class="row">
-                                <img src="" alt="Preview" class="img-fluid col-md-12 rounded"
-                                    style="max-height: 200px;">
-                                <button type="button" class="btn btn-sm btn-danger col-md-12 mt-2"
-                                    onclick="removeImage()">
-                                    <i class="fas fa-times me-1"></i>Remove
-                                </button>
+                                <input class="form-check-input" type="checkbox" role="switch" id="is_hot"
+                                    name="is_hot" value="1" {{ old('is_hot') ? 'checked' : '' }}>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="d-flex justify-content-end col-lg-12 gap-3">
-                <button type="submit" class="btn btn-primary" name="action" value="save">
-                    <i class="fas fa-save me-2"></i>Save
-                </button>
-                <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
-                    <i class="fas fa-plus me-2"></i>Save & Add Another
-                </button>
-                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times me-2"></i>Cancel
-                </a>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-image me-2"></i>Product Image
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="custom-file-upload">
+                                <div id="image-preview" class="text-center d-none">
+                                    <img src="" alt="Preview" class="img-fluid rounded"
+                                        style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
+                                </div>
+                                <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
+                                    name="image" accept="image/*" onchange="previewImage(event)">
+                                <button type="button" class="btn-select-image w-100 mt-3"
+                                    onclick="document.getElementById('image').click()">
+                                    Select image
+                                </button>
+                            </div>
+
+                            @error('image')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="submit" class="btn btn-primary" name="action" value="save">
+                        <i class="fas fa-save me-2"></i>Save
+                    </button>
+                    <button type="submit" class="btn btn-success" name="action" value="save_and_continue">
+                        <i class="fas fa-plus me-2"></i>Save & Add Another
+                    </button>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
             </div>
         </div>
     </form>
@@ -173,16 +191,13 @@
     <script>
         let specIndex = 1;
 
-        // ===== PRICE FORMATTING =====
         function formatPrice(value) {
-            // Loại bỏ tất cả ký tự không phải số
             const numericValue = value.replace(/[^0-9]/g, '');
 
             if (!numericValue) {
                 return '';
             }
 
-            // Format với dấu phân cách
             return new Intl.NumberFormat('vi-VN').format(parseInt(numericValue));
         }
 
@@ -190,18 +205,30 @@
             const price = parseInt(value.replace(/[^0-9]/g, ''));
 
             if (isNaN(price)) {
-                return { valid: false, error: 'Giá phải là số' };
+                return {
+                    valid: false,
+                    error: 'Price must be a number'
+                };
             }
 
             if (price < 0) {
-                return { valid: false, error: 'Giá phải là số dương' };
+                return {
+                    valid: false,
+                    error: 'Price must be a positive number'
+                };
             }
 
             if (price > 999999999) {
-                return { valid: false, error: 'Giá vượt quá giới hạn (999.999.999 ₫)' };
+                return {
+                    valid: false,
+                    error: 'Price exceeds limit (999,999,999 ₫)'
+                };
             }
 
-            return { valid: true, value: price };
+            return {
+                valid: true,
+                value: price
+            };
         }
 
         function displayFormattedPrice(price) {
@@ -234,7 +261,6 @@
             }
         });
 
-        // ===== SPECIFICATIONS =====
         $('#add-specification').on('click', function() {
             const newRow = `
             <div class="row g-2 mb-2 specification-row">
@@ -259,7 +285,6 @@
             $(this).closest('.specification-row').remove();
         });
 
-        // ===== IMAGE PREVIEW =====
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -278,7 +303,6 @@
             $('#image-preview img').attr('src', '');
         }
 
-        // ===== FORM VALIDATION =====
         $('#productForm').on('submit', function(e) {
             let isValid = true;
 
@@ -296,7 +320,7 @@
             if (isNaN(priceValue) || priceValue < 0) {
                 isValid = false;
                 $('#price_display').addClass('is-invalid');
-                toastr.error('Vui lòng nhập giá sản phẩm hợp lệ!');
+                toastr.error('Please enter a valid product price!');
             }
 
             if (!isValid) {
@@ -335,8 +359,21 @@
             border-bottom: 2px solid #e9ecef;
         }
 
-        #image-preview img {
-            border: 2px solid #dee2e6;
+        .btn-select-image {
+            font-weight: 600;
+            font-size: 16px;
+            padding: 15px;
+            border: none;
+            background-color: #4b8df8;
+            color: #fff;
+        }
+
+        .btn-select-image i {
+            font-size: 18px;
+        }
+
+        .custom-file-upload {
+            margin-bottom: 10px;
         }
     </style>
 @endpush

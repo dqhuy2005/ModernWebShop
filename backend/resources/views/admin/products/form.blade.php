@@ -36,8 +36,8 @@
             <input type="hidden" name="category_id" id="hidden_category_id" value="{{ request('category_id') }}">
             <input type="hidden" name="status" id="hidden_status" value="{{ request('status') }}">
             <input type="hidden" name="is_hot" id="hidden_is_hot" value="{{ request('is_hot') }}">
-            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by', 'id') }}">
-            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order', 'desc') }}">
+            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
+            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
         </form>
 
         @if (request('search') || request('category_id') || request('status') !== null || request('is_hot') !== null)

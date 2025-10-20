@@ -31,7 +31,7 @@
 
                             <td>
                                 @if ($product->image)
-                                    <img src="#" alt="Image Product" class="product-image">
+                                    <img src="{{ asset('/storage/' . $product->image) }}" alt="Image Product" class="product-image">
                                 @else
                                     <div
                                         class="product-image bg-light d-flex align-items-center justify-content-center">

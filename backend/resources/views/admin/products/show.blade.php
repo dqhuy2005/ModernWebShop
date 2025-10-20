@@ -14,9 +14,6 @@
                 <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-warning">
                     <i class="fas fa-edit me-2"></i>Edit
                 </a>
-                <button type="button" class="btn btn-danger" onclick="deleteProduct({{ $product->id }})">
-                    <i class="fas fa-trash me-2"></i>Delete
-                </button>
                 <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
@@ -216,34 +213,6 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        // Delete Product
-        function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/admin/products/' + productId;
-
-                var methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                methodInput.value = 'DELETE';
-                form.appendChild(methodInput);
-
-                var tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = '_token';
-                tokenInput.value = '{{ csrf_token() }}';
-                form.appendChild(tokenInput);
-
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
-@endpush
 
 @push('styles')
     <style>

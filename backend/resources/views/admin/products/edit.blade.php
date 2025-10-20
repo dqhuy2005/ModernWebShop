@@ -79,10 +79,8 @@
                             </label>
                             <div id="specifications-container">
                                 @php
-                                    // Parse specifications correctly
                                     $specs = old('specifications');
                                     if (!$specs && $product->specifications) {
-                                        // If specifications is a JSON string, decode it
                                         if (is_string($product->specifications)) {
                                             $specs = json_decode($product->specifications, true);
                                         } else {
@@ -198,34 +196,30 @@
                     <div class="card-body">
                         @if ($product->image)
                             <div class="mb-3 text-center">
-                                <label class="form-label fw-bold d-block">Current Image</label>
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                    class="img-fluid rounded" style="max-height: 200px; border: 2px solid #dee2e6;"
+                                    class="img-fluid rounded" style="max-height: 300px; padding: 4px; border: 1px solid #ddd;"
                                     id="current-image">
                             </div>
                         @endif
 
                         <div class="mb-3">
-                            <label for="image" class="form-label fw-bold">
-                                {{ $product->image ? 'Change Image' : 'Upload Image' }}
-                            </label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror"
-                                id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                            <div class="custom-file-upload">
+                                <input type="file" class="d-none @error('image') is-invalid @enderror"
+                                    id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                                <button type="button" class="btn-select-image w-100" onclick="document.getElementById('image').click()">
+                                    Select image
+                                </button>
+                            </div>
+
                             @error('image')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted">
-                                Accepted: JPG, PNG, GIF, WEBP. Max: 2MB
-                            </small>
                         </div>
 
                         <div id="image-preview" class="text-center d-none">
                             <div class="d-flex flex-column align-items-center">
                                 <label class="form-label fw-bold d-block">New Image Preview</label>
-                                <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
-                                <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
-                                    <i class="fas fa-times me-1"></i>Remove
-                                </button>
+                                <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
                             </div>
                         </div>
                     </div>
@@ -248,7 +242,6 @@
     <script>
         let specIndex = {{ $specCount ?? 1 }};
 
-        // ===== PRICE FORMATTING =====
         function formatPrice(value) {
             const numericValue = value.replace(/[^0-9]/g, '');
             if (!numericValue) return '';
@@ -289,7 +282,6 @@
             }
         });
 
-        // ===== SPECIFICATIONS =====
         $('#add-specification').on('click', function() {
             const newRow = `
             <div class="row g-2 mb-2 specification-row">
@@ -316,7 +308,6 @@
             }
         });
 
-        // ===== IMAGE PREVIEW =====
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -337,7 +328,6 @@
             $('#current-image').css('opacity', '1');
         }
 
-        // ===== FORM VALIDATION =====
         $('#productForm').on('submit', function(e) {
             let isValid = true;
 
@@ -398,6 +388,23 @@
         #current-image {
             border: 2px solid #dee2e6;
             transition: opacity 0.3s ease;
+        }
+
+        .btn-select-image {
+            font-weight: 600;
+            font-size: 16px;
+            padding: 15px 30px;
+            border: none;
+            background-color: #4b8df8;
+            color: #fff;
+        }
+
+        .btn-select-image i {
+            font-size: 18px;
+        }
+
+        .custom-file-upload {
+            margin-bottom: 10px;
         }
     </style>
 @endpush
