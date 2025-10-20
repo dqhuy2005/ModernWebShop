@@ -20,11 +20,11 @@ class OrderSeeder extends Seeder
         $products = Product::all();
 
         if ($users->isEmpty() || $products->isEmpty()) {
-            $this->command->warn('⚠ Không có users hoặc products. Vui lòng chạy UserSeeder và ProductSeeder trước!');
+
             return;
         }
 
-        $this->command->info('🚀 Bắt đầu tạo đơn hàng test...');
+
 
         $statuses = ['pending', 'confirmed', 'processing', 'shipping', 'completed', 'cancelled'];
         $orderCount = 0;
@@ -81,13 +81,12 @@ class OrderSeeder extends Seeder
                 }
 
                 $orderCount++;
-                $this->command->info("✅ Đơn hàng #{$order->id} - User: {$user->fullname} - Tổng: " . number_format($totalAmount) . " ₫");
             }
         }
 
         $this->createSpecialOrders($users, $products);
 
-        $this->command->info("✅ Hoàn thành! Đã tạo {$orderCount} đơn hàng.");
+
     }
 
     /**
@@ -101,7 +100,7 @@ class OrderSeeder extends Seeder
 
         $testUser = $users->first();
 
-        $this->command->info('📦 Tạo đơn hàng test với sản phẩm giá 0...');
+
         $testProduct = $products->first();
 
         $order1 = Order::create([
@@ -124,7 +123,7 @@ class OrderSeeder extends Seeder
             'product_specifications' => null,
         ]);
 
-        $this->command->info('📦 Tạo đơn hàng test với giá trị lớn...');
+
 
         $largeTotal = 0;
         $largeItemCount = 0;
@@ -162,7 +161,7 @@ class OrderSeeder extends Seeder
             OrderDetail::create(array_merge($detail, ['order_id' => $order2->id]));
         }
 
-        $this->command->info('📦 Tạo đơn hàng hoàn thành...');
+
 
         $completedTotal = 0;
         $completedItems = 0;
@@ -201,7 +200,7 @@ class OrderSeeder extends Seeder
             'total_items' => $completedItems,
         ]);
 
-        $this->command->info('✅ Đã tạo 3 đơn hàng test đặc biệt');
+
     }
 
     /**

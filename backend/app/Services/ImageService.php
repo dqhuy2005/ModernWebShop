@@ -14,10 +14,8 @@ class ImageService
 
     public function __construct()
     {
-        // Check if GD extension is available
         $this->useResize = extension_loaded('gd');
 
-        // Only initialize ImageManager if GD is available
         if ($this->useResize) {
             try {
                 $this->manager = new \Intervention\Image\ImageManager(
@@ -31,9 +29,6 @@ class ImageService
         $this->config = config('image');
     }
 
-    /**
-     * Check if image resize is available
-     */
     public function canResize(): bool
     {
         return $this->useResize;
@@ -48,7 +43,6 @@ class ImageService
         $filename = $this->generateFilename($file);
         $path = $this->config['paths']['products'] . '/' . $filename;
 
-        // If GD is available, resize image
         if ($this->useResize) {
             $image = $this->manager->read($file->getRealPath());
             $sizes = $this->config['sizes']['product'];
@@ -61,7 +55,6 @@ class ImageService
             $encoded = $image->toJpeg(quality: $this->config['quality']);
             Storage::disk('public')->put($path, $encoded);
         } else {
-            // Fallback: Store original image without resize
             Storage::disk('public')->putFileAs(
                 $this->config['paths']['products'],
                 $file,
@@ -81,7 +74,6 @@ class ImageService
         $filename = $this->generateFilename($file);
         $path = $this->config['paths']['avatars'] . '/' . $filename;
 
-        // If GD is available, resize and crop to square
         if ($this->useResize) {
             $image = $this->manager->read($file->getRealPath());
             $sizes = $this->config['sizes']['avatar'];
@@ -94,7 +86,6 @@ class ImageService
             $encoded = $image->toJpeg(quality: $this->config['quality']);
             Storage::disk('public')->put($path, $encoded);
         } else {
-            // Fallback: Store original image without resize
             Storage::disk('public')->putFileAs(
                 $this->config['paths']['avatars'],
                 $file,
@@ -135,7 +126,6 @@ class ImageService
 
     public function createThumbnail(string $imagePath, string $type = 'product'): ?string
     {
-        // Can't create thumbnail without GD extension
         if (!$this->useResize) {
             return null;
         }

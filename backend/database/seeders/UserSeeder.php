@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
         $userRole = Role::where('slug', Role::USER)->first();
 
         User::create([
+            'id' => 1,
             'fullname' => 'Admin User',
             'email' => 'admin@gmail.com',
             'role_id' => $adminRole->id,
@@ -26,6 +27,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'id' => 2,
             'fullname' => 'John Doe',
             'email' => 'john@gmail.com',
             'role_id' => $userRole->id,
@@ -37,6 +39,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'id' => 3,
             'fullname' => 'Nguyen Van A',
             'email' => 'nguyenvana@gmail.com',
             'role_id' => $userRole->id,

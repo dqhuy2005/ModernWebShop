@@ -34,7 +34,7 @@
 
                 <div class="mb-4 pb-3 border-bottom">
                     <label class="form-label fw-bold">
-                        <i class="fas fa-image me-2"></i>{{ $user->image ? 'Change Avatar' : 'Upload Avatar' }}
+                        {{ $user->image ? 'Change Avatar' : 'Upload Avatar' }}
                     </label>
 
                     <input type="file" class="d-none @error('image') is-invalid @enderror" id="image" name="image"

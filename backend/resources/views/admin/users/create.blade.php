@@ -25,7 +25,7 @@
             <div class="card-body">
                 <div class="mb-4 pb-3">
                     <label class="form-label fw-bold">
-                        <i class="fas fa-image me-2"></i>User Avatar
+                        </i>User Avatar
                     </label>
 
                     <input type="file" class="d-none @error('image') is-invalid @enderror" id="image" name="image"
