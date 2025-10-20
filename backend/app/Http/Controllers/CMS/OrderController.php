@@ -18,7 +18,8 @@ class OrderController extends Controller
         try {
             $order = Order::with([
                 'user:id,fullname,email,phone',
-                'orderDetails.product:id,name,image'
+                'orderDetails.product:id,name,image',
+                'activities.user:id,fullname'
             ])->findOrFail($id);
 
             $calculatedTotal = $order->calculateTotalAmount();
@@ -74,12 +75,29 @@ class OrderController extends Controller
                     $q->where('id', 'like', "%{$search}%")
                         ->orWhereHas('user', function ($userQuery) use ($search) {
                             $userQuery->where('fullname', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
+                                ->orWhere('email', 'like', "%{$search}%")
+                                ->orWhere('phone', 'like', "%{$search}%");
                         });
                 });
             }
 
-            $sortBy = $request->get('sort_by', 'created_at');
+            // Date range filtering
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
+
+            // Price range filtering
+            if ($request->filled('price_min')) {
+                $query->where('total_amount', '>=', $request->price_min);
+            }
+            if ($request->filled('price_max')) {
+                $query->where('total_amount', '<=', $request->price_max);
+            }
+
+            $sortBy = $request->get('sort_by', 'updated_at');
             $sortOrder = $request->get('sort_order', 'desc');
             $query->orderBy($sortBy, $sortOrder);
 
@@ -246,6 +264,10 @@ class OrderController extends Controller
         try {
             $order = Order::findOrFail($id);
 
+            $oldStatus = $order->status;
+            $oldAddress = $order->address;
+            $oldNote = $order->note;
+
             $order->orderDetails()->delete();
 
             $totalAmount = 0;
@@ -280,6 +302,25 @@ class OrderController extends Controller
                 'note' => $request->note,
             ]);
 
+            $order->logActivity('order_updated', 'Order details updated');
+
+            if ($oldStatus !== $request->status) {
+                $order->logActivity(
+                    'status_changed',
+                    "Status changed from {$oldStatus} to {$request->status}",
+                    $oldStatus,
+                    $request->status
+                );
+            }
+
+            if ($oldAddress !== $request->address) {
+                $order->logActivity('address_updated', 'Shipping address was updated');
+            }
+
+            if ($oldNote !== $request->note && $request->note) {
+                $order->logActivity('note_added', 'Order note was updated');
+            }
+
             DB::commit();
 
             return redirect()
@@ -300,6 +341,8 @@ class OrderController extends Controller
             $order = Order::findOrFail($id);
             $order->status = Order::STATUS_CANCELLED;
             $order->update();
+
+            $order->logActivity('order_cancelled', 'Order was cancelled by admin');
 
             if ($request->ajax()) {
                 $statistics = [
@@ -340,6 +383,8 @@ class OrderController extends Controller
         try {
             $order = Order::withTrashed()->findOrFail($id);
             $order->restore();
+
+            $order->logActivity('order_restored', 'Order was restored from trash');
 
             if ($request->ajax()) {
                 $statistics = [

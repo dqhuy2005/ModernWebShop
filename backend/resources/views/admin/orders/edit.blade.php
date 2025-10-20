@@ -34,7 +34,6 @@
         @method('PUT')
 
         <div class="row">
-            <!-- Order Information -->
             <div class="col-lg-8">
                 <div class="card mb-4">
                     <div class="card-header bg-light">
@@ -43,7 +42,6 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <!-- Customer Selection -->
                         <div class="mb-3">
                             <label for="user_id" class="form-label">
                                 Customer <span class="text-danger">*</span>
@@ -63,7 +61,6 @@
                             @enderror
                         </div>
 
-                        <!-- Status -->
                         <div class="mb-3">
                             <label for="status" class="form-label">
                                 Status <span class="text-danger">*</span>
@@ -89,7 +86,6 @@
                             @enderror
                         </div>
 
-                        <!-- Address -->
                         <div class="mb-3">
                             <label for="address" class="form-label">
                                 Delivery Address
@@ -102,7 +98,6 @@
                             @enderror
                         </div>
 
-                        <!-- Note -->
                         <div class="mb-0">
                             <label for="note" class="form-label">
                                 Order Note
@@ -116,7 +111,6 @@
                     </div>
                 </div>
 
-                <!-- Products Selection -->
                 <div class="card mb-4">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
@@ -188,7 +182,6 @@
                 </div>
             </div>
 
-            <!-- Order Summary -->
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header bg-light">
@@ -229,7 +222,6 @@
         </div>
     </form>
 
-    <!-- Multi-Select Product Modal -->
     <div class="modal fade" id="productModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -325,12 +317,10 @@
         const selectedProducts = new Set(@json($order->orderDetails->pluck('product_id')));
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
 
-        // Add Product Button
         $('#addProductBtn').on('click', function() {
             productModal.show();
         });
 
-        // Product Search
         $('#productSearch').on('input', function() {
             const searchTerm = $(this).val().toLowerCase();
             $('.product-item').each(function() {
@@ -344,7 +334,6 @@
             });
         });
 
-        // Update Selected Count
         $(document).on('change', '.product-checkbox', function() {
             updateSelectedCount();
         });
@@ -354,7 +343,6 @@
             $('#selectedCount').text(count);
         }
 
-        // Confirm Selection - Add Multiple Products
         $('#confirmSelection').on('click', function() {
             const selectedCheckboxes = $('.product-checkbox:checked');
 
@@ -378,7 +366,6 @@
                 }
             });
 
-            // Reset modal
             $('.product-checkbox').prop('checked', false);
             updateSelectedCount();
             productModal.hide();
@@ -391,13 +378,11 @@
             }
         });
 
-        // Reset modal when closed
         $('#productModal').on('hidden.bs.modal', function() {
             $('.product-checkbox').prop('checked', false);
             updateSelectedCount();
         });
 
-        // Add Product Row
         function addProductRow(id, name, price, image) {
             $('#emptyState').hide();
 
@@ -440,7 +425,6 @@
             productIndex++;
         }
 
-        // Remove Product
         $(document).on('click', '.remove-product', function() {
             const productId = $(this).data('product-id');
             const row = $(this).closest('.product-row');
@@ -456,7 +440,6 @@
             });
         });
 
-        // Update Quantity
         $(document).on('input', '.quantity-input', function() {
             const quantity = parseInt($(this).val()) || 0;
             const price = parseInt($(this).data('price')) || 0;
@@ -466,7 +449,6 @@
             updateSummary();
         });
 
-        // Update Summary
         function updateSummary() {
             let grandTotal = 0;
             let totalItems = 0;
@@ -484,15 +466,12 @@
             $('#grandTotalDisplay').text(formatPrice(grandTotal) + ' ₫');
         }
 
-        // Format Price
         function formatPrice(price) {
             return new Intl.NumberFormat('vi-VN').format(price);
         }
 
-        // Initialize summary
         updateSummary();
 
-        // Form Validation
         $('#orderForm').on('submit', function(e) {
             if ($('.product-row').length === 0) {
                 e.preventDefault();

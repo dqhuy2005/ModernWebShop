@@ -7,29 +7,20 @@
 
     <title>@yield('title', 'ModernWebShop - Cửa hàng trực tuyến')</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
-    <!-- Custom CSS -->
-    {{-- @vite(['resources/css/app.css']) --}}
 
     @stack('styles')
 </head>
 <body>
-    <!-- Header -->
     @include('components.user.header')
 
-    <!-- Main Content -->
     <main class="main-content">
         @if(session('success'))
             <div class="container mt-3">
@@ -52,20 +43,13 @@
         @yield('content')
     </main>
 
-    <!-- Footer -->
     @include('components.user.footer')
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery (optional) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-    <!-- Custom JS -->
-    {{-- @vite(['resources/js/app.js']) --}}
 
     <script>
         // Toastr Configuration

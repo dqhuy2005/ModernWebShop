@@ -5,10 +5,8 @@
 @section('content')
 <div class="page-header">
     <h1 class="h3 mb-0">Dashboard</h1>
-    <p class="text-muted">Tổng quan hệ thống</p>
 </div>
 
-<!-- Statistics Cards -->
 <div class="row">
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stat-card border-start border-primary border-4">
@@ -85,7 +83,6 @@
     </div>
 </div>
 
-<!-- Charts Row -->
 <div class="row">
     <div class="col-xl-8 mb-4">
         <div class="card">
@@ -110,7 +107,6 @@
     </div>
 </div>
 
-<!-- Recent Orders -->
 <div class="row">
     <div class="col-12">
         <div class="card">

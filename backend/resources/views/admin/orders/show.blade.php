@@ -114,6 +114,47 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Activity Timeline -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Order Activity Timeline</h5>
+                </div>
+                <div class="card-body">
+                    @if($order->activities->count() > 0)
+                        <div class="timeline">
+                            @foreach($order->activities as $activity)
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-{{ $activity->action_color }}">
+                                        <i class="fas {{ $activity->action_icon }} text-white"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <h6 class="mb-0">{{ $activity->formatted_description }}</h6>
+                                            <small class="text-muted">{{ $activity->created_at->format('d/m/Y H:i') }}</small>
+                                        </div>
+                                        <div class="text-muted small">
+                                            @if($activity->user)
+                                                <i class="fas fa-user me-1"></i>{{ $activity->user->fullname }}
+                                            @else
+                                                <i class="fas fa-robot me-1"></i>System
+                                            @endif
+                                            @if($activity->ip_address)
+                                                <span class="ms-2"><i class="fas fa-globe me-1"></i>{{ $activity->ip_address }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-clock fa-3x mb-3 opacity-25"></i>
+                            <p class="mb-0">No activity recorded yet</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-4">
@@ -161,6 +202,65 @@
         .table-sm td,
         .table-sm th {
             padding: 0.5rem;
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -32px;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #dee2e6;
+        }
+
+        .timeline-content h6 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .timeline-item:hover .timeline-content {
+            background: #e9ecef;
+            transition: background 0.2s ease;
         }
     </style>
 @endpush

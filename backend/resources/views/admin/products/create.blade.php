@@ -26,7 +26,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="category_id" class="form-label">
+                            <label for="category_id" class="form-label fw-bold">
                                 Category <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('category_id') is-invalid @enderror" id="category_id"
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">
+                            <label for="name" class="form-label fw-bold">
                                 Product Name <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
@@ -56,8 +56,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="price" class="form-label">
-                                <i class="fas fa-tag me-1"></i>Price (VNĐ) <span class="text-danger">*</span>
+                            <label for="price" class="form-label fw-bold">
+                                Price (VNĐ) <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control @error('price') is-invalid @enderror"
@@ -70,16 +70,10 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <small class="text-muted">
-                                Giá tối đa: 999.999.999 ₫. Nhập 0 để hiển thị "Liên hệ"
-                            </small>
-                            <div id="price-preview" class="mt-2 d-none">
-                                <strong>Hiển thị:</strong> <span id="price-formatted" class="text-primary"></span>
-                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label fw-bold">Description</label>
                             <textarea class="form-control @error('description') is-invalid @enderror" id="editor" name="description"
                                 rows="5" placeholder="Enter product description...">{{ old('description') }}</textarea>
                             @error('description')
@@ -88,7 +82,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">
+                            <label class="form-label fw-bold">
                                 <i class="fas fa-list me-1"></i>Specifications
                             </label>
                             <div id="specifications-container">
@@ -114,7 +108,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Status</label>
+                            <label class="form-label fw-bold">Status</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="status" name="status"
                                     value="1" {{ old('status', 1) ? 'checked' : '' }}>
@@ -125,7 +119,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Hot Product</label>
+                            <label class="form-label fw-bold">Hot Product</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="is_hot" name="is_hot"
                                     value="1" {{ old('is_hot') ? 'checked' : '' }}>
@@ -133,7 +127,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="image" class="form-label">
+                            <label for="image" class="form-label fw-bold">
                                 Product Image
                             </label>
                             <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
@@ -231,15 +225,12 @@
             if (validation.valid) {
                 $('#price').val(validation.value);
                 $('#price-formatted').text(displayFormattedPrice(validation.value));
-                $('#price-preview').removeClass('d-none');
                 $(this).removeClass('is-invalid').addClass('is-valid');
             } else if (formatted === '') {
                 $('#price').val(0);
-                $('#price-preview').addClass('d-none');
                 $(this).removeClass('is-invalid is-valid');
             } else {
                 $(this).removeClass('is-valid').addClass('is-invalid');
-                $('#price-preview').addClass('d-none');
             }
         });
 

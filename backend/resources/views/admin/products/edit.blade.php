@@ -36,7 +36,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="name" class="form-label">
+                            <label for="name" class="form-label fw-bold">
                                 Product Name <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
@@ -48,13 +48,13 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="price" class="form-label">
-                                <i class="fas fa-tag me-1"></i>Price (VNĐ) <span class="text-danger">*</span>
+                            <label for="price" class="form-label fw-bold">
+                                Price (VNĐ) <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control @error('price') is-invalid @enderror" 
-                                    id="price_display" 
-                                    placeholder="Nhập giá sản phẩm..." 
+                                <input type="text" class="form-control @error('price') is-invalid @enderror"
+                                    id="price_display"
+                                    placeholder="Nhập giá sản phẩm..."
                                     value="{{ old('price') ? number_format(old('price'), 0, ',', '.') : number_format($product->price ?? 0, 0, ',', '.') }}">
                                 <input type="hidden" id="price" name="price" value="{{ old('price', $product->price ?? 0) }}">
                                 <span class="input-group-text">₫</span>
@@ -62,16 +62,10 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <small class="text-muted">
-                                Giá tối đa: 999.999.999 ₫. Nhập 0 để hiển thị "Liên hệ"
-                            </small>
-                            <div id="price-preview" class="mt-2 {{ $product->price > 0 ? '' : 'd-none' }}">
-                                <strong>Hiển thị:</strong> <span id="price-formatted" class="text-primary">{{ $product->formatted_price ?? 'Liên hệ' }}</span>
-                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label fw-bold">Description</label>
                             <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                                 rows="5" placeholder="Enter product description...">{{ old('description', $product->description) }}</textarea>
                             @error('description')
@@ -80,7 +74,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">
+                            <label class="form-label fw-bold">
                                 <i class="fas fa-list me-1"></i>Specifications
                             </label>
                             <div id="specifications-container">
@@ -156,7 +150,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="category_id" class="form-label">
+                            <label for="category_id" class="form-label fw-bold">
                                 Category <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('category_id') is-invalid @enderror" id="category_id"
@@ -175,7 +169,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Status</label>
+                            <label class="form-label fw-bold">Status</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="status"
                                     name="status" value="1" {{ old('status', $product->status) ? 'checked' : '' }}>
@@ -186,7 +180,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Hot Product</label>
+                            <label class="form-label fw-bold">Hot Product</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" id="is_hot"
                                     name="is_hot" value="1" {{ old('is_hot', $product->is_hot) ? 'checked' : '' }}>
@@ -204,7 +198,7 @@
                     <div class="card-body">
                         @if ($product->image)
                             <div class="mb-3 text-center">
-                                <label class="form-label d-block">Current Image</label>
+                                <label class="form-label fw-bold d-block">Current Image</label>
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                     class="img-fluid rounded" style="max-height: 200px; border: 2px solid #dee2e6;"
                                     id="current-image">
@@ -212,7 +206,7 @@
                         @endif
 
                         <div class="mb-3">
-                            <label for="image" class="form-label">
+                            <label for="image" class="form-label fw-bold">
                                 {{ $product->image ? 'Change Image' : 'Upload Image' }}
                             </label>
                             <input type="file" class="form-control @error('image') is-invalid @enderror"
@@ -227,7 +221,7 @@
 
                         <div id="image-preview" class="text-center d-none">
                             <div class="d-flex flex-column align-items-center">
-                                <label class="form-label d-block">New Image Preview</label>
+                                <label class="form-label fw-bold d-block">New Image Preview</label>
                                 <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
                                 <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeImage()">
                                     <i class="fas fa-times me-1"></i>Remove
@@ -281,20 +275,17 @@
             const value = $(this).val();
             const formatted = formatPrice(value);
             $(this).val(formatted);
-            
+
             const validation = validatePrice(formatted);
             if (validation.valid) {
                 $('#price').val(validation.value);
                 $('#price-formatted').text(displayFormattedPrice(validation.value));
-                $('#price-preview').removeClass('d-none');
                 $(this).removeClass('is-invalid').addClass('is-valid');
             } else if (formatted === '') {
                 $('#price').val(0);
-                $('#price-preview').addClass('d-none');
                 $(this).removeClass('is-invalid is-valid');
             } else {
                 $(this).removeClass('is-valid').addClass('is-invalid');
-                $('#price-preview').addClass('d-none');
             }
         });
 

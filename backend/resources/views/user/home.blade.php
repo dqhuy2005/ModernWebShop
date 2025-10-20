@@ -81,7 +81,6 @@
     updateCountdown();
 
     function addToCart(productId) {
-        console.log('Adding product to cart:', productId);
         toastr.success('Product added to cart!');
     }
 

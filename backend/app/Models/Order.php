@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -52,6 +53,28 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
+    public function activities()
+    {
+        return $this->hasMany(OrderActivity::class)->latest();
+    }
+
+    public function logActivity(
+        string $action,
+        ?string $description = null,
+        ?string $oldValue = null,
+        ?string $newValue = null
+    ): OrderActivity {
+        return $this->activities()->create([
+            'user_id' => Auth::id(),
+            'action' => $action,
+            'old_value' => $oldValue,
+            'new_value' => $newValue,
+            'description' => $description,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+    }
+
     // Helper Methods - Status Badges
 
     public function getStatusBadgeColorAttribute(): string
@@ -91,10 +114,6 @@ class Order extends Model
         return number_format($this->total_amount, 0, ',', '.') . ' ₫';
     }
 
-    /**
-     * Tính toán tổng tiền từ order details
-     * Server PHẢI tự tính, KHÔNG tin dữ liệu từ client
-     */
     public function calculateTotalAmount(): int
     {
         return $this->orderDetails->sum(function ($item) {
@@ -102,17 +121,11 @@ class Order extends Model
         });
     }
 
-    /**
-     * Tính tổng số lượng sản phẩm
-     */
     public function calculateTotalItems(): int
     {
         return $this->orderDetails->sum('quantity');
     }
 
-    /**
-     * Kiểm tra tính toàn vẹn của đơn hàng
-     */
     public function verifyIntegrity(): bool
     {
         $calculatedTotal = $this->calculateTotalAmount();

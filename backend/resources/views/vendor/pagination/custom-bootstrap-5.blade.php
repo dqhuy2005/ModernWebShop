@@ -32,11 +32,11 @@
                 $currentPage = $paginator->currentPage();
                 $lastPage = $paginator->lastPage();
                 $maxPages = 5; // Maximum number of page links to show
-                
+
                 // Calculate start and end page
                 $start = max(1, $currentPage - floor($maxPages / 2));
                 $end = min($lastPage, $start + $maxPages - 1);
-                
+
                 // Adjust start if end is at last page
                 if ($end - $start < $maxPages - 1) {
                     $start = max(1, $end - $maxPages + 1);

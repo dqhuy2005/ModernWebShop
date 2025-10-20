@@ -1,0 +1,4 @@
+.is-readonly {
+    background-color: #e9ecef;
+    pointer-events: none;
+}

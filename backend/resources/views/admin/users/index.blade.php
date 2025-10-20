@@ -99,7 +99,6 @@
 
 @push('scripts')
     <script>
-        // Initialize AJAX Pagination
         let userPagination;
 
         $(document).ready(function() {
@@ -107,7 +106,6 @@
                 containerId: 'users-table-container',
                 paginationSelector: 'nav[aria-label="Users pagination"]',
                 onCountsUpdate: function(counts) {
-                    // Update count cards if counts are provided
                     if (counts.total !== undefined) $('#totalUsersCount').text(counts.total);
                     if (counts.active !== undefined) $('#activeUsersCount').text(counts.active);
                     if (counts.inactive !== undefined) $('#inactiveUsersCount').text(counts.inactive);

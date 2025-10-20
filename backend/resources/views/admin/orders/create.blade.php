@@ -275,6 +275,8 @@
 
         // Product Search
         $('#productSearch').on('input', function() {
+            console.log($('#productSearch') ? 'true' : 'false');
+
             const searchTerm = $(this).val().toLowerCase();
             $('.product-item').each(function() {
                 const checkbox = $(this).find('.product-checkbox');
