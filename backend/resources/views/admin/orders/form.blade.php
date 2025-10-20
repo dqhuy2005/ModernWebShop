@@ -5,9 +5,8 @@
         </h5>
     </div>
     <div class="card-body">
-        <form action="{{ route('admin.orders.index') }}" method="GET" id="searchForm">
+        <form action="{{ route('admin.orders.index') }}" method="GET" id="searchForm" class="clean-form">
             <div class="row g-3 align-items-end mb-3">
-                <!-- Search Input -->
                 <div class="col-md-6">
                     <label for="search" class="form-label small text-muted">Search</label>
                     <div class="position-relative">
@@ -24,7 +23,6 @@
                     </div>
                 </div>
 
-                <!-- Status Filter -->
                 <div class="col-md-3">
                     <label for="status_filter" class="form-label small text-muted">Status</label>
                     <select name="status" id="status_filter" class="form-select">
@@ -39,7 +37,6 @@
                     </select>
                 </div>
 
-                <!-- Search Button -->
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-search me-2"></i>Search
@@ -47,7 +44,6 @@
                 </div>
             </div>
 
-            <!-- Advanced Filters Toggle -->
             <div class="mb-3">
                 <a href="#advancedFilters" data-bs-toggle="collapse" class="text-decoration-none">
                     <i class="fas fa-sliders-h me-2"></i>Advanced Filters
@@ -55,34 +51,30 @@
                 </a>
             </div>
 
-            <!-- Advanced Filters -->
             <div class="collapse" id="advancedFilters">
                 <div class="row g-3">
-                    <!-- Date Range -->
                     <div class="col-md-3">
                         <label for="date_from" class="form-label small text-muted">Date From</label>
-                        <input type="date" name="date_from" id="date_from" class="form-control" 
+                        <input type="date" name="date_from" id="date_from" class="form-control"
                             value="{{ request('date_from') }}">
                     </div>
                     <div class="col-md-3">
                         <label for="date_to" class="form-label small text-muted">Date To</label>
-                        <input type="date" name="date_to" id="date_to" class="form-control" 
+                        <input type="date" name="date_to" id="date_to" class="form-control"
                             value="{{ request('date_to') }}">
                     </div>
 
-                    <!-- Price Range -->
                     <div class="col-md-3">
                         <label for="price_min" class="form-label small text-muted">Min Price (₫)</label>
-                        <input type="number" name="price_min" id="price_min" class="form-control" 
+                        <input type="number" name="price_min" id="price_min" class="form-control"
                             placeholder="0" value="{{ request('price_min') }}" min="0" step="1000">
                     </div>
                     <div class="col-md-3">
                         <label for="price_max" class="form-label small text-muted">Max Price (₫)</label>
-                        <input type="number" name="price_max" id="price_max" class="form-control" 
+                        <input type="number" name="price_max" id="price_max" class="form-control"
                             placeholder="999,999,999" value="{{ request('price_max') }}" min="0" step="1000">
                     </div>
 
-                    <!-- Quick Date Filters -->
                     <div class="col-12">
                         <label class="form-label small text-muted">Quick Date Filters</label>
                         <div class="btn-group" role="group">
@@ -96,8 +88,8 @@
                 </div>
             </div>
 
-            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by', 'id') }}">
-            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order', 'desc') }}">
+            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
+            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
         </form>
 
         @if (request('search') || request('status') || request('date_from') || request('date_to') || request('price_min') || request('price_max'))
@@ -233,7 +225,7 @@
 
             $('#date_from').val(dateFrom);
             $('#date_to').val(dateTo);
-            
+
             // Expand advanced filters if collapsed
             if (!$('#advancedFilters').hasClass('show')) {
                 $('#advancedFilters').collapse('show');

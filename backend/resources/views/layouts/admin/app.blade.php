@@ -120,6 +120,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="{{ asset('js/ajax-pagination.js') }}"></script>
+    <script src="{{ asset('js/clean-form-submit.js') }}"></script>
 
     <script>
         $(document).ready(function() {

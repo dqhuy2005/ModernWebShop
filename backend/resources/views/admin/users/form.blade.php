@@ -5,7 +5,7 @@
         </h5>
     </div>
     <div class="card-body">
-        <form action="{{ route('admin.users.index') }}" method="GET" id="searchForm">
+        <form action="{{ route('admin.users.index') }}" method="GET" id="searchForm" class="clean-form">
             <div class="row g-3 align-items-center">
                 <div class="col-md-8">
                     <div class="position-relative">

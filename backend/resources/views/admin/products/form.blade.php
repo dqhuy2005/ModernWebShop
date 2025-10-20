@@ -14,7 +14,7 @@
         </button>
     </div>
     <div class="card-body">
-        <form action="{{ route('admin.products.index') }}" method="GET" id="searchForm">
+        <form action="{{ route('admin.products.index') }}" method="GET" id="searchForm" class="clean-form">
             <div class="row g-3 align-items-center">
                 <div class="col-md-12">
                     <div class="position-relative">

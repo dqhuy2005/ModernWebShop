@@ -81,7 +81,6 @@ class OrderController extends Controller
                 });
             }
 
-            // Date range filtering
             if ($request->filled('date_from')) {
                 $query->whereDate('created_at', '>=', $request->date_from);
             }
@@ -89,7 +88,6 @@ class OrderController extends Controller
                 $query->whereDate('created_at', '<=', $request->date_to);
             }
 
-            // Price range filtering
             if ($request->filled('price_min')) {
                 $query->where('total_amount', '>=', $request->price_min);
             }
@@ -97,7 +95,7 @@ class OrderController extends Controller
                 $query->where('total_amount', '<=', $request->price_max);
             }
 
-            $sortBy = $request->get('sort_by', 'updated_at');
+            $sortBy = $request->get('sort_by', 'created_at');
             $sortOrder = $request->get('sort_order', 'desc');
             $query->orderBy($sortBy, $sortOrder);
 
