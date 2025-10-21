@@ -24,16 +24,14 @@ class CategoryController extends Controller
 
         // Pagination
         $perPage = $request->get('per_page', 15);
-        $categories = $query->paginate($perPage);        if ($request->ajax()) {
+        $categories = $query->paginate($perPage);
+        if ($request->ajax()) {
             return view('admin.categories.table', compact('categories', 'stats'))->render();
         }
 
         return view('admin.categories.index', compact('categories', 'stats'));
     }
 
-    /**
-     * Get category statistics (optimized single query)
-     */
     protected function getCategoryStatistics()
     {
         return Category::selectRaw('
@@ -43,23 +41,16 @@ class CategoryController extends Controller
         ')->withTrashed()->first();
     }
 
-    /**
-     * Show the form for creating a new category
-     */
     public function create()
     {
         return view('admin.categories.create');
     }
 
-    /**
-     * Store a newly created category
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
-            'parent_id' => 'nullable|exists:categories,id'
         ]);
 
         if (empty($validated['slug'])) {
@@ -79,18 +70,12 @@ class CategoryController extends Controller
             ->with('success', 'Category created successfully!');
     }
 
-    /**
-     * Display the specified category
-     */
     public function show(Category $category)
     {
         $category->load(['products', 'parent', 'children']);
         return view('admin.categories.show', compact('category'));
     }
 
-    /**
-     * Show the form for editing the specified category
-     */
     public function edit(Category $category)
     {
         $categories = Category::whereNull('deleted_at')
@@ -100,9 +85,6 @@ class CategoryController extends Controller
         return view('admin.categories.edit', compact('category', 'categories'));
     }
 
-    /**
-     * Update the specified category
-     */
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
@@ -128,9 +110,6 @@ class CategoryController extends Controller
             ->with('success', 'Category updated successfully!');
     }
 
-    /**
-     * Soft delete the specified category
-     */
     public function destroy(Category $category)
     {
         $category->delete();
@@ -146,9 +125,6 @@ class CategoryController extends Controller
             ->with('success', 'Category deleted successfully!');
     }
 
-    /**
-     * Restore a soft deleted category
-     */
     public function restore($id)
     {
         $category = Category::withTrashed()->findOrFail($id);
@@ -165,9 +141,6 @@ class CategoryController extends Controller
             ->with('success', 'Category restored successfully!');
     }
 
-    /**
-     * Permanently delete a category
-     */
     public function forceDelete($id)
     {
         $category = Category::withTrashed()->findOrFail($id);

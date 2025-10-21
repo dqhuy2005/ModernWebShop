@@ -22,11 +22,8 @@
     </div>
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0">Category Information</h5>
-                </div>
                 <div class="card-body">
                     <table class="table table-borderless">
                         <tbody>
@@ -147,50 +144,11 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-bar me-2"></i>Statistics
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                        <div>
-                            <div class="text-muted small">Total Products</div>
-                            <h3 class="mb-0 text-primary">{{ $category->products->count() }}</h3>
-                        </div>
-                        <div class="stats-icon bg-primary-soft">
-                            <i class="fas fa-box text-primary"></i>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                        <div>
-                            <div class="text-muted small">Active Products</div>
-                            <h3 class="mb-0 text-success">{{ $category->products->where('status', 1)->count() }}</h3>
-                        </div>
-                        <div class="stats-icon bg-success-soft">
-                            <i class="fas fa-check-circle text-success"></i>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="text-muted small">Inactive Products</div>
-                            <h3 class="mb-0 text-secondary">{{ $category->products->where('status', 0)->count() }}</h3>
-                        </div>
-                        <div class="stats-icon bg-secondary-soft">
-                            <i class="fas fa-times-circle text-secondary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             @if ($category->children && $category->children->count() > 0)
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
                         <h5 class="mb-0">
-                            <i class="fas fa-sitemap me-2"></i>Sub Categories
+                            <i class="fas fa-sitemap me-2"></i>Categories child
                         </h5>
                     </div>
                     <div class="card-body">

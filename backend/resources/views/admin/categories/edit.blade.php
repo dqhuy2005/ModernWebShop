@@ -19,7 +19,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0">Category Information</h5>
@@ -51,63 +51,16 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-1"></i> Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i> Update
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0">
-                        <i class="fas fa-info-circle me-2"></i>Category Stats
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Total Products:</span>
-                        <strong>{{ $category->products()->count() }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Created:</span>
-                        <strong>{{ $category->created_at->format('d/m/Y') }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">Last Updated:</span>
-                        <strong>{{ $category->updated_at->format('d/m/Y') }}</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0">
-                        <i class="fas fa-lightbulb me-2"></i>Tips
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p class="small text-muted mb-2">
-                        <i class="fas fa-check text-success me-1"></i>
-                        Update the category name carefully as it affects product organization.
-                    </p>
-                    <p class="small text-muted mb-2">
-                        <i class="fas fa-check text-success me-1"></i>
-                        Keep the slug URL-friendly for better SEO.
-                    </p>
-                    <p class="small text-muted mb-0">
-                        <i class="fas fa-check text-success me-1"></i>
-                        High-quality images improve category visibility.
-                    </p>
-                </div>
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-1"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Update
+                </button>
             </div>
         </div>
     </div>
