@@ -76,7 +76,20 @@ class AjaxPagination {
             },
             success: (response) => {
                 // Extract and update container content
-                const newContent = $(response).find('#' + this.containerId).html();
+                // Check if response already contains the target container
+                const $response = $(response);
+                let newContent;
+                
+                // Try to find the container in the response
+                const foundContainer = $response.find('#' + this.containerId);
+                if (foundContainer.length > 0) {
+                    // Container found in response, extract its HTML
+                    newContent = foundContainer.html();
+                } else {
+                    // Container not found, use response as-is (likely a partial view)
+                    newContent = response;
+                }
+                
                 container.html(newContent);
                 
                 // Update browser history
