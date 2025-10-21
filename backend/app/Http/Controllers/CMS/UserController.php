@@ -90,9 +90,6 @@ class UserController extends BaseController
         return $query;
     }
 
-    /**
-     * Get user statistics in a single query
-     */
     protected function getUserStatistics()
     {
         return DB::table('users')
@@ -265,7 +262,7 @@ class UserController extends BaseController
 
             if (request()->ajax()) {
                 $stats = $this->getUserStatistics();
-                
+
                 return response()->json([
                     'success' => true,
                     'message' => 'User deleted successfully! You can restore it later.',
@@ -293,21 +290,17 @@ class UserController extends BaseController
             $user->restore();
 
             if (request()->ajax()) {
-                $query = User::withTrashed()->with('role')
-                    ->whereDoesntHave('role', function ($q) {
-                        $q->where('slug', Role::ADMIN);
-                    });
-                $this->applyUserFilters($query, request());
+                $stats = $this->getUserStatistics();
 
                 return response()->json([
                     'success' => true,
                     'message' => 'User restored successfully!',
                     'status' => $user->status,
                     'counts' => [
-                        'total' => (clone $query)->count(),
-                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $query)->onlyTrashed()->count(),
+                        'total' => $stats->total,
+                        'active' => $stats->active,
+                        'inactive' => $stats->inactive,
+                        'deleted' => $stats->deleted,
                     ],
                 ]);
             }
@@ -335,20 +328,16 @@ class UserController extends BaseController
             $user->forceDelete();
 
             if (request()->ajax()) {
-                $query = User::withTrashed()->with('role')
-                    ->whereDoesntHave('role', function ($q) {
-                        $q->where('slug', Role::ADMIN);
-                    });
-                $this->applyUserFilters($query, request());
+                $stats = $this->getUserStatistics();
 
                 return response()->json([
                     'success' => true,
                     'message' => 'User permanently deleted!',
                     'counts' => [
-                        'total' => (clone $query)->count(),
-                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $query)->onlyTrashed()->count(),
+                        'total' => $stats->total,
+                        'active' => $stats->active,
+                        'inactive' => $stats->inactive,
+                        'deleted' => $stats->deleted,
                     ],
                 ]);
             }
@@ -383,21 +372,17 @@ class UserController extends BaseController
             $status = $user->status ? 'active' : 'inactive';
 
             if (request()->ajax()) {
-                $query = User::withTrashed()->with('role')
-                    ->whereDoesntHave('role', function ($q) {
-                        $q->where('slug', Role::ADMIN);
-                    });
-                $this->applyUserFilters($query, request());
+                $stats = $this->getUserStatistics();
 
                 return response()->json([
                     'success' => true,
                     'message' => "User marked as {$status} successfully!",
                     'status' => $user->status,
                     'counts' => [
-                        'total' => (clone $query)->count(),
-                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $query)->onlyTrashed()->count(),
+                        'total' => $stats->total,
+                        'active' => $stats->active,
+                        'inactive' => $stats->inactive,
+                        'deleted' => $stats->deleted,
                     ],
                 ]);
             }
@@ -415,9 +400,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * Export users to Excel
-     */
     public function export(ExcelService $excelService)
     {
         $excel = $excelService->exportUsers();
@@ -426,9 +408,6 @@ class UserController extends BaseController
         return response($excel, 200, $excelService->getDownloadHeaders($filename));
     }
 
-    /**
-     * Download Excel template for import
-     */
     public function downloadTemplate(ExcelService $excelService)
     {
         $excel = $excelService->generateUserTemplate();
@@ -437,9 +416,6 @@ class UserController extends BaseController
         return response($excel, 200, $excelService->getDownloadHeaders($filename));
     }
 
-    /**
-     * Import users from Excel file
-     */
     public function import(Request $request, ExcelService $excelService)
     {
         $request->validate([

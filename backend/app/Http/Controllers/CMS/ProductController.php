@@ -7,12 +7,27 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class ProductController extends BaseController
 {
+    protected function getProductStatistics($query = null)
+    {
+        $baseQuery = $query ? clone $query : Product::query();
+
+        return DB::table(DB::raw("({$baseQuery->toSql()}) as filtered_products"))
+            ->mergeBindings($baseQuery->getQuery())
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive,
+                SUM(CASE WHEN is_hot = 1 THEN 1 ELSE 0 END) as hot
+            ')
+            ->first();
+    }
+
     public function index(Request $request)
     {
         try {
@@ -20,10 +35,7 @@ class ProductController extends BaseController
 
             $this->applyProductFilters($query, $request);
 
-            $totalProducts = (clone $query)->count();
-            $activeProducts = (clone $query)->where('status', true)->count();
-            $inactiveProducts = (clone $query)->where('status', false)->count();
-            $hotProducts = (clone $query)->where('is_hot', true)->count();
+            $stats = $this->getProductStatistics($query);
 
             $this->applySorting(
                 $query,
@@ -49,14 +61,13 @@ class ProductController extends BaseController
 
             $categories = Category::select('id', 'name')->orderBy('name')->get();
 
-            return view('admin.products.index', compact(
-                'products',
-                'categories',
-                'totalProducts',
-                'activeProducts',
-                'inactiveProducts',
-                'hotProducts'
-            ));
+            return view('admin.products.index', compact('products', 'categories'))
+                ->with([
+                    'totalProducts' => $stats->total,
+                    'activeProducts' => $stats->active,
+                    'inactiveProducts' => $stats->inactive,
+                    'hotProducts' => $stats->hot,
+                ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load products: ' . $e->getMessage());
         }
@@ -314,16 +325,17 @@ class ProductController extends BaseController
             if (request()->ajax()) {
                 $query = Product::query();
                 $this->applyProductFilters($query, request());
+                $stats = $this->getProductStatistics($query);
 
                 return response()->json([
                     'success' => true,
                     'message' => "Product marked as {$status} successfully!",
                     'is_hot' => $product->is_hot,
                     'counts' => [
-                        'total' => (clone $query)->count(),
-                        'active' => (clone $query)->where('status', true)->count(),
-                        'inactive' => (clone $query)->where('status', false)->count(),
-                        'hot' => (clone $query)->where('is_hot', true)->count(),
+                        'total' => $stats->total,
+                        'active' => $stats->active,
+                        'inactive' => $stats->inactive,
+                        'hot' => $stats->hot,
                     ],
                 ]);
             }
@@ -353,16 +365,17 @@ class ProductController extends BaseController
             if (request()->ajax()) {
                 $query = Product::query();
                 $this->applyProductFilters($query, request());
+                $stats = $this->getProductStatistics($query);
 
                 return response()->json([
                     'success' => true,
                     'message' => "Product marked as {$status} successfully!",
                     'status' => $product->status,
                     'counts' => [
-                        'total' => (clone $query)->count(),
-                        'active' => (clone $query)->where('status', true)->count(),
-                        'inactive' => (clone $query)->where('status', false)->count(),
-                        'hot' => (clone $query)->where('is_hot', true)->count(),
+                        'total' => $stats->total,
+                        'active' => $stats->active,
+                        'inactive' => $stats->inactive,
+                        'hot' => $stats->hot,
                     ],
                 ]);
             }

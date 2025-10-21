@@ -14,6 +14,25 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+    /**
+     * Get order statistics in a single query
+     */
+    protected function getOrderStatistics()
+    {
+        return DB::table('orders')
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = "confirmed" THEN 1 ELSE 0 END) as confirmed,
+                SUM(CASE WHEN status = "processing" THEN 1 ELSE 0 END) as processing,
+                SUM(CASE WHEN status = "shipping" THEN 1 ELSE 0 END) as shipping,
+                SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled
+            ')
+            ->whereNull('deleted_at')
+            ->first();
+    }
+
     public function show($id)
     {
         try {
@@ -103,37 +122,29 @@ class OrderController extends Controller
             $perPage = $request->get('per_page', 15);
             $orders = $query->paginate($perPage)->withQueryString();
 
-            $totalOrders = Order::count();
-            $pendingOrders = Order::where('status', 'pending')->count();
-            $confirmedOrders = Order::where('status', 'confirmed')->count();
-            $processingOrders = Order::where('status', 'processing')->count();
-            $shippingOrders = Order::where('status', 'shipping')->count();
-            $completedOrders = Order::where('status', 'completed')->count();
-            $cancelledOrders = Order::where('status', 'cancelled')->count();
+            $stats = $this->getOrderStatistics();
 
             if ($request->ajax()) {
-                return view('admin.orders.table', compact(
-                    'orders',
-                    'totalOrders',
-                    'pendingOrders',
-                    'confirmedOrders',
-                    'processingOrders',
-                    'shippingOrders',
-                    'completedOrders',
-                    'cancelledOrders'
-                ));
+                return view('admin.orders.table', compact('orders'))->with([
+                    'totalOrders' => $stats->total,
+                    'pendingOrders' => $stats->pending,
+                    'confirmedOrders' => $stats->confirmed,
+                    'processingOrders' => $stats->processing,
+                    'shippingOrders' => $stats->shipping,
+                    'completedOrders' => $stats->completed,
+                    'cancelledOrders' => $stats->cancelled
+                ]);
             }
 
-            return view('admin.orders.index', compact(
-                'orders',
-                'totalOrders',
-                'pendingOrders',
-                'confirmedOrders',
-                'processingOrders',
-                'shippingOrders',
-                'completedOrders',
-                'cancelledOrders'
-            ));
+            return view('admin.orders.index', compact('orders'))->with([
+                'totalOrders' => $stats->total,
+                'pendingOrders' => $stats->pending,
+                'confirmedOrders' => $stats->confirmed,
+                'processingOrders' => $stats->processing,
+                'shippingOrders' => $stats->shipping,
+                'completedOrders' => $stats->completed,
+                'cancelledOrders' => $stats->cancelled
+            ]);
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error loading orders: ' . $e->getMessage());
@@ -143,8 +154,16 @@ class OrderController extends Controller
     public function create()
     {
         try {
-            $users = User::where('status', true)->orderBy('fullname')->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))->get();
-            $products = Product::where('status', true)->with('category')->get();
+            $users = User::select('id', 'fullname', 'role_id')
+                ->where('status', true)
+                ->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))
+                ->orderBy('fullname')
+                ->get();
+
+            $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')
+                ->where('status', true)
+                ->with('category:id,name')
+                ->get();
 
             return view('admin.orders.create', compact('users', 'products'));
         } catch (\Exception $e) {
@@ -229,9 +248,19 @@ class OrderController extends Controller
     public function edit($id)
     {
         try {
-            $order = Order::with(['orderDetails.product', 'user'])->findOrFail($id);
-            $users = User::where('status', true)->orderBy('fullname')->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))->get();
-            $products = Product::where('status', true)->with('category')->get();
+            $order = Order::with(['orderDetails.product:id,name,price', 'user:id,fullname'])
+                ->findOrFail($id);
+
+            $users = User::select('id', 'fullname', 'role_id')
+                ->where('status', true)
+                ->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))
+                ->orderBy('fullname')
+                ->get();
+
+            $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')
+                ->where('status', true)
+                ->with('category:id,name')
+                ->get();
 
             return view('admin.orders.edit', compact('order', 'users', 'products'));
         } catch (\Exception $e) {
@@ -344,20 +373,20 @@ class OrderController extends Controller
             $order->logActivity('order_cancelled', 'Order was cancelled by admin');
 
             if ($request->ajax()) {
-                $statistics = [
-                    'total' => Order::count(),
-                    'pending' => Order::where('status', 'pending')->count(),
-                    'confirmed' => Order::where('status', 'confirmed')->count(),
-                    'processing' => Order::where('status', 'processing')->count(),
-                    'shipping' => Order::where('status', 'shipping')->count(),
-                    'completed' => Order::where('status', 'completed')->count(),
-                    'cancelled' => Order::where('status', 'cancelled')->count(),
-                ];
+                $stats = $this->getOrderStatistics();
 
                 return response()->json([
                     'success' => true,
                     'message' => 'Order cancelled successfully!',
-                    'counts' => $statistics
+                    'counts' => [
+                        'total' => $stats->total,
+                        'pending' => $stats->pending,
+                        'confirmed' => $stats->confirmed,
+                        'processing' => $stats->processing,
+                        'shipping' => $stats->shipping,
+                        'completed' => $stats->completed,
+                        'cancelled' => $stats->cancelled,
+                    ]
                 ]);
             }
 
@@ -386,20 +415,20 @@ class OrderController extends Controller
             $order->logActivity('order_restored', 'Order was restored from trash');
 
             if ($request->ajax()) {
-                $statistics = [
-                    'total' => Order::count(),
-                    'pending' => Order::where('status', 'pending')->count(),
-                    'confirmed' => Order::where('status', 'confirmed')->count(),
-                    'processing' => Order::where('status', 'processing')->count(),
-                    'shipping' => Order::where('status', 'shipping')->count(),
-                    'completed' => Order::where('status', 'completed')->count(),
-                    'cancelled' => Order::where('status', 'cancelled')->count(),
-                ];
+                $stats = $this->getOrderStatistics();
 
                 return response()->json([
                     'success' => true,
                     'message' => 'Order restored successfully!',
-                    'counts' => $statistics
+                    'counts' => [
+                        'total' => $stats->total,
+                        'pending' => $stats->pending,
+                        'confirmed' => $stats->confirmed,
+                        'processing' => $stats->processing,
+                        'shipping' => $stats->shipping,
+                        'completed' => $stats->completed,
+                        'cancelled' => $stats->cancelled,
+                    ]
                 ]);
             }
 
@@ -417,9 +446,6 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Export orders to Excel
-     */
     public function export(ExcelService $excelService)
     {
         $excel = $excelService->exportOrders();

@@ -35,7 +35,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 45900000, // 45,900,000 VND
                 'currency' => 'VND',
-                'image' => 'asus-rog-strix-g15.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -60,7 +60,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 89900000, // 89,900,000 VND
                 'currency' => 'VND',
-                'image' => 'msi-raider-ge78.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -85,7 +85,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 64500000, // 64,500,000 VND
                 'currency' => 'VND',
-                'image' => 'lenovo-legion-pro-7i.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -113,7 +113,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 28900000, // 28,900,000 VND
                 'currency' => 'VND',
-                'image' => 'dell-latitude-5540.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -139,7 +139,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 42900000, // 42,900,000 VND
                 'currency' => 'VND',
-                'image' => 'hp-elitebook-840.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -166,7 +166,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 36900000, // 36,900,000 VND
                 'currency' => 'VND',
-                'image' => 'dell-xps-13-plus.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -191,7 +191,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 32900000, // 32,900,000 VND
                 'currency' => 'VND',
-                'image' => 'macbook-air-m2.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -218,7 +218,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 18900000, // 18,900,000 VND
                 'currency' => 'VND',
-                'image' => 'intel-i9-14900k.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -243,7 +243,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 19500000, // 19,500,000 VND
                 'currency' => 'VND',
-                'image' => 'amd-ryzen-9-7950x.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -268,7 +268,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 8900000, // 8,900,000 VND
                 'currency' => 'VND',
-                'image' => 'intel-i5-13600k.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -296,7 +296,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 52900000, // 52,900,000 VND
                 'currency' => 'VND',
-                'image' => 'rtx-4090.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -322,7 +322,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 28900000, // 28,900,000 VND
                 'currency' => 'VND',
-                'image' => 'rx-7900-xtx.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -348,7 +348,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 22900000, // 22,900,000 VND
                 'currency' => 'VND',
-                'image' => 'rtx-4070-ti.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -375,7 +375,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 18900000, // 18,900,000 VND
                 'currency' => 'VND',
-                'image' => 'asus-rog-z790-hero.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -400,7 +400,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 7900000, // 7,900,000 VND
                 'currency' => 'VND',
-                'image' => 'msi-b650-tomahawk.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -427,7 +427,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 5900000, // 5,900,000 VND
                 'currency' => 'VND',
-                'image' => 'corsair-dominator-ddr5.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -452,7 +452,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 11900000, // 11,900,000 VND
                 'currency' => 'VND',
-                'image' => 'gskill-trident-z5.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -481,7 +481,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 7900000, // 7,900,000 VND
                 'currency' => 'VND',
-                'image' => 'samsung-990-pro.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -509,7 +509,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3900000, // 3,900,000 VND
                 'currency' => 'VND',
-                'image' => 'wd-black-sn850x.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -537,7 +537,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3900000, // 3,900,000 VND
                 'currency' => 'VND',
-                'image' => 'corsair-k70-rgb.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -563,7 +563,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 5900000, // 5,900,000 VND
                 'currency' => 'VND',
-                'image' => 'logitech-g915-tkl.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -590,7 +590,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3500000, // 3,500,000 VND
                 'currency' => 'VND',
-                'image' => 'logitech-gpro-superlight.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -615,7 +615,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3900000, // 3,900,000 VND
                 'currency' => 'VND',
-                'image' => 'razer-deathadder-v3.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -643,7 +643,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 26900000, // 26,900,000 VND
                 'currency' => 'VND',
-                'image' => 'lg-27gr95qe.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -669,7 +669,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 29900000, // 29,900,000 VND
                 'currency' => 'VND',
-                'image' => 'asus-pg27aqdm.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -700,7 +700,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 5900000, // 5,900,000 VND
                 'currency' => 'VND',
-                'image' => 'corsair-rm1000x.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -728,7 +728,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 4900000, // 4,900,000 VND
                 'currency' => 'VND',
-                'image' => 'lian-li-o11-evo.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -754,7 +754,7 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 6900000, // 6,900,000 VND
                 'currency' => 'VND',
-                'image' => 'nzxt-kraken-x73.jpg',
+                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
