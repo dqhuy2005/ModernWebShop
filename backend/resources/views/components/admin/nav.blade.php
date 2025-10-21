@@ -36,7 +36,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
                    href="{{ route('admin.categories.index') }}">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-list"></i>
                     <span>Category</span>
                 </a>
             </li>

@@ -9,7 +9,6 @@
                 <h1 class="h3 mb-0">
                     <i class="fas fa-plus me-2"></i>Create New Category
                 </h1>
-                <p class="text-muted mb-0">Add a new product category</p>
             </div>
             <div>
                 <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
@@ -33,13 +32,8 @@
                             <label for="name" class="form-label fw-bold">
                                 Category Name <span class="text-danger">*</span>
                             </label>
-                            <input type="text"
-                                   class="form-control @error('name') is-invalid @enderror"
-                                   id="name"
-                                   name="name"
-                                   value="{{ old('name') }}"
-                                   placeholder="Enter category name"
-                                   required>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
+                                name="name" value="{{ old('name') }}" placeholder="Enter category name" required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -49,12 +43,8 @@
                             <label for="slug" class="form-label fw-bold">
                                 Slug <small class="text-muted fw-normal">(Auto-generated if empty)</small>
                             </label>
-                            <input type="text"
-                                   class="form-control @error('slug') is-invalid @enderror"
-                                   id="slug"
-                                   name="slug"
-                                   value="{{ old('slug') }}"
-                                   placeholder="category-slug">
+                            <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug"
+                                name="slug" value="{{ old('slug') }}" placeholder="category-slug">
                             @error('slug')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -62,12 +52,12 @@
 
                         <div class="mb-3">
                             <label for="parent_id" class="form-label fw-bold">Parent Category</label>
-                            <select class="form-select @error('parent_id') is-invalid @enderror"
-                                    id="parent_id"
-                                    name="parent_id">
+                            <select class="form-select @error('parent_id') is-invalid @enderror" id="parent_id"
+                                name="parent_id">
                                 <option value="">-- No Parent (Root Category) --</option>
-                                @foreach(\App\Models\Category::whereNull('deleted_at')->get() as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('parent_id') == $cat->id ? 'selected' : '' }}>
+                                @foreach (\App\Models\Category::whereNull('deleted_at')->get() as $cat)
+                                    <option value="{{ $cat->id }}"
+                                        {{ old('parent_id') == $cat->id ? 'selected' : '' }}>
                                         {{ $cat->name }}
                                     </option>
                                 @endforeach
@@ -124,18 +114,18 @@
 @endsection
 
 @push('scripts')
-<script>
-    $(document).ready(function() {
-        // Auto-generate slug from name
-        $('#name').on('input', function() {
-            const name = $(this).val();
-            const slug = name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/--+/g, '-')
-                .trim();
-            $('#slug').val(slug);
+    <script>
+        $(document).ready(function() {
+            // Auto-generate slug from name
+            $('#name').on('input', function() {
+                const name = $(this).val();
+                const slug = name.toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/--+/g, '-')
+                    .trim();
+                $('#slug').val(slug);
+            });
         });
-    });
-</script>
+    </script>
 @endpush

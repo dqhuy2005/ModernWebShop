@@ -9,48 +9,22 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of categories with filters, sort, and pagination
-     */
     public function index(Request $request)
     {
-        $query = Category::withCount('products');
+        $query = Category::withCount('products')->withTrashed();
 
-        // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%");
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
-        // Status filter
-        if ($request->filled('status')) {
-            if ($request->status === 'active') {
-                $query->whereNull('deleted_at');
-            } elseif ($request->status === 'inactive') {
-                $query->onlyTrashed();
-            }
-        }
+        $query->orderBy('created_at', 'desc');
 
-        // Sort
-        $sortField = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-
-        $allowedSorts = ['name', 'slug', 'created_at', 'updated_at'];
-        if (in_array($sortField, $allowedSorts)) {
-            $query->orderBy($sortField, $sortOrder);
-        }
-
-        // Get statistics
         $stats = $this->getCategoryStatistics();
 
         // Pagination
-        $perPage = $request->get('per_page', 10);
-        $categories = $query->withTrashed()->paginate($perPage);
-
-        if ($request->ajax()) {
+        $perPage = $request->get('per_page', 15);
+        $categories = $query->paginate($perPage);        if ($request->ajax()) {
             return view('admin.categories.table', compact('categories', 'stats'))->render();
         }
 
@@ -88,7 +62,6 @@ class CategoryController extends Controller
             'parent_id' => 'nullable|exists:categories,id'
         ]);
 
-        // Auto-generate slug if not provided
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
         }
@@ -138,7 +111,6 @@ class CategoryController extends Controller
             'parent_id' => 'nullable|exists:categories,id'
         ]);
 
-        // Auto-generate slug if not provided
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
         }

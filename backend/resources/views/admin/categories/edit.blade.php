@@ -52,29 +52,12 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="parent_id" class="form-label fw-bold">Parent Category</label>
-                            <select class="form-select @error('parent_id') is-invalid @enderror" id="parent_id"
-                                name="parent_id">
-                                <option value="">-- No Parent (Root Category) --</option>
-                                @foreach ($categories as $cat)
-                                    <option value="{{ $cat->id }}"
-                                        {{ old('parent_id', $category->parent_id) == $cat->id ? 'selected' : '' }}>
-                                        {{ $cat->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('parent_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="d-flex justify-content-end gap-2">
                             <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i> Update Category
+                                <i class="fas fa-save me-1"></i> Update
                             </button>
                         </div>
                     </form>
