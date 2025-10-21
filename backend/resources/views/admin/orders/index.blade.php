@@ -11,12 +11,10 @@
                 </h1>
             </div>
             <div class="d-flex gap-2">
-                <!-- Export Button -->
                 <a href="{{ route('admin.orders.export') }}" class="btn btn-success">
-                    <i class="fas fa-file-export me-2"></i>Export CSV
+                    <i class="fas fa-file-excel me-2"></i>Export Excel
                 </a>
 
-                <!-- Add Order Button -->
                 <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Add
                 </a>

@@ -12,11 +12,11 @@
             </div>
             <div class="d-flex gap-2">
                 <a href="{{ route('admin.users.export') }}" class="btn btn-success">
-                    <i class="fas fa-file-export me-2"></i>Export CSV
+                    <i class="fas fa-file-excel me-2"></i>Export Excel
                 </a>
 
                 <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="fas fa-file-import me-2"></i>Import CSV
+                    <i class="fas fa-file-import me-2"></i>Import Excel
                 </button>
 
                 <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
@@ -391,7 +391,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="importModalLabel">
-                    <i class="fas fa-file-import me-2"></i>Import Users from CSV
+                    <i class="fas fa-file-import me-2"></i>Import Users from Excel
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -404,21 +404,21 @@
                         <ul class="mb-0 mt-2">
                             <li>Download the template below to see the required format</li>
                             <li>Fill in your user data following the template structure</li>
-                            <li>Upload the completed CSV file</li>
+                            <li>Upload the completed Excel file</li>
                             <li>Maximum file size: 2MB</li>
                         </ul>
                     </div>
 
                     <div class="mb-3">
                         <a href="{{ route('admin.users.import-template') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-download me-1"></i>Download CSV Template
+                            <i class="fas fa-download me-1"></i>Download Excel Template
                         </a>
                     </div>
 
                     <div class="mb-3">
-                        <label for="csv_file" class="form-label fw-bold">Select CSV File</label>
-                        <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
-                        <small class="text-muted">Accepted format: CSV (*.csv)</small>
+                        <label for="excel_file" class="form-label fw-bold">Select Excel File</label>
+                        <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                        <small class="text-muted">Accepted formats: Excel (*.xlsx, *.xls)</small>
                     </div>
 
                     @if(session('import_errors'))

@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\User;
 use App\Models\Product;
-use App\Services\CsvService;
+use App\Services\ExcelService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -418,13 +418,13 @@ class OrderController extends Controller
     }
 
     /**
-     * Export orders to CSV
+     * Export orders to Excel
      */
-    public function export(CsvService $csvService)
+    public function export(ExcelService $excelService)
     {
-        $csv = $csvService->exportOrders();
-        $filename = 'orders_export_' . date('Y-m-d_His') . '.csv';
-        
-        return response($csv, 200, $csvService->getDownloadHeaders($filename));
+        $excel = $excelService->exportOrders();
+        $filename = 'orders_export_' . date('Y-m-d_His') . '.xls';
+
+        return response($excel, 200, $excelService->getDownloadHeaders($filename));
     }
 }

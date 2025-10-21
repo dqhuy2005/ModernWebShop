@@ -25,17 +25,44 @@ class CsvService
         foreach ($users as $user) {
             $csvData[] = [
                 $user->id,
-                $user->fullname,
+                $user->fullname ?? 'N/A',
                 $user->email,
                 $user->phone ?? 'N/A',
                 $user->address ?? 'N/A',
-                $user->role->name ?? 'N/A',
+                optional($user->role)->name ?? 'No Role',
                 $user->status ? 'Active' : 'Inactive',
                 $user->created_at->format('Y-m-d H:i:s'),
             ];
         }
 
         return $this->arrayToCsv($csvData);
+    }
+
+    /**
+     * Export users to Excel (XLSX format)
+     *
+     * @return string Excel HTML content
+     */
+    public function exportUsersExcel(): string
+    {
+        $users = User::with('role')->get();
+
+        return $this->generateExcelHtml([
+            'title' => 'Users Export',
+            'headers' => ['ID', 'Full Name', 'Email', 'Phone', 'Address', 'Role', 'Status', 'Created At'],
+            'data' => $users->map(function ($user) {
+                return [
+                    $user->id,
+                    $user->fullname ?? 'N/A',
+                    $user->email,
+                    $user->phone ?? 'N/A',
+                    $user->address ?? 'N/A',
+                    optional($user->role)->name ?? 'No Role',
+                    $user->status ? 'Active' : 'Inactive',
+                    $user->created_at->format('Y-m-d H:i:s'),
+                ];
+            })->toArray()
+        ]);
     }
 
     /**
@@ -54,8 +81,8 @@ class CsvService
             'Customer Email',
             'Customer Phone',
             'Total Amount',
+            'Total Items',
             'Status',
-            'Payment Method',
             'Shipping Address',
             'Note',
             'Created At'
@@ -64,12 +91,12 @@ class CsvService
         foreach ($orders as $order) {
             $csvData[] = [
                 $order->id,
-                $order->user->fullname ?? 'N/A',
+                $order->user->fullname ?? 'Guest',
                 $order->user->email ?? 'N/A',
                 $order->user->phone ?? 'N/A',
-                $order->total_amount,
+                number_format($order->total_amount, 0, ',', '.') . ' VND',
+                $order->total_items,
                 $this->getOrderStatusLabel($order->status),
-                $this->getPaymentMethodLabel($order->payment_method),
                 $order->address ?? 'N/A',
                 $order->note ?? 'N/A',
                 $order->created_at->format('Y-m-d H:i:s'),
@@ -80,11 +107,45 @@ class CsvService
     }
 
     /**
-     * Import users from CSV
+     * Export orders to Excel (XLSX format)
      *
-     * @param string $filePath
-     * @return array ['success' => int, 'failed' => int, 'errors' => array]
+     * @return string Excel HTML content
      */
+    public function exportOrdersExcel(): string
+    {
+        $orders = Order::with('user')->get();
+
+        return $this->generateExcelHtml([
+            'title' => 'Orders Export',
+            'headers' => [
+                'Order ID',
+                'Customer Name',
+                'Customer Email',
+                'Customer Phone',
+                'Total Amount',
+                'Total Items',
+                'Status',
+                'Shipping Address',
+                'Note',
+                'Created At'
+            ],
+            'data' => $orders->map(function ($order) {
+                return [
+                    $order->id,
+                    $order->user->fullname ?? 'Guest',
+                    $order->user->email ?? 'N/A',
+                    $order->user->phone ?? 'N/A',
+                    number_format($order->total_amount, 0, ',', '.') . ' VND',
+                    $order->total_items,
+                    $this->getOrderStatusLabel($order->status),
+                    $order->address ?? 'N/A',
+                    $order->note ?? 'N/A',
+                    $order->created_at->format('Y-m-d H:i:s'),
+                ];
+            })->toArray()
+        ]);
+    }
+
     public function importUsers(string $filePath): array
     {
         $csvData = $this->csvToArray($filePath);
@@ -93,25 +154,22 @@ class CsvService
         $failed = 0;
         $errors = [];
 
-        // Skip header row
         array_shift($csvData);
 
         foreach ($csvData as $index => $row) {
-            $rowNumber = $index + 2; // +2 because we skipped header and arrays are 0-indexed
+            $rowNumber = $index + 2;
 
             try {
-                // Map CSV columns to user data
                 $userData = [
                     'fullname' => $row[0] ?? null,
                     'email' => $row[1] ?? null,
                     'phone' => $row[2] ?? null,
                     'address' => $row[3] ?? null,
                     'password' => isset($row[4]) ? Hash::make($row[4]) : Hash::make('password123'),
-                    'role_id' => $row[5] ?? 2, // Default to customer role
+                    'role_id' => $row[5] ?? 2,
                     'status' => isset($row[6]) ? ($row[6] === 'Active' || $row[6] === '1' ? 1 : 0) : 1,
                 ];
 
-                // Validate
                 $validator = Validator::make($userData, [
                     'fullname' => 'required|string|max:255',
                     'email' => 'required|email|unique:users,email',
@@ -126,7 +184,6 @@ class CsvService
                     continue;
                 }
 
-                // Create user
                 User::create($userData);
                 $success++;
 
@@ -187,12 +244,6 @@ class CsvService
         return $rows;
     }
 
-    /**
-     * Get order status label
-     *
-     * @param string $status
-     * @return string
-     */
     protected function getOrderStatusLabel(string $status): string
     {
         $labels = [
@@ -226,12 +277,6 @@ class CsvService
         return $labels[$method] ?? $method;
     }
 
-    /**
-     * Get CSV download headers
-     *
-     * @param string $filename
-     * @return array
-     */
     public function getDownloadHeaders(string $filename): array
     {
         return [
@@ -244,10 +289,90 @@ class CsvService
     }
 
     /**
-     * Generate sample CSV template for users
+     * Get download headers for Excel files
      *
+     * @param string $filename
+     * @return array
+     */
+    public function getExcelDownloadHeaders(string $filename): array
+    {
+        return [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+    }
+
+    /**
+     * Generate Excel HTML format
+     * Excel can open HTML tables as native Excel format
+     *
+     * @param array $config
      * @return string
      */
+    protected function generateExcelHtml(array $config): string
+    {
+        $title = $config['title'] ?? 'Export';
+        $headers = $config['headers'] ?? [];
+        $data = $config['data'] ?? [];
+
+        $html = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $html .= '<?mso-application progid="Excel.Sheet"?>' . "\n";
+        $html .= '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+        $html .= ' xmlns:o="urn:schemas-microsoft-com:office:office"' . "\n";
+        $html .= ' xmlns:x="urn:schemas-microsoft-com:office:excel"' . "\n";
+        $html .= ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+        $html .= ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
+
+        // Styles
+        $html .= '<Styles>' . "\n";
+        $html .= '<Style ss:ID="Header">' . "\n";
+        $html .= '<Font ss:Bold="1" ss:Color="#FFFFFF"/>' . "\n";
+        $html .= '<Interior ss:Color="#4472C4" ss:Pattern="Solid"/>' . "\n";
+        $html .= '<Alignment ss:Horizontal="Center" ss:Vertical="Center"/>' . "\n";
+        $html .= '</Style>' . "\n";
+        $html .= '<Style ss:ID="Default">' . "\n";
+        $html .= '<Alignment ss:Vertical="Center"/>' . "\n";
+        $html .= '</Style>' . "\n";
+        $html .= '</Styles>' . "\n";
+
+        // Worksheet
+        $html .= '<Worksheet ss:Name="' . htmlspecialchars($title) . '">' . "\n";
+        $html .= '<Table>' . "\n";
+
+        // Column widths
+        foreach ($headers as $header) {
+            $width = strlen($header) * 10; // Approximate width
+            $html .= '<Column ss:Width="' . max($width, 60) . '"/>' . "\n";
+        }
+
+        // Header row
+        $html .= '<Row>' . "\n";
+        foreach ($headers as $header) {
+            $html .= '<Cell ss:StyleID="Header"><Data ss:Type="String">' . htmlspecialchars($header) . '</Data></Cell>' . "\n";
+        }
+        $html .= '</Row>' . "\n";
+
+        // Data rows
+        foreach ($data as $row) {
+            $html .= '<Row>' . "\n";
+            foreach ($row as $cell) {
+                // Detect data type
+                $type = is_numeric($cell) ? 'Number' : 'String';
+                $html .= '<Cell ss:StyleID="Default"><Data ss:Type="' . $type . '">' . htmlspecialchars($cell) . '</Data></Cell>' . "\n";
+            }
+            $html .= '</Row>' . "\n";
+        }
+
+        $html .= '</Table>' . "\n";
+        $html .= '</Worksheet>' . "\n";
+        $html .= '</Workbook>';
+
+        return $html;
+    }
+
     public function generateUserTemplate(): string
     {
         $csvData = [];

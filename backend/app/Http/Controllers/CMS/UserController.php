@@ -7,12 +7,13 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\Role;
-use App\Services\CsvService;
+use App\Services\ExcelService;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends BaseController
 {
@@ -25,11 +26,6 @@ class UserController extends BaseController
                 });
 
             $this->applyUserFilters($query, $request);
-
-            $totalUsers = (clone $query)->count();
-            $activeUsers = (clone $query)->where('status', true)->whereNull('deleted_at')->count();
-            $inactiveUsers = (clone $query)->where('status', false)->whereNull('deleted_at')->count();
-            $deletedUsers = (clone $query)->onlyTrashed()->count();
 
             if ($request->filled('status')) {
                 switch ($request->status) {
@@ -54,23 +50,23 @@ class UserController extends BaseController
             );
 
             $perPage = $request->get('per_page', 15);
-            $allowedPerPage = [15, 25, 50, 100];
-            if (!in_array($perPage, $allowedPerPage)) {
-                $perPage = 15;
-            }
+            $perPage = in_array($perPage, [15, 25, 50, 100]) ? $perPage : 15;
 
             $users = $query->paginate($perPage)->withQueryString();
+
+            $stats = $this->getUserStatistics();
 
             $roles = Role::select('id', 'name', 'slug')->get();
 
             return view('admin.users.index', compact(
                 'users',
-                'roles',
-                'totalUsers',
-                'activeUsers',
-                'inactiveUsers',
-                'deletedUsers'
-            ));
+                'roles'
+            ))->with([
+                'totalUsers' => $stats->total,
+                'activeUsers' => $stats->active,
+                'inactiveUsers' => $stats->inactive,
+                'deletedUsers' => $stats->deleted
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load users: ' . $e->getMessage());
         }
@@ -92,6 +88,27 @@ class UserController extends BaseController
         }
 
         return $query;
+    }
+
+    /**
+     * Get user statistics in a single query
+     */
+    protected function getUserStatistics()
+    {
+        return DB::table('users')
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 1 AND deleted_at IS NULL THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 0 AND deleted_at IS NULL THEN 1 ELSE 0 END) as inactive,
+                SUM(CASE WHEN deleted_at IS NOT NULL THEN 1 ELSE 0 END) as deleted
+            ')
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('roles')
+                    ->whereRaw('roles.id = users.role_id')
+                    ->where('roles.slug', Role::ADMIN);
+            })
+            ->first();
     }
 
     public function create()
@@ -247,20 +264,16 @@ class UserController extends BaseController
             $user->delete();
 
             if (request()->ajax()) {
-                $query = User::withTrashed()->with('role')
-                    ->whereDoesntHave('role', function ($q) {
-                        $q->where('slug', Role::ADMIN);
-                    });
-                $this->applyUserFilters($query, request());
-
+                $stats = $this->getUserStatistics();
+                
                 return response()->json([
                     'success' => true,
                     'message' => 'User deleted successfully! You can restore it later.',
                     'counts' => [
-                        'total' => (clone $query)->count(),
-                        'active' => (clone $query)->where('status', true)->whereNull('deleted_at')->count(),
-                        'inactive' => (clone $query)->where('status', false)->whereNull('deleted_at')->count(),
-                        'deleted' => (clone $query)->onlyTrashed()->count(),
+                        'total' => $stats->total,
+                        'active' => $stats->active,
+                        'inactive' => $stats->inactive,
+                        'deleted' => $stats->deleted,
                     ],
                 ]);
             }
@@ -402,44 +415,42 @@ class UserController extends BaseController
         }
     }
 
-
-
     /**
-     * Export users to CSV
+     * Export users to Excel
      */
-    public function export(CsvService $csvService)
+    public function export(ExcelService $excelService)
     {
-        $csv = $csvService->exportUsers();
-        $filename = 'users_export_' . date('Y-m-d_His') . '.csv';
+        $excel = $excelService->exportUsers();
+        $filename = 'users_export_' . date('Y-m-d_His') . '.xls';
 
-        return response($csv, 200, $csvService->getDownloadHeaders($filename));
+        return response($excel, 200, $excelService->getDownloadHeaders($filename));
     }
 
     /**
-     * Download CSV template for import
+     * Download Excel template for import
      */
-    public function downloadTemplate(CsvService $csvService)
+    public function downloadTemplate(ExcelService $excelService)
     {
-        $csv = $csvService->generateUserTemplate();
-        $filename = 'users_import_template.csv';
+        $excel = $excelService->generateUserTemplate();
+        $filename = 'users_import_template.xls';
 
-        return response($csv, 200, $csvService->getDownloadHeaders($filename));
+        return response($excel, 200, $excelService->getDownloadHeaders($filename));
     }
 
     /**
-     * Import users from CSV
+     * Import users from Excel file
      */
-    public function import(Request $request, CsvService $csvService)
+    public function import(Request $request, ExcelService $excelService)
     {
         $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+            'excel_file' => 'required|file|mimes:xls,xlsx|max:2048',
         ]);
 
         try {
-            $file = $request->file('csv_file');
-            $filePath = $file->getRealPath();
+            $file = $request->file('excel_file');
+            $content = file_get_contents($file->getRealPath());
 
-            $result = $csvService->importUsers($filePath);
+            $result = $excelService->importUsers($content);
 
             if ($result['success'] > 0) {
                 $message = "Successfully imported {$result['success']} user(s).";
@@ -454,7 +465,7 @@ class UserController extends BaseController
                     session()->flash('import_errors', $result['errors']);
                 }
             } else {
-                session()->flash('error', 'No users were imported. Please check your CSV file.');
+                session()->flash('error', 'No users were imported.');
 
                 if (!empty($result['errors'])) {
                     session()->flash('import_errors', $result['errors']);

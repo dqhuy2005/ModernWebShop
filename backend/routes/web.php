@@ -60,7 +60,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('{product}', [ProductController::class, 'update'])->name('update');
             Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy');
 
-            // AJAX routes
             Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
             Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
         });
@@ -69,36 +68,35 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
             Route::get('create', [UserController::class, 'create'])->name('create');
+
+            Route::get('export', [UserController::class, 'export'])->name('export');
+            Route::get('import-template', [UserController::class, 'downloadTemplate'])->name('import-template');
+            Route::post('import', [UserController::class, 'import'])->name('import');
+
             Route::post('/', [UserController::class, 'store'])->name('store');
             Route::get('{user}', [UserController::class, 'show'])->name('show');
             Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
             Route::put('{user}', [UserController::class, 'update'])->name('update');
             Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
 
-            // AJAX routes
             Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
             Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
             Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
-
-            // Import/Export routes
-            Route::get('export', [UserController::class, 'export'])->name('export');
-            Route::get('import-template', [UserController::class, 'downloadTemplate'])->name('import-template');
-            Route::post('import', [UserController::class, 'import'])->name('import');
         });
 
         // Orders Management
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
             Route::get('create', [OrderController::class, 'create'])->name('create');
+
+            Route::get('export', [OrderController::class, 'export'])->name('export');
+
             Route::post('/', [OrderController::class, 'store'])->name('store');
             Route::get('{order}', [OrderController::class, 'show'])->name('show');
             Route::get('{order}/edit', [OrderController::class, 'edit'])->name('edit');
             Route::put('{order}', [OrderController::class, 'update'])->name('update');
             Route::delete('{order}', [OrderController::class, 'destroy'])->name('destroy');
             Route::post('{order}/restore', [OrderController::class, 'restore'])->name('restore');
-
-            // Export route
-            Route::get('export', [OrderController::class, 'export'])->name('export');
         });
     });
 });
