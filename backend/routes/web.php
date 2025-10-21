@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CMS\AuthController as CMSAuthController;
+use App\Http\Controllers\CMS\DashboardController;
 use App\Http\Controllers\CMS\ProductController;
 use App\Http\Controllers\CMS\UserController;
 use App\Http\Controllers\CMS\OrderController;
@@ -44,9 +45,7 @@ Route::middleware('guest')->group(function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'role.restriction'])->group(function () {
-        Route::get('dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
         Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
 

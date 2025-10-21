@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dashboard.index');
         }
 
         return view('cms.login');
@@ -53,7 +53,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             if ($user->role && $user->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'));
+                return redirect()->intended(route('admin.dashboard.index'));
             } else if ($user->role && $user->isUser()) {
                 return redirect()->intended(route('home'));
             }

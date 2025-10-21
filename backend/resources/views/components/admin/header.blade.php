@@ -1,6 +1,6 @@
 <header class="admin-header bg-white shadow-sm">
     <nav class="navbar navbar-expand-lg navbar-light px-4">
-        <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard') }}">
+        <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard.index') }}">
             <i class="fas fa-store"></i> CMS - ModernWebShop
         </a>
 

@@ -46,7 +46,7 @@ class CheckUser
             }
 
             if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard')->with('info', 'Bạn là admin, đã chuyển đến trang quản trị.');
+                return redirect()->route('admin.dashboard.index')->with('info', 'Bạn là admin, đã chuyển đến trang quản trị.');
             }
 
             return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập trang này.');
