@@ -7,7 +7,6 @@
                         <tr>
                             <th width="5%">ID</th>
                             <th width="30%">Name</th>
-                            <th width="15%">Slug</th>
                             <th width="15%">Products</th>
                             <th width="15%" class="text-center">Status</th>
                             <th width="20%" class="text-center">Actions</th>
@@ -28,12 +27,7 @@
                                 </td>
 
                                 <td>
-                                    <code class="text-muted">{{ $category->slug }}</code>
-                                </td>
-
-                                <td>
                                     <span class="badge bg-info">
-                                        <i class="fas fa-box me-1"></i>
                                         {{ $category->products_count ?? 0 }}
                                     </span>
                                 </td>
@@ -43,7 +37,7 @@
                                         <span class="badge bg-secondary">Deleted</span>
                                     @else
                                         <span class="badge bg-success">
-                                            <i class="fas fa-check-circle me-1"></i> Active
+                                            Active
                                         </span>
                                     @endif
                                 </td>
@@ -64,6 +58,11 @@
                                         </div>
                                     @else
                                         <div class="btn-group" role="group">
+                                            <a href="{{ route('admin.categories.show', $category) }}"
+                                                class="btn btn-sm btn-info" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
                                             <a href="{{ route('admin.categories.edit', $category) }}"
                                                 class="btn btn-sm btn-warning" title="Edit">
                                                 <i class="fas fa-edit"></i>

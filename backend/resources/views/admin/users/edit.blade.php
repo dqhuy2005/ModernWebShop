@@ -48,7 +48,7 @@
                     </div>
 
                     <div id="image-preview" class="text-center mt-3 d-none">
-                        <p class="text-success mb-2"><strong><i class="fas fa-check-circle me-1"></i>New Avatar
+                        <p class="text-success mb-2"><strong>New Avatar
                                 Preview:</strong></p>
                         <div class="row">
                             <div class="preview-container col-md-12">

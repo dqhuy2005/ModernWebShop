@@ -12,7 +12,7 @@
             </div>
             <div>
                 <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i> Back to List
+                    <i class="fas fa-arrow-left me-1"></i> Back
                 </a>
             </div>
         </div>
@@ -43,7 +43,7 @@
 
                         <div class="mb-3">
                             <label for="slug" class="form-label fw-bold">
-                                Slug <small class="text-muted fw-normal">(Auto-generated if empty)</small>
+                                Slug
                             </label>
                             <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug"
                                 name="slug" value="{{ old('slug', $category->slug) }}" placeholder="category-slug">
@@ -116,15 +116,16 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Auto-generate slug from name
-            $('#name').on('input', function() {
-                const name = $(this).val();
-                const slug = name.toLowerCase()
-                    .replace(/[^\w\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/--+/g, '-')
-                    .trim();
-                $('#slug').val(slug);
+            // Form validation
+            $('#category-form').on('submit', function(e) {
+                let isValid = true;
+
+                if ($('#name').val().trim() === '') {
+                    isValid = false;
+                    $('#name').addClass('is-invalid');
+                }
+
+                return isValid;
             });
         });
     </script>

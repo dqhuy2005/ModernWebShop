@@ -6,28 +6,18 @@
     </div>
     <div class="card-body">
         <form action="{{ route('admin.categories.index') }}" method="GET" id="searchForm" class="clean-form">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-10">
-                    <div class="position-relative">
-                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                            placeholder="Search by category name..." value="{{ request('search') }}"
-                            style="height: 45px;">
-                        @if (request('search'))
-                            <button type="button"
-                                class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
-                                onclick="clearSearch()" title="Clear search">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100" style="height: 45px;">
-                        <i class="fas fa-search me-1"></i> Search
+            <div class="position-relative">
+                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
+                    placeholder="Search by category name..." value="{{ request('search') }}"
+                    style="height: 45px;">
+                @if (request('search'))
+                    <button type="button"
+                        class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                        onclick="clearSearch()" title="Clear search">
+                        <i class="fas fa-times"></i>
                     </button>
-                </div>
+                @endif
             </div>
         </form>
 

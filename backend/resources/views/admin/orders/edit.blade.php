@@ -43,7 +43,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="user_id" class="form-label">
+                            <label for="user_id" class="form-label fw-bold">
                                 Customer <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('user_id') is-invalid @enderror" id="user_id" name="user_id"
@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="status" class="form-label">
+                            <label for="status" class="form-label fw-bold">
                                 Status <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status"
@@ -87,7 +87,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="address" class="form-label">
+                            <label for="address" class="form-label fw-bold">
                                 Delivery Address
                             </label>
                             <input type="text" class="form-control @error('address') is-invalid @enderror" id="address"
@@ -99,7 +99,7 @@
                         </div>
 
                         <div class="mb-0">
-                            <label for="note" class="form-label">
+                            <label for="note" class="form-label fw-bold">
                                 Order Note
                             </label>
                             <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note" rows="3"
@@ -149,14 +149,14 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3">
-                                            <label class="form-label small mb-1">Quantity</label>
+                                            <label class="form-label fw-bold small mb-1">Quantity</label>
                                             <input type="number" class="form-control form-control-sm quantity-input"
                                                 name="products[{{ $index }}][quantity]"
                                                 value="{{ $detail->quantity }}" min="1" max="9999"
                                                 data-price="{{ $detail->product->price ?? 0 }}" required>
                                         </div>
                                         <div class="col-md-3 text-end">
-                                            <label class="form-label small mb-1">Subtotal</label>
+                                            <label class="form-label fw-bold small mb-1">Subtotal</label>
                                             <div class="fw-bold text-success subtotal">
                                                 {{ number_format(($detail->product->price ?? 0) * $detail->quantity, 0, ',', '.') }}
                                                 ₫</div>
@@ -404,12 +404,12 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label small mb-1">Quantity</label>
+                            <label class="form-label fw-bold small mb-1">Quantity</label>
                             <input type="number" class="form-control form-control-sm quantity-input" name="products[${productIndex}][quantity]"
                                 value="1" min="1" max="9999" data-price="${price}" required>
                         </div>
                         <div class="col-md-3 text-end">
-                            <label class="form-label small mb-1">Subtotal</label>
+                            <label class="form-label fw-bold small mb-1">Subtotal</label>
                             <div class="fw-bold text-success subtotal">${formatPrice(price)} ₫</div>
                         </div>
                         <div class="col-md-1 text-end">

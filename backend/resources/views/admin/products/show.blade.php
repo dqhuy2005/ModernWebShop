@@ -68,11 +68,11 @@
                                 <td>
                                     @if ($product->status)
                                         <span class="badge bg-success">
-                                            <i class="fas fa-check-circle me-1"></i>Active
+                                            Active
                                         </span>
                                     @else
                                         <span class="badge bg-danger">
-                                            <i class="fas fa-times-circle me-1"></i>Inactive
+                                            Inactive
                                         </span>
                                     @endif
                                 </td>
