@@ -25,11 +25,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-muted mb-2 text-uppercase small">Tổng doanh thu</p>
+                            <p class="text-muted mb-2 text-uppercase small">Total Revenue</p>
                             <h3 class="mb-0 fw-bold">{{ number_format($stats['total_revenue']) }} ₫</h3>
                             <small class="text-success">
                                 <i class="fas fa-arrow-up"></i>
-                                Tất cả đơn hoàn thành
+                                All Completed Orders
                             </small>
                         </div>
                         <div class="stats-icon bg-primary-soft">
@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-muted mb-2 text-uppercase small">Doanh thu hôm nay</p>
+                            <p class="text-muted mb-2 text-uppercase small">Today's Revenue</p>
                             <h3 class="mb-0 fw-bold">{{ number_format($stats['today_revenue']) }} ₫</h3>
                             <small class="text-info">
                                 <i class="fas fa-calendar-day"></i>
@@ -65,11 +65,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-muted mb-2 text-uppercase small">Doanh thu tháng này</p>
+                            <p class="text-muted mb-2 text-uppercase small">This Month Revenue</p>
                             <h3 class="mb-0 fw-bold">{{ number_format($stats['month_revenue']) }} ₫</h3>
                             <small class="text-success">
                                 <i class="fas fa-calendar-alt"></i>
-                                Tháng {{ now()->format('m/Y') }}
+                                {{ now()->format('F Y') }}
                             </small>
                         </div>
                         <div class="stats-icon bg-success-soft">
@@ -85,11 +85,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-muted mb-2 text-uppercase small">Doanh thu năm nay</p>
+                            <p class="text-muted mb-2 text-uppercase small">This Year Revenue</p>
                             <h3 class="mb-0 fw-bold">{{ number_format($stats['year_revenue']) }} ₫</h3>
                             <small class="text-warning">
                                 <i class="fas fa-calendar"></i>
-                                Năm {{ now()->format('Y') }}
+                                Year {{ now()->format('Y') }}
                             </small>
                         </div>
                         <div class="stats-icon bg-warning-soft">
@@ -109,7 +109,7 @@
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </div>
                     <h4 class="mb-1 fw-bold">{{ $stats['total_orders'] }}</h4>
-                    <p class="text-muted small mb-0">Tổng đơn hàng</p>
+                    <p class="text-muted small mb-0">Total Orders</p>
                 </div>
             </div>
         </div>
@@ -121,7 +121,7 @@
                         <i class="fas fa-clock text-warning"></i>
                     </div>
                     <h4 class="mb-1 fw-bold">{{ $stats['pending_orders'] }}</h4>
-                    <p class="text-muted small mb-0">Chờ xử lý</p>
+                    <p class="text-muted small mb-0">Pending</p>
                 </div>
             </div>
         </div>
@@ -133,7 +133,7 @@
                         <i class="fas fa-cog text-info"></i>
                     </div>
                     <h4 class="mb-1 fw-bold">{{ $stats['processing_orders'] }}</h4>
-                    <p class="text-muted small mb-0">Đang xử lý</p>
+                    <p class="text-muted small mb-0">Processing</p>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
                         <i class="fas fa-truck text-primary"></i>
                     </div>
                     <h4 class="mb-1 fw-bold">{{ $stats['shipping_orders'] }}</h4>
-                    <p class="text-muted small mb-0">Đang giao</p>
+                    <p class="text-muted small mb-0">Shipping</p>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
                         <i class="fas fa-check-circle text-success"></i>
                     </div>
                     <h4 class="mb-1 fw-bold">{{ $stats['completed_orders'] }}</h4>
-                    <p class="text-muted small mb-0">Hoàn thành</p>
+                    <p class="text-muted small mb-0">Completed</p>
                 </div>
             </div>
         </div>
@@ -169,7 +169,7 @@
                         <i class="fas fa-times-circle text-danger"></i>
                     </div>
                     <h4 class="mb-1 fw-bold">{{ $stats['cancelled_orders'] }}</h4>
-                    <p class="text-muted small mb-0">Đã hủy</p>
+                    <p class="text-muted small mb-0">Cancelled</p>
                 </div>
             </div>
         </div>
@@ -185,7 +185,7 @@
                         </div>
                         <div>
                             <h5 class="mb-0">{{ $stats['total_products'] }}</h5>
-                            <small class="text-muted">Sản phẩm ({{ $stats['active_products'] }} active)</small>
+                            <small class="text-muted">Products ({{ $stats['active_products'] }} active)</small>
                         </div>
                     </div>
                 </div>
@@ -201,7 +201,7 @@
                         </div>
                         <div>
                             <h5 class="mb-0">{{ $stats['total_users'] }}</h5>
-                            <small class="text-muted">Người dùng ({{ $stats['new_users_month'] }} mới tháng này)</small>
+                            <small class="text-muted">Users ({{ $stats['new_users_month'] }} new this month)</small>
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                         </div>
                         <div>
                             <h5 class="mb-0">{{ $stats['total_categories'] }}</h5>
-                            <small class="text-muted">Danh mục ({{ $stats['active_categories'] }} active)</small>
+                            <small class="text-muted">Categories ({{ $stats['active_categories'] }} active)</small>
                         </div>
                     </div>
                 </div>
@@ -233,7 +233,7 @@
                         </div>
                         <div>
                             <h5 class="mb-0">{{ $stats['today_orders'] }}</h5>
-                            <small class="text-muted">Đơn hàng hôm nay</small>
+                            <small class="text-muted">Today's Orders</small>
                         </div>
                     </div>
                 </div>
@@ -248,40 +248,40 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0">
                             <i class="fas fa-chart-line me-2 text-primary"></i>
-                            Biểu đồ doanh thu
+                            Revenue Chart
                         </h5>
                     </div>
 
                     <div class="row g-2">
                         <div class="col-md-3">
                             <select id="revenueType" class="form-select form-select-sm">
-                                <option value="year" {{ $revenueFilter['type'] == 'year' ? 'selected' : '' }}>Theo năm</option>
-                                <option value="quarter" {{ $revenueFilter['type'] == 'quarter' ? 'selected' : '' }}>Theo quý</option>
-                                <option value="month" {{ $revenueFilter['type'] == 'month' ? 'selected' : '' }}>Theo tháng</option>
+                                <option value="year" {{ $revenueFilter['type'] == 'year' ? 'selected' : '' }}>By Year</option>
+                                <option value="quarter" {{ $revenueFilter['type'] == 'quarter' ? 'selected' : '' }}>By Quarter</option>
+                                <option value="month" {{ $revenueFilter['type'] == 'month' ? 'selected' : '' }}>By Month</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <select id="revenueYear" class="form-select form-select-sm">
                                 @foreach($availableYears as $year)
                                     <option value="{{ $year }}" {{ $revenueFilter['year'] == $year ? 'selected' : '' }}>
-                                        Năm {{ $year }}
+                                        Year {{ $year }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3" id="revenueQuarterContainer" style="display: none;">
                             <select id="revenueQuarter" class="form-select form-select-sm">
-                                <option value="1" {{ $revenueFilter['quarter'] == 1 ? 'selected' : '' }}>Quý 1</option>
-                                <option value="2" {{ $revenueFilter['quarter'] == 2 ? 'selected' : '' }}>Quý 2</option>
-                                <option value="3" {{ $revenueFilter['quarter'] == 3 ? 'selected' : '' }}>Quý 3</option>
-                                <option value="4" {{ $revenueFilter['quarter'] == 4 ? 'selected' : '' }}>Quý 4</option>
+                                <option value="1" {{ $revenueFilter['quarter'] == 1 ? 'selected' : '' }}>Q1</option>
+                                <option value="2" {{ $revenueFilter['quarter'] == 2 ? 'selected' : '' }}>Q2</option>
+                                <option value="3" {{ $revenueFilter['quarter'] == 3 ? 'selected' : '' }}>Q3</option>
+                                <option value="4" {{ $revenueFilter['quarter'] == 4 ? 'selected' : '' }}>Q4</option>
                             </select>
                         </div>
                         <div class="col-md-3" id="revenueMonthContainer" style="display: none;">
                             <select id="revenueMonth" class="form-select form-select-sm">
                                 @for($m = 1; $m <= 12; $m++)
                                     <option value="{{ $m }}" {{ $revenueFilter['month'] == $m ? 'selected' : '' }}>
-                                        Tháng {{ $m }}
+                                        Month {{ $m }}
                                     </option>
                                 @endfor
                             </select>
@@ -300,16 +300,16 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0">
                             <i class="fas fa-chart-pie me-2 text-success"></i>
-                            Danh mục bán chạy
+                            Top Categories
                         </h5>
                     </div>
 
                     <div class="row g-2">
                         <div class="col-md-4">
                             <select id="categoryType" class="form-select form-select-sm">
-                                <option value="year" {{ $categoryFilter['type'] == 'year' ? 'selected' : '' }}>Năm</option>
-                                <option value="month" {{ $categoryFilter['type'] == 'month' ? 'selected' : '' }}>Tháng</option>
-                                <option value="week" {{ $categoryFilter['type'] == 'week' ? 'selected' : '' }}>Tuần</option>
+                                <option value="year" {{ $categoryFilter['type'] == 'year' ? 'selected' : '' }}>Year</option>
+                                <option value="month" {{ $categoryFilter['type'] == 'month' ? 'selected' : '' }}>Month</option>
+                                <option value="week" {{ $categoryFilter['type'] == 'week' ? 'selected' : '' }}>Week</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -325,7 +325,7 @@
                             <select id="categoryMonth" class="form-select form-select-sm">
                                 @for($m = 1; $m <= 12; $m++)
                                     <option value="{{ $m }}" {{ $categoryFilter['month'] == $m ? 'selected' : '' }}>
-                                        T{{ $m }}
+                                        M{{ $m }}
                                     </option>
                                 @endfor
                             </select>
@@ -398,15 +398,12 @@
     let categoryChart = null;
 
     $(document).ready(function() {
-        // Initialize charts
         initRevenueChart(@json($revenueChartData));
         initCategoryChart(@json($categoryChartData));
 
-        // Setup filter change handlers
         setupRevenueFilters();
         setupCategoryFilters();
 
-        // Show/hide appropriate filters on load
         updateRevenueFilterVisibility();
         updateCategoryFilterVisibility();
     });
@@ -423,7 +420,7 @@
             data: {
                 labels: data.labels,
                 datasets: [{
-                    label: 'Doanh thu (VNĐ)',
+                    label: 'Revenue (VND)',
                     data: data.data,
                     borderColor: 'rgb(13, 110, 253)',
                     backgroundColor: 'rgba(13, 110, 253, 0.1)',
@@ -515,8 +512,8 @@
                                 const quantity = data.quantities[context.dataIndex];
                                 return [
                                     label,
-                                    'Doanh thu: ' + value + ' ₫',
-                                    'Số lượng: ' + quantity + ' sản phẩm'
+                                    'Revenue: ' + value + ' ₫',
+                                    'Quantity: ' + quantity + ' products'
                                 ];
                             }
                         }
@@ -582,7 +579,7 @@
             },
             error: function(xhr) {
                 console.error('Failed to load revenue chart:', xhr);
-                toastr.error('Không thể tải biểu đồ doanh thu');
+                toastr.error('Failed to load revenue chart');
             }
         });
     }
@@ -605,7 +602,7 @@
             },
             error: function(xhr) {
                 console.error('Failed to load category chart:', xhr);
-                toastr.error('Không thể tải biểu đồ danh mục');
+                toastr.error('Failed to load category chart');
             }
         });
     }

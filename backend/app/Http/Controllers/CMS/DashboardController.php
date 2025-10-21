@@ -18,17 +18,13 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // Get overview statistics
         $stats = $this->getOverviewStatistics();
 
-        // Get chart data based on filters
         $revenueChartData = $this->getRevenueChartData($request);
         $categoryChartData = $this->getCategoryChartData($request);
 
-        // Get available years (from 2010 to current year)
         $availableYears = range(date('Y'), 2010);
 
-        // Get current filters
         $revenueFilter = [
             'type' => $request->get('revenue_type', 'month'),
             'year' => $request->get('revenue_year', date('Y')),
@@ -68,61 +64,80 @@ class DashboardController extends Controller
         $thisMonth = Carbon::now()->startOfMonth();
         $thisYear = Carbon::now()->startOfYear();
 
+        $orderStats = Order::selectRaw("
+            SUM(CASE WHEN status = 'completed' THEN total_amount ELSE 0 END) as total_revenue,
+            SUM(CASE WHEN status = 'completed' AND DATE(created_at) = ? THEN total_amount ELSE 0 END) as today_revenue,
+            SUM(CASE WHEN status = 'completed' AND created_at >= ? THEN total_amount ELSE 0 END) as month_revenue,
+            SUM(CASE WHEN status = 'completed' AND created_at >= ? THEN total_amount ELSE 0 END) as year_revenue,
+            COUNT(*) as total_orders,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_orders,
+            SUM(CASE WHEN status IN ('confirmed', 'processing') THEN 1 ELSE 0 END) as processing_orders,
+            SUM(CASE WHEN status IN ('shipping', 'shipped') THEN 1 ELSE 0 END) as shipping_orders,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_orders,
+            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_orders,
+            SUM(CASE WHEN DATE(created_at) = ? THEN 1 ELSE 0 END) as today_orders,
+            SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as month_orders
+        ", [$today, $thisMonth, $thisYear, $today, $thisMonth])
+        ->first();
+
+        $productStats = Product::selectRaw("
+            COUNT(*) as total_products,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_products,
+            SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_products
+        ")->first();
+
+        $userStats = User::selectRaw("
+            COUNT(*) as total_users,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_users,
+            SUM(CASE WHEN DATE(created_at) = ? THEN 1 ELSE 0 END) as new_users_today,
+            SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as new_users_month
+        ", [$today, $thisMonth])
+        ->whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))
+        ->first();
+
+        $categoryStats = Category::selectRaw("
+            COUNT(*) as total_categories,
+            SUM(CASE WHEN deleted_at IS NULL THEN 1 ELSE 0 END) as active_categories
+        ")->withTrashed()->first();
+
         return [
-            // Revenue statistics
-            'total_revenue' => Order::where('status', 'completed')
-                ->sum('total_amount'),
-            'today_revenue' => Order::where('status', 'completed')
-                ->whereDate('created_at', $today)
-                ->sum('total_amount'),
-            'month_revenue' => Order::where('status', 'completed')
-                ->where('created_at', '>=', $thisMonth)
-                ->sum('total_amount'),
-            'year_revenue' => Order::where('status', 'completed')
-                ->where('created_at', '>=', $thisYear)
-                ->sum('total_amount'),
+            // Revenue
+            'total_revenue' => $orderStats->total_revenue ?? 0,
+            'today_revenue' => $orderStats->today_revenue ?? 0,
+            'month_revenue' => $orderStats->month_revenue ?? 0,
+            'year_revenue' => $orderStats->year_revenue ?? 0,
 
-            // Order statistics
-            'total_orders' => Order::count(),
-            'pending_orders' => Order::where('status', 'pending')->count(),
-            'processing_orders' => Order::whereIn('status', ['confirmed', 'processing'])->count(),
-            'shipping_orders' => Order::whereIn('status', ['shipping', 'shipped'])->count(),
-            'completed_orders' => Order::where('status', 'completed')->count(),
-            'cancelled_orders' => Order::where('status', 'cancelled')->count(),
-            'today_orders' => Order::whereDate('created_at', $today)->count(),
-            'month_orders' => Order::where('created_at', '>=', $thisMonth)->count(),
+            // Orders
+            'total_orders' => $orderStats->total_orders ?? 0,
+            'pending_orders' => $orderStats->pending_orders ?? 0,
+            'processing_orders' => $orderStats->processing_orders ?? 0,
+            'shipping_orders' => $orderStats->shipping_orders ?? 0,
+            'completed_orders' => $orderStats->completed_orders ?? 0,
+            'cancelled_orders' => $orderStats->cancelled_orders ?? 0,
+            'today_orders' => $orderStats->today_orders ?? 0,
+            'month_orders' => $orderStats->month_orders ?? 0,
 
-            // Product statistics
-            'total_products' => Product::count(),
-            'active_products' => Product::where('status', true)->count(),
-            'inactive_products' => Product::where('status', false)->count(),
+            // Products
+            'total_products' => $productStats->total_products ?? 0,
+            'active_products' => $productStats->active_products ?? 0,
+            'inactive_products' => $productStats->inactive_products ?? 0,
             'low_stock_products' => 0,
 
-            // User statistics
-            'total_users' => User::whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))->count(),
-            'active_users' => User::where('status', true)
-                ->whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))
-                ->count(),
-            'new_users_today' => User::whereDate('created_at', $today)
-                ->whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))
-                ->count(),
-            'new_users_month' => User::where('created_at', '>=', $thisMonth)
-                ->whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))
-                ->count(),
+            // Users
+            'total_users' => $userStats->total_users ?? 0,
+            'active_users' => $userStats->active_users ?? 0,
+            'new_users_today' => $userStats->new_users_today ?? 0,
+            'new_users_month' => $userStats->new_users_month ?? 0,
 
-            // Category statistics
-            'total_categories' => Category::count(),
-            'active_categories' => Category::whereNotNull('deleted_at')->count(),
+            // Categories
+            'total_categories' => $categoryStats->total_categories ?? 0,
+            'active_categories' => $categoryStats->active_categories ?? 0,
         ];
     }
 
-    /**
-     * Get revenue chart data (Line Chart)
-     * Filter by: year, month, quarter, week
-     */
     protected function getRevenueChartData(Request $request)
     {
-        $type = $request->get('revenue_type', 'month'); // year, month, quarter, week
+        $type = $request->get('revenue_type', 'month');
         $year = $request->get('revenue_year', date('Y'));
         $month = $request->get('revenue_month', date('m'));
         $quarter = $request->get('revenue_quarter', ceil(date('m') / 3));
@@ -132,40 +147,41 @@ class DashboardController extends Controller
 
         switch ($type) {
             case 'year':
-                // Show 12 months of selected year
+                $startDate = Carbon::create($year, 1, 1)->startOfYear();
+                $endDate = Carbon::create($year, 12, 31)->endOfYear();
+
+                $revenues = Order::where('status', 'completed')
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->selectRaw('MONTH(created_at) as month, SUM(total_amount) as revenue')
+                    ->groupBy('month')
+                    ->pluck('revenue', 'month');
+
                 for ($m = 1; $m <= 12; $m++) {
-                    $startDate = Carbon::create($year, $m, 1)->startOfMonth();
-                    $endDate = Carbon::create($year, $m, 1)->endOfMonth();
-
-                    $revenue = Order::where('status', 'completed')
-                        ->whereBetween('created_at', [$startDate, $endDate])
-                        ->sum('total_amount');
-
-                    $labels[] = 'Tháng ' . $m;
-                    $data[] = $revenue;
+                    $labels[] = 'Month ' . $m;
+                    $data[] = $revenues->get($m, 0);
                 }
                 break;
 
             case 'quarter':
-                // Show months in selected quarter
                 $startMonth = ($quarter - 1) * 3 + 1;
                 $endMonth = $quarter * 3;
 
+                $startDate = Carbon::create($year, $startMonth, 1)->startOfMonth();
+                $endDate = Carbon::create($year, $endMonth, 1)->endOfMonth();
+
+                $revenues = Order::where('status', 'completed')
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->selectRaw('MONTH(created_at) as month, SUM(total_amount) as revenue')
+                    ->groupBy('month')
+                    ->pluck('revenue', 'month');
+
                 for ($m = $startMonth; $m <= $endMonth; $m++) {
-                    $startDate = Carbon::create($year, $m, 1)->startOfMonth();
-                    $endDate = Carbon::create($year, $m, 1)->endOfMonth();
-
-                    $revenue = Order::where('status', 'completed')
-                        ->whereBetween('created_at', [$startDate, $endDate])
-                        ->sum('total_amount');
-
-                    $labels[] = 'Tháng ' . $m;
-                    $data[] = $revenue;
+                    $labels[] = 'Month ' . $m;
+                    $data[] = $revenues->get($m, 0);
                 }
                 break;
 
             case 'month':
-                // Show weeks in selected month
                 $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
                 $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
 
@@ -173,13 +189,11 @@ class DashboardController extends Controller
                 $weekNumber = 1;
 
                 while ($currentDate->lte($endOfMonth)) {
-                    // Start of week (Monday) or start of month if first week
                     $weekStart = $currentDate->copy()->startOfWeek();
                     if ($weekStart->lt($startOfMonth)) {
                         $weekStart = $startOfMonth->copy();
                     }
 
-                    // End of week (Sunday) or end of month if last week
                     $weekEnd = $currentDate->copy()->endOfWeek();
                     if ($weekEnd->gt($endOfMonth)) {
                         $weekEnd = $endOfMonth->copy();
@@ -189,10 +203,9 @@ class DashboardController extends Controller
                         ->whereBetween('created_at', [$weekStart, $weekEnd])
                         ->sum('total_amount');
 
-                    $labels[] = 'Tuần ' . $weekNumber;
+                    $labels[] = 'Week ' . $weekNumber;
                     $data[] = $revenue;
 
-                    // Move to next week
                     $currentDate->addWeek();
                     $weekNumber++;
                 }
@@ -215,7 +228,7 @@ class DashboardController extends Controller
      */
     protected function getCategoryChartData(Request $request)
     {
-        $type = $request->get('category_type', 'month'); // week, month, year
+        $type = $request->get('category_type', 'month');
         $year = $request->get('category_year', date('Y'));
         $month = $request->get('category_month', date('m'));
 
@@ -234,7 +247,6 @@ class DashboardController extends Controller
                 break;
         }
 
-        // Get category sales statistics
         $categorySales = DB::table('order_details')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('products', 'order_details.product_id', '=', 'products.id')
@@ -250,7 +262,7 @@ class DashboardController extends Controller
             ->whereNull('orders.deleted_at')
             ->groupBy('categories.id', 'categories.name')
             ->orderByDesc('total_revenue')
-            ->limit(10) // Top 10 categories
+            ->limit(10)
             ->get();
 
         $labels = [];
@@ -299,7 +311,7 @@ class DashboardController extends Controller
     public function getTopProducts(Request $request)
     {
         $limit = $request->get('limit', 10);
-        $period = $request->get('period', 'month'); // week, month, year, all
+        $period = $request->get('period', 'month');
 
         $startDate = match($period) {
             'week' => Carbon::now()->startOfWeek(),
