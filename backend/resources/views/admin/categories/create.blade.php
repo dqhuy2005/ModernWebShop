@@ -46,16 +46,32 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="mb-3">
+                            <label for="language" class="form-label fw-bold">
+                                Language
+                            </label>
+                            <select class="form-select @error('language') is-invalid @enderror" id="language"
+                                name="language">
+                                <option value="">Default</option>
+                                <option value="en" {{ old('language') == 'en' ? 'selected' : '' }}>Tiếng Anh</option>
+                                <option value="vi" {{ old('language') == 'vi' ? 'selected' : '' }}>Tiếng Việt</option>
+                            </select>
+                            @error('language')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Create
+                            </button>
+                        </div>
                     </form>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times me-1"></i> Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-1"></i> Create
-                </button>
             </div>
         </div>
     </div>
@@ -64,13 +80,34 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Form validation
+            $('#name, #slug').on('input', function() {
+                $(this).removeClass('is-invalid');
+            });
+
             $('#category-form').on('submit', function(e) {
                 let isValid = true;
 
                 if ($('#name').val().trim() === '') {
                     isValid = false;
                     $('#name').addClass('is-invalid');
+                    if (!$('#name').next('.invalid-feedback').length) {
+                        $('#name').after('<div class="invalid-feedback d-block">Category name is required.</div>');
+                    }
+                } else {
+                    $('#name').removeClass('is-invalid');
+                    $('#name').next('.invalid-feedback').remove();
+                }
+
+                const slug = $('#slug').val().trim();
+                if (slug !== '' && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+                    isValid = false;
+                    $('#slug').addClass('is-invalid');
+                    if (!$('#slug').next('.invalid-feedback').length) {
+                        $('#slug').after('<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>');
+                    }
+                } else {
+                    $('#slug').removeClass('is-invalid');
+                    $('#slug').next('.invalid-feedback').remove();
                 }
 
                 return isValid;

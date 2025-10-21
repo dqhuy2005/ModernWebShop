@@ -21,9 +21,6 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0">Category Information</h5>
-                </div>
                 <div class="card-body">
                     <form action="{{ route('admin.categories.update', $category) }}" method="POST" id="category-form">
                         @csrf
@@ -51,16 +48,17 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Update
+                            </button>
+                        </div>
                     </form>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times me-1"></i> Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-1"></i> Update
-                </button>
             </div>
         </div>
     </div>
@@ -69,13 +67,38 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Remove invalid class on input
+            $('#name, #slug').on('input', function() {
+                $(this).removeClass('is-invalid');
+            });
+
             // Form validation
             $('#category-form').on('submit', function(e) {
                 let isValid = true;
 
+                // Validate name
                 if ($('#name').val().trim() === '') {
                     isValid = false;
                     $('#name').addClass('is-invalid');
+                    if (!$('#name').next('.invalid-feedback').length) {
+                        $('#name').after('<div class="invalid-feedback d-block">Category name is required.</div>');
+                    }
+                } else {
+                    $('#name').removeClass('is-invalid');
+                    $('#name').next('.invalid-feedback').remove();
+                }
+
+                // Validate slug format if provided
+                const slug = $('#slug').val().trim();
+                if (slug !== '' && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+                    isValid = false;
+                    $('#slug').addClass('is-invalid');
+                    if (!$('#slug').next('.invalid-feedback').length) {
+                        $('#slug').after('<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>');
+                    }
+                } else {
+                    $('#slug').removeClass('is-invalid');
+                    $('#slug').next('.invalid-feedback').remove();
                 }
 
                 return isValid;

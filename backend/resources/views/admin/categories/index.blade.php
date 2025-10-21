@@ -12,7 +12,7 @@
             </div>
             <div>
                 <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i> Add Category
+                    <i class="fas fa-plus me-1"></i> Add
                 </a>
             </div>
         </div>
