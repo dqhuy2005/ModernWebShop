@@ -33,13 +33,13 @@
                 </a>
             </li>
 
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
-                   href="{{ route('admin.users.index') }}">
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
+                   href="{{ route('admin.categories.index') }}">
                     <i class="fas fa-users"></i>
-                    <span>Quản lý người dùng</span>
+                    <span>Category</span>
                 </a>
-            </li> --}}
+            </li>
 
             {{-- <li class="nav-item mt-3">
                 <div class="nav-section-title px-3 py-2 text-muted small">
