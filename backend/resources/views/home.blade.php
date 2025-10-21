@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="container py-5">
-    <!-- Hero Section -->
     <section class="hero-section mb-5">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -20,7 +19,6 @@
         </div>
     </section>
 
-    <!-- Featured Products -->
     <section class="featured-products mb-5">
         <h2 class="text-center mb-4">Sản phẩm nổi bật</h2>
         <div class="row">
@@ -44,7 +42,6 @@
         </div>
     </section>
 
-    <!-- Categories -->
     <section class="categories">
         <h2 class="text-center mb-4">Danh mục sản phẩm</h2>
         <div class="row">
@@ -73,11 +70,11 @@
         padding: 60px;
         border-radius: 15px;
     }
-    
+
     .card {
         transition: transform 0.3s;
     }
-    
+
     .card:hover {
         transform: translateY(-5px);
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
