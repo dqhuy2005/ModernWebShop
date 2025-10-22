@@ -3,17 +3,15 @@
 @section('title', 'MWS - High-end computers, Laptops, PC Gaming, Genuine accessories')
 
 @section('content')
-    {{-- Carousel Banner (Static content - no data needed) --}}
     @include('components.user.carousel-banner')
 
-    {{-- Category Grid (Uses inline query) --}}
     @include('components.user.category-grid')
 
-    {{-- Product Carousel (Uses $categories with products) --}}
     @include('components.user.product-carousel', ['categories' => $categories])
 
-    {{-- Top Selling Products (Uses $topSellingProducts) --}}
     @include('components.user.top-selling', ['topSellingProducts' => $topSellingProducts])
+
+    @include('components.user.brand-carousel')
 @endsection
 
 @push('styles')

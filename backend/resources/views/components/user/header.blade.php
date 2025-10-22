@@ -10,14 +10,14 @@
             <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4">
                 <form action="{{ route('products.search') }}" method="GET" class="d-flex w-100">
                     <select class="form-select form-select-sm" name="category" style="max-width: 150px;">
-                        <option value="">All Categories</option>
+                        <option value="">Tất cả danh mục</option>
                         <option value="laptops">Laptops</option>
                         <option value="smartphones">Smartphones</option>
                         <option value="cameras">Cameras</option>
-                        <option value="accessories">Accessories</option>
+                        <option value="accessories">Phụ kiện</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm mx-2" name="q" placeholder="Search here">
-                    <button type="submit" class="btn btn-danger btn-sm">Search</button>
+                    <input type="text" class="form-control form-control-sm mx-2" name="q" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit" class="btn btn-danger btn-sm">Tìm kiếm</button>
                 </form>
             </div>
 
@@ -26,22 +26,22 @@
                     <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown"
                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user me-1"></i>
-                        <small>My Account</small>
+                        <small>Tài khoản</small>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                         @auth
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">My Orders</a></li>
+                            <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" href="#">Đơn hàng của tôi</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">Logout</button>
+                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
                                 </form>
                             </li>
                         @else
-                            <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
-                            <li><a class="dropdown-item" href="{{ route('register') }}">Register</a></li>
+                            <li><a class="dropdown-item" href="{{ route('login') }}">Đăng nhập</a></li>
+                            <li><a class="dropdown-item" href="{{ route('register') }}">Đăng ký</a></li>
                         @endauth
                     </ul>
                 </div>
@@ -51,7 +51,7 @@
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
                         3
                     </span>
-                    <br><small>Your Wishlist</small>
+                    <br><small>Yêu thích</small>
                 </a>
 
                 <a href="{{ route('cart.index') }}" class="text-white text-decoration-none position-relative">
@@ -59,7 +59,7 @@
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
                         {{ session('cart_count', 0) }}
                     </span>
-                    <br><small>Your Cart</small>
+                    <br><small>Giỏ hàng</small>
                 </a>
             </div>
 
@@ -75,18 +75,18 @@
                 <ul class="navbar-nav d-flex flex-row">
                     <li class="nav-item">
                         <a class="nav-link text-dark fw-semibold" href="{{ route('home') }}">
-                            <i class="fas fa-home me-1"></i> Home
+                            <i class="fas fa-home me-1"></i> Trang chủ
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="{{ route('hot-deals') }}">
-                            <i class="fas fa-fire me-1"></i> Hot Deals
+                            <i class="fas fa-fire me-1"></i> Khuyến mãi
                         </a>
                     </li>
                     <li class="nav-item dropdown mega-dropdown">
                         <a class="nav-link" href="#" id="categoriesDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-th-large me-1"></i> Categories
+                            <i class="fas fa-th-large me-1"></i> Danh mục
                         </a>
                         <div class="dropdown-menu mega-menu p-4" aria-labelledby="categoriesDropdown">
                             <div class="row g-4">
@@ -133,7 +133,7 @@
                                     </div>
                                 @empty
                                     <div class="col-12">
-                                        <p class="text-muted text-center">No categories available</p>
+                                        <p class="text-muted text-center">Chưa có danh mục</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -142,7 +142,7 @@
                                 <div class="col-12 text-center">
                                     <a href="{{ route('categories.show', 'all') }}"
                                        class="btn btn-outline-danger btn-sm">
-                                        View All Categories <i class="fas fa-arrow-right ms-2"></i>
+                                        Xem tất cả danh mục <i class="fas fa-arrow-right ms-2"></i>
                                     </a>
                                 </div>
                             </div>

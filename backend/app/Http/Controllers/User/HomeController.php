@@ -23,16 +23,16 @@ class HomeController extends Controller
 
         $categories = Category::active()
             ->with(['products' => function ($query) {
-                $query->active()->limit(4);
+                $query->active();
             }])
             ->limit(4)
             ->get();
 
         $topSellingProducts = Product::active()
             ->with('category')
-            ->mostViewed(9)
+            ->mostViewed(12)
             ->get()
-            ->chunk(3);
+            ->chunk(6); // 2 rows of 6 products each
 
         $hotDeals = Product::active()
             ->hot()

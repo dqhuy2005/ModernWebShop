@@ -11,7 +11,7 @@
         @endif
         <div class="product-image mb-3">
             @if(isset($product))
-                <img src="{{ asset('storage/products/' . ($product->image ?? 'default.png')) }}"
+                <img src="{{ asset('storage/' . ($product->image ?? 'default.png')) }}"
                      alt="{{ $product->name }}"
                      class="img-fluid">
             @else
@@ -29,7 +29,7 @@
         </p>
         <h6 class="product-name mb-2">
             @if(isset($product))
-                <a href="{{ route('products.show', $product->slug ?? $product->id) }}" class="text-dark text-decoration-none">
+                <a href="#" class="text-dark text-decoration-none">
                     {{ $product->name }}
                 </a>
             @else
@@ -40,12 +40,12 @@
         </h6>
         <div class="product-price mb-2">
             @if(isset($product))
-                <span class="text-danger fw-bold fs-5">${{ number_format($product->price, 2) }}</span>
+                <span class="text-danger fw-bold fs-5">₫{{ number_format($product->price) }}</span>
                 @if($product->compare_price && $product->compare_price > $product->price)
-                    <span class="text-muted text-decoration-line-through ms-2 small">${{ number_format($product->compare_price, 2) }}</span>
+                    <span class="text-muted text-decoration-line-through ms-2 small">₫{{ number_format($product->compare_price) }}</span>
                 @endif
             @else
-                <span class="text-danger fw-bold fs-5">{{ $price ?? '$980.00' }}</span>
+                <span class="text-danger fw-bold fs-5">{{ $price ?? '₫980.000' }}</span>
                 @if (isset($oldPrice))
                     <span class="text-muted text-decoration-line-through ms-2 small">{{ $oldPrice }}</span>
                 @endif
@@ -60,13 +60,13 @@
             @endfor
         </div>
         <div class="product-actions d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-outline-secondary" title="Add to Wishlist">
+            <button class="btn btn-sm btn-outline-secondary" title="Thêm vào yêu thích">
                 <i class="far fa-heart"></i>
             </button>
-            <button class="btn btn-sm btn-outline-secondary" title="Compare">
+            <button class="btn btn-sm btn-outline-secondary" title="So sánh">
                 <i class="fas fa-exchange-alt"></i>
             </button>
-            <button class="btn btn-sm btn-outline-secondary" title="Quick View">
+            <button class="btn btn-sm btn-outline-secondary" title="Xem nhanh">
                 <i class="far fa-eye"></i>
             </button>
         </div>

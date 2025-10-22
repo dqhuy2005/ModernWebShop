@@ -5,20 +5,20 @@
                 @php
                     $banners = [
                         [
-                            'title' => 'New Laptop Collection 2025',
-                            'subtitle' => 'Get up to 30% off on selected items',
+                            'title' => 'Bộ Sưu Tập Laptop Mới 2025',
+                            'subtitle' => 'Giảm giá lên đến 30% cho các sản phẩm được chọn',
                             'image' => 'shop01.png',
                             'link' => route('categories.show', 'laptops')
                         ],
                         [
-                            'title' => 'Premium Accessories',
-                            'subtitle' => 'Enhance your tech experience',
+                            'title' => 'Phụ Kiện Cao Cấp',
+                            'subtitle' => 'Nâng cao trải nghiệm công nghệ của bạn',
                             'image' => 'shop02.png',
                             'link' => route('categories.show', 'accessories')
                         ],
                         [
-                            'title' => 'Professional Cameras',
-                            'subtitle' => 'Capture every moment perfectly',
+                            'title' => 'Máy Ảnh Chuyên Nghiệp',
+                            'subtitle' => 'Ghi lại mọi khoảnh khắc hoàn hảo',
                             'image' => 'shop03.png',
                             'link' => route('categories.show', 'cameras')
                         ]
@@ -36,7 +36,7 @@
                                                 <h1 class="banner-title">{{ $banner['title'] }}</h1>
                                                 <p class="banner-subtitle">{{ $banner['subtitle'] }}</p>
                                                 <a href="{{ $banner['link'] }}" class="btn-banner">
-                                                    Shop Now
+                                                    Mua Ngay
                                                 </a>
                                             </div>
                                         </div>
@@ -202,7 +202,7 @@
     }
 
     .indicator.active {
-        background-color: #FFFCED;
+        background-color: #fff;
         width: 30px;
         border-radius: 6px;
     }

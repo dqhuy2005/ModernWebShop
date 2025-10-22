@@ -1,7 +1,7 @@
 <section class="category-grid py-5" style="background-color: #FFFFFF;">
     <div class="container">
         <div class="section-header text-center mb-4">
-            <h2 class="section-title">CATEGORY PRODUCT</h2>
+            <h2 class="section-title">DANH MỤC SẢN PHẨM</h2>
         </div>
 
         <div class="row g-4 justify-content-center">
@@ -10,14 +10,14 @@
                     ->withCount('products')
                     ->whereNull('parent_id')
                     ->whereNotNull('image')
-                    ->orderBy('products_count', 'desc')
+                    ->orderBy('updated_at', 'desc')
                     ->limit(5)
                     ->get();
             @endphp
 
             @forelse($displayCategories as $category)
                 <div class="col-6 col-md-4 col-lg">
-                    <a href="{{ route('categories.show', $category->slug) }}" class="category-card">
+                    <a href="{{ route('categories.show', $category->slug . '.html') }}" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="{{ asset('storage/categories/' . $category->image) }}"
                                  alt="{{ $category->name }}"

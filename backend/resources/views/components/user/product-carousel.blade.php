@@ -1,7 +1,7 @@
 <section class="product-carousel py-5" style="background-color: #FFFFFF;">
     <div class="container">
         <div class="section-header text-center mb-4">
-            <h2 class="section-title">Featured Products</h2>
+            <h2 class="section-title">SẢN PHẨM NỔI BẬT</h2>
         </div>
 
         <div class="category-tabs mb-4">
@@ -38,7 +38,7 @@
                                         <div class="empty-icon">
                                             <i class="fas fa-box-open"></i>
                                         </div>
-                                        <p>No products available</p>
+                                        <p>Chưa có sản phẩm</p>
                                     </div>
                                 </div>
                             @endfor
@@ -210,7 +210,7 @@
     }
 
     .indicator.active {
-        background-color: #202732;
+        background-color: #fff;
     }
 
     /* Empty State */
