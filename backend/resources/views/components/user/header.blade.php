@@ -71,25 +71,102 @@
 
     <div class="main-menu bg-white border-bottom">
         <div class="container">
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+            <div class="menu-wrapper d-flex align-items-center" id="navbarNav">
+                <ul class="navbar-nav d-flex flex-row">
                     <li class="nav-item">
-                        <a class="nav-link text-dark fw-semibold" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link text-dark fw-semibold" href="{{ route('home') }}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('hot-deals') }}">Hot Deals</a>
+                        <a class="nav-link text-dark" href="{{ route('hot-deals') }}">
+                            <i class="fas fa-fire me-1"></i> Hot Deals
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown mega-dropdown">
+                        <a class="nav-link" href="#" id="categoriesDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-th-large me-1"></i> Categories
+                        </a>
+                        <div class="dropdown-menu mega-menu p-4" aria-labelledby="categoriesDropdown">
+                            <div class="row g-4">
+                                @php
+                                    use \App\Models\Category;
+
+                                    $categories = Category::with(['children' => function($query) {
+                                            $query->limit(5);
+                                        }])
+                                        ->withCount('products')
+                                        ->whereNull('parent_id')
+                                        ->orderBy('name')
+                                        ->limit(6)
+                                        ->get();
+                                @endphp
+
+                                @forelse($categories as $category)
+                                    <div class="col-md-4">
+                                        <div class="category-group">
+                                            <h6 class="category-title fw-bold text-danger mb-3">
+                                                <a href="#"
+                                                   class="text-danger text-decoration-none">
+                                                    {{ $category->name }}
+                                                    <span class="badge bg-danger-subtle text-danger ms-2">
+                                                        {{ $category->products_count }}
+                                                    </span>
+                                                </a>
+                                            </h6>
+
+                                            @if($category->children && $category->children->count() > 0)
+                                                <ul class="list-unstyled category-list">
+                                                    @foreach($category->children as $child)
+                                                        <li class="mb-2">
+                                                            <a href="#"
+                                                               class="text-muted text-decoration-none category-link">
+                                                                <i class="fas fa-angle-right me-2"></i>
+                                                                {{ $child->name }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="col-12">
+                                        <p class="text-muted text-center">No categories available</p>
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <div class="row mt-4 pt-3 border-top">
+                                <div class="col-12 text-center">
+                                    <a href="{{ route('categories.show', 'all') }}"
+                                       class="btn btn-outline-danger btn-sm">
+                                        View All Categories <i class="fas fa-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'laptops') }}">Laptops</a>
+                        <a class="nav-link text-dark" href="{{ route('categories.show', 'laptops') }}">
+                            <i class="fas fa-laptop me-1"></i> Laptops
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'smartphones') }}">Smartphones</a>
+                        <a class="nav-link text-dark" href="{{ route('categories.show', 'smartphones') }}">
+                            <i class="fas fa-mobile-alt me-1"></i> Smartphones
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'cameras') }}">Cameras</a>
+                        <a class="nav-link text-dark" href="{{ route('categories.show', 'cameras') }}">
+                            <i class="fas fa-camera me-1"></i> Cameras
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'accessories') }}">Accessories</a>
+                        <a class="nav-link text-dark" href="{{ route('categories.show', 'accessories') }}">
+                            <i class="fas fa-headphones me-1"></i> Accessories
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -112,13 +189,117 @@
 
     .main-menu {
         padding: 0.5rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .main-menu .nav-link {
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .main-menu .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background: #dc3545;
+        transition: width 0.3s ease;
     }
 
     .main-menu .nav-link:hover {
         color: #dc3545 !important;
+    }
+
+    .main-menu .nav-link:hover::after {
+        width: 80%;
+    }
+
+    /* Mega Menu Styles */
+    .mega-dropdown {
+        position: static;
+    }
+
+    .mega-menu {
+        width: 100%;
+        left: 0 !important;
+        right: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        margin-top: 0.5rem;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .category-group {
+        padding: 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .category-group:hover {
+        background-color: #f8f9fa;
+    }
+
+    .category-title {
+        font-size: 1rem;
+        border-bottom: 2px solid #dc3545;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem !important;
+    }
+
+    .category-title a:hover {
+        text-decoration: underline !important;
+    }
+
+    .category-list {
+        padding-left: 0;
+    }
+
+    .category-link {
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .category-link:hover {
+        color: #dc3545 !important;
+        transform: translateX(5px);
+    }
+
+    .category-link i {
+        color: #dc3545;
+        font-size: 0.75rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+        .mega-menu {
+            position: absolute !important;
+            width: auto !important;
+            min-width: 300px;
+        }
+
+        .menu-wrapper .navbar-nav {
+            flex-direction: column !important;
+        }
+
+        .main-menu .nav-link {
+            padding: 0.5rem 1rem;
+        }
     }
 </style>

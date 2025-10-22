@@ -1,9 +1,9 @@
-<section class="hero-banner py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="hero-banner py-5"
+    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); background-image: url('{{ asset('assets/imgs/banner/hotdeal.png') }}');
+">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-4 text-center mb-4 mb-md-0">
-                <img src="{{ asset('assets/imgs/banner/shop01.png') }}" alt="Laptop" class="img-fluid"
-                    style="max-height: 300px;">
             </div>
 
             <div class="col-md-4 text-center text-white">
@@ -57,8 +57,6 @@
             </div>
 
             <div class="col-md-4 text-center mb-4 mb-md-0">
-                <img src="{{ asset('assets/imgs/banner/shop03.png') }}" alt="Headphone" class="img-fluid"
-                    style="max-height: 300px;">
             </div>
         </div>
     </div>
@@ -66,7 +64,7 @@
 
 <style>
     .hero-banner {
-        min-height: 400px;
+        min-height: 450px;
     }
 
     .countdown-timer .time-box {
