@@ -1,28 +1,62 @@
 <div class="product-card bg-white shadow-sm h-100">
     <div class="card-body text-center p-3">
-        @if (isset($badge))
+        @if (isset($product) && $product->is_hot)
+            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                HOT
+            </span>
+        @elseif (isset($badge))
             <span class="badge {{ $badgeClass ?? 'bg-danger' }} position-absolute top-0 start-0 m-2">
                 {{ $badge }}
             </span>
         @endif
         <div class="product-image mb-3">
-            <img src="{{ $image ?? asset('assets/imgs/banner/shop01.png') }}" alt="{{ $name ?? 'Product' }}" class="img-fluid">
+            @if(isset($product))
+                <img src="{{ asset('storage/products/' . ($product->image ?? 'default.png')) }}"
+                     alt="{{ $product->name }}"
+                     class="img-fluid">
+            @else
+                <img src="{{ $image ?? asset('assets/imgs/banner/shop01.png') }}"
+                     alt="{{ $name ?? 'Product' }}"
+                     class="img-fluid">
+            @endif
         </div>
-        <p class="text-muted small mb-1">{{ $category ?? 'CATEGORY' }}</p>
+        <p class="text-muted small mb-1">
+            @if(isset($product) && $product->category)
+                {{ $product->category->name }}
+            @else
+                {{ $category ?? 'CATEGORY' }}
+            @endif
+        </p>
         <h6 class="product-name mb-2">
-            <a href="{{ $url ?? '#' }}" class="text-dark text-decoration-none">
-                {{ $name ?? 'PRODUCT NAME GOES HERE' }}
-            </a>
+            @if(isset($product))
+                <a href="{{ route('products.show', $product->slug ?? $product->id) }}" class="text-dark text-decoration-none">
+                    {{ $product->name }}
+                </a>
+            @else
+                <a href="{{ $url ?? '#' }}" class="text-dark text-decoration-none">
+                    {{ $name ?? 'PRODUCT NAME GOES HERE' }}
+                </a>
+            @endif
         </h6>
         <div class="product-price mb-2">
-            <span class="text-danger fw-bold fs-5">{{ $price ?? '$980.00' }}</span>
-            @if (isset($oldPrice))
-                <span class="text-muted text-decoration-line-through ms-2 small">{{ $oldPrice }}</span>
+            @if(isset($product))
+                <span class="text-danger fw-bold fs-5">${{ number_format($product->price, 2) }}</span>
+                @if($product->compare_price && $product->compare_price > $product->price)
+                    <span class="text-muted text-decoration-line-through ms-2 small">${{ number_format($product->compare_price, 2) }}</span>
+                @endif
+            @else
+                <span class="text-danger fw-bold fs-5">{{ $price ?? '$980.00' }}</span>
+                @if (isset($oldPrice))
+                    <span class="text-muted text-decoration-line-through ms-2 small">{{ $oldPrice }}</span>
+                @endif
             @endif
         </div>
         <div class="product-rating mb-3">
+            @php
+                $productRating = isset($product) ? ($product->rating ?? 5) : ($rating ?? 5);
+            @endphp
             @for ($i = 1; $i <= 5; $i++)
-                <i class="fas fa-star {{ $i <= ($rating ?? 5) ? 'text-warning' : 'text-muted' }}"></i>
+                <i class="fas fa-star {{ $i <= $productRating ? 'text-warning' : 'text-muted' }}"></i>
             @endfor
         </div>
         <div class="product-actions d-flex justify-content-center gap-2">

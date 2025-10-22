@@ -22,7 +22,7 @@
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('admin.categories.store') }}" method="POST" id="category-form">
+                    <form action="{{ route('admin.categories.store') }}" method="POST" id="category-form" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
@@ -45,6 +45,21 @@
                             @error('slug')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label fw-bold">
+                                Category Image
+                            </label>
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
+                                name="image" accept="image/*">
+                            <small class="text-muted">Recommended size: 300x300px. Max: 2MB</small>
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="image-preview" class="mt-2" style="display: none;">
+                                <img src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -80,6 +95,21 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Image preview
+            $('#image').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#image-preview').show();
+                        $('#image-preview img').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#image-preview').hide();
+                }
+            });
+
             $('#name, #slug').on('input', function() {
                 $(this).removeClass('is-invalid');
             });

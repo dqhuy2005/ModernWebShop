@@ -7,18 +7,12 @@ use App\Http\Controllers\CMS\ProductController;
 use App\Http\Controllers\CMS\CategoryController;
 use App\Http\Controllers\CMS\UserController;
 use App\Http\Controllers\CMS\OrderController;
+use App\Http\Controllers\User\HomeController;
 
-Route::get('/', function () {
-    return view('user.home');
-})->name('home');
-
-Route::get('/hot-deals', function () {
-    return view('user.hot-deals');
-})->name('hot-deals');
-
-Route::get('/categories/{slug}', function ($slug) {
-    return view('user.category', compact('slug'));
-})->name('categories.show');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
+Route::get('/categories/{slug}', [HomeController::class, 'showCategory'])->name('categories.show');
+Route::get('/products/{slug}', [HomeController::class, 'showProduct'])->name('products.show');
 
 Route::get('/products/search', function () {
     return redirect()->route('home');

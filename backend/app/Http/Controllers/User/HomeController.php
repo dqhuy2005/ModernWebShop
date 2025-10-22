@@ -5,18 +5,13 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * Display the home page with products
-     */
     public function index()
     {
         $featuredCategories = Category::active()
             ->withCount('products')
-            ->where('products_count', '>', 0)
             ->limit(3)
             ->get();
 
@@ -52,5 +47,35 @@ class HomeController extends Controller
             'topSellingProducts',
             'hotDeals'
         ));
+    }
+
+    public function showProduct($slug)
+    {
+        $product = Product::where('slug', $slug)
+            ->with('category')
+            ->firstOrFail();
+
+        return view('user.product-detail', compact('product'));
+    }
+
+    public function showCategory($slug)
+    {
+        $category = Category::where('slug', $slug)
+            ->with(['products' => function($query) {
+                $query->active();
+            }])
+            ->firstOrFail();
+
+        return view('user.category', compact('category'));
+    }
+
+    public function hotDeals()
+    {
+        $hotDeals = Product::active()
+            ->hot()
+            ->with('category')
+            ->paginate(12);
+
+        return view('user.hot-deals', compact('hotDeals'));
     }
 }

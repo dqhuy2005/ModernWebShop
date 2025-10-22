@@ -14,6 +14,7 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
+        'image',
         'parent_id',
         'language',
     ];
@@ -55,6 +56,6 @@ class Category extends Model
 
     public function scopeActive($query)
     {
-        return $query->whereNotNull('deleted_at');
+        return $query->whereNull('deleted_at');
     }
 }

@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->index();
             $table->string('slug')->nullable()->default(null)->index();
+            $table->string('image')->nullable()->default(null);
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('language', 10)->nullable();
             $table->timestamps();

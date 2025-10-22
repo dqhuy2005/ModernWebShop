@@ -1,12 +1,9 @@
-{{-- Product Carousel Component --}}
 <section class="product-carousel py-5" style="background-color: #FFFFFF;">
     <div class="container">
         <div class="section-header text-center mb-4">
             <h2 class="section-title">Featured Products</h2>
-            <p class="section-subtitle">Discover our latest collection</p>
         </div>
 
-        {{-- Category Tabs --}}
         <div class="category-tabs mb-4">
             <div class="category-tabs-wrapper">
                 @foreach($categories ?? [] as $index => $category)
@@ -19,7 +16,6 @@
             </div>
         </div>
 
-        {{-- Carousel for each category --}}
         @foreach($categories ?? [] as $categoryIndex => $category)
             <div class="carousel-container {{ $categoryIndex === 0 ? 'active' : '' }}"
                  id="carousel-{{ $categoryIndex }}">
@@ -55,7 +51,6 @@
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
-                {{-- Indicators --}}
                 @if($category->products->count() > 0)
                     <div class="carousel-indicators">
                         @php

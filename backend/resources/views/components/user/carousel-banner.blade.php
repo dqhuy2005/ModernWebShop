@@ -1,4 +1,3 @@
-{{-- Carousel Banner Component --}}
 <section class="carousel-banner">
     <div class="container-fluid px-0">
         <div class="banner-carousel-wrapper">
@@ -8,19 +7,19 @@
                         [
                             'title' => 'New Laptop Collection 2025',
                             'subtitle' => 'Get up to 30% off on selected items',
-                            'image' => 'banner-1.jpg',
+                            'image' => 'shop01.png',
                             'link' => route('categories.show', 'laptops')
                         ],
                         [
                             'title' => 'Premium Accessories',
                             'subtitle' => 'Enhance your tech experience',
-                            'image' => 'banner-2.jpg',
+                            'image' => 'shop02.png',
                             'link' => route('categories.show', 'accessories')
                         ],
                         [
                             'title' => 'Professional Cameras',
                             'subtitle' => 'Capture every moment perfectly',
-                            'image' => 'banner-3.jpg',
+                            'image' => 'shop03.png',
                             'link' => route('categories.show', 'cameras')
                         ]
                     ];
@@ -55,7 +54,6 @@
                     @endforeach
                 </div>
 
-                {{-- Navigation Buttons --}}
                 <button class="banner-nav banner-prev" onclick="moveBannerSlide(-1)">
                     <i class="fas fa-chevron-left"></i>
                 </button>
@@ -63,7 +61,6 @@
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
-                {{-- Indicators --}}
                 <div class="banner-indicators">
                     @foreach($banners as $index => $banner)
                         <button class="indicator {{ $index === 0 ? 'active' : '' }}"

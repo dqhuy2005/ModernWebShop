@@ -22,7 +22,7 @@
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('admin.categories.update', $category) }}" method="POST" id="category-form">
+                    <form action="{{ route('admin.categories.update', $category) }}" method="POST" id="category-form" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -49,6 +49,43 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="image" class="form-label fw-bold">
+                                Category Image
+                            </label>
+                            @if($category->image)
+                                <div class="mb-2">
+                                    <img src="{{ asset('storage/categories/' . $category->image) }}" 
+                                         alt="{{ $category->name }}" 
+                                         style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                                </div>
+                            @endif
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
+                                name="image" accept="image/*">
+                            <small class="text-muted">Recommended size: 300x300px. Max: 2MB. Leave empty to keep current image.</small>
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="image-preview" class="mt-2" style="display: none;">
+                                <img src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="language" class="form-label fw-bold">
+                                Language
+                            </label>
+                            <select class="form-select @error('language') is-invalid @enderror" id="language"
+                                name="language">
+                                <option value="">Default</option>
+                                <option value="en" {{ old('language', $category->language) == 'en' ? 'selected' : '' }}>Tiếng Anh</option>
+                                <option value="vi" {{ old('language', $category->language) == 'vi' ? 'selected' : '' }}>Tiếng Việt</option>
+                            </select>
+                            @error('language')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Cancel
@@ -67,6 +104,21 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Image preview
+            $('#image').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#image-preview').show();
+                        $('#image-preview img').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#image-preview').hide();
+                }
+            });
+
             // Remove invalid class on input
             $('#name, #slug').on('input', function() {
                 $(this).removeClass('is-invalid');

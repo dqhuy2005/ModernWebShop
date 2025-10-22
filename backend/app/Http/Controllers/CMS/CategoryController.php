@@ -51,10 +51,20 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+            'language' => 'nullable|string|max:10',
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/categories', $imageName);
+            $validated['image'] = $imageName;
         }
 
         Category::create($validated);
@@ -90,11 +100,29 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+            'language' => 'nullable|string|max:10',
             'parent_id' => 'nullable|exists:categories,id'
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($category->image) {
+                $oldImagePath = storage_path('app/public/categories/' . $category->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/categories', $imageName);
+            $validated['image'] = $imageName;
         }
 
         $category->update($validated);

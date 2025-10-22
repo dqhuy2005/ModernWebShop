@@ -1,19 +1,19 @@
 @extends('layouts.user.app')
 
-@section('title', 'Home - Electro eCommerce')
+@section('title', 'MWS - High-end computers, Laptops, PC Gaming, Genuine accessories')
 
 @section('content')
-    {{-- Carousel Banner (First Position) --}}
+    {{-- Carousel Banner (Static content - no data needed) --}}
     @include('components.user.carousel-banner')
 
-    {{-- Category Grid --}}
+    {{-- Category Grid (Uses inline query) --}}
     @include('components.user.category-grid')
 
-    {{-- Product Carousel (Replaces product-tabs) --}}
-    @include('components.user.product-carousel')
+    {{-- Product Carousel (Uses $categories with products) --}}
+    @include('components.user.product-carousel', ['categories' => $categories])
 
-    {{-- Top Selling --}}
-    @include('components.user.top-selling')
+    {{-- Top Selling Products (Uses $topSellingProducts) --}}
+    @include('components.user.top-selling', ['topSellingProducts' => $topSellingProducts])
 @endsection
 
 @push('styles')

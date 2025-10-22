@@ -11,14 +11,14 @@
                     @foreach($productsChunk as $product)
                         <div class="product-item-horizontal d-flex mb-3 p-3">
                             <div class="product-thumbnail me-3">
-                                <img src="{{ asset('storage/products/' . ($product->image ?? 'default.png')) }}" 
-                                     alt="{{ $product->name }}" 
+                                <img src="{{ asset('storage/products/' . ($product->image ?? 'default.png')) }}"
+                                     alt="{{ $product->name }}"
                                      class="img-fluid">
                             </div>
                             <div class="product-info flex-grow-1">
                                 <p class="product-category mb-1">{{ $product->category->name ?? 'CATEGORY' }}</p>
                                 <h6 class="product-title mb-2">
-                                    <a href="{{ route('products.show', $product->slug) }}">{{ $product->name }}</a>
+                                    <a href="#">{{ $product->name }}</a>
                                 </h6>
                                 <div class="product-price-section mb-1">
                                     <span class="price-current">${{ number_format($product->price, 2) }}</span>
