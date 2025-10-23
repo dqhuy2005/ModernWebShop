@@ -52,11 +52,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            if ($user->role && $user->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard.index'));
-            } else if ($user->role && $user->isUser()) {
-                return redirect()->intended(route('home'));
-            }
+            return redirect()->intended(route('home'));
         }
 
         return redirect()->back()
@@ -71,8 +67,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')
-            ->with('success', 'Đăng xuất thành công!');
+        return redirect()->route('home');
     }
 
     public function showRegisterForm()
