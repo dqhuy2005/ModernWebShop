@@ -9,7 +9,6 @@
                 $displayCategories = \App\Models\Category::active()
                     ->withCount('products')
                     ->whereNull('parent_id')
-                    ->whereNotNull('image')
                     ->orderBy('updated_at', 'desc')
                     ->limit(5)
                     ->get();

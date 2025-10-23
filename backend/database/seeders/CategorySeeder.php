@@ -35,7 +35,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'name' => 'Peripherals',
+                'name' => 'Keyboard',
                 'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
@@ -43,7 +43,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 4,
-                'name' => 'Storage',
+                'name' => 'Mouse',
                 'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
@@ -51,7 +51,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'name' => 'Networking',
+                'name' => 'Monitor',
                 'parent_id' => null,
                 'language' => null,
                 'created_at' => $now,
@@ -87,7 +87,7 @@ class CategorySeeder extends Seeder
             // PC Components Sub-categories
             [
                 'id' => 9,
-                'name' => 'Processor (CPU)',
+                'name' => 'CPU',
                 'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
@@ -95,7 +95,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 10,
-                'name' => 'Graphics Card (GPU)',
+                'name' => 'GPU',
                 'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
@@ -103,7 +103,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 11,
-                'name' => 'Motherboard',
+                'name' => 'Mainboard',
                 'parent_id' => 2,
                 'language' => null,
                 'created_at' => $now,
@@ -142,10 +142,10 @@ class CategorySeeder extends Seeder
                 'updated_at' => $now,
             ],
 
-            // Peripherals Sub-categories
+            // Keyboard Sub-categories
             [
                 'id' => 16,
-                'name' => 'Keyboard',
+                'name' => 'Keyboard Mechanical',
                 'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
@@ -153,7 +153,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 17,
-                'name' => 'Mouse',
+                'name' => 'Keyboard Membrane',
                 'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
@@ -161,7 +161,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 18,
-                'name' => 'Monitor',
+                'name' => 'Keyboard Wireless',
                 'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
@@ -169,7 +169,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 19,
-                'name' => 'Headset',
+                'name' => 'Keyboard Gaming',
                 'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
@@ -177,17 +177,17 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 20,
-                'name' => 'Webcam',
+                'name' => 'Keyboard Ergonomic',
                 'parent_id' => 3,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
 
-            // Storage Sub-categories
+            // Mouse Sub-categories
             [
                 'id' => 21,
-                'name' => 'SSD',
+                'name' => 'Mouse Gaming',
                 'parent_id' => 4,
                 'language' => null,
                 'created_at' => $now,
@@ -195,7 +195,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 22,
-                'name' => 'HDD',
+                'name' => 'Mouse Wired',
                 'parent_id' => 4,
                 'language' => null,
                 'created_at' => $now,
@@ -203,25 +203,56 @@ class CategorySeeder extends Seeder
             ],
             [
                 'id' => 23,
-                'name' => 'External Storage',
+                'name' => 'Mouse Wireless',
                 'parent_id' => 4,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
-
-            // Networking Sub-categories
             [
                 'id' => 24,
-                'name' => 'Router',
+                'name' => 'Mouse Silent',
+                'parent_id' => 4,
+                'language' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            // Monitor Sub-categories
+            [
+                'id' => 25,
+                'name' => 'Monitor 60Hz',
                 'parent_id' => 5,
                 'language' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
-                'id' => 25,
-                'name' => 'Network Adapter',
+                'id' => 26,
+                'name' => 'Monitor 144Hz',
+                'parent_id' => 5,
+                'language' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id' => 27,
+                'name' => 'Monitor 240Hz',
+                'parent_id' => 5,
+                'language' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id' => 28,
+                'name' => 'Monitor 2K',
+                'parent_id' => 5,
+                'language' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id' => 29,
+                'name' => 'Monitor 4K',
                 'parent_id' => 5,
                 'language' => null,
                 'created_at' => $now,
