@@ -82,10 +82,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        function addToCart(productId) {
-            toastr.success('Product added to cart!');
-        }
-
+        // Wishlist toggle (legacy - can be removed if not needed)
         $(document).on('click', '.btn-outline-secondary', function(e) {
             e.preventDefault();
             const icon = $(this).find('i');

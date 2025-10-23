@@ -89,9 +89,6 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Update cart item quantity
-     */
     public function update(Request $request)
     {
         $request->validate([
@@ -121,9 +118,6 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Remove item from cart
-     */
     public function remove(Request $request)
     {
         $request->validate([
@@ -155,9 +149,6 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Clear entire cart
-     */
     public function clear()
     {
         if (Auth::check()) {

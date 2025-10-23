@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id')->index();
             $table->unsignedBigInteger('product_id')->index();
             $table->unsignedInteger('quantity')->default(1);
-            $table->unsignedBigInteger('price')->default(0)->comment('Giá tại thời điểm thêm vào giỏ (VNĐ)');
+            $table->unsignedBigInteger('price')->default(0);
             $table->timestamps();
             $table->softDeletes();
 

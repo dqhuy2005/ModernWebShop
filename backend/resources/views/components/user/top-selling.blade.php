@@ -48,6 +48,14 @@
                                         <i class="fas fa-star {{ $i <= ($product->rating ?? 5) ? 'rated' : '' }}"></i>
                                     @endfor
                                 </div>
+
+                                <div class="product-actions mt-2">
+                                    <button class="btn btn-sm btn-primary w-100 add-to-cart-btn"
+                                            data-product-id="{{ $product->id }}"
+                                            title="Thêm vào giỏ hàng">
+                                        <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
+                                    </button>
+                                </div>
                             </div>
                         </a>
                     </div>
@@ -205,6 +213,35 @@
 
     .product-rating i.rated {
         color: #FFD700;
+    }
+
+    .product-actions {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .top-product-card:hover .product-actions {
+        opacity: 1;
+    }
+
+    .product-actions .btn {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #FFFFFF;
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .product-actions .btn:hover {
+        background-color: #bb2d3b;
+        border-color: #bb2d3b;
+        transform: translateY(-2px);
+    }
+
+    .product-actions .btn i {
+        font-size: 0.75rem;
     }
 
     @media (max-width: 992px) {

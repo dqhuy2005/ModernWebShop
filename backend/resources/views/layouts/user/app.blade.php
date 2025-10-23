@@ -45,14 +45,16 @@
 
     @include('components.user.footer')
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <!-- jQuery MUST be loaded first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Then Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Then Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script>
-        // Toastr Configuration
         toastr.options = {
             "closeButton": true,
             "progressBar": true,
@@ -60,8 +62,8 @@
             "timeOut": "3000"
         };
 
-        // Add to Cart Function
         function addToCart(productId, quantity = 1) {
+
             $.ajax({
                 url: '{{ route("cart.add") }}',
                 method: 'POST',
@@ -72,19 +74,16 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Update cart count badge
                         $('#cart-count').text(response.cart_count);
-                        
-                        // Show success message
                         toastr.success(response.message);
                     }
                 },
-                error: function(xhr) {
-                    if (xhr.status === 401) {
-                        toastr.error('Vui lòng đăng nhập để thêm vào giỏ hàng!');
-                        setTimeout(function() {
-                            window.location.href = '{{ route("login") }}';
-                        }, 1500);
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {xhr: xhr, status: status, error: error});
+                    console.error('Response:', xhr.responseText);
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        toastr.error(xhr.responseJSON.message);
                     } else {
                         toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
                     }
@@ -92,16 +91,18 @@
             });
         }
 
-        // Global event handler for add to cart buttons
         $(document).on('click', '.add-to-cart-btn', function(e) {
             e.preventDefault();
             const productId = $(this).data('product-id');
+
             if (productId) {
                 addToCart(productId);
+            } else {
+                console.error('No product ID found!');
+                toastr.error('Không tìm thấy ID sản phẩm!');
             }
         });
 
-        // Quick view handler (placeholder)
         $(document).on('click', '.quick-view-btn', function(e) {
             e.preventDefault();
             toastr.info('Tính năng xem nhanh đang được phát triển!');
