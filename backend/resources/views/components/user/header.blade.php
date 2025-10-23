@@ -46,17 +46,9 @@
                     </ul>
                 </div>
 
-                <a href="{{ route('wishlist.index') }}" class="text-white text-decoration-none position-relative">
-                    <i class="fas fa-heart"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
-                        3
-                    </span>
-                    <br><small>Yêu thích</small>
-                </a>
-
                 <a href="{{ route('cart.index') }}" class="text-white text-decoration-none position-relative">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill" id="cart-count">
                         {{ session('cart_count', 0) }}
                     </span>
                     <br><small>Giỏ hàng</small>
@@ -147,26 +139,6 @@
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'laptops') }}">
-                            <i class="fas fa-laptop me-1"></i> Laptops
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'smartphones') }}">
-                            <i class="fas fa-mobile-alt me-1"></i> Smartphones
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'cameras') }}">
-                            <i class="fas fa-camera me-1"></i> Cameras
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('categories.show', 'accessories') }}">
-                            <i class="fas fa-headphones me-1"></i> Accessories
-                        </a>
                     </li>
                 </ul>
             </div>

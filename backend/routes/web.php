@@ -8,6 +8,7 @@ use App\Http\Controllers\CMS\CategoryController;
 use App\Http\Controllers\CMS\UserController;
 use App\Http\Controllers\CMS\OrderController;
 use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\CartController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
@@ -18,12 +19,15 @@ Route::get('/products/search', function () {
     return redirect()->route('home');
 })->name('products.search');
 
-Route::get('/cart', function () {
-    return view('user.cart');
-})->name('cart.index');
+// Cart Routes
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
 Route::get('/wishlist', function () {
-    return view('user.wishlist');
+    return redirect()->route('home');
 })->name('wishlist.index');
 
 Route::post('/newsletter/subscribe', function () {
@@ -31,12 +35,18 @@ Route::post('/newsletter/subscribe', function () {
 })->name('newsletter.subscribe');
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', [CMSAuthController::class, 'showLoginForm'])->name('login');
+    Route::get('login', function() {
+        return view('user.auth.login');
+    })->name('login');
     Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
-    Route::get('register', [CMSAuthController::class, 'showRegisterForm'])->name('register');
+
+    Route::get('register', function() {
+        return view('user.auth.register');
+    })->name('register');
     Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
-    Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
 });
+
+Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'role.restriction'])->group(function () {

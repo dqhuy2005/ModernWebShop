@@ -60,13 +60,14 @@
             @endfor
         </div>
         <div class="product-actions d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-outline-secondary" title="Thêm vào yêu thích">
-                <i class="far fa-heart"></i>
+            <button class="btn btn-sm btn-primary flex-fill add-to-cart-btn"
+                    data-product-id="{{ isset($product) ? $product->id : '' }}"
+                    title="Thêm vào giỏ hàng">
+                <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
             </button>
-            <button class="btn btn-sm btn-outline-secondary" title="So sánh">
-                <i class="fas fa-exchange-alt"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary" title="Xem nhanh">
+            <button class="btn btn-sm btn-outline-secondary quick-view-btn"
+                    data-product-id="{{ isset($product) ? $product->id : '' }}"
+                    title="Xem nhanh">
                 <i class="far fa-eye"></i>
             </button>
         </div>
@@ -134,11 +135,26 @@
         background-color: #202732;
         border-color: #202732;
         color: #FFFCED;
+        transition: all 0.3s ease;
     }
 
     .product-actions .btn:hover {
         background-color: #FFFCED;
         border-color: #202732;
         color: #202732;
+        transform: translateY(-2px);
+    }
+
+    .product-actions .btn-primary {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #FFFFFF;
+        font-weight: 600;
+    }
+
+    .product-actions .btn-primary:hover {
+        background-color: #bb2d3b;
+        border-color: #bb2d3b;
+        color: #FFFFFF;
     }
 </style>

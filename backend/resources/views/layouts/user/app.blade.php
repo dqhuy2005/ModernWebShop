@@ -59,6 +59,53 @@
             "positionClass": "toast-top-right",
             "timeOut": "3000"
         };
+
+        // Add to Cart Function
+        function addToCart(productId, quantity = 1) {
+            $.ajax({
+                url: '{{ route("cart.add") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    product_id: productId,
+                    quantity: quantity
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update cart count badge
+                        $('#cart-count').text(response.cart_count);
+                        
+                        // Show success message
+                        toastr.success(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 401) {
+                        toastr.error('Vui lòng đăng nhập để thêm vào giỏ hàng!');
+                        setTimeout(function() {
+                            window.location.href = '{{ route("login") }}';
+                        }, 1500);
+                    } else {
+                        toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
+                    }
+                }
+            });
+        }
+
+        // Global event handler for add to cart buttons
+        $(document).on('click', '.add-to-cart-btn', function(e) {
+            e.preventDefault();
+            const productId = $(this).data('product-id');
+            if (productId) {
+                addToCart(productId);
+            }
+        });
+
+        // Quick view handler (placeholder)
+        $(document).on('click', '.quick-view-btn', function(e) {
+            e.preventDefault();
+            toastr.info('Tính năng xem nhanh đang được phát triển!');
+        });
     </script>
 
     @stack('scripts')

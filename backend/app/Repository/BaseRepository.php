@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repository;
 
 use Exception;
-
 
 abstract class BaseRepository extends \Prettus\Repository\Eloquent\BaseRepository
 {
