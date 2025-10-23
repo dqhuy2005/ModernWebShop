@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\CheckAdmin::class,
             'user' => \App\Http\Middleware\CheckUser::class,
             'role.restriction' => \App\Http\Middleware\RoleRouteRestriction::class,
+            'admin.access' => \App\Http\Middleware\CheckAdminAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

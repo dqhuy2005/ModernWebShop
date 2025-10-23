@@ -48,77 +48,75 @@ Route::middleware('guest')->group(function () {
 
 Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware(['auth', 'role.restriction'])->group(function () {
-        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-
-        Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
-
-        // Products Management
-        Route::prefix('products')->name('products.')->group(function () {
-            Route::get('/', [ProductController::class, 'index'])->name('index');
-            Route::get('create', [ProductController::class, 'create'])->name('create');
-            Route::post('/', [ProductController::class, 'store'])->name('store');
-            Route::get('{product}', [ProductController::class, 'show'])->name('show');
-            Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');
-            Route::put('{product}', [ProductController::class, 'update'])->name('update');
-            Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy');
-
-            Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
-            Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
-        });
-
-        // Categories Management
-        Route::prefix('categories')->name('categories.')->group(function () {
-            Route::get('/', [CategoryController::class, 'index'])->name('index');
-            Route::get('create', [CategoryController::class, 'create'])->name('create');
-            Route::post('/', [CategoryController::class, 'store'])->name('store');
-            Route::get('{category}', [CategoryController::class, 'show'])->name('show');
-            Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
-            Route::put('{category}', [CategoryController::class, 'update'])->name('update');
-            Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
-
-            Route::post('{id}/restore', [CategoryController::class, 'restore'])->name('restore');
-            Route::post('{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('force-delete');
-        });
-
-        // Users Management
-        Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('index');
-            Route::get('create', [UserController::class, 'create'])->name('create');
-
-            Route::get('export', [UserController::class, 'export'])->name('export');
-            Route::get('import-template', [UserController::class, 'downloadTemplate'])->name('import-template');
-            Route::post('import', [UserController::class, 'import'])->name('import');
-
-            Route::post('/', [UserController::class, 'store'])->name('store');
-            Route::get('{user}', [UserController::class, 'show'])->name('show');
-            Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
-            Route::put('{user}', [UserController::class, 'update'])->name('update');
-            Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
-
-            Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
-            Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
-            Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
-        });
-
-        // Orders Management
-        Route::prefix('orders')->name('orders.')->group(function () {
-            Route::get('/', [OrderController::class, 'index'])->name('index');
-            Route::get('create', [OrderController::class, 'create'])->name('create');
-
-            Route::get('export', [OrderController::class, 'export'])->name('export');
-
-            Route::post('/', [OrderController::class, 'store'])->name('store');
-            Route::get('{order}', [OrderController::class, 'show'])->name('show');
-            Route::get('{order}/edit', [OrderController::class, 'edit'])->name('edit');
-            Route::put('{order}', [OrderController::class, 'update'])->name('update');
-            Route::delete('{order}', [OrderController::class, 'destroy'])->name('destroy');
-            Route::post('{order}/restore', [OrderController::class, 'restore'])->name('restore');
-        });
-    });
-});
-
 Route::get('password/reset', function () {
     return 'Password reset form';
 })->name('password.request');
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
+
+    // Products Management
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::get('create', [ProductController::class, 'create'])->name('create');
+        Route::post('/', [ProductController::class, 'store'])->name('store');
+        Route::get('{product}', [ProductController::class, 'show'])->name('show');
+        Route::get('{product}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::put('{product}', [ProductController::class, 'update'])->name('update');
+        Route::delete('{product}', [ProductController::class, 'destroy'])->name('destroy');
+
+        Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
+    });
+
+    // Categories Management
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::get('{category}', [CategoryController::class, 'show'])->name('show');
+        Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('{category}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
+
+        Route::post('{id}/restore', [CategoryController::class, 'restore'])->name('restore');
+        Route::post('{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('force-delete');
+    });
+
+    // Users Management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+
+        Route::get('export', [UserController::class, 'export'])->name('export');
+        Route::get('import-template', [UserController::class, 'downloadTemplate'])->name('import-template');
+        Route::post('import', [UserController::class, 'import'])->name('import');
+
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('{user}', [UserController::class, 'show'])->name('show');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+
+        Route::post('{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
+        Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+    });
+
+    // Orders Management
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('create', [OrderController::class, 'create'])->name('create');
+
+        Route::get('export', [OrderController::class, 'export'])->name('export');
+
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::get('{order}', [OrderController::class, 'show'])->name('show');
+        Route::get('{order}/edit', [OrderController::class, 'edit'])->name('edit');
+        Route::put('{order}', [OrderController::class, 'update'])->name('update');
+        Route::delete('{order}', [OrderController::class, 'destroy'])->name('destroy');
+        Route::post('{order}/restore', [OrderController::class, 'restore'])->name('restore');
+    });
+});

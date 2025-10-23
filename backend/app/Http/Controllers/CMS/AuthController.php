@@ -7,16 +7,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
+use App\Repository\CartRepository;
 
 class AuthController extends Controller
 {
+    protected $cartRepository;
+
+    public function __construct(CartRepository $cartRepository)
+    {
+        $this->cartRepository = $cartRepository;
+    }
+
     public function showLoginForm()
     {
         if (Auth::check()) {
             return redirect()->route('admin.dashboard.index');
         }
 
-        return view('cms.login');
+        return view('login');
     }
 
     public function login(Request $request)
@@ -52,6 +61,9 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            // Merge session cart to database cart when user logs in
+            $this->mergeSessionCartToDatabase($user->id);
+
             return redirect()->intended(route('home'));
         }
 
@@ -66,8 +78,52 @@ class AuthController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
+        // Clear cart session
+        Session::forget('cart');
+        Session::forget('cart_count');
 
         return redirect()->route('home');
+    }
+
+    /**
+     * Merge session cart to database when user logs in
+     */
+    protected function mergeSessionCartToDatabase($userId)
+    {
+        $sessionCart = Session::get('cart', []);
+        
+        if (empty($sessionCart)) {
+            // Update cart count from database
+            $cartCount = $this->cartRepository->findByUser($userId)->count();
+            Session::put('cart_count', $cartCount);
+            return;
+        }
+
+        foreach ($sessionCart as $item) {
+            $existingCart = $this->cartRepository->findByUserAndProduct($userId, $item['product_id']);
+            
+            if ($existingCart) {
+                // Update quantity if item already exists
+                $newQuantity = $existingCart->quantity + $item['quantity'];
+                $this->cartRepository->updateQuantity($existingCart->id, $newQuantity);
+            } else {
+                // Create new cart item
+                $this->cartRepository->create([
+                    'user_id' => $userId,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                ]);
+            }
+        }
+
+        // Clear session cart after merging
+        Session::forget('cart');
+        
+        // Update cart count
+        $cartCount = $this->cartRepository->findByUser($userId)->count();
+        Session::put('cart_count', $cartCount);
     }
 
     public function showRegisterForm()

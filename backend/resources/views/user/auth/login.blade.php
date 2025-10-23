@@ -52,22 +52,22 @@
                                     @enderror
                                 </div>
 
-                                <div class="mb-3 text-end">
+                                <div class="mb-3 text-start">
                                     <a href="{{ route('password.request') }}" class="text-muted text-decoration-none small">
                                         Quên mật khẩu?
                                     </a>
                                 </div>
 
-                                <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                <button type="submit" class="btn btn-danger w-100 py-2 fw-normal mb-3">
+                                    ĐĂNG NHẬP
                                 </button>
                             </form>
 
-                            <div class="text-center mb-3">
-                                <span class="text-muted small">HOẶC</span>
+                            <div class="text-center mb-3 position-relative">
+                                <span class="text-muted small inner-text">HOẶC</span>
+                                <div class="divided"></div>
                             </div>
 
-                            <!-- Social Login Buttons -->
                             <div class="d-grid gap-2">
                                 <button type="button"
                                     class="btn btn-outline-primary d-flex align-items-center justify-content-center py-2">
@@ -97,9 +97,7 @@
                                 </button>
                             </div>
 
-                            <hr class="my-4">
-
-                            <div class="text-center">
+                            <div class="text-center mt-4">
                                 <p class="text-muted mb-0">
                                     Chưa có tài khoản?
                                     <a href="{{ route('register') }}" class="text-danger text-decoration-none fw-semibold">
@@ -134,12 +132,28 @@
         #togglePassword:focus {
             box-shadow: none;
         }
+
+        .divided {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #757575;
+            transform: translateY(-50%);
+        }
+
+        .inner-text {
+            position: relative;
+            background-color: #F8F9FA;
+            padding: 0 10px;
+            z-index: 1;
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
-        // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const password = document.getElementById('password');
             const icon = this.querySelector('i');

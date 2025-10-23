@@ -21,6 +21,8 @@ class CartController extends Controller
 
     public function index()
     {
+        if (!Auth::check()) return redirect()->route('login');
+
         if (Auth::check()) {
             $cartItems = $this->cartRepository->findByUser(Auth::id());
             $total = $this->cartRepository->calculateUserCartTotal(Auth::id());

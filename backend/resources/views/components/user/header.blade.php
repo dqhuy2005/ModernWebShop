@@ -1,23 +1,24 @@
 
 <header class="main-header">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-0 m-0">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <span class="text-danger">Electro</span><span class="text-warning">.</span>
+                <span class="text-danger">MWShop</span><span class="text-warning">.</span>
             </a>
 
             <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4">
-                <form action="{{ route('products.search') }}" method="GET" class="d-flex w-100">
-                    <select class="form-select form-select-sm" name="category" style="max-width: 150px;">
-                        <option value="">Tất cả danh mục</option>
-                        <option value="laptops">Laptops</option>
-                        <option value="smartphones">Smartphones</option>
-                        <option value="cameras">Cameras</option>
-                        <option value="accessories">Phụ kiện</option>
-                    </select>
-                    <input type="text" class="form-control form-control-sm mx-2" name="q" placeholder="Tìm kiếm sản phẩm...">
-                    <button type="submit" class="btn btn-danger btn-sm">Tìm kiếm</button>
+                <form action="{{ route('products.search') }}" method="GET" class="w-100 position-relative">
+                    <input type="text"
+                           class="form-control form-control-sm pe-5"
+                           name="q"
+                           placeholder="Nhập từ khóa tìm kiếm..."
+                           style="border-radius: 25px; padding-right: 45px;">
+                    <button type="submit"
+                            class="btn btn-danger btn-sm position-absolute end-0 top-50 translate-middle-y me-1"
+                            style="border-radius: 20px; padding: 0.25rem 1rem;">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </form>
             </div>
 
@@ -26,7 +27,6 @@
                     <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown"
                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user me-1"></i>
-                        <small>Tài khoản</small>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                         @auth
@@ -51,7 +51,6 @@
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill" id="cart-count">
                         {{ session('cart_count', 0) }}
                     </span>
-                    <br><small>Giỏ hàng</small>
                 </a>
             </div>
 
@@ -157,6 +156,25 @@
 
     .search-wrapper {
         max-width: 600px;
+    }
+
+    .search-wrapper form {
+        position: relative;
+    }
+
+    .search-wrapper input.form-control {
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .search-wrapper input.form-control:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+    }
+
+    .search-wrapper button {
+        height: calc(100% - 4px);
+        z-index: 10;
     }
 
     .main-menu {

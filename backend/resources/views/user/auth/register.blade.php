@@ -96,14 +96,6 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-                                    <label class="form-check-label" for="terms">
-                                        Tôi đồng ý với <a href="#" class="text-danger">Điều khoản dịch vụ</a> và
-                                        <a href="#" class="text-danger">Chính sách bảo mật</a>
-                                    </label>
-                                </div>
-
                                 <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
                                     <i class="fas fa-user-plus me-2"></i>Đăng ký
                                 </button>

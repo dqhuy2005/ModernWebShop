@@ -9,12 +9,10 @@
             <h2 class="fw-bold" style="color: #202732;">
                 <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
             </h2>
-            <p class="text-muted">Quản lý các sản phẩm trong giỏ hàng</p>
         </div>
 
         @if(isset($cartItems) && $cartItems->count() > 0)
             <div class="row g-4">
-                <!-- Cart Items -->
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4">
@@ -112,7 +110,6 @@
                     </div>
                 </div>
 
-                <!-- Cart Summary -->
                 <div class="col-lg-4">
                     <div class="card shadow-sm border-0 sticky-top" style="border-radius: 12px; top: 20px;">
                         <div class="card-body p-4">
@@ -148,7 +145,6 @@
                         </div>
                     </div>
 
-                    <!-- Promo Code (Optional) -->
                     <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px;">
                         <div class="card-body p-4">
                             <h6 class="fw-semibold mb-3">Mã giảm giá</h6>
@@ -161,7 +157,6 @@
                 </div>
             </div>
         @else
-            <!-- Empty Cart -->
             <div class="text-center py-5">
                 <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px; border-radius: 12px;">
                     <div class="card-body p-5">
