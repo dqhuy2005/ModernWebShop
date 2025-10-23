@@ -133,9 +133,15 @@
                                         id="total">₫{{ number_format($total) }}</span>
                                 </div>
 
-                                <a href="#" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
+                                <a href="{{ route('checkout.index') }}" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
                                     <i class="fas fa-credit-card me-2"></i>Thanh toán
                                 </a>
+
+                                <div class="text-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-shield-alt me-1"></i>Giao dịch an toàn & bảo mật
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>

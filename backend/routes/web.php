@@ -9,6 +9,7 @@ use App\Http\Controllers\CMS\UserController;
 use App\Http\Controllers\CMS\OrderController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\CheckoutController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
@@ -25,6 +26,13 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+// Checkout Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/success/{orderId}', [CheckoutController::class, 'success'])->name('checkout.success');
+});
 
 Route::get('/wishlist', function () {
     return redirect()->route('home');
