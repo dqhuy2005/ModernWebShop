@@ -18,6 +18,9 @@ Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals')
 Route::get('/categories/{slug}', [HomeController::class, 'showCategory'])->name('categories.show');
 Route::get('/products/{slug}', [HomeController::class, 'showProduct'])->name('products.show');
 
+// Search Suggestions (AJAX)
+Route::get('/products/search/suggestions', [HomeController::class, 'searchSuggestions'])->name('products.search.suggestions');
+
 Route::get('/products/search', function () {
     return redirect()->route('home');
 })->name('products.search');

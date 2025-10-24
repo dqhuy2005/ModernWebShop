@@ -268,14 +268,11 @@
         const selectedProducts = new Set();
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
 
-        // Add Product Button
         $('#addProductBtn').on('click', function() {
             productModal.show();
         });
 
-        // Product Search
         $('#productSearch').on('input', function() {
-            console.log($('#productSearch') ? 'true' : 'false');
 
             const searchTerm = $(this).val().toLowerCase();
             $('.product-item').each(function() {
@@ -290,7 +287,6 @@
             });
         });
 
-        // Update selected count
         $(document).on('change', '.product-checkbox', function() {
             updateSelectedCount();
         });
@@ -300,7 +296,6 @@
             $('#selectedCount').text(count);
         }
 
-        // Confirm Selection
         $('#confirmSelection').on('click', function() {
             const selectedCheckboxes = $('.product-checkbox:checked');
 
@@ -322,7 +317,6 @@
                 }
             });
 
-            // Uncheck all and reset
             $('.product-checkbox').prop('checked', false);
             updateSelectedCount();
             productModal.hide();
@@ -331,7 +325,6 @@
             toastr.success(`Added ${selectedCheckboxes.length} product(s) successfully!`);
         });
 
-        // Add Product Row
         function addProductRow(id, name, price, image) {
             $('#emptyState').hide();
 
@@ -374,7 +367,6 @@
             productIndex++;
         }
 
-        // Remove Product
         $(document).on('click', '.remove-product', function() {
             const productId = $(this).data('product-id');
             const row = $(this).closest('.product-row');
@@ -390,7 +382,6 @@
             });
         });
 
-        // Update Quantity
         $(document).on('input', '.quantity-input', function() {
             const quantity = parseInt($(this).val()) || 0;
             const price = parseInt($(this).data('price')) || 0;
@@ -400,7 +391,6 @@
             updateSummary();
         });
 
-        // Update Summary
         function updateSummary() {
             let grandTotal = 0;
             let totalItems = 0;
@@ -418,12 +408,10 @@
             $('#grandTotalDisplay').text(formatPrice(grandTotal) + ' ₫');
         }
 
-        // Format Price
         function formatPrice(price) {
             return new Intl.NumberFormat('vi-VN').format(price);
         }
 
-        // Form Validation
         $('#orderForm').on('submit', function(e) {
             if ($('.product-row').length === 0) {
                 e.preventDefault();
@@ -438,7 +426,6 @@
             }
         });
 
-        // Close modal when clicking outside
         $('#productModal').on('hidden.bs.modal', function() {
             $('.product-checkbox').prop('checked', false);
             updateSelectedCount();

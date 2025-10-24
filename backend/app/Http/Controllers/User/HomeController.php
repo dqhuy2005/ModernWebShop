@@ -78,4 +78,36 @@ class HomeController extends Controller
 
         return view('user.hot-deals', compact('hotDeals'));
     }
+
+    public function searchSuggestions(\Illuminate\Http\Request $request)
+    {
+        $keyword = $request->input('keyword', '');
+
+        if (strlen($keyword) < 2) {
+            return response()->json([
+                'success' => true,
+                'products' => []
+            ]);
+        }
+
+        $products = Product::active()
+            ->search($keyword)
+            ->select('id', 'name', 'image', 'price')
+            ->limit(10)
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'image' => $product->image ? asset('storage/' . $product->image) : asset('assets/imgs/products/default.png'),
+                    'price' => $product->price,
+                    'formatted_price' => number_format($product->price, 0, ',', '.') . 'đ',
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'products' => $products
+        ]);
+    }
 }

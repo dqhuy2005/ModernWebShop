@@ -1,7 +1,7 @@
 /**
  * AJAX Pagination Manager
  * Handles AJAX-based pagination with race condition prevention
- * 
+ *
  * Usage:
  * const userPagination = new AjaxPagination({
  *     containerId: 'users-table-container',
@@ -18,55 +18,53 @@ class AjaxPagination {
         // Required options
         this.containerId = options.containerId;
         this.paginationSelector = options.paginationSelector || 'nav[aria-label="Pagination"]';
-        
+
         // Optional callbacks
         this.onCountsUpdate = options.onCountsUpdate || null;
         this.onBeforeLoad = options.onBeforeLoad || null;
         this.onAfterLoad = options.onAfterLoad || null;
         this.onError = options.onError || null;
-        
+
         // Configuration
         this.scrollOffset = options.scrollOffset || 100;
         this.scrollDuration = options.scrollDuration || 300;
         this.enableHistory = options.enableHistory !== false; // Default true
-        
+
         // State management
         this.currentRequest = null; // Track current AJAX request
         this.isLoading = false; // Loading state flag
-        
+
         // Initialize
         this.init();
     }
-    
+
     init() {
         this.attachPaginationHandlers();
         this.attachPopStateHandler();
     }
-    
+
     /**
      * Load page with race condition prevention
      */
     loadPage(url) {
         // Abort previous request if still pending
         if (this.currentRequest && this.currentRequest.readyState !== 4) {
-            console.log('[AjaxPagination] Aborting previous request');
             this.currentRequest.abort();
         }
-        
+
         // Prevent multiple simultaneous requests
         if (this.isLoading) {
-            console.log('[AjaxPagination] Request already in progress, skipping');
             return;
         }
-        
+
         this.isLoading = true;
         const container = $('#' + this.containerId);
-        
+
         // Call before load callback
         if (this.onBeforeLoad) {
             this.onBeforeLoad();
         }
-        
+
         // Store reference to current request
         this.currentRequest = $.ajax({
             url: url,
@@ -79,7 +77,7 @@ class AjaxPagination {
                 // Check if response already contains the target container
                 const $response = $(response);
                 let newContent;
-                
+
                 // Try to find the container in the response
                 const foundContainer = $response.find('#' + this.containerId);
                 if (foundContainer.length > 0) {
@@ -89,20 +87,20 @@ class AjaxPagination {
                     // Container not found, use response as-is (likely a partial view)
                     newContent = response;
                 }
-                
+
                 container.html(newContent);
-                
+
                 // Update browser history
                 if (this.enableHistory) {
                     window.history.pushState({ url: url }, '', url);
                 }
-                
+
                 // Smooth scroll to container
                 this.scrollToContainer();
-                
+
                 // Re-attach pagination handlers
                 this.attachPaginationHandlers();
-                
+
                 // Update counts if callback provided
                 if (this.onCountsUpdate) {
                     const countsData = this.extractCounts(response);
@@ -110,7 +108,7 @@ class AjaxPagination {
                         this.onCountsUpdate(countsData);
                     }
                 }
-                
+
                 // Call after load callback
                 if (this.onAfterLoad) {
                     this.onAfterLoad(response);
@@ -119,12 +117,11 @@ class AjaxPagination {
             error: (xhr) => {
                 // Ignore aborted requests
                 if (xhr.statusText === 'abort') {
-                    console.log('[AjaxPagination] Request aborted');
                     return;
                 }
-                
+
                 console.error('[AjaxPagination] Failed to load page:', xhr);
-                
+
                 // Call error callback or show default error
                 if (this.onError) {
                     this.onError(xhr);
@@ -139,43 +136,42 @@ class AjaxPagination {
             }
         });
     }
-    
+
     /**
      * Attach click handlers to pagination links
      */
     attachPaginationHandlers() {
         const self = this;
-        
+
         // Use event delegation to handle dynamically loaded pagination links
         $(document).off('click', `#${this.containerId} ${this.paginationSelector} a.page-link`);
         $(document).on('click', `#${this.containerId} ${this.paginationSelector} a.page-link`, function(e) {
             e.preventDefault();
-            
+
             const $link = $(this);
             const url = $link.attr('href');
             const $parent = $link.parent();
-            
+
             // Ignore disabled and active links
             if (!url || $parent.hasClass('disabled') || $parent.hasClass('active')) {
                 return;
             }
-            
+
             // Prevent clicking if already loading
             if (self.isLoading) {
-                console.log('[AjaxPagination] Loading in progress, ignoring click');
                 return;
             }
-            
+
             self.loadPage(url);
         });
     }
-    
+
     /**
      * Handle browser back/forward buttons
      */
     attachPopStateHandler() {
         if (!this.enableHistory) return;
-        
+
         const self = this;
         window.addEventListener('popstate', function(event) {
             if (event.state && event.state.url) {
@@ -183,7 +179,7 @@ class AjaxPagination {
             }
         });
     }
-    
+
     /**
      * Smooth scroll to container
      */
@@ -195,7 +191,7 @@ class AjaxPagination {
             }, this.scrollDuration);
         }
     }
-    
+
     /**
      * Extract counts from response (if present in data attributes or meta)
      */
@@ -203,7 +199,7 @@ class AjaxPagination {
         try {
             const $response = $(response);
             const countsElement = $response.find('[data-counts]');
-            
+
             if (countsElement.length) {
                 return JSON.parse(countsElement.attr('data-counts'));
             }
@@ -212,7 +208,7 @@ class AjaxPagination {
         }
         return null;
     }
-    
+
     /**
      * Show error message
      */
@@ -223,7 +219,7 @@ class AjaxPagination {
             alert(message);
         }
     }
-    
+
     /**
      * Destroy instance and cleanup
      */
@@ -232,10 +228,10 @@ class AjaxPagination {
         if (this.currentRequest && this.currentRequest.readyState !== 4) {
             this.currentRequest.abort();
         }
-        
+
         // Remove event handlers
         $(document).off('click', `#${this.containerId} ${this.paginationSelector} a.page-link`);
-        
+
         this.isLoading = false;
         this.currentRequest = null;
     }

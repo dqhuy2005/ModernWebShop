@@ -6,34 +6,37 @@
                 <span class="text-danger">MWShop</span><span class="text-warning">.</span>
             </a>
 
-            <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4">
-                <form action="{{ route('products.search') }}" method="GET" class="w-100 position-relative">
-                    <input type="text" class="form-control form-control-sm pe-5" name="q"
-                        placeholder="Nhập từ khóa tìm kiếm..." style="border-radius: 25px; padding-right: 45px;">
+            <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4 position-relative">
+                <form action="{{ route('products.search') }}" method="GET" class="w-100 position-relative"
+                    id="searchForm">
+                    <input type="text" class="form-control form-control-sm pe-5" name="q" id="searchInput"
+                        placeholder="Nhập từ khóa tìm kiếm..." style="border-radius: 25px; padding-right: 45px;"
+                        autocomplete="off">
                     <button type="submit"
                         class="btn btn-danger btn-sm position-absolute end-0 top-50 translate-middle-y me-1"
-                        style="border-radius: 20px; padding: 0.25rem 1rem;">
+                        style="border-radius: 20px; padding: 0.25rem 1rem; z-index: 10;">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
+
+                <div id="searchSuggestions" class="search-suggestions-dropdown" style="display: none;">
+                    <div class="suggestions-list">
+                    </div>
+                </div>
             </div>
 
             <div class="d-flex align-items-center gap-3">
                 @auth
                     <div class="dropdown">
-                        <a class="text-white text-decoration-none d-flex align-items-center gap-2"
-                           href="#"
-                           id="accountDropdown"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            @if(auth()->user()->image)
+                        <a class="text-white text-decoration-none d-flex align-items-center gap-2" href="#"
+                            id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (auth()->user()->image)
                                 <img src="{{ asset('storage/' . auth()->user()->image) }}"
-                                     alt="{{ auth()->user()->fullname }}"
-                                     class="rounded-circle"
-                                     style="width: 32px; height: 32px; object-fit: cover;">
+                                    alt="{{ auth()->user()->fullname }}" class="rounded-circle"
+                                    style="width: 32px; height: 32px; object-fit: cover;">
                             @else
                                 <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center"
-                                     style="width: 32px; height: 32px;">
+                                    style="width: 32px; height: 32px;">
                                     <i class="fas fa-user text-white"></i>
                                 </div>
                             @endif
@@ -118,6 +121,83 @@
     .search-wrapper button {
         height: calc(100% - 4px);
         z-index: 10;
+    }
+
+    .search-suggestions-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+        margin-top: 5px;
+    }
+
+    .suggestions-list {
+        padding: 0.5rem 0;
+    }
+
+    .suggestion-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .suggestion-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-right: 1rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .suggestion-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .suggestion-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #202732;
+        margin-bottom: 0.25rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .suggestion-price {
+        font-size: 0.85rem;
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .suggestion-empty {
+        padding: 1rem;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .suggestion-loading {
+        padding: 1rem;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9rem;
     }
 
     .main-menu {

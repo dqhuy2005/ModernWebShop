@@ -63,11 +63,15 @@ class Product extends Model
         return $query->orderBy('views', 'desc')->limit($limit);
     }
 
-    // Accessors & Mutators
-    
-    /**
-     * Format giá theo chuẩn Việt Nam: 150.000 ₫
-     */
+    public function scopeSearch($query, $keyword)
+    {
+        if (empty($keyword)) {
+            return $query;
+        }
+
+        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+    }
+
     public function getFormattedPriceAttribute(): string
     {
         if ($this->price === 0 || $this->price === null) {
@@ -76,9 +80,6 @@ class Product extends Model
         return number_format($this->price, 0, ',', '.') . ' ₫';
     }
 
-    /**
-     * Format giá với đơn vị tiền tệ đầy đủ
-     */
     public function getFormattedPriceWithCurrencyAttribute(): string
     {
         if ($this->price === 0 || $this->price === null) {

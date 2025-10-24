@@ -49,7 +49,6 @@
             "hideMethod": "fadeOut"
         };
 
-        // Display session messages as toast
         @if(session('success'))
             toastr.success("{{ session('success') }}");
         @endif
@@ -110,6 +109,110 @@
         $(document).on('click', '.quick-view-btn', function(e) {
             e.preventDefault();
             toastr.info('Tính năng xem nhanh đang được phát triển!');
+        });
+
+        $(document).ready(function() {
+            let searchTimeout = null;
+
+            const searchInput = $('#searchInput');
+            const suggestionsDropdown = $('#searchSuggestions');
+            const suggestionsList = suggestionsDropdown.find('.suggestions-list');
+
+            function debounce(func, delay) {
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => func.apply(context, args), delay);
+                };
+            }
+
+            function fetchSuggestions(keyword) {
+
+                if (keyword.length < 2) {
+                    suggestionsDropdown.hide();
+                    return;
+                }
+
+                suggestionsList.html(
+                    '<div class="suggestion-loading"><i class="fas fa-spinner fa-spin me-2"></i>Đang tìm kiếm...</div>'
+                );
+                suggestionsDropdown.show();
+
+                $.ajax({
+                    url: '{{ route('products.search.suggestions') }}',
+                    method: 'GET',
+                    data: {
+                        keyword: keyword
+                    },
+                    success: function(response) {
+
+                        if (response.success && response.products.length > 0) {
+                            renderSuggestions(response.products);
+                        } else {
+                            suggestionsList.html(
+                                '<div class="suggestion-empty"><i class="fas fa-search me-2"></i>Không tìm thấy sản phẩm nào</div>'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Search error:', error);
+                        console.error('XHR:', xhr);
+                        suggestionsList.html(
+                            '<div class="suggestion-empty text-danger"><i class="fas fa-exclamation-circle me-2"></i>Có lỗi xảy ra</div>'
+                        );
+                    }
+                });
+            }
+
+            function renderSuggestions(products) {
+                let html = '';
+
+                products.forEach(function(product) {
+                    html += `
+                        <a href="${product.url}" class="suggestion-item">
+                            <img src="${product.image}" alt="${product.name}" class="suggestion-image">
+                            <div class="suggestion-info">
+                                <div class="suggestion-name">${product.name}</div>
+                                <div class="suggestion-price">${product.formatted_price}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+
+                suggestionsList.html(html);
+            }
+
+            searchInput.on('input', debounce(function() {
+                const keyword = $(this).val().trim();
+                fetchSuggestions(keyword);
+            }, 300));
+
+            searchInput.on('focus', function() {
+                const keyword = $(this).val().trim();
+                if (keyword.length >= 2) {
+                    suggestionsDropdown.show();
+                }
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.search-wrapper').length) {
+                    suggestionsDropdown.hide();
+                }
+            });
+
+            searchInput.on('keyup', function(e) {
+                if ($(this).val().trim().length === 0) {
+                    suggestionsDropdown.hide();
+                }
+            });
+
+            searchInput.on('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    suggestionsDropdown.hide();
+                }
+            });
+
         });
     </script>
 
