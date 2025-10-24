@@ -182,13 +182,6 @@
             const currentSortBy = $('#hidden_sort_by').val();
             const currentSortOrder = $('#hidden_sort_order').val();
 
-            if (currentSortBy === column) {
-                $('#hidden_sort_order').val(currentSortOrder === 'asc' ? 'desc' : 'asc');
-            } else {
-                $('#hidden_sort_by').val(column);
-                $('#hidden_sort_order').val('desc');
-            }
-
             $('#searchForm').submit();
         }
 

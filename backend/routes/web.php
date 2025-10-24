@@ -10,6 +10,8 @@ use App\Http\Controllers\CMS\OrderController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\PurchaseController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
@@ -32,6 +34,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{orderId}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+
+    // Purchase History Routes
+    Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.index');
+    Route::get('/purchase/{orderId}', [PurchaseController::class, 'show'])->name('purchase.show');
+    Route::post('/purchase/{orderId}/cancel', [PurchaseController::class, 'cancel'])->name('purchase.cancel');
 });
 
 Route::get('/wishlist', function () {

@@ -41,11 +41,8 @@
                             </div>
 
                             <div class="d-flex gap-3 justify-content-center flex-wrap">
-                                <a href="{{ route('home') }}" class="btn btn-outline-secondary px-4">
-                                    <i class="fas fa-home me-2"></i>Về trang chủ
-                                </a>
-                                <a href="#orderDetails" class="btn btn-danger px-4">
-                                    <i class="fas fa-list me-2"></i>Xem chi tiết đơn hàng
+                                <a href="{{ route('home') }}" class="btn btn-danger" style="border-radius: 0px;">
+                                    TRANG CHỦ
                                 </a>
                             </div>
                         </div>
@@ -132,15 +129,6 @@
                                     @endif
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-info mt-4 d-flex align-items-start" role="alert">
-                        <i class="fas fa-info-circle me-3 mt-1"></i>
-                        <div>
-                            <strong>Lưu ý:</strong> Chúng tôi đã gửi email xác nhận đơn hàng đến địa chỉ
-                            <strong>{{ $order->user->email }}</strong>. Vui lòng kiểm tra email để biết thêm chi tiết về
-                            đơn hàng của bạn.
                         </div>
                     </div>
                 </div>

@@ -28,7 +28,6 @@ abstract class BaseRepository extends \Prettus\Repository\Eloquent\BaseRepositor
 
     public function create(array $attributes)
     {
-        // Have to skip presenter to get a model not some data
         $temporarySkipPresenter = $this->skipPresenter;
         $this->skipPresenter(true);
         $model = parent::create($attributes);
@@ -42,7 +41,6 @@ abstract class BaseRepository extends \Prettus\Repository\Eloquent\BaseRepositor
 
     public function update(array $attributes, $id)
     {
-        // Have to skip presenter to get a model not some data
         $temporarySkipPresenter = $this->skipPresenter;
         $this->skipPresenter(true);
         $model = parent::update($attributes, $id);

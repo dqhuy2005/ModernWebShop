@@ -1,4 +1,3 @@
-
 <header class="main-header">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-0 m-0">
@@ -9,14 +8,11 @@
 
             <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4">
                 <form action="{{ route('products.search') }}" method="GET" class="w-100 position-relative">
-                    <input type="text"
-                           class="form-control form-control-sm pe-5"
-                           name="q"
-                           placeholder="Nhập từ khóa tìm kiếm..."
-                           style="border-radius: 25px; padding-right: 45px;">
+                    <input type="text" class="form-control form-control-sm pe-5" name="q"
+                        placeholder="Nhập từ khóa tìm kiếm..." style="border-radius: 25px; padding-right: 45px;">
                     <button type="submit"
-                            class="btn btn-danger btn-sm position-absolute end-0 top-50 translate-middle-y me-1"
-                            style="border-radius: 20px; padding: 0.25rem 1rem;">
+                        class="btn btn-danger btn-sm position-absolute end-0 top-50 translate-middle-y me-1"
+                        style="border-radius: 20px; padding: 0.25rem 1rem;">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
@@ -25,30 +21,43 @@
             <div class="d-flex align-items-center gap-3">
                 <div class="dropdown">
                     <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user me-1"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                         @auth
-                            <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
-                            <li><a class="dropdown-item" href="#">Đơn hàng của tôi</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.index') }}">
+                                    <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ route('purchase.index') }}">
+                                    <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </button>
                                 </form>
                             </li>
                         @else
-                            <li><a class="dropdown-item" href="{{ route('login') }}">Đăng nhập</a></li>
-                            <li><a class="dropdown-item" href="{{ route('register') }}">Đăng ký</a></li>
+                            <li><a class="dropdown-item" href="{{ route('login') }}">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ route('register') }}">
+                                    <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                </a></li>
                         @endauth
                     </ul>
                 </div>
 
                 <a href="{{ route('cart.index') }}" class="text-white text-decoration-none position-relative">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill" id="cart-count">
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill"
+                        id="cart-count">
                         {{ session('cart_count', 0) }}
                     </span>
                 </a>
@@ -75,18 +84,20 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown mega-dropdown">
-                        <a class="nav-link" href="#" id="categoriesDropdown"
-                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link" href="#" id="categoriesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-th-large me-1"></i> Danh mục
                         </a>
                         <div class="dropdown-menu mega-menu p-4" aria-labelledby="categoriesDropdown">
                             <div class="row g-4">
                                 @php
-                                    use \App\Models\Category;
+                                    use App\Models\Category;
 
-                                    $categories = Category::with(['children' => function($query) {
+                                    $categories = Category::with([
+                                        'children' => function ($query) {
                                             $query->limit(5);
-                                        }])
+                                        },
+                                    ])
                                         ->withCount('products')
                                         ->whereNull('parent_id')
                                         ->orderBy('name')
@@ -98,8 +109,7 @@
                                     <div class="col-md-4">
                                         <div class="category-group">
                                             <h6 class="category-title fw-bold text-danger mb-3">
-                                                <a href="#"
-                                                   class="text-danger text-decoration-none">
+                                                <a href="#" class="text-danger text-decoration-none">
                                                     {{ $category->name }}
                                                     <span class="badge bg-danger-subtle text-danger ms-2">
                                                         {{ $category->products_count }}
@@ -107,12 +117,12 @@
                                                 </a>
                                             </h6>
 
-                                            @if($category->children && $category->children->count() > 0)
+                                            @if ($category->children && $category->children->count() > 0)
                                                 <ul class="list-unstyled category-list">
-                                                    @foreach($category->children as $child)
+                                                    @foreach ($category->children as $child)
                                                         <li class="mb-2">
                                                             <a href="#"
-                                                               class="text-muted text-decoration-none category-link">
+                                                                class="text-muted text-decoration-none category-link">
                                                                 <i class="fas fa-angle-right me-2"></i>
                                                                 {{ $child->name }}
                                                             </a>
@@ -132,7 +142,7 @@
                             <div class="row mt-4 pt-3 border-top">
                                 <div class="col-12 text-center">
                                     <a href="{{ route('categories.show', 'all') }}"
-                                       class="btn btn-outline-danger btn-sm">
+                                        class="btn btn-outline-danger btn-sm">
                                         Xem tất cả danh mục <i class="fas fa-arrow-right ms-2"></i>
                                     </a>
                                 </div>
@@ -179,7 +189,7 @@
 
     .main-menu {
         padding: 0.5rem 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .main-menu .nav-link {
@@ -219,7 +229,7 @@
         right: 0;
         border: none;
         border-radius: 0;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         margin-top: 0.5rem;
         animation: slideDown 0.3s ease;
     }
@@ -229,6 +239,7 @@
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
