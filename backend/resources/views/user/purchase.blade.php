@@ -12,12 +12,12 @@
                             <div class="profile-avatar mb-3">
                                 <img src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/imgs/default-avatar.png') }}"
                                     alt="Avatar" class="rounded-circle"
-                                    style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #dc3545;">
+                                    style="width: 120px; height: 120px; object-fit: cover;">
                             </div>
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ Auth::user()->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ Auth::user()->email }}</p>
                             <div class="d-grid gap-2">
-                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-outline-secondary">
+                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-outline-secondary" style="border: none">
                                     <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                 </a>
                                 <a href="{{ route('purchase.index') }}" class="btn btn-sm btn-danger active">
@@ -54,7 +54,8 @@
                                 <div class="orders-list">
                                     @foreach ($orders as $order)
                                         <div class="order-card mb-3 border rounded p-3" data-order-id="{{ $order->id }}">
-                                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
                                                 <div>
                                                     <h6 class="fw-bold mb-1">
                                                         Đơn hàng #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
@@ -69,9 +70,18 @@
                                                         $statusConfig = [
                                                             'pending' => ['badge' => 'warning', 'text' => 'Chờ xử lý'],
                                                             'confirmed' => ['badge' => 'info', 'text' => 'Đã xác nhận'],
-                                                            'processing' => ['badge' => 'primary', 'text' => 'Đang xử lý'],
-                                                            'shipping' => ['badge' => 'secondary', 'text' => 'Đang giao'],
-                                                            'completed' => ['badge' => 'success', 'text' => 'Hoàn thành'],
+                                                            'processing' => [
+                                                                'badge' => 'primary',
+                                                                'text' => 'Đang xử lý',
+                                                            ],
+                                                            'shipping' => [
+                                                                'badge' => 'secondary',
+                                                                'text' => 'Đang giao',
+                                                            ],
+                                                            'completed' => [
+                                                                'badge' => 'success',
+                                                                'text' => 'Hoàn thành',
+                                                            ],
                                                             'cancelled' => ['badge' => 'danger', 'text' => 'Đã hủy'],
                                                         ];
                                                         $config = $statusConfig[$order->status] ?? [
@@ -132,7 +142,8 @@
                                                         <i class="fas fa-eye me-1"></i>Chi tiết
                                                     </a>
                                                     @if (in_array($order->status, ['pending', 'confirmed']))
-                                                        <button type="button" class="btn btn-sm btn-outline-danger cancel-order-btn"
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-outline-danger cancel-order-btn"
                                                             data-order-id="{{ $order->id }}">
                                                             <i class="fas fa-times me-1"></i>Hủy đơn
                                                         </button>
@@ -194,6 +205,13 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Submit search form on Enter key
+            $('input[name="search"]').on('keypress', function(e) {
+                if (e.which === 13) { // Enter key
+                    $(this).closest('form').submit();
+                }
+            });
+
             $('.cancel-order-btn').on('click', function() {
                 const orderId = $(this).data('order-id');
                 const $orderCard = $(`.order-card[data-order-id="${orderId}"]`);

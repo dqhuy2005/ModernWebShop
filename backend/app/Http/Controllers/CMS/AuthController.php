@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
+use App\Models\User;
 use App\Repository\CartRepository;
 
 class AuthController extends Controller
@@ -61,7 +62,6 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            // Merge session cart to database cart when user logs in
             $this->mergeSessionCartToDatabase($user->id);
 
             return redirect()->intended(route('home'));
@@ -78,23 +78,18 @@ class AuthController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
-        // Clear cart session
+
         Session::forget('cart');
         Session::forget('cart_count');
 
         return redirect()->route('home');
     }
 
-    /**
-     * Merge session cart to database when user logs in
-     */
     protected function mergeSessionCartToDatabase($userId)
     {
         $sessionCart = Session::get('cart', []);
-        
+
         if (empty($sessionCart)) {
-            // Update cart count from database
             $cartCount = $this->cartRepository->findByUser($userId)->count();
             Session::put('cart_count', $cartCount);
             return;
@@ -102,13 +97,11 @@ class AuthController extends Controller
 
         foreach ($sessionCart as $item) {
             $existingCart = $this->cartRepository->findByUserAndProduct($userId, $item['product_id']);
-            
+
             if ($existingCart) {
-                // Update quantity if item already exists
                 $newQuantity = $existingCart->quantity + $item['quantity'];
                 $this->cartRepository->updateQuantity($existingCart->id, $newQuantity);
             } else {
-                // Create new cart item
                 $this->cartRepository->create([
                     'user_id' => $userId,
                     'product_id' => $item['product_id'],
@@ -118,10 +111,8 @@ class AuthController extends Controller
             }
         }
 
-        // Clear session cart after merging
         Session::forget('cart');
-        
-        // Update cart count
+
         $cartCount = $this->cartRepository->findByUser($userId)->count();
         Session::put('cart_count', $cartCount);
     }
@@ -153,7 +144,7 @@ class AuthController extends Controller
                 ->withInput();
         }
 
-        $user = \App\Models\User::create([
+        User::create([
             'fullname' => $request->fullname,
             'email' => $request->email,
             'password' => Hash::make($request->password),

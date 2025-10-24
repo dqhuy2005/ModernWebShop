@@ -17,7 +17,6 @@
 
             <div class="row">
                 <div class="col-lg-8 mb-4">
-                    <!-- Order Info -->
                     <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -49,7 +48,6 @@
                                 </span>
                             </div>
 
-                            <!-- Products -->
                             <h6 class="fw-bold mb-3" style="color: #202732;">Sản phẩm đã đặt</h6>
                             <div class="table-responsive">
                                 <table class="table">
@@ -103,7 +101,6 @@
                         </div>
                     </div>
 
-                    <!-- Shipping Info -->
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4">
                             <h6 class="fw-bold mb-3" style="color: #202732;">
@@ -137,7 +134,6 @@
                     </div>
                 </div>
 
-                <!-- Order Summary -->
                 <div class="col-lg-4">
                     <div class="card shadow-sm border-0 sticky-top" style="border-radius: 12px; top: 20px;">
                         <div class="card-body p-4">
@@ -162,11 +158,11 @@
 
                             <div class="d-grid gap-2">
                                 @if (in_array($order->status, ['pending', 'confirmed']))
-                                    <button type="button" class="btn btn-outline-danger" id="cancelOrderBtn">
+                                    <button type="button" class="btn btn-danger" id="cancelOrderBtn" style="border: none;">
                                         <i class="fas fa-times me-2"></i>Hủy đơn hàng
                                     </button>
                                 @endif
-                                <a href="{{ route('purchase.index') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('purchase.index') }}" class="btn btn-secondary" style="border: none;">
                                     <i class="fas fa-arrow-left me-2"></i>Quay lại
                                 </a>
                             </div>

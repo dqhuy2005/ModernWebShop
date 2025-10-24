@@ -30,13 +30,13 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="name" class="form-label fw-semibold">Họ và tên</label>
+                                        <label for="fullname" class="form-label fw-semibold">Họ và tên</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                                id="name" name="name" value="{{ old('name') }}"
-                                                placeholder="Nguyễn Văn A" required autofocus>
+                                            <input type="text"
+                                                class="form-control @error('fullname') is-invalid @enderror" id="fullname"
+                                                name="fullname" value="{{ old('fullname') }}" required autofocus>
                                         </div>
-                                        @error('name')
+                                        @error('fullname')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -45,8 +45,8 @@
                                         <label for="email" class="form-label fw-semibold">Email</label>
                                         <div class="input-group">
                                             <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                                id="email" name="email" value="{{ old('email') }}"
-                                                placeholder="example@email.com" required>
+                                                id="email" name="email" value="{{ old('email') }}" placeholder=""
+                                                required>
                                         </div>
                                         @error('email')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -58,8 +58,7 @@
                                     <label for="phone" class="form-label fw-semibold">Số điện thoại</label>
                                     <div class="input-group">
                                         <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                                            id="phone" name="phone" value="{{ old('phone') }}"
-                                            placeholder="0123456789">
+                                            id="phone" name="phone" value="{{ old('phone') }}" placeholder="">
                                     </div>
                                     @error('phone')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -72,7 +71,7 @@
                                         <div class="input-group">
                                             <input type="password"
                                                 class="form-control @error('password') is-invalid @enderror" id="password"
-                                                name="password" placeholder="••••••••" required>
+                                                name="password" placeholder="" required>
                                             <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                                 <i class="far fa-eye"></i>
                                             </button>
@@ -87,7 +86,7 @@
                                             khẩu</label>
                                         <div class="input-group">
                                             <input type="password" class="form-control" id="password_confirmation"
-                                                name="password_confirmation" placeholder="••••••••" required>
+                                                name="password_confirmation" placeholder="" required>
                                             <button class="btn btn-outline-secondary" type="button"
                                                 id="togglePasswordConfirm">
                                                 <i class="far fa-eye"></i>
@@ -96,8 +95,8 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
-                                    <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                <button type="submit" class="btn btn-danger w-100 py-2 mb-3">
+                                    TẠO TÀI KHOẢN
                                 </button>
                             </form>
 

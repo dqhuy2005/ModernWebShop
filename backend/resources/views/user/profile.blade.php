@@ -23,14 +23,14 @@
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ $user->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ $user->email }}</p>
                             <div class="d-grid gap-2">
-                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-danger active">
+                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-danger active" style="border: none;">
                                     <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                 </a>
-                                <a href="{{ route('purchase.index') }}" class="btn btn-sm btn-outline-secondary">
+                                <a href="{{ route('purchase.index') }}" class="btn btn-sm btn-outline-secondary" style="border: none;">
                                     <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
                                 </a>
                                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
-                                    data-bs-target="#changePasswordModal">
+                                    data-bs-target="#changePasswordModal" style="border: none;">
                                     <i class="fas fa-key me-2"></i>Đổi mật khẩu
                                 </button>
                             </div>
@@ -163,11 +163,6 @@
         .btn-danger.active {
             background-color: #dc3545;
             border-color: #dc3545;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: #6c757d;
-            color: white;
         }
 
         .profile-avatar {

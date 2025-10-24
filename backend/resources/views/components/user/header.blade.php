@@ -21,7 +21,7 @@
             <div class="d-flex align-items-center gap-3">
                 <div class="dropdown">
                     <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                        aria-expanded="false">
                         <i class="fas fa-user me-1"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
@@ -200,6 +200,27 @@
     .category-link i {
         color: #dc3545;
         font-size: 0.75rem;
+    }
+
+    /* Dropdown hover effect */
+    .dropdown:hover .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+
+    .dropdown-menu {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Responsive */
