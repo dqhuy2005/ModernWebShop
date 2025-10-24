@@ -93,10 +93,7 @@
                                     </table>
                                 </div>
 
-                                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                                    <a href="{{ route('home') }}" class="btn btn-outline-secondary">
-                                        <i class="fas fa-arrow-left me-2"></i>Tiếp tục mua sắm
-                                    </a>
+                                <div class="d-flex justify-content-end align-items-center pt-3">
                                     <form action="{{ route('cart.clear') }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -134,14 +131,8 @@
                                 </div>
 
                                 <a href="{{ route('checkout.index') }}" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
-                                    <i class="fas fa-credit-card me-2"></i>Thanh toán
+                                    Thanh toán
                                 </a>
-
-                                <div class="text-center">
-                                    <small class="text-muted">
-                                        <i class="fas fa-shield-alt me-1"></i>Giao dịch an toàn & bảo mật
-                                    </small>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -155,9 +146,6 @@
                             </div>
                             <h4 class="fw-bold mb-3" style="color: #202732;">Giỏ hàng trống</h4>
                             <p class="text-muted mb-4">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
-                            <a href="{{ route('home') }}" class="btn btn-danger px-4">
-                                <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -234,14 +222,26 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Pulse animation for updated totals */
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .total-updated {

@@ -21,7 +21,6 @@
             <form id="checkoutForm">
                 @csrf
                 <div class="row g-4">
-                    <!-- Thông tin giao hàng -->
                     <div class="col-lg-7">
                         <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
                             <div class="card-body p-4">
@@ -33,7 +32,7 @@
                                     <label for="name" class="form-label fw-semibold">Họ và tên <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $user->name }}" required>
+                                        value="{{ $user->fullname }}" required>
                                 </div>
 
                                 <div class="mb-3">
@@ -63,46 +62,8 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Phương thức thanh toán -->
-                        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                            <div class="card-body p-4">
-                                <h5 class="fw-bold mb-4" style="color: #202732;">
-                                    <i class="fas fa-wallet me-2"></i>Phương thức thanh toán
-                                </h5>
-
-                                <div class="form-check mb-3 p-3 border rounded">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_cod"
-                                        value="cod" checked>
-                                    <label class="form-check-label w-100" for="payment_cod">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <strong>Thanh toán khi nhận hàng (COD)</strong>
-                                                <div class="text-muted small mt-1">Thanh toán bằng tiền mặt khi nhận hàng</div>
-                                            </div>
-                                            <i class="fas fa-money-bill-wave fa-2x text-success"></i>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="form-check p-3 border rounded">
-                                    <input class="form-check-input" type="radio" name="payment_method"
-                                        id="payment_transfer" value="bank_transfer">
-                                    <label class="form-check-label w-100" for="payment_transfer">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <strong>Chuyển khoản ngân hàng</strong>
-                                                <div class="text-muted small mt-1">Chuyển khoản qua tài khoản ngân hàng</div>
-                                            </div>
-                                            <i class="fas fa-university fa-2x text-primary"></i>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    <!-- Đơn hàng của bạn -->
                     <div class="col-lg-5">
                         <div class="card shadow-sm border-0 sticky-top" style="border-radius: 12px; top: 20px;">
                             <div class="card-body p-4">
@@ -154,14 +115,8 @@
 
                                     <button type="submit" class="btn btn-danger w-100 py-3 fw-semibold"
                                         id="submitOrder">
-                                        <i class="fas fa-check-circle me-2"></i>Đặt hàng
+                                       Đặt hàng
                                     </button>
-
-                                    <div class="text-center mt-3">
-                                        <small class="text-muted">
-                                            <i class="fas fa-lock me-1"></i>Thông tin của bạn được bảo mật
-                                        </small>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -236,7 +191,6 @@
             $('#checkoutForm').on('submit', function(e) {
                 e.preventDefault();
 
-                // Validate form
                 if (!this.checkValidity()) {
                     e.stopPropagation();
                     $(this).addClass('was-validated');
@@ -244,23 +198,19 @@
                     return;
                 }
 
-                // Disable submit button
                 const $submitBtn = $('#submitOrder');
                 const originalText = $submitBtn.html();
                 $submitBtn.prop('disabled', true);
                 $submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...');
 
-                // Get form data
                 const formData = {
                     _token: '{{ csrf_token() }}',
                     name: $('#name').val(),
                     phone: $('#phone').val(),
                     address: $('#address').val(),
                     note: $('#note').val(),
-                    payment_method: $('input[name="payment_method"]:checked').val()
                 };
 
-                // Send AJAX request
                 $.ajax({
                     url: '{{ route('checkout.process') }}',
                     method: 'POST',
@@ -269,17 +219,14 @@
                         if (response.success) {
                             toastr.success(response.message);
 
-                            // Update cart count
                             $('#cart-count').text('0');
 
-                            // Redirect to success page
                             setTimeout(function() {
                                 window.location.href = response.redirect_url;
                             }, 1000);
                         }
                     },
                     error: function(xhr) {
-                        // Re-enable button
                         $submitBtn.prop('disabled', false);
                         $submitBtn.html(originalText);
 
@@ -297,7 +244,6 @@
                 });
             });
 
-            // Phone number formatting
             $('#phone').on('input', function() {
                 let value = $(this).val().replace(/[^0-9]/g, '');
                 if (value.length > 11) {

@@ -7,19 +7,9 @@ use Illuminate\Http\Request;
 
 abstract class BaseController extends Controller
 {
-    /**
-     * Apply filters to query efficiently
-     * Only applies filters that have values
-     *
-     * @param Builder $query
-     * @param Request $request
-     * @param array $filterConfig
-     * @return Builder
-     */
     protected function applyFilters(Builder $query, Request $request, array $filterConfig): Builder
     {
         foreach ($filterConfig as $param => $config) {
-            // Skip if request doesn't have this parameter or it's empty
             if (!$request->filled($param)) {
                 continue;
             }
@@ -28,26 +18,21 @@ abstract class BaseController extends Controller
             $type = $config['type'] ?? 'exact';
             $column = $config['column'] ?? $param;
 
-            // Apply filter based on type
             switch ($type) {
                 case 'exact':
-                    // Exact match: status = 'active'
                     $query->where($column, $value);
                     break;
 
                 case 'like':
-                    // LIKE search: name LIKE '%value%'
                     $query->where($column, 'like', "%{$value}%");
                     break;
 
                 case 'in':
-                    // IN clause: id IN (1,2,3)
                     $values = is_array($value) ? $value : explode(',', $value);
                     $query->whereIn($column, $values);
                     break;
 
                 case 'between':
-                    // BETWEEN: price BETWEEN min AND max
                     if (isset($config['min']) && $request->filled($config['min'])) {
                         $query->where($column, '>=', $request->input($config['min']));
                     }
@@ -57,7 +42,6 @@ abstract class BaseController extends Controller
                     break;
 
                 case 'date_range':
-                    // Date range: created_at >= date_from AND created_at <= date_to
                     if (isset($config['from']) && $request->filled($config['from'])) {
                         $query->whereDate($column, '>=', $request->input($config['from']));
                     }
@@ -67,13 +51,11 @@ abstract class BaseController extends Controller
                     break;
 
                 case 'boolean':
-                    // Boolean: status = 1 or 0
                     $boolValue = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     $query->where($column, $boolValue);
                     break;
 
                 case 'relation':
-                    // Relation search: whereHas('category', ...)
                     $relation = $config['relation'];
                     $relationColumn = $config['relation_column'];
                     $query->whereHas($relation, function ($q) use ($relationColumn, $value) {
@@ -82,7 +64,6 @@ abstract class BaseController extends Controller
                     break;
 
                 case 'custom':
-                    // Custom callback
                     if (isset($config['callback']) && is_callable($config['callback'])) {
                         $config['callback']($query, $value, $request);
                     }
@@ -93,15 +74,6 @@ abstract class BaseController extends Controller
         return $query;
     }
 
-    /**
-     * Apply search to multiple columns
-     *
-     * @param Builder $query
-     * @param Request $request
-     * @param array $searchColumns
-     * @param string $searchParam
-     * @return Builder
-     */
     protected function applySearch(Builder $query, Request $request, array $searchColumns, string $searchParam = 'search'): Builder
     {
         if (!$request->filled($searchParam)) {
@@ -127,16 +99,6 @@ abstract class BaseController extends Controller
         return $query;
     }
 
-    /**
-     * Apply sorting
-     *
-     * @param Builder $query
-     * @param Request $request
-     * @param string $defaultSort
-     * @param string $defaultOrder
-     * @param array $allowedSortFields
-     * @return Builder
-     */
     protected function applySorting(
         Builder $query,
         Request $request,
@@ -147,12 +109,10 @@ abstract class BaseController extends Controller
         $sortBy = $request->get('sort_by', $defaultSort);
         $sortOrder = $request->get('sort_order', $defaultOrder);
 
-        // Validate sort field
         if (!empty($allowedSortFields) && !in_array($sortBy, $allowedSortFields)) {
             $sortBy = $defaultSort;
         }
 
-        // Validate sort order
         if (!in_array(strtolower($sortOrder), ['asc', 'desc'])) {
             $sortOrder = $defaultOrder;
         }

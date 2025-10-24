@@ -64,7 +64,6 @@ class CheckoutController extends Controller
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:500',
             'note' => 'nullable|string|max:500',
-            'payment_method' => 'required|in:cod,bank_transfer',
         ]);
 
         $userId = Auth::id();

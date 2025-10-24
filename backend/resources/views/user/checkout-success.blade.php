@@ -22,7 +22,8 @@
                                 <div class="row">
                                     <div class="col-md-6 text-start mb-3">
                                         <small class="text-muted d-block mb-1">Mã đơn hàng</small>
-                                        <strong class="text-danger">#{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</strong>
+                                        <strong
+                                            class="text-danger">#{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</strong>
                                     </div>
                                     <div class="col-md-6 text-start mb-3">
                                         <small class="text-muted d-block mb-1">Ngày đặt</small>
@@ -92,7 +93,8 @@
                                                     ₫{{ number_format($detail->unit_price) }}
                                                 </td>
                                                 <td class="text-end align-middle">
-                                                    <strong class="text-danger">₫{{ number_format($detail->total_price) }}</strong>
+                                                    <strong
+                                                        class="text-danger">₫{{ number_format($detail->total_price) }}</strong>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -101,7 +103,8 @@
                                         <tr>
                                             <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
                                             <td class="text-end">
-                                                <strong class="text-danger fs-5">₫{{ number_format($order->total_amount) }}</strong>
+                                                <strong
+                                                    class="text-danger fs-5">₫{{ number_format($order->total_amount) }}</strong>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -111,18 +114,16 @@
                             <hr class="my-4">
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12 border-bottom mb-3">
                                     <h6 class="fw-bold mb-3" style="color: #202732;">Thông tin giao hàng</h6>
-                                    <p class="mb-1"><strong>Họ tên:</strong> {{ $order->user->name }}</p>
-                                    <p class="mb-1"><strong>Email:</strong> {{ $order->user->email }}</p>
-                                    <p class="mb-1"><strong>Địa chỉ:</strong> {{ $order->address }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <h6 class="fw-bold mb-3" style="color: #202732;">Phương thức thanh toán</h6>
-                                    <p class="mb-1">
-                                        <i class="fas fa-money-bill-wave text-success me-2"></i>
-                                        <strong>Thanh toán khi nhận hàng (COD)</strong>
-                                    </p>
+                                    <p class="mb-1"><strong>Họ tên:</strong> {{ $order->user->fullname }}</p>
+                                    <p class="mb-1"><strong>Email:</strong> {{ $order->user->email }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Địa chỉ:</strong> {{ $order->address }}</p>
+
                                     @if ($order->note)
                                         <div class="mt-3">
                                             <h6 class="fw-bold mb-2" style="color: #202732;">Ghi chú</h6>
@@ -205,18 +206,12 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Smooth scroll to order details
             $('a[href="#orderDetails"]').on('click', function(e) {
                 e.preventDefault();
                 $('html, body').animate({
                     scrollTop: $('#orderDetails').offset().top - 20
                 }, 500);
             });
-
-            // Show success animation
-            setTimeout(function() {
-                toastr.success('Đơn hàng của bạn đã được tạo thành công!');
-            }, 500);
         });
     </script>
 @endpush
