@@ -15,17 +15,16 @@ use App\Http\Controllers\User\PurchaseController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
-Route::get('/categories/{slug}', [HomeController::class, 'showCategory'])->name('categories.show');
+Route::get('/danh-muc/{slug}.html', [HomeController::class, 'showCategory'])->name('categories.show');
 Route::get('/products/{slug}', [HomeController::class, 'showProduct'])->name('products.show');
 
-// Search Suggestions (AJAX)
+// Search Suggestions
 Route::get('/products/search/suggestions', [HomeController::class, 'searchSuggestions'])->name('products.search.suggestions');
 
 Route::get('/products/search', function () {
     return redirect()->route('home');
 })->name('products.search');
 
-// Cart Routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
@@ -75,6 +74,7 @@ Route::get('password/reset', function () {
     return 'Password reset form';
 })->name('password.request');
 
+/* ADMIN ROUTES */
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 

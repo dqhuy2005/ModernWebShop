@@ -15,30 +15,28 @@
 
                 $bannerImage = ['laptop.png', 'case.png', 'keyboard.jpg', 'mouse.jpg', 'monitor.jpg'];
 
-                foreach($displayCategories as $category) {
+                foreach ($displayCategories as $category) {
                     $category->banner_image = array_shift($bannerImage);
                 }
             @endphp
 
             @forelse($displayCategories as $category)
                 <div class="col-6 col-md-4 col-lg">
-                    <a href="{{ route('categories.show', $category->slug . '.html') }}" class="category-card">
+                    <a href="{{ route('categories.show', $category->slug) }}" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="{{ asset('assets/imgs/banner/' . $category->banner_image) }}"
-                                 alt="{{ $category->name }}"
-                                 class="category-image">
+                                alt="{{ $category->name }}" class="category-image">
                         </div>
                         <h6 class="category-name">{{ strtoupper($category->name) }}</h6>
                     </a>
                 </div>
             @empty
-                @foreach(['LAPTOP', 'LAPTOP GAMING', 'PC', 'TABLET', 'HARD DRIVE'] as $index => $cat)
+                @foreach (['LAPTOP', 'LAPTOP GAMING', 'PC', 'TABLET', 'HARD DRIVE'] as $index => $cat)
                     <div class="col-6 col-md-4 col-lg">
                         <a href="#" class="category-card">
                             <div class="category-image-wrapper">
-                                <img src="{{ asset('assets/imgs/categories/default.png') }}"
-                                     alt="{{ $cat }}"
-                                     class="category-image">
+                                <img src="{{ asset('assets/imgs/categories/default.png') }}" alt="{{ $cat }}"
+                                    class="category-image">
                             </div>
                             <h6 class="category-name">{{ $cat }}</h6>
                         </a>

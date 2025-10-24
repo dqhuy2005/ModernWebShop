@@ -16,27 +16,22 @@
 
 @push('styles')
     <style>
-        /* Global Styles */
         body {
             font-family: 'Figtree', sans-serif;
         }
 
-        /* Smooth Scroll */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Section Spacing */
         section {
             position: relative;
         }
 
-        /* Hover Effects */
         a {
             transition: all 0.3s ease;
         }
 
-        /* Loading Animation */
         .loading {
             display: inline-block;
             width: 20px;

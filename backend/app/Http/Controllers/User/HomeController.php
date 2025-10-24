@@ -49,9 +49,9 @@ class HomeController extends Controller
         ));
     }
 
-    public function showProduct($slug)
+    public function showProduct($name)
     {
-        $product = Product::where('slug', $slug)
+        $product = Product::where('name', $name)
             ->with('category')
             ->firstOrFail();
 
