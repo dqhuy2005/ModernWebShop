@@ -13,16 +13,6 @@
                                 <h2 class="fw-bold" style="color: #202732;">Đăng nhập</h2>
                             </div>
 
-                            @if ($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle me-2"></i>
-                                    @foreach ($errors->all() as $error)
-                                        <div>{{ $error }}</div>
-                                    @endforeach
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            @endif
-
                             <form action="{{ route('login.post') }}" method="POST">
                                 @csrf
 

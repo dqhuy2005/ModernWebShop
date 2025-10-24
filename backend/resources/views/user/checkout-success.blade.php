@@ -117,6 +117,7 @@
                                 <div class="col-md-6">
                                     <p class="mb-1"><strong>Họ tên:</strong> {{ $order->user->fullname }}</p>
                                     <p class="mb-1"><strong>Email:</strong> {{ $order->user->email }}</p>
+                                    <p class="mb-1"><strong>Số điện thoại:</strong> {{ $order->user->phone }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="mb-1"><strong>Địa chỉ:</strong> {{ $order->address }}</p>

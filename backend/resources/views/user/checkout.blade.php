@@ -52,7 +52,7 @@
                                     <label for="address" class="form-label fw-semibold">Địa chỉ giao hàng <span
                                             class="text-danger">*</span></label>
                                     <textarea class="form-control" id="address" name="address" rows="3" required
-                                        placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
+                                        placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố">{{ old('address', $user->address) }}</textarea>
                                 </div>
 
                                 <div class="mb-3">

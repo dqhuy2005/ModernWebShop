@@ -19,12 +19,17 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
 
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckUserStatus::class,
+        ]);
+
         $middleware->alias([
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'admin' => \App\Http\Middleware\CheckAdmin::class,
             'user' => \App\Http\Middleware\CheckUser::class,
             'role.restriction' => \App\Http\Middleware\RoleRouteRestriction::class,
             'admin.access' => \App\Http\Middleware\CheckAdminAccess::class,
+            'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
