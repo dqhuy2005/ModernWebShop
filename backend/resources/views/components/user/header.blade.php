@@ -19,18 +19,33 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
-                <div class="dropdown">
-                    <a class="text-white text-decoration-none dropdown-toggle" href="#" id="accountDropdown"
-                        aria-expanded="false">
-                        <i class="fas fa-user me-1"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="accountDropdown">
-                        @auth
+                @auth
+                    <div class="dropdown">
+                        <a class="text-white text-decoration-none d-flex align-items-center gap-2"
+                           href="#"
+                           id="accountDropdown"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            @if(auth()->user()->image)
+                                <img src="{{ asset('storage/' . auth()->user()->image) }}"
+                                     alt="{{ auth()->user()->fullname }}"
+                                     class="rounded-circle"
+                                     style="width: 32px; height: 32px; object-fit: cover;">
+                            @else
+                                <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center"
+                                     style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                            @endif
+                            <span class="d-none d-lg-inline">{{ auth()->user()->fullname }}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
                             <li><a class="dropdown-item" href="{{ route('profile.index') }}">
-                                    Thông tin cá nhân
+                                    <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                 </a></li>
                             <li><a class="dropdown-item" href="{{ route('purchase.index') }}">
-                                    Đơn hàng của tôi
+                                    <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
                                 </a></li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -38,21 +53,24 @@
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        Đăng xuất
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                     </button>
                                 </form>
                             </li>
-                        @else
-                            <li><a class="dropdown-item" href="{{ route('login') }}">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                </a></li>
-                            <li><a class="dropdown-item" href="{{ route('register') }}">
-                                    <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                </a></li>
-                        @endauth
-                    </ul>
-                </div>
+                        </ul>
+                    </div>
+                @else
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="{{ route('login') }}" class="text-white text-decoration-none">
+                            <span class="d-none d-lg-inline">Đăng nhập</span>
+                        </a>
+                        <span class="text-white d-none d-lg-inline">|</span>
+                        <a href="{{ route('register') }}" class="text-white text-decoration-none">
+                            <span class="d-none d-lg-inline">Đăng ký</span>
+                        </a>
+                    </div>
+                @endauth
 
                 <a href="{{ route('cart.index') }}" class="text-white text-decoration-none position-relative">
                     <i class="fas fa-shopping-cart"></i>
@@ -202,25 +220,18 @@
         font-size: 0.75rem;
     }
 
-    /* Dropdown hover effect */
-    .dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0;
-    }
-
+    /* User dropdown styles */
     .dropdown-menu {
-        animation: fadeIn 0.3s ease;
+        animation: slideDown 0.2s ease;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        padding: 0.5rem 0;
     }
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .dropdown-item {
+        padding: 0.6rem 1.5rem;
+        transition: all 0.2s ease;
     }
 
     /* Responsive */

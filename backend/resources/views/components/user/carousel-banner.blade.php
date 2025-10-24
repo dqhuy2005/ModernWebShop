@@ -13,8 +13,7 @@
                     </a>
                 </li>
                 <li class="nav-item dropdown mega-dropdown">
-                    <a class="nav-link" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                    <a class="nav-link" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-th-large me-1"></i> Danh mục
                     </a>
                     <div class="dropdown-menu mega-menu p-4" aria-labelledby="categoriesDropdown">
@@ -92,19 +91,16 @@
                             'title' => 'Bộ Sưu Tập Laptop Mới 2025',
                             'subtitle' => 'Giảm giá lên đến 30% cho các sản phẩm được chọn',
                             'image' => 'shop01.png',
-                            'link' => route('categories.show', 'laptops'),
                         ],
                         [
                             'title' => 'Phụ Kiện Cao Cấp',
                             'subtitle' => 'Nâng cao trải nghiệm công nghệ của bạn',
                             'image' => 'shop02.png',
-                            'link' => route('categories.show', 'accessories'),
                         ],
                         [
                             'title' => 'Máy Ảnh Chuyên Nghiệp',
                             'subtitle' => 'Ghi lại mọi khoảnh khắc hoàn hảo',
                             'image' => 'shop03.png',
-                            'link' => route('categories.show', 'cameras'),
                         ],
                     ];
                 @endphp
@@ -119,9 +115,6 @@
                                             <div class="banner-text">
                                                 <h1 class="banner-title">{{ $banner['title'] }}</h1>
                                                 <p class="banner-subtitle">{{ $banner['subtitle'] }}</p>
-                                                <a href="{{ $banner['link'] }}" class="btn-banner">
-                                                    Mua Ngay
-                                                </a>
                                             </div>
                                         </div>
                                         <div class="col-md-6">

@@ -24,12 +24,12 @@ class CheckUserStatus
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Your account has been deleted. Please contact support if you believe this is an error.'
+                        'message' => 'Tài khoản của bạn đã bị xóa. Vui lòng liên hệ với bộ phận hỗ trợ nếu bạn cho rằng đây là lỗi.'
                     ], 403);
                 }
 
                 return redirect()->route('login')
-                    ->with('error', 'Your account has been deleted. Please contact support if you believe this is an error.');
+                    ->with('error', 'Tài khoản của bạn đã bị xóa. Vui lòng liên hệ với bộ phận hỗ trợ nếu bạn cho rằng đây là lỗi.');
             }
 
             if (!$user->status) {
@@ -40,12 +40,12 @@ class CheckUserStatus
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Your account has been banned. Please contact support for more information.'
+                        'message' => 'Tài khoản của bạn đã bị cấm. Vui lòng liên hệ với bộ phận hỗ trợ để biết thêm thông tin.'
                     ], 403);
                 }
 
                 return redirect()->route('login')
-                    ->with('error', 'Your account has been banned. Please contact support for more information.');
+                    ->with('error', 'Tài khoản của bạn đã bị cấm. Vui lòng liên hệ với bộ phận hỗ trợ để biết thêm thông tin.');
             }
         }
 
