@@ -16,9 +16,6 @@ class PurchaseController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
-    /**
-     * Display user's purchase history
-     */
     public function index(Request $request)
     {
         if (!Auth::check()) {
@@ -29,7 +26,6 @@ class PurchaseController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        // Build query
         $query = $this->orderRepository->with(['orderDetails.product'])
             ->scopeQuery(function($q) use ($userId, $search, $status) {
                 $q = $q->where('user_id', $userId);
@@ -55,9 +51,6 @@ class PurchaseController extends Controller
         return view('user.purchase', compact('orders', 'search', 'status'));
     }
 
-    /**
-     * Display order detail
-     */
     public function show($orderId)
     {
         if (!Auth::check()) {
@@ -95,7 +88,6 @@ class PurchaseController extends Controller
             ], 404);
         }
 
-        // Only allow cancel if order is pending or confirmed
         if (!in_array($order->status, ['pending', 'confirmed'])) {
             return response()->json([
                 'success' => false,

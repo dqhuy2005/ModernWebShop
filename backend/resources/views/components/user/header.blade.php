@@ -27,10 +27,10 @@
                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                         @auth
                             <li><a class="dropdown-item" href="{{ route('profile.index') }}">
-                                    <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                                    Thông tin cá nhân
                                 </a></li>
                             <li><a class="dropdown-item" href="{{ route('purchase.index') }}">
-                                    <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                    Đơn hàng của tôi
                                 </a></li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -39,7 +39,7 @@
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit" class="dropdown-item">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        Đăng xuất
                                     </button>
                                 </form>
                             </li>
@@ -68,91 +68,6 @@
             </button>
         </div>
     </nav>
-
-    <div class="main-menu bg-white border-bottom">
-        <div class="container">
-            <div class="menu-wrapper d-flex align-items-center" id="navbarNav">
-                <ul class="navbar-nav d-flex flex-row">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fw-semibold" href="{{ route('home') }}">
-                            <i class="fas fa-home me-1"></i> Trang chủ
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ route('hot-deals') }}">
-                            <i class="fas fa-fire me-1"></i> Khuyến mãi
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown mega-dropdown">
-                        <a class="nav-link" href="#" id="categoriesDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-th-large me-1"></i> Danh mục
-                        </a>
-                        <div class="dropdown-menu mega-menu p-4" aria-labelledby="categoriesDropdown">
-                            <div class="row g-4">
-                                @php
-                                    use App\Models\Category;
-
-                                    $categories = Category::with([
-                                        'children' => function ($query) {
-                                            $query->limit(5);
-                                        },
-                                    ])
-                                        ->withCount('products')
-                                        ->whereNull('parent_id')
-                                        ->orderBy('name')
-                                        ->limit(6)
-                                        ->get();
-                                @endphp
-
-                                @forelse($categories as $category)
-                                    <div class="col-md-4">
-                                        <div class="category-group">
-                                            <h6 class="category-title fw-bold text-danger mb-3">
-                                                <a href="#" class="text-danger text-decoration-none">
-                                                    {{ $category->name }}
-                                                    <span class="badge bg-danger-subtle text-danger ms-2">
-                                                        {{ $category->products_count }}
-                                                    </span>
-                                                </a>
-                                            </h6>
-
-                                            @if ($category->children && $category->children->count() > 0)
-                                                <ul class="list-unstyled category-list">
-                                                    @foreach ($category->children as $child)
-                                                        <li class="mb-2">
-                                                            <a href="#"
-                                                                class="text-muted text-decoration-none category-link">
-                                                                <i class="fas fa-angle-right me-2"></i>
-                                                                {{ $child->name }}
-                                                            </a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="col-12">
-                                        <p class="text-muted text-center">Chưa có danh mục</p>
-                                    </div>
-                                @endforelse
-                            </div>
-
-                            <div class="row mt-4 pt-3 border-top">
-                                <div class="col-12 text-center">
-                                    <a href="{{ route('categories.show', 'all') }}"
-                                        class="btn btn-outline-danger btn-sm">
-                                        Xem tất cả danh mục <i class="fas fa-arrow-right ms-2"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
 </header>
 
 <style>

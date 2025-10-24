@@ -12,7 +12,7 @@
                             <div class="profile-avatar mb-3 position-relative">
                                 <img src="{{ $user->image ? asset('storage/' . $user->image) : asset('assets/imgs/default-avatar.png') }}"
                                     alt="Avatar" class="rounded-circle" id="avatarPreview"
-                                    style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #dc3545;">
+                                    style="width: 120px; height: 120px; object-fit: cover;">
                                 <label for="imageInput"
                                     class="position-absolute bottom-0 end-0 bg-danger text-white rounded-circle"
                                     style="width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
@@ -92,7 +92,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <button type="submit" class="btn btn-danger px-4" id="saveBtn">
-                                                    <i class="fas fa-save me-2"></i>Lưu thay đổi
+                                                    Lưu
                                                 </button>
                                             </div>
                                         </div>

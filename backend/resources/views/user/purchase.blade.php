@@ -32,12 +32,12 @@
                     <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-4" style="color: #202732;">
-                                <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                Đơn hàng của tôi
                             </h5>
 
                             <form method="GET" action="{{ route('purchase.index') }}" class="mb-4">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="input-group">
                                             <span class="input-group-text bg-white">
                                                 <i class="fas fa-search text-muted"></i>
@@ -46,28 +46,6 @@
                                                 placeholder="Tìm kiếm theo mã đơn hàng hoặc tên sản phẩm"
                                                 value="{{ $search ?? '' }}">
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-select" name="status">
-                                            <option value="">Tất cả trạng thái</option>
-                                            <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Chờ xử lý
-                                            </option>
-                                            <option value="confirmed" {{ $status == 'confirmed' ? 'selected' : '' }}>Đã xác
-                                                nhận</option>
-                                            <option value="processing" {{ $status == 'processing' ? 'selected' : '' }}>Đang
-                                                xử lý</option>
-                                            <option value="shipping" {{ $status == 'shipping' ? 'selected' : '' }}>Đang giao
-                                                hàng</option>
-                                            <option value="completed" {{ $status == 'completed' ? 'selected' : '' }}>Hoàn
-                                                thành</option>
-                                            <option value="cancelled" {{ $status == 'cancelled' ? 'selected' : '' }}>Đã hủy
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-danger w-100">
-                                            <i class="fas fa-filter me-2"></i>Lọc
-                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -191,11 +169,6 @@
         .order-card {
             transition: all 0.3s ease;
             background-color: white;
-        }
-
-        .order-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
         }
 
         .input-group-text {

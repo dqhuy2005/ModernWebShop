@@ -82,7 +82,6 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Wishlist toggle (legacy - can be removed if not needed)
         $(document).on('click', '.btn-outline-secondary', function(e) {
             e.preventDefault();
             const icon = $(this).find('i');
