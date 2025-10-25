@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
-    /**
-     * Get order statistics in a single query
-     */
     protected function getOrderStatistics()
     {
         return DB::table('orders')
@@ -81,39 +78,7 @@ class OrderController extends Controller
         try {
             $query = Order::with(['user:id,fullname,email,phone']);
 
-            if ($request->status === 'deleted') {
-                $query->onlyTrashed();
-            }
-
-            if ($request->filled('status') && $request->status !== 'deleted') {
-                $query->where('status', $request->status);
-            }
-
-            if ($request->filled('search')) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('id', 'like', "%{$search}%")
-                        ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('fullname', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%")
-                                ->orWhere('phone', 'like', "%{$search}%");
-                        });
-                });
-            }
-
-            if ($request->filled('date_from')) {
-                $query->whereDate('created_at', '>=', $request->date_from);
-            }
-            if ($request->filled('date_to')) {
-                $query->whereDate('created_at', '<=', $request->date_to);
-            }
-
-            if ($request->filled('price_min')) {
-                $query->where('total_amount', '>=', $request->price_min);
-            }
-            if ($request->filled('price_max')) {
-                $query->where('total_amount', '<=', $request->price_max);
-            }
+            $query = $this->applyFilters($request, $query);
 
             $sortBy = $request->get('sort_by', 'created_at');
             $sortOrder = $request->get('sort_order', 'desc');
@@ -452,5 +417,40 @@ class OrderController extends Controller
         $filename = 'orders_export_' . date('Y-m-d_His') . '.xls';
 
         return response($excel, 200, $excelService->getDownloadHeaders($filename));
+    }
+
+    private function applyFilters(Request $request, $query)
+    {
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('fullname', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('price_min')) {
+            $query->where('total_amount', '>=', $request->price_min);
+        }
+        if ($request->filled('price_max')) {
+            $query->where('total_amount', '<=', $request->price_max);
+        }
+
+        return $query;
     }
 }
