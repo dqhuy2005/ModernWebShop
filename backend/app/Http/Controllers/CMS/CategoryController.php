@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Services\ImageService;
 
 class CategoryController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     public function index(Request $request)
     {
         $query = Category::withCount('products')->withTrashed();
@@ -61,10 +69,15 @@ class CategoryController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/categories', $imageName);
-            $validated['image'] = $imageName;
+            $imageService = new ImageService();
+
+            if (!$imageService->validateImage($request->file('image'))) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
+            }
+
+            $validated['image'] = $this->imageService->uploadCategoryImage($request->file('image'));
         }
 
         Category::create($validated);
@@ -111,7 +124,6 @@ class CategoryController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($category->image) {
                 $oldImagePath = storage_path('app/public/categories/' . $category->image);
                 if (file_exists($oldImagePath)) {
@@ -120,9 +132,7 @@ class CategoryController extends Controller
             }
 
             $image = $request->file('image');
-            $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/categories', $imageName);
-            $validated['image'] = $imageName;
+            $validated['image'] = $this->imageService->uploadCategoryImage($image, $category->image ?? null);
         }
 
         $category->update($validated);

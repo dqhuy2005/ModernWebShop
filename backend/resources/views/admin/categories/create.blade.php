@@ -48,18 +48,22 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="image" class="form-label fw-bold">
-                                Category Image
-                            </label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
-                                name="image" accept="image/*">
-                            <small class="text-muted">Recommended size: 300x300px. Max: 2MB</small>
-                            @error('image')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div id="image-preview" class="mt-2" style="display: none;">
-                                <img src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                            <label for="" class="form-label fw-bold">Category Image</label>
+                            <div class="custom-file-upload">
+                                <div id="image-preview" class="text-center d-none">
+                                    <img src="" alt="Preview" class="img-fluid rounded"
+                                        style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
+                                </div>
+                                <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
+                                    name="image" accept="image/*" onchange="previewImage(event)">
+                                <button type="button" class="btn-select-image w-100 mt-3"
+                                    onclick="document.getElementById('image').click()">
+                                    <i class="fas fa-image me-2"></i>Select Image
+                                </button>
                             </div>
+                            @error('image')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
@@ -79,22 +83,19 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            // Image preview
-            $('#image').on('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#image-preview').show();
-                        $('#image-preview img').attr('src', e.target.result);
-                    }
-                    reader.readAsDataURL(file);
-                } else {
-                    $('#image-preview').hide();
-                }
-            });
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#image-preview img').attr('src', e.target.result);
+                    $('#image-preview').removeClass('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
+        $(document).ready(function() {
             $('#name, #slug').on('input', function() {
                 $(this).removeClass('is-invalid');
             });
@@ -129,4 +130,30 @@
             });
         });
     </script>
+@endpush
+
+@push('styles')
+    <style>
+        .btn-select-image {
+            font-weight: 600;
+            font-size: 16px;
+            padding: 15px;
+            border: none;
+            background-color: #4b8df8;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-select-image i {
+            font-size: 18px;
+        }
+
+        .custom-file-upload {
+            margin-bottom: 10px;
+        }
+
+        #image-preview img {
+            transition: all 0.3s ease;
+        }
+    </style>
 @endpush

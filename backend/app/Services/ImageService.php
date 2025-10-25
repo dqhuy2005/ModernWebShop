@@ -34,6 +34,37 @@ class ImageService
         return $this->useResize;
     }
 
+    public function uploadCategoryImage(UploadedFile $file, ?string $oldImage = null): string
+    {
+        if ($oldImage) {
+            $this->deleteImage($oldImage);
+        }
+
+        $filename = $this->generateFilename($file);
+        $path = $this->config['paths']['categories'] . '/' . $filename;
+
+        if ($this->useResize) {
+            $image = $this->manager->read($file->getRealPath());
+            $sizes = $this->config['sizes']['category'];
+
+            $image->scale(
+                width: $sizes['large']['width'],
+                height: $sizes['large']['height']
+            );
+
+            $encoded = $image->toJpeg(quality: $this->config['quality']);
+            Storage::disk('public')->put($path, $encoded);
+        } else {
+            Storage::disk('public')->putFileAs(
+                $this->config['paths']['categories'],
+                $file,
+                $filename
+            );
+        }
+
+        return $path;
+    }
+
     public function uploadProductImage(UploadedFile $file, ?string $oldImage = null): string
     {
         if ($oldImage) {
