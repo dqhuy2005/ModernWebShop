@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Repository\OrderRepository;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,15 +28,15 @@ class PurchaseController extends Controller
         $status = $request->input('status');
 
         $query = $this->orderRepository->with(['orderDetails.product'])
-            ->scopeQuery(function($q) use ($userId, $search, $status) {
+            ->scopeQuery(function ($q) use ($userId, $search, $status) {
                 $q = $q->where('user_id', $userId);
 
                 if ($search) {
-                    $q = $q->where(function($query) use ($search) {
+                    $q = $q->where(function ($query) use ($search) {
                         $query->where('id', 'like', '%' . $search . '%')
-                              ->orWhereHas('orderDetails', function($q) use ($search) {
-                                  $q->where('product_name', 'like', '%' . $search . '%');
-                              });
+                            ->orWhereHas('orderDetails', function ($q) use ($search) {
+                                $q->where('product_name', 'like', '%' . $search . '%');
+                            });
                     });
                 }
 
@@ -67,9 +68,6 @@ class PurchaseController extends Controller
         return view('user.purchase-detail', compact('order'));
     }
 
-    /**
-     * Cancel order
-     */
     public function cancel($orderId)
     {
         if (!Auth::check()) {
@@ -96,6 +94,13 @@ class PurchaseController extends Controller
         }
 
         try {
+            $order->logActivity(
+                'order_cancelled',
+                'Đơn hàng đã bị hủy',
+                $order->status,
+                Order::STATUS_CANCELLED
+            );
+
             $this->orderRepository->update([
                 'status' => 'cancelled'
             ], $orderId);

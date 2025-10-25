@@ -26,9 +26,6 @@ class CheckoutController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
-    /**
-     * Display checkout page
-     */
     public function index()
     {
         if (!Auth::check()) {
@@ -47,9 +44,6 @@ class CheckoutController extends Controller
         return view('user.checkout', compact('cartItems', 'total', 'user'));
     }
 
-    /**
-     * Process checkout and create order
-     */
     public function process(Request $request)
     {
         if (!Auth::check()) {
@@ -79,7 +73,6 @@ class CheckoutController extends Controller
         try {
             DB::beginTransaction();
 
-            // Calculate totals
             $totalAmount = 0;
             $totalItems = 0;
 
@@ -88,7 +81,6 @@ class CheckoutController extends Controller
                 $totalItems += $cartItem->quantity;
             }
 
-            // Create order
             $order = $this->orderRepository->create([
                 'user_id' => $userId,
                 'total_amount' => $totalAmount,
@@ -98,7 +90,6 @@ class CheckoutController extends Controller
                 'note' => $request->note,
             ]);
 
-            // Create order details
             foreach ($cartItems as $cartItem) {
                 $product = $cartItem->product;
 
@@ -117,11 +108,9 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // Clear user cart
             $this->cartRepository->clearUserCart($userId);
             Session::put('cart_count', 0);
 
-            // Log activity
             if (method_exists($order, 'logActivity')) {
                 $order->logActivity(
                     'order_created',
@@ -152,9 +141,6 @@ class CheckoutController extends Controller
         }
     }
 
-    /**
-     * Display order success page
-     */
     public function success($orderId)
     {
         if (!Auth::check()) {

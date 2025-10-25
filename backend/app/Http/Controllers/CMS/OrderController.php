@@ -216,7 +216,7 @@ class OrderController extends Controller
             $order = Order::with(['orderDetails.product:id,name,price', 'user:id,fullname'])
                 ->findOrFail($id);
 
-            $users = User::select('id', 'fullname', 'role_id')
+            $users = User::select('id', 'fullname', 'email', 'role_id')
                 ->where('status', true)
                 ->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))
                 ->orderBy('fullname')
