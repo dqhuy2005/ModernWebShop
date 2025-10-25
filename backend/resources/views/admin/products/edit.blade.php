@@ -29,11 +29,6 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle me-2"></i>Product Information
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="name" class="form-label fw-bold">
@@ -53,10 +48,10 @@
                             </label>
                             <div class="input-group">
                                 <input type="text" class="form-control @error('price') is-invalid @enderror"
-                                    id="price_display"
-                                    placeholder="Nhập giá sản phẩm..."
+                                    id="price_display" placeholder="Nhập giá sản phẩm..."
                                     value="{{ old('price') ? number_format(old('price'), 0, ',', '.') : number_format($product->price ?? 0, 0, ',', '.') }}">
-                                <input type="hidden" id="price" name="price" value="{{ old('price', $product->price ?? 0) }}">
+                                <input type="hidden" id="price" name="price"
+                                    value="{{ old('price', $product->price ?? 0) }}">
                                 <span class="input-group-text">₫</span>
                                 @error('price')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -75,7 +70,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">
-                                <i class="fas fa-list me-1"></i>Specifications
+                                Specifications
                             </label>
                             <div id="specifications-container">
                                 @php
@@ -141,11 +136,6 @@
 
             <div class="col-lg-4">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-cog me-2"></i>Settings
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="category_id" class="form-label fw-bold">
@@ -188,25 +178,22 @@
                 </div>
 
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-image me-2"></i>Product Image
-                        </h5>
-                    </div>
                     <div class="card-body">
+                        <label for="" class="form-label fw-bold">Product Image</label>
                         @if ($product->image)
                             <div class="mb-3 text-center">
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                    class="img-fluid rounded" style="max-height: 300px; padding: 4px; border: 1px solid #ddd;"
-                                    id="current-image">
+                                    class="img-fluid rounded"
+                                    style="max-height: 300px; padding: 4px; border: 1px solid #ddd;" id="current-image">
                             </div>
                         @endif
 
                         <div class="mb-3">
                             <div class="custom-file-upload">
-                                <input type="file" class="d-none @error('image') is-invalid @enderror"
-                                    id="image" name="image" accept="image/*" onchange="previewImage(event)">
-                                <button type="button" class="btn-select-image w-100" onclick="document.getElementById('image').click()">
+                                <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
+                                    name="image" accept="image/*" onchange="previewImage(event)">
+                                <button type="button" class="btn-select-image w-100"
+                                    onclick="document.getElementById('image').click()">
                                     Select image
                                 </button>
                             </div>
@@ -219,7 +206,8 @@
                         <div id="image-preview" class="text-center d-none">
                             <div class="d-flex flex-column align-items-center">
                                 <label class="form-label fw-bold d-block">New Image Preview</label>
-                                <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
+                                <img src="" alt="Preview" class="img-fluid rounded"
+                                    style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
                             </div>
                         </div>
                     </div>
@@ -250,10 +238,22 @@
 
         function validatePrice(value) {
             const price = parseInt(value.replace(/[^0-9]/g, ''));
-            if (isNaN(price)) return { valid: false, error: 'Giá phải là số' };
-            if (price < 0) return { valid: false, error: 'Giá phải là số dương' };
-            if (price > 999999999) return { valid: false, error: 'Giá vượt quá giới hạn' };
-            return { valid: true, value: price };
+            if (isNaN(price)) return {
+                valid: false,
+                error: 'Giá phải là số'
+            };
+            if (price < 0) return {
+                valid: false,
+                error: 'Giá phải là số dương'
+            };
+            if (price > 999999999) return {
+                valid: false,
+                error: 'Giá vượt quá giới hạn'
+            };
+            return {
+                valid: true,
+                value: price
+            };
         }
 
         function displayFormattedPrice(price) {

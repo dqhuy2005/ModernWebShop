@@ -62,21 +62,6 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="language" class="form-label fw-bold">
-                                Language
-                            </label>
-                            <select class="form-select @error('language') is-invalid @enderror" id="language"
-                                name="language">
-                                <option value="">Default</option>
-                                <option value="en" {{ old('language') == 'en' ? 'selected' : '' }}>Tiếng Anh</option>
-                                <option value="vi" {{ old('language') == 'vi' ? 'selected' : '' }}>Tiếng Việt</option>
-                            </select>
-                            @error('language')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-times me-1"></i> Cancel

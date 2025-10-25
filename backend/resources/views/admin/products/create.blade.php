@@ -24,11 +24,6 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle me-2"></i>Product Information
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="name" class="form-label fw-bold">
@@ -67,9 +62,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">
-                                <i class="fas fa-list me-1"></i>Specifications
-                            </label>
+                            <label class="form-label fw-bold">Specifications</label>
                             <div id="specifications-container">
                                 <div class="row g-2 mb-2 specification-row">
                                     <div class="col-5">
@@ -97,11 +90,6 @@
 
             <div class="col-lg-4">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-cog me-2"></i>Settings
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="category_id" class="form-label fw-bold">
@@ -125,8 +113,8 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Status</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="status"
-                                    name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" role="switch" id="status" name="status"
+                                    value="1" {{ old('status', 1) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="status">
                                     Active
                                 </label>
@@ -144,13 +132,9 @@
                 </div>
 
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-image me-2"></i>Product Image
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
+                            <label for="" class="form-label fw-bold">Product Image</label>
                             <div class="custom-file-upload">
                                 <div id="image-preview" class="text-center d-none">
                                     <img src="" alt="Preview" class="img-fluid rounded"

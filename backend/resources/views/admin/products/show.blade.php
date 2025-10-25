@@ -24,11 +24,6 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>Product Information
-                    </h5>
-                </div>
                 <div class="card-body">
                     <table class="table table-borderless">
                         <tbody>
@@ -141,12 +136,12 @@
                 </div>
             </div>
 
-            @if ($product->specifications && (is_array($product->specifications) ? count($product->specifications) > 0 : !empty($product->specifications)))
+            @if (
+                $product->specifications &&
+                    (is_array($product->specifications) ? count($product->specifications) > 0 : !empty($product->specifications)))
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-list me-2"></i>Specifications
-                        </h5>
+                        <h5 class="card-title mb-0">Specifications</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -172,9 +167,9 @@
                                 <tbody>
                                     @forelse ($specs as $key => $value)
                                         <tr>
-                                            <td class="fw-bold">{{ is_array($value) ? ($value['key'] ?? $key) : $key }}
+                                            <td class="fw-bold">{{ is_array($value) ? $value['key'] ?? $key : $key }}
                                             </td>
-                                            <td>{{ is_array($value) ? ($value['value'] ?? '') : $value }}</td>
+                                            <td>{{ is_array($value) ? $value['value'] ?? '' : $value }}</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -193,21 +188,21 @@
 
         <div class="col-lg-4">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-image me-2"></i>Product Image
-                    </h5>
-                </div>
-                <div class="card-body text-center">
-                    @if ($product->image)
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                            class="img-fluid rounded shadow-sm" style="max-height: 300px;">
-                    @else
-                        <div class="bg-light rounded p-5">
-                            <i class="fas fa-image fa-4x text-muted"></i>
-                            <p class="text-muted mt-3 mb-0">No image available</p>
-                        </div>
-                    @endif
+
+                <div class="card-body">
+                    <label class="form-label fw-bold text-start">Product Image</label>
+
+                    <div class="text-center">
+                        @if ($product->image)
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                        @else
+                            <div class="bg-light rounded p-5">
+                                <i class="fas fa-image fa-4x text-muted"></i>
+                                <p class="text-muted mt-3 mb-0">No image available</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -219,6 +214,7 @@
         .border-header .border-header-name {
             max-width: 1200px;
         }
+
         .card {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
             border: 1px solid #e9ecef;

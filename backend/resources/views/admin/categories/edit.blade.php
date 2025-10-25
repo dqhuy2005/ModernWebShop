@@ -55,8 +55,8 @@
                             </label>
                             @if($category->image)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/categories/' . $category->image) }}" 
-                                         alt="{{ $category->name }}" 
+                                    <img src="{{ asset('storage/categories/' . $category->image) }}"
+                                         alt="{{ $category->name }}"
                                          style="max-width: 200px; max-height: 200px; border-radius: 8px;">
                                 </div>
                             @endif
@@ -69,21 +69,6 @@
                             <div id="image-preview" class="mt-2" style="display: none;">
                                 <img src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="language" class="form-label fw-bold">
-                                Language
-                            </label>
-                            <select class="form-select @error('language') is-invalid @enderror" id="language"
-                                name="language">
-                                <option value="">Default</option>
-                                <option value="en" {{ old('language', $category->language) == 'en' ? 'selected' : '' }}>Tiếng Anh</option>
-                                <option value="vi" {{ old('language', $category->language) == 'vi' ? 'selected' : '' }}>Tiếng Việt</option>
-                            </select>
-                            @error('language')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
