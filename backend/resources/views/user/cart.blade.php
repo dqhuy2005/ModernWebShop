@@ -44,7 +44,10 @@
                                                                 style="width: 80px; height: 80px; object-fit: cover;">
                                                             <div>
                                                                 <h6 class="mb-1 fw-semibold">
-                                                                    {{ Auth::check() ? $product->name : $item['name'] }}
+                                                                    <a href="{{ route('products.show', Auth::check() ? $product->name : $item['name']) }}"
+                                                                        class="text-dark text-decoration-none">
+                                                                        {{ Auth::check() ? $product->name : $item['name'] }}
+                                                                    </a>
                                                                 </h6>
                                                                 @if (Auth::check() && $product->category)
                                                                     <small

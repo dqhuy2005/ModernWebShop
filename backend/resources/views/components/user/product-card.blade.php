@@ -29,7 +29,7 @@
         </p>
         <h6 class="product-name mb-2">
             @if(isset($product))
-                <a href="#" class="text-dark text-decoration-none">
+                <a href="{{ route('products.show', $product->name) }}" class="text-dark text-decoration-none">
                     {{ $product->name }}
                 </a>
             @else

@@ -102,6 +102,7 @@ class HomeController extends Controller
                     'image' => $product->image ? asset('storage/' . $product->image) : asset('assets/imgs/products/default.png'),
                     'price' => $product->price,
                     'formatted_price' => number_format($product->price, 0, ',', '.') . 'đ',
+                    'url' => route('products.show', $product->name),
                 ];
             });
 

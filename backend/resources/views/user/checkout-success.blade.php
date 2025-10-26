@@ -75,7 +75,15 @@
                                                                 style="width: 60px; height: 60px; object-fit: cover;">
                                                         @endif
                                                         <div>
-                                                            <h6 class="mb-0">{{ $detail->product_name }}</h6>
+                                                            <h6 class="mb-0">
+                                                                @if ($detail->product)
+                                                                    <a href="{{ route('products.show', $detail->product->name) }}" class="text-dark text-decoration-none">
+                                                                        {{ $detail->product_name }}
+                                                                    </a>
+                                                                @else
+                                                                    {{ $detail->product_name }}
+                                                                @endif
+                                                            </h6>
                                                             @if ($detail->product && $detail->product->category)
                                                                 <small
                                                                     class="text-muted">{{ $detail->product->category->name }}</small>

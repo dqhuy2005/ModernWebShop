@@ -37,7 +37,8 @@
                                 <div class="col-md-4">
                                     <div class="category-group">
                                         <h6 class="category-title fw-bold text-danger mb-3">
-                                            <a href="#" class="text-danger text-decoration-none">
+                                            <a href="{{ route('categories.show', $category->slug) }}"
+                                                class="text-danger text-decoration-none">
                                                 {{ $category->name }}
                                                 <span class="badge bg-danger-subtle text-danger ms-2">
                                                     {{ $category->products_count }}

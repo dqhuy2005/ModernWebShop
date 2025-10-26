@@ -109,7 +109,15 @@
                                                             </div>
                                                         @endif
                                                         <div class="flex-grow-1">
-                                                            <h6 class="mb-0">{{ $detail->product_name }}</h6>
+                                                            <h6 class="mb-0">
+                                                                @if ($detail->product)
+                                                                    <a href="{{ route('products.show', $detail->product->name) }}" class="text-dark text-decoration-none">
+                                                                        {{ $detail->product_name }}
+                                                                    </a>
+                                                                @else
+                                                                    {{ $detail->product_name }}
+                                                                @endif
+                                                            </h6>
                                                             <small class="text-muted">Số lượng:
                                                                 {{ $detail->quantity }}</small>
                                                         </div>

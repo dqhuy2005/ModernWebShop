@@ -12,7 +12,7 @@
             @forelse($displayProducts->take(12) as $index => $product)
                 <div class="col-6 col-md-4 col-lg-2">
                     <div class="top-product-card">
-                        <a href="#" class="product-link">
+                        <a href="{{ route('products.show', $product->name) }}" class="product-link">
                             @if ($product->is_hot)
                                 <span class="product-badge hot-badge">HOT</span>
                             @endif

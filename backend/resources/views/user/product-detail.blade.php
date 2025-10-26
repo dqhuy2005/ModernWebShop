@@ -11,7 +11,7 @@
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
                         @if ($product->category)
                             <li class="breadcrumb-item"><a
-                                    href="{{ route('categories.show', $product->category->slug) }}">{{ $product->category->name }}</a>
+                                    href="{{ route('categories.show', $product->category->name) }}">{{ $product->category->name }}</a>
                             </li>
                         @endif
                         <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
