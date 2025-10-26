@@ -41,6 +41,23 @@ return [
                 'aspect_ratio' => true,
             ],
         ],
+        'category' => [
+            'thumbnail' => [
+                'width' => 150,
+                'height' => 150,
+                'aspect_ratio' => true,
+            ],
+            'medium' => [
+                'width' => 400,
+                'height' => 400,
+                'aspect_ratio' => true,
+            ],
+            'large' => [
+                'width' => 600,
+                'height' => 600,
+                'aspect_ratio' => true,
+            ],
+        ],
         'avatar' => [
             'thumbnail' => [
                 'width' => 50,

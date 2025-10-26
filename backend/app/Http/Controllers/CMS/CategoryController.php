@@ -122,17 +122,18 @@ class CategoryController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        // Handle image upload
+        // Handle image upload using ImageService
         if ($request->hasFile('image')) {
-            if ($category->image) {
-                $oldImagePath = storage_path('app/public/categories/' . $category->image);
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
+            if (!$this->imageService->validateImage($request->file('image'))) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
             }
 
-            $image = $request->file('image');
-            $validated['image'] = $this->imageService->uploadCategoryImage($image, $category->image ?? null);
+            $validated['image'] = $this->imageService->uploadCategoryImage(
+                $request->file('image'),
+                $category->image
+            );
         }
 
         $category->update($validated);
@@ -182,6 +183,11 @@ class CategoryController extends Controller
     public function forceDelete($id)
     {
         $category = Category::withTrashed()->findOrFail($id);
+
+        // Delete category image if exists
+        if ($category->image) {
+            $this->imageService->deleteImage($category->image);
+        }
 
         $category->forceDelete();
 
