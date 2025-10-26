@@ -12,19 +12,13 @@
                     ->orderBy('updated_at', 'desc')
                     ->limit(5)
                     ->get();
-
-                $bannerImage = ['laptop.png', 'case.png', 'keyboard.jpg', 'mouse.jpg', 'monitor.jpg'];
-
-                foreach ($displayCategories as $category) {
-                    $category->banner_image = array_shift($bannerImage);
-                }
             @endphp
 
             @forelse($displayCategories as $category)
                 <div class="col-6 col-md-4 col-lg">
                     <a href="{{ route('categories.show', $category->slug) }}" class="category-card">
                         <div class="category-image-wrapper">
-                            <img src="{{ asset('assets/imgs/banner/' . $category->image) }}"
+                            <img src="{{ asset('storage/' . $category->image) }}"
                                 alt="{{ $category->name }}" class="category-image">
                         </div>
                         <h6 class="category-name">{{ strtoupper($category->name) }}</h6>
