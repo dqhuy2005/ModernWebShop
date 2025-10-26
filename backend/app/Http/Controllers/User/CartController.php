@@ -47,20 +47,28 @@ class CartController extends Controller
         $quantity = $request->quantity ?? 1;
 
         if (Auth::check()) {
-            $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
+            try {
+                $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
 
-            if ($cartItem) {
-                $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
-            } else {
-                $this->cartRepository->create([
-                    'user_id' => Auth::id(),
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'price' => $product->price,
-                ]);
+                if ($cartItem) {
+                    $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                } else {
+                    $this->cartRepository->create([
+                        'user_id' => Auth::id(),
+                        'product_id' => $product->id,
+                        'quantity' => $quantity,
+                        'price' => $product->price,
+                    ]);
+                }
+
+                $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
+                if ($cartItem) {
+                    $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                }
+                $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
             }
-
-            $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
         } else {
             $cart = Session::get('cart', []);
 

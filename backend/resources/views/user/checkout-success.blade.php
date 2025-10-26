@@ -111,8 +111,8 @@
                             <hr class="my-4">
 
                             <div class="row">
-                                <div class="col-md-12 border-bottom mb-3">
-                                    <h6 class="fw-bold mb-3" style="color: #202732;">Thông tin giao hàng</h6>
+                                <div class="col-md-12 mb-3">
+                                    <h6 class="fw-bold mb-3" style="color: #202732;">Thông tin giao hàng:</h6>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="mb-1"><strong>Họ tên:</strong> {{ $order->user->fullname }}</p>

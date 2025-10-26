@@ -32,7 +32,7 @@
                             id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             @if (auth()->user()->image)
                                 <img src="{{ asset('storage/' . auth()->user()->image) }}"
-                                    alt="{{ auth()->user()->fullname }}" class="rounded-circle"
+                                    alt="{{ auth()->user()->fullname }}"
                                     style="width: 32px; height: 32px; object-fit: cover;">
                             @else
                                 <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center"
@@ -51,12 +51,9 @@
                                     <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
                                 </a></li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
+                                    <button type="submit" class="dropdown-item">
                                         <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                     </button>
                                 </form>
@@ -307,11 +304,24 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         border-radius: 8px;
         padding: 0.5rem 0;
+        z-index: 9999 !important;
+        position: absolute !important;
     }
 
     .dropdown-item {
         padding: 0.6rem 1.5rem;
         transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #dc3545;
+    }
+
+    /* Ensure dropdown is above all content */
+    .navbar .dropdown {
+        position: relative;
+        z-index: 1050;
     }
 
     /* Responsive */
