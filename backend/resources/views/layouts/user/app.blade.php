@@ -16,6 +16,26 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1 0 auto;
+        }
+
+        .main-footer, .copyright-bar {
+            flex-shrink: 0;
+        }
+    </style>
+
     @stack('styles')
 </head>
 <body>
