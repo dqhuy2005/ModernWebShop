@@ -2,7 +2,7 @@
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('admin.dashboard.*') ? 'active' : '' }}"
                     href="{{ route('admin.dashboard.index') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
@@ -27,7 +27,7 @@
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"
-                   href="{{ route('admin.orders.index') }}">
+                    href="{{ route('admin.orders.index') }}">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Order</span>
                 </a>
@@ -35,7 +35,7 @@
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
-                   href="{{ route('admin.categories.index') }}">
+                    href="{{ route('admin.categories.index') }}">
                     <i class="fas fa-list"></i>
                     <span>Category</span>
                 </a>

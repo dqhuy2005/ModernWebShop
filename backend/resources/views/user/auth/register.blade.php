@@ -68,26 +68,26 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="password" class="form-label fw-semibold">Mật khẩu</label>
-                                        <div class="input-group">
+                                        <div class="input-group password-input-wrapper">
                                             <input type="password"
                                                 class="form-control @error('password') is-invalid @enderror" id="password"
                                                 name="password" placeholder="" required>
-                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <button class="btn btn-outline-secondary password-toggle-btn" type="button" id="togglePassword">
                                                 <i class="far fa-eye"></i>
                                             </button>
                                         </div>
                                         @error('password')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block password-error-msg">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="password_confirmation" class="form-label fw-semibold">Xác nhận mật
                                             khẩu</label>
-                                        <div class="input-group">
+                                        <div class="input-group password-input-wrapper">
                                             <input type="password" class="form-control" id="password_confirmation"
                                                 name="password_confirmation" placeholder="" required>
-                                            <button class="btn btn-outline-secondary" type="button"
+                                            <button class="btn btn-outline-secondary password-toggle-btn" type="button"
                                                 id="togglePasswordConfirm">
                                                 <i class="far fa-eye"></i>
                                             </button>
@@ -117,6 +117,30 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        .password-input-wrapper {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            z-index: 5;
+            position: relative;
+        }
+
+        .password-error-msg {
+            display: block !important;
+            margin-top: 0.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .invalid-feedback {
+            display: block !important;
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script>

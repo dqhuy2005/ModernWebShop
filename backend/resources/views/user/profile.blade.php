@@ -91,28 +91,42 @@
                                     <div class="col-md-6">
                                         <div class="row g-2">
                                             <div class="col-4">
-                                                <select class="form-select" id="birthday_day" name="birthday_day">
-                                                    @for ($i = 1; $i <= 31; $i++)
-                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
-                                                            {{ $i }}</option>
-                                                    @endfor
-                                                </select>
+                                                <div class="custom-select-wrapper">
+                                                    <input type="text" class="form-control custom-select-input"
+                                                        id="birthday_day_display" readonly>
+                                                    <input type="hidden" id="birthday_day" name="birthday_day">
+                                                    <ul class="custom-select-dropdown" id="birthday_day_dropdown">
+                                                        @for ($i = 1; $i <= 31; $i++)
+                                                            <li data-value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
+                                                                {{ $i }}</li>
+                                                        @endfor
+                                                    </ul>
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <select class="form-select" id="birthday_month" name="birthday_month">
-                                                    @for ($i = 1; $i <= 12; $i++)
-                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
-                                                            {{ $i }}</option>
-                                                    @endfor
-                                                </select>
+                                                <div class="custom-select-wrapper">
+                                                    <input type="text" class="form-control custom-select-input"
+                                                        id="birthday_month_display" readonly>
+                                                    <input type="hidden" id="birthday_month" name="birthday_month">
+                                                    <ul class="custom-select-dropdown" id="birthday_month_dropdown">
+                                                        @for ($i = 1; $i <= 12; $i++)
+                                                            <li data-value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
+                                                                {{ $i }}</li>
+                                                        @endfor
+                                                    </ul>
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <select class="form-select" id="birthday_year" name="birthday_year">
-                                                    @for ($i = date('Y'); $i >= 1940; $i--)
-                                                        <option value="{{ $i }}">{{ $i }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
+                                                <div class="custom-select-wrapper">
+                                                    <input type="text" class="form-control custom-select-input"
+                                                        id="birthday_year_display" readonly>
+                                                    <input type="hidden" id="birthday_year" name="birthday_year">
+                                                    <ul class="custom-select-dropdown" id="birthday_year_dropdown">
+                                                        @for ($i = date('Y'); $i >= 1940; $i--)
+                                                            <li data-value="{{ $i }}">{{ $i }}</li>
+                                                        @endfor
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -123,7 +137,7 @@
                                         <label for="address" class="form-label fw-semibold">Địa chỉ</label>
                                     </div>
 
-                                    <div class="col-10">
+                                    <div class="col-6">
                                         <textarea class="form-control" id="address" name="address" rows="3"
                                             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố">{{ $user->address ?? '' }}</textarea>
                                     </div>
@@ -223,19 +237,144 @@
         .form-select:hover {
             border-color: #adb5bd;
         }
+
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-input {
+            cursor: pointer;
+            background-color: #fff;
+            padding-right: 2rem;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
+        .custom-select-input:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+            outline: 0;
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 0.25rem 0.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-select-dropdown.show {
+            display: block;
+        }
+
+        .custom-select-dropdown li {
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .custom-select-dropdown li:hover {
+            background-color: #f8f9fa;
+        }
+
+        .custom-select-dropdown li.selected {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .custom-select-dropdown::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-select-dropdown::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 0 0 0.25rem 0;
+        }
+
+        .custom-select-dropdown::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
         $(document).ready(function() {
+            function initCustomSelect(inputId, dropdownId, hiddenId) {
+                const $input = $(`#${inputId}`);
+                const $dropdown = $(`#${dropdownId}`);
+                const $hidden = $(`#${hiddenId}`);
+
+                $input.on('click', function(e) {
+                    e.stopPropagation();
+                    $('.custom-select-dropdown').not($dropdown).removeClass('show');
+                    $dropdown.toggleClass('show');
+                });
+
+                $dropdown.find('li').on('click', function(e) {
+                    e.stopPropagation();
+                    const value = $(this).data('value');
+                    const text = $(this).text();
+
+                    $input.val(text);
+                    $hidden.val(value);
+
+                    $dropdown.find('li').removeClass('selected');
+                    $(this).addClass('selected');
+
+                    $dropdown.removeClass('show');
+                });
+
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('.custom-select-wrapper').length) {
+                        $dropdown.removeClass('show');
+                    }
+                });
+            }
+
+            initCustomSelect('birthday_day_display', 'birthday_day_dropdown', 'birthday_day');
+            initCustomSelect('birthday_month_display', 'birthday_month_dropdown', 'birthday_month');
+            initCustomSelect('birthday_year_display', 'birthday_year_dropdown', 'birthday_year');
+
             const existingBirthday = '{{ $user->birthday ?? '' }}';
             if (existingBirthday) {
                 const parts = existingBirthday.split('-');
                 if (parts.length === 3) {
-                    $('#birthday_year').val(parts[0]);
-                    $('#birthday_month').val(parts[1]);
-                    $('#birthday_day').val(parts[2]);
+                    const year = parts[0];
+                    const month = parts[1];
+                    const day = parts[2];
+
+                    $('#birthday_year').val(year);
+                    $('#birthday_year_display').val(year);
+                    $(`#birthday_year_dropdown li[data-value="${year}"]`).addClass('selected');
+
+                    $('#birthday_month').val(month);
+                    $('#birthday_month_display').val(parseInt(month));
+                    $(`#birthday_month_dropdown li[data-value="${month}"]`).addClass('selected');
+
+                    $('#birthday_day').val(day);
+                    $('#birthday_day_display').val(parseInt(day));
+                    $(`#birthday_day_dropdown li[data-value="${day}"]`).addClass('selected');
                 }
             }
 
