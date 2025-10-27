@@ -51,8 +51,7 @@
 
                                 <div class="product-actions mt-2">
                                     <button class="btn btn-sm btn-primary w-100 add-to-cart-btn"
-                                            data-product-id="{{ $product->id }}"
-                                            title="Thêm vào giỏ hàng">
+                                        data-product-id="{{ $product->id }}" title="Thêm vào giỏ hàng">
                                         <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
                                     </button>
                                 </div>

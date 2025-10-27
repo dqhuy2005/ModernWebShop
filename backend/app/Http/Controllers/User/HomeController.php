@@ -23,9 +23,12 @@ class HomeController extends Controller
 
         $categories = Category::active()
             ->with(['products' => function ($query) {
-                $query->active();
+                $query->active()
+                    ->where('is_hot', true)
+                    ->latest('updated_at')
+                    ->limit(15);
             }])
-            ->limit(4)
+            ->limit(value: 5)
             ->get();
 
         $topSellingProducts = Product::active()

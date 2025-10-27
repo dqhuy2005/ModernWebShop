@@ -10,25 +10,23 @@
             </span>
         @endif
         <div class="product-image mb-3">
-            @if(isset($product))
-                <img src="{{ asset('storage/' . ($product->image ?? 'default.png')) }}"
-                     alt="{{ $product->name }}"
-                     class="img-fluid">
+            @if (isset($product))
+                <img src="{{ asset('storage/' . ($product->image ?? 'default.png')) }}" alt="{{ $product->name }}"
+                    class="img-fluid">
             @else
-                <img src="{{ $image ?? asset('assets/imgs/banner/shop01.png') }}"
-                     alt="{{ $name ?? 'Product' }}"
-                     class="img-fluid">
+                <img src="{{ $image ?? asset('assets/imgs/banner/shop01.png') }}" alt="{{ $name ?? 'Product' }}"
+                    class="img-fluid">
             @endif
         </div>
         <p class="text-muted small mb-1">
-            @if(isset($product) && $product->category)
+            @if (isset($product) && $product->category)
                 {{ $product->category->name }}
             @else
                 {{ $category ?? 'CATEGORY' }}
             @endif
         </p>
         <h6 class="product-name mb-2">
-            @if(isset($product))
+            @if (isset($product))
                 <a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">
                     {{ $product->name }}
                 </a>
@@ -39,10 +37,11 @@
             @endif
         </h6>
         <div class="product-price mb-2">
-            @if(isset($product))
+            @if (isset($product))
                 <span class="text-danger fw-bold fs-5">₫{{ number_format($product->price) }}</span>
-                @if($product->compare_price && $product->compare_price > $product->price)
-                    <span class="text-muted text-decoration-line-through ms-2 small">₫{{ number_format($product->compare_price) }}</span>
+                @if ($product->compare_price && $product->compare_price > $product->price)
+                    <span
+                        class="text-muted text-decoration-line-through ms-2 small">₫{{ number_format($product->compare_price) }}</span>
                 @endif
             @else
                 <span class="text-danger fw-bold fs-5">{{ $price ?? '₫980.000' }}</span>
@@ -53,7 +52,7 @@
         </div>
         <div class="product-rating mb-3">
             @php
-                $productRating = isset($product) ? ($product->rating ?? 5) : ($rating ?? 5);
+                $productRating = isset($product) ? $product->rating ?? 5 : $rating ?? 5;
             @endphp
             @for ($i = 1; $i <= 5; $i++)
                 <i class="fas fa-star {{ $i <= $productRating ? 'text-warning' : 'text-muted' }}"></i>
@@ -61,8 +60,7 @@
         </div>
         <div class="product-actions d-flex justify-content-center gap-2">
             <button class="btn btn-sm btn-primary flex-fill add-to-cart-btn"
-                    data-product-id="{{ isset($product) ? $product->id : '' }}"
-                    title="Thêm vào giỏ hàng">
+                data-product-id="{{ isset($product) ? $product->id : '' }}" title="Thêm vào giỏ hàng">
                 <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
             </button>
         </div>

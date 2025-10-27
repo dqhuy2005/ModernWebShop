@@ -6,22 +6,20 @@
 
         <div class="category-tabs mb-4">
             <div class="category-tabs-wrapper">
-                @foreach($categories ?? [] as $index => $category)
+                @foreach ($categories ?? [] as $index => $category)
                     <button class="category-tab {{ $index === 0 ? 'active' : '' }}"
-                            onclick="switchCategory({{ $index }})">
+                        onclick="switchCategory({{ $index }})">
                         {{ $category->name }}
-                        <span class="tab-count">{{ $category->products->count() }}</span>
                     </button>
                 @endforeach
             </div>
         </div>
 
-        @foreach($categories ?? [] as $categoryIndex => $category)
+        @foreach ($categories ?? [] as $categoryIndex => $category)
             <div class="carousel-container {{ $categoryIndex === 0 ? 'active' : '' }}"
-                 id="carousel-{{ $categoryIndex }}">
+                id="carousel-{{ $categoryIndex }}">
 
-                <button class="carousel-btn carousel-prev"
-                        onclick="moveProductSlide(-1, {{ $categoryIndex }})">
+                <button class="carousel-btn carousel-prev" onclick="moveProductSlide(-1, {{ $categoryIndex }})">
                     <i class="fas fa-chevron-left"></i>
                 </button>
 
@@ -32,7 +30,7 @@
                                 @include('components.user.product-card', ['product' => $product])
                             </div>
                         @empty
-                            @for($i = 0; $i < 4; $i++)
+                            @for ($i = 0; $i < 4; $i++)
                                 <div class="carousel-slide">
                                     <div class="product-card-empty">
                                         <div class="empty-icon">
@@ -46,22 +44,9 @@
                     </div>
                 </div>
 
-                <button class="carousel-btn carousel-next"
-                        onclick="moveProductSlide(1, {{ $categoryIndex }})">
+                <button class="carousel-btn carousel-next" onclick="moveProductSlide(1, {{ $categoryIndex }})">
                     <i class="fas fa-chevron-right"></i>
                 </button>
-
-                @if($category->products->count() > 0)
-                    <div class="carousel-indicators">
-                        @php
-                            $totalSlides = ceil($category->products->count() / 4);
-                        @endphp
-                        @for($i = 0; $i < $totalSlides; $i++)
-                            <span class="indicator {{ $i === 0 ? 'active' : '' }}"
-                                  onclick="goToProductSlide({{ $i }}, {{ $categoryIndex }})"></span>
-                        @endfor
-                    </div>
-                @endif
             </div>
         @endforeach
     </div>
@@ -191,28 +176,6 @@
         right: 0;
     }
 
-    /* Indicators */
-    .carousel-indicators {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-top: 2rem;
-    }
-
-    .indicator {
-        width: 10px;
-        height: 10px;
-        background-color: #FFFCED;
-        border: 2px solid #202732;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .indicator.active {
-        background-color: #fff;
-    }
-
     /* Empty State */
     .product-card-empty {
         background-color: #FFFCED;
@@ -267,32 +230,25 @@
 </style>
 
 <script>
-    // Track current slide for each carousel
     let currentProductSlides = {};
 
-    // Initialize all carousels at slide 0
-    @foreach($categories ?? [] as $index => $category)
+    @foreach ($categories ?? [] as $index => $category)
         currentProductSlides[{{ $index }}] = 0;
     @endforeach
 
-    // Switch category tab
     function switchCategory(categoryIndex) {
-        // Remove active class from all tabs and carousels
         document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.carousel-container').forEach(carousel => carousel.classList.remove('active'));
 
-        // Add active class to selected tab and carousel
         document.querySelectorAll('.category-tab')[categoryIndex].classList.add('active');
         document.getElementById('carousel-' + categoryIndex).classList.add('active');
     }
 
-    // Move product slide
     function moveProductSlide(direction, categoryIndex) {
         const track = document.getElementById('track-' + categoryIndex);
         const slides = track.querySelectorAll('.carousel-slide');
         const totalSlides = slides.length;
 
-        // Calculate slides per view based on screen width
         let slidesPerView = 4;
         if (window.innerWidth <= 480) slidesPerView = 1;
         else if (window.innerWidth <= 768) slidesPerView = 2;
@@ -300,10 +256,8 @@
 
         const maxSlide = Math.ceil(totalSlides / slidesPerView) - 1;
 
-        // Update current slide
         currentProductSlides[categoryIndex] += direction;
 
-        // Wrap around
         if (currentProductSlides[categoryIndex] < 0) {
             currentProductSlides[categoryIndex] = maxSlide;
         } else if (currentProductSlides[categoryIndex] > maxSlide) {
@@ -313,18 +267,9 @@
         showProductSlide(categoryIndex);
     }
 
-    // Go to specific slide
-    function goToProductSlide(slideIndex, categoryIndex) {
-        currentProductSlides[categoryIndex] = slideIndex;
-        showProductSlide(categoryIndex);
-    }
-
-    // Show product slide
     function showProductSlide(categoryIndex) {
         const track = document.getElementById('track-' + categoryIndex);
-        const indicators = document.querySelectorAll(`#carousel-${categoryIndex} .indicator`);
 
-        // Calculate slides per view
         let slidesPerView = 4;
         if (window.innerWidth <= 480) slidesPerView = 1;
         else if (window.innerWidth <= 768) slidesPerView = 2;
@@ -334,19 +279,13 @@
         const offset = -currentProductSlides[categoryIndex] * 100;
 
         track.style.transform = `translateX(${offset}%)`;
-
-        // Update indicators
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentProductSlides[categoryIndex]);
-        });
     }
 
-    // Recalculate on window resize
     let resizeTimer;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
-            @foreach($categories ?? [] as $index => $category)
+            @foreach ($categories ?? [] as $index => $category)
                 showProductSlide({{ $index }});
             @endforeach
         }, 250);

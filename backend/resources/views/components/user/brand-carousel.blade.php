@@ -24,11 +24,11 @@
                         ];
                     @endphp
 
-                    @foreach($brands as $brand)
+                    @foreach ($brands as $brand)
                         <div class="brand-slide">
                             <div class="brand-card">
                                 <img src="{{ asset('assets/imgs/thumbnail/' . $brand['logo']) }}"
-                                     alt="{{ $brand['name'] }}">
+                                    alt="{{ $brand['name'] }}">
                             </div>
                         </div>
                     @endforeach
@@ -40,13 +40,13 @@
             </button>
         </div>
 
-                <div class="brand-indicators" id="brandIndicators">
+        <div class="brand-indicators" id="brandIndicators">
             @php
                 $totalSlides = ceil(count($brands) / 6);
             @endphp
-            @for($i = 0; $i < $totalSlides; $i++)
+            @for ($i = 0; $i < $totalSlides; $i++)
                 <span class="brand-indicator {{ $i === 0 ? 'active' : '' }}"
-                      onclick="goToBrandSlide({{ $i }})"></span>
+                    onclick="goToBrandSlide({{ $i }})"></span>
             @endfor
         </div>
     </div>
@@ -178,13 +178,15 @@
     /* Responsive Design */
     @media (max-width: 1200px) {
         .brand-slide {
-            flex: 0 0 calc(20% - 1.2rem); /* 5 items per view */
+            flex: 0 0 calc(20% - 1.2rem);
+            /* 5 items per view */
         }
     }
 
     @media (max-width: 992px) {
         .brand-slide {
-            flex: 0 0 calc(25% - 1.125rem); /* 4 items per view */
+            flex: 0 0 calc(25% - 1.125rem);
+            /* 4 items per view */
         }
 
         .section-title {
@@ -194,7 +196,8 @@
 
     @media (max-width: 768px) {
         .brand-slide {
-            flex: 0 0 calc(33.333% - 1rem); /* 3 items per view */
+            flex: 0 0 calc(33.333% - 1rem);
+            /* 3 items per view */
         }
 
         .brand-carousel-wrapper {
@@ -215,7 +218,8 @@
 
     @media (max-width: 576px) {
         .brand-slide {
-            flex: 0 0 calc(50% - 0.75rem); /* 2 items per view */
+            flex: 0 0 calc(50% - 0.75rem);
+            /* 2 items per view */
         }
 
         .brand-track {

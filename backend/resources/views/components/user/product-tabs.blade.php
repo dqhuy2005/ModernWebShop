@@ -6,25 +6,25 @@
             <ul class="nav nav-tabs border-0" id="productTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active fw-semibold" id="laptops-tab" data-bs-toggle="tab"
-                            data-bs-target="#laptops" type="button" role="tab">
+                        data-bs-target="#laptops" type="button" role="tab">
                         Laptops
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link fw-semibold" id="smartphones-tab" data-bs-toggle="tab"
-                            data-bs-target="#smartphones" type="button" role="tab">
+                        data-bs-target="#smartphones" type="button" role="tab">
                         Smartphones
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-semibold" id="cameras-tab" data-bs-toggle="tab"
-                            data-bs-target="#cameras" type="button" role="tab">
+                    <button class="nav-link fw-semibold" id="cameras-tab" data-bs-toggle="tab" data-bs-target="#cameras"
+                        type="button" role="tab">
                         Cameras
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link fw-semibold" id="accessories-tab" data-bs-toggle="tab"
-                            data-bs-target="#accessories" type="button" role="tab">
+                        data-bs-target="#accessories" type="button" role="tab">
                         Accessories
                     </button>
                 </li>
@@ -43,7 +43,7 @@
                                 'name' => 'PRODUCT NAME GOES HERE',
                                 'price' => '$980.00',
                                 'oldPrice' => '$990.00',
-                                'rating' => 5
+                                'rating' => 5,
                             ])
                         </div>
                     @endfor
@@ -61,7 +61,7 @@
                                 'name' => 'PRODUCT NAME GOES HERE',
                                 'price' => '$980.00',
                                 'oldPrice' => '$990.00',
-                                'rating' => 4
+                                'rating' => 4,
                             ])
                         </div>
                     @endfor
@@ -79,7 +79,7 @@
                                 'name' => 'PRODUCT NAME GOES HERE',
                                 'price' => '$980.00',
                                 'oldPrice' => '$990.00',
-                                'rating' => 5
+                                'rating' => 5,
                             ])
                         </div>
                     @endfor
@@ -97,7 +97,7 @@
                                 'name' => 'PRODUCT NAME GOES HERE',
                                 'price' => '$980.00',
                                 'oldPrice' => '$990.00',
-                                'rating' => 4
+                                'rating' => 4,
                             ])
                         </div>
                     @endfor

@@ -14,7 +14,7 @@
                         'slug' => 'laptops',
                         'image' => 'shop01.png',
                         'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        'icon' => 'fa-laptop'
+                        'icon' => 'fa-laptop',
                     ],
                     [
                         'title' => 'Bộ sưu tập phụ kiện',
@@ -22,7 +22,7 @@
                         'slug' => 'accessories',
                         'image' => 'shop02.png',
                         'gradient' => 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                        'icon' => 'fa-headphones'
+                        'icon' => 'fa-headphones',
                     ],
                     [
                         'title' => 'Bộ sưu tập máy ảnh',
@@ -30,15 +30,16 @@
                         'slug' => 'cameras',
                         'image' => 'shop03.png',
                         'gradient' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                        'icon' => 'fa-camera'
-                    ]
+                        'icon' => 'fa-camera',
+                    ],
                 ];
             @endphp
 
-            @foreach($collections as $collection)
+            @foreach ($collections as $collection)
                 <div class="col-md-4">
                     <div class="collection-card position-relative overflow-hidden rounded-3 shadow-sm">
-                        <div class="collection-content" style="background: {{ $collection['gradient'] }}; min-height: 280px;">
+                        <div class="collection-content"
+                            style="background: {{ $collection['gradient'] }}; min-height: 280px;">
                             <div class="row g-0 h-100 align-items-center">
                                 <div class="col-7 p-4">
                                     <div class="collection-icon mb-3">
@@ -47,17 +48,16 @@
                                     <h4 class="fw-bold text-white mb-2">{{ $collection['title'] }}</h4>
                                     <p class="text-white-50 small mb-3">{{ $collection['subtitle'] }}</p>
                                     <a href="{{ route('categories.show', $collection['slug']) }}"
-                                       class="btn btn-light btn-sm rounded-pill px-4 fw-semibold">
+                                        class="btn btn-light btn-sm rounded-pill px-4 fw-semibold">
                                         MUA NGAY <i class="fas fa-arrow-right ms-2"></i>
                                     </a>
                                 </div>
                                 <div class="col-5">
                                     <div class="collection-image p-3">
                                         <img src="{{ asset('assets/imgs/banner/' . $collection['image']) }}"
-                                             alt="{{ $collection['title'] }}"
-                                             class="img-fluid"
-                                             style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));"
-                                             onerror="this.src='{{ asset('assets/imgs/banner/shop01.png') }}'">
+                                            alt="{{ $collection['title'] }}" class="img-fluid"
+                                            style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));"
+                                            onerror="this.src='{{ asset('assets/imgs/banner/shop01.png') }}'">
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
         opacity: 0;
         transition: opacity 0.4s ease;
         border-radius: 1rem;
@@ -121,8 +121,15 @@
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
     .collection-image {
@@ -160,7 +167,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: radial-gradient(circle at top right, rgba(255,255,255,0.2) 0%, transparent 60%);
+        background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
         pointer-events: none;
         border-radius: 1rem;
     }
