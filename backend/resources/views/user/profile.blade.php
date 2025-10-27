@@ -5,7 +5,7 @@
 @section('content')
     <div class="profile-section py-5" style="background-color: #F8F9FA;">
         <div class="container">
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-lg-3 mb-4">
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
@@ -23,10 +23,12 @@
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ $user->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ $user->email }}</p>
                             <div class="d-grid gap-2">
-                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-danger active" style="border: none;">
+                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-danger active"
+                                    style="border: none;">
                                     <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                 </a>
-                                <a href="{{ route('purchase.index') }}" class="btn btn-sm btn-outline-secondary" style="border: none;">
+                                <a href="{{ route('purchase.index') }}" class="btn btn-sm btn-outline-secondary"
+                                    style="border: none;">
                                     <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
                                 </a>
                                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
@@ -47,54 +49,96 @@
 
                             <form id="profileForm">
                                 @csrf
-                                <div class="row g-3">
-                                    <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-2">
                                         <label for="fullname" class="form-label fw-semibold">
-                                            Họ và tên <span class="text-danger">*</span>
+                                            Tên <span class="text-danger">*</span>
                                         </label>
+                                    </div>
+
+                                    <div class="col-md-6">
                                         <input type="text" class="form-control" id="fullname" name="fullname"
                                             value="{{ $user->fullname }}" required>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-2">
                                         <label for="email" class="form-label fw-semibold">Email</label>
-                                        <input type="email" class="form-control" id="email"
-                                            value="{{ $user->email }}" readonly>
-                                        <small class="text-muted">Email không thể thay đổi</small>
                                     </div>
 
                                     <div class="col-md-6">
+                                        <input type="email" class="form-control" id="email"
+                                            value="{{ $user->email }}" readonly style="color: #ccc">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-2">
                                         <label for="phone" class="form-label fw-semibold">Số điện thoại</label>
+                                    </div>
+
+                                    <div class="col-md-6">
                                         <input type="tel" class="form-control" id="phone" name="phone"
                                             value="{{ $user->phone ?? '' }}">
                                     </div>
+                                </div>
 
+                                <div class="row mb-3">
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-semibold">Ngày sinh</label>
+                                    </div>
                                     <div class="col-md-6">
-                                        <label for="birthday" class="form-label fw-semibold">Ngày sinh</label>
-                                        <input type="date" class="form-control" id="birthday" name="birthday"
-                                            value="{{ $user->birthday ?? '' }}">
+                                        <div class="row g-2">
+                                            <div class="col-4">
+                                                <select class="form-select" id="birthday_day" name="birthday_day">
+                                                    @for ($i = 1; $i <= 31; $i++)
+                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
+                                                            {{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <select class="form-select" id="birthday_month" name="birthday_month">
+                                                    @for ($i = 1; $i <= 12; $i++)
+                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
+                                                            {{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <select class="form-select" id="birthday_year" name="birthday_year">
+                                                    @for ($i = date('Y'); $i >= 1940; $i--)
+                                                        <option value="{{ $i }}">{{ $i }}
+                                                        </option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-2">
+                                        <label for="address" class="form-label fw-semibold">Địa chỉ</label>
                                     </div>
 
-                                    <div class="col-12">
-                                        <label for="address" class="form-label fw-semibold">Địa chỉ</label>
+                                    <div class="col-10">
                                         <textarea class="form-control" id="address" name="address" rows="3"
                                             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố">{{ $user->address ?? '' }}</textarea>
                                     </div>
 
-                                    <div class="col-12">
-                                        <small class="text-muted">
-                                            Tham gia: {{ $user->created_at->format('d/m/Y') }}
-                                        </small>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <hr class="my-3">
+                                    <div class="col-12 my-3">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <button type="submit" class="btn btn-danger px-4" id="saveBtn">
                                                     Lưu
                                                 </button>
                                             </div>
+
+                                            <small class="text-muted">
+                                                Tham gia: {{ $user->created_at->format('d/m/Y') }}
+                                            </small>
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +199,8 @@
 
 @push('styles')
     <style>
-        .form-control:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: #dc3545;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
@@ -168,12 +213,32 @@
         .profile-avatar {
             display: inline-block;
         }
+
+        .form-select {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-select:hover {
+            border-color: #adb5bd;
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
         $(document).ready(function() {
+            const existingBirthday = '{{ $user->birthday ?? '' }}';
+            if (existingBirthday) {
+                const parts = existingBirthday.split('-');
+                if (parts.length === 3) {
+                    $('#birthday_year').val(parts[0]);
+                    $('#birthday_month').val(parts[1]);
+                    $('#birthday_day').val(parts[2]);
+                }
+            }
+
             $('#imageInput').on('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
@@ -213,7 +278,17 @@
                 formData.append('fullname', $('#fullname').val());
                 formData.append('phone', $('#phone').val());
                 formData.append('address', $('#address').val());
-                formData.append('birthday', $('#birthday').val());
+
+                const day = $('#birthday_day').val();
+                const month = $('#birthday_month').val();
+                const year = $('#birthday_year').val();
+
+                if (day && month && year) {
+                    const birthday = `${year}-${month}-${day}`;
+                    formData.append('birthday', birthday);
+                } else {
+                    formData.append('birthday', '');
+                }
 
                 const imageFile = $('#imageInput')[0].files[0];
                 if (imageFile) {

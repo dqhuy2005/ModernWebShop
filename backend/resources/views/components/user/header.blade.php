@@ -33,7 +33,7 @@
                             @if (auth()->user()->image)
                                 <img src="{{ asset('storage/' . auth()->user()->image) }}"
                                     alt="{{ auth()->user()->fullname }}"
-                                    style="width: 32px; height: 32px; object-fit: cover;">
+                                    style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
                             @else
                                 <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center"
                                     style="width: 32px; height: 32px;">
