@@ -25,7 +25,7 @@
             <div class="row g-4 mb-3 pw-product-row">
                 <div class="col-6 col-md-4 col-lg-2-4">
                     <div class="pw-product-card">
-                        <a href="{{ route('products.show', $product->name) }}" class="pw-product-link">
+                        <a href="{{ route('products.show', $product->slug) }}" class="pw-product-link">
                             <div class="pw-product-image">
                                 @php
                                     $img = $product->image ?: 'assets/imgs/products/default.png';

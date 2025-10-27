@@ -111,7 +111,7 @@
                                                         <div class="flex-grow-1">
                                                             <h6 class="mb-0">
                                                                 @if ($detail->product)
-                                                                    <a href="{{ route('products.show', $detail->product->name) }}" class="text-dark text-decoration-none">
+                                                                    <a href="{{ route('products.show', $detail->product->slug) }}" class="text-dark text-decoration-none">
                                                                         {{ $detail->product_name }}
                                                                     </a>
                                                                 @else

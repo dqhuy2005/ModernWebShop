@@ -20,6 +20,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 6,
                 'name' => 'ASUS ROG Strix G15',
+                'slug' => 'asus-rog-strix-g15',
                 'description' => 'High-performance gaming laptop with AMD Ryzen 9 and RTX 4070',
                 'specifications' => json_encode([
                     'processor' => 'AMD Ryzen 9 7945HX',
@@ -45,6 +46,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 6,
                 'name' => 'MSI Raider GE78 HX',
+                'slug' => 'msi-raider-ge78-hx',
                 'description' => 'Premium gaming laptop with Intel Core i9 and RTX 4090',
                 'specifications' => json_encode([
                     'processor' => 'Intel Core i9-13980HX',
@@ -70,6 +72,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 6,
                 'name' => 'Lenovo Legion Pro 7i',
+                'slug' => 'lenovo-legion-pro-7i',
                 'description' => 'Powerful gaming machine with excellent cooling system',
                 'specifications' => json_encode([
                     'processor' => 'Intel Core i9-13900HX',
@@ -97,6 +100,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 7,
                 'name' => 'Dell Latitude 5540',
+                'slug' => 'dell-latitude-5540',
                 'description' => 'Reliable business laptop with enterprise-grade security',
                 'specifications' => json_encode([
                     'processor' => 'Intel Core i7-1355U',
@@ -123,6 +127,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 7,
                 'name' => 'HP EliteBook 840 G10',
+                'slug' => 'hp-elitebook-840-g10',
                 'description' => 'Premium business laptop with exceptional battery life',
                 'specifications' => json_encode([
                     'processor' => 'Intel Core i7-1365U',
@@ -151,6 +156,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 8,
                 'name' => 'Dell XPS 13 Plus',
+                'slug' => 'dell-xps-13-plus',
                 'description' => 'Ultra-portable laptop with stunning OLED display',
                 'specifications' => json_encode([
                     'processor' => 'Intel Core i7-1360P',
@@ -176,6 +182,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 8,
                 'name' => 'MacBook Air M2',
+                'slug' => 'macbook-air-m2',
                 'description' => 'Lightweight powerhouse with Apple M2 chip',
                 'specifications' => json_encode([
                     'processor' => 'Apple M2 8-core CPU',
@@ -203,6 +210,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 9,
                 'name' => 'Intel Core i9-14900K',
+                'slug' => 'intel-core-i9-14900k',
                 'description' => 'Top-tier desktop processor for gaming and content creation',
                 'specifications' => json_encode([
                     'cores' => 24,
@@ -228,6 +236,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 9,
                 'name' => 'AMD Ryzen 9 7950X',
+                'slug' => 'amd-ryzen-9-7950x',
                 'description' => 'High-performance 16-core processor for enthusiasts',
                 'specifications' => json_encode([
                     'cores' => 16,
@@ -251,8 +260,9 @@ class ProductSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'category_id' => 9,
+                'category_id' => 10,
                 'name' => 'Intel Core i5-13600K',
+                'slug' => 'intel-core-i5-13600k',
                 'description' => 'Best value gaming processor with excellent performance',
                 'specifications' => json_encode([
                     'cores' => 14,
@@ -278,8 +288,9 @@ class ProductSeeder extends Seeder
 
             // Graphics Cards (GPU)
             [
-                'category_id' => 10,
+                'category_id' => 11,
                 'name' => 'NVIDIA GeForce RTX 4090',
+                'slug' => 'nvidia-geforce-rtx-4090',
                 'description' => 'Ultimate graphics card for 4K gaming and AI workloads',
                 'specifications' => json_encode([
                     'gpu' => 'AD102',
@@ -304,8 +315,9 @@ class ProductSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'category_id' => 10,
+                'category_id' => 12,
                 'name' => 'AMD Radeon RX 7900 XTX',
+                'slug' => 'amd-radeon-rx-7900-xtx',
                 'description' => 'High-end AMD graphics card with excellent rasterization',
                 'specifications' => json_encode([
                     'gpu' => 'Navi 31',
@@ -332,6 +344,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 10,
                 'name' => 'NVIDIA GeForce RTX 4070 Ti',
+                'slug' => 'nvidia-geforce-rtx-4070-ti',
                 'description' => 'Perfect balance of performance and price for 1440p gaming',
                 'specifications' => json_encode([
                     'gpu' => 'AD104',
@@ -360,6 +373,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 11,
                 'name' => 'ASUS ROG Maximus Z790 Hero',
+                'slug' => 'asus-rog-maximus-z790-hero',
                 'description' => 'Premium Z790 motherboard for Intel 13th/14th gen CPUs',
                 'specifications' => json_encode([
                     'socket' => 'LGA1700',
@@ -385,6 +399,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 11,
                 'name' => 'MSI MAG B650 TOMAHAWK WiFi',
+                'slug' => 'msi-mag-b650-tomahawk-wifi',
                 'description' => 'Feature-rich B650 motherboard for AMD Ryzen 7000 series',
                 'specifications' => json_encode([
                     'socket' => 'AM5',
@@ -412,6 +427,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 12,
                 'name' => 'Corsair Dominator Platinum RGB DDR5',
+                'slug' => 'corsair-dominator-platinum-rgb-ddr5',
                 'description' => 'Premium DDR5 RAM with stunning RGB lighting',
                 'specifications' => json_encode([
                     'type' => 'DDR5',
@@ -437,6 +453,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 12,
                 'name' => 'G.SKILL Trident Z5 RGB DDR5',
+                'slug' => 'gskill-trident-z5-rgb-ddr5',
                 'description' => 'High-performance DDR5 memory for enthusiasts',
                 'specifications' => json_encode([
                     'type' => 'DDR5',
@@ -464,6 +481,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 21,
                 'name' => 'Samsung 990 Pro',
+                'slug' => 'samsung-990-pro',
                 'description' => 'Flagship PCIe 4.0 NVMe SSD with exceptional speed',
                 'specifications' => json_encode([
                     'capacity' => '2TB',
@@ -491,6 +509,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 21,
                 'name' => 'WD Black SN850X',
+                'slug' => 'wd-black-sn850x',
                 'description' => 'High-performance gaming SSD with heatsink',
                 'specifications' => json_encode([
                     'capacity' => '1TB',
@@ -521,6 +540,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 16,
                 'name' => 'Corsair K70 RGB PRO',
+                'slug' => 'corsair-k70-rgb-pro',
                 'description' => 'Premium mechanical gaming keyboard with Cherry MX switches',
                 'specifications' => json_encode([
                     'switch_type' => 'Cherry MX Red',
@@ -547,6 +567,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 16,
                 'name' => 'Logitech G915 TKL',
+                'slug' => 'logitech-g915-tkl',
                 'description' => 'Wireless low-profile mechanical gaming keyboard',
                 'specifications' => json_encode([
                     'switch_type' => 'GL Tactile Low-profile',
@@ -575,6 +596,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 17,
                 'name' => 'Logitech G Pro X Superlight',
+                'slug' => 'logitech-g-pro-x-superlight',
                 'description' => 'Ultra-lightweight wireless gaming mouse for esports',
                 'specifications' => json_encode([
                     'sensor' => 'HERO 25K',
@@ -600,6 +622,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 17,
                 'name' => 'Razer DeathAdder V3 Pro',
+                'slug' => 'razer-deathadder-v3-pro',
                 'description' => 'Wireless ergonomic gaming mouse with Focus Pro sensor',
                 'specifications' => json_encode([
                     'sensor' => 'Focus Pro 30K',
@@ -627,6 +650,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 18,
                 'name' => 'LG 27GR95QE-B UltraGear',
+                'slug' => 'lg-27gr95qe-b-ultragear',
                 'description' => '27" OLED gaming monitor with 240Hz refresh rate',
                 'specifications' => json_encode([
                     'size' => '27 inches',
@@ -653,6 +677,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 18,
                 'name' => 'ASUS ROG Swift PG27AQDM',
+                'slug' => 'asus-rog-swift-pg27aqdm',
                 'description' => '27" QD-OLED gaming monitor with exceptional colors',
                 'specifications' => json_encode([
                     'size' => '27 inches',
@@ -681,6 +706,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 13,
                 'name' => 'Corsair RM1000x',
+                'slug' => 'corsair-rm1000x',
                 'description' => '1000W 80 PLUS Gold fully modular power supply',
                 'specifications' => json_encode([
                     'wattage' => '1000W',
@@ -712,6 +738,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 14,
                 'name' => 'Lian Li O11 Dynamic EVO',
+                'slug' => 'lian-li-o11-dynamic-evo',
                 'description' => 'Premium ATX case with excellent airflow and build quality',
                 'specifications' => json_encode([
                     'type' => 'Mid-Tower',
@@ -740,6 +767,7 @@ class ProductSeeder extends Seeder
             [
                 'category_id' => 15,
                 'name' => 'NZXT Kraken X73 RGB',
+                'slug' => 'nzxt-kraken-x73-rgb',
                 'description' => '360mm AIO liquid cooler with stunning RGB',
                 'specifications' => json_encode([
                     'type' => 'AIO Liquid Cooler',

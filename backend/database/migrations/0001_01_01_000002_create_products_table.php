@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('category_id')->index();
             $table->string('name')->index();
+            $table->string('slug')->nullable()->index();
             $table->longText('description')->nullable();
             $table->json('specifications')->nullable();
             $table->unsignedBigInteger('price')->default(0);

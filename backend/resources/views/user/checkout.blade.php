@@ -83,7 +83,7 @@
                                                     style="width: 60px; height: 60px; object-fit: cover;">
                                                 <div>
                                                     <h6 class="mb-1">
-                                                        <a href="{{ route('products.show', $product->name) }}" class="text-dark text-decoration-none">
+                                                        <a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">
                                                             {{ $product->name }}
                                                         </a>
                                                     </h6>

@@ -44,7 +44,7 @@
                                                                 style="width: 80px; height: 80px; object-fit: cover;">
                                                             <div>
                                                                 <h6 class="mb-1 fw-semibold">
-                                                                    <a href="{{ route('products.show', Auth::check() ? $product->name : $item['name']) }}"
+                                                                    <a href="{{ route('products.show', Auth::check() ? $product->slug : $item['slug']) }}"
                                                                         class="text-dark text-decoration-none">
                                                                         {{ Auth::check() ? $product->name : $item['name'] }}
                                                                     </a>

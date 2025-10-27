@@ -49,9 +49,9 @@ class HomeController extends Controller
         ));
     }
 
-    public function showProduct($name)
+    public function showProduct($slug)
     {
-        $product = Product::where('name', $name)
+        $product = Product::where('slug', $slug)
             ->with('category')
             ->firstOrFail();
 
@@ -92,7 +92,7 @@ class HomeController extends Controller
 
         $products = Product::active()
             ->search($keyword)
-            ->select('id', 'name', 'image', 'price')
+            ->select('id', 'name', 'slug', 'image', 'price')
             ->limit(10)
             ->get()
             ->map(function ($product) {
@@ -102,7 +102,7 @@ class HomeController extends Controller
                     'image' => $product->image ? asset('storage/' . $product->image) : asset('assets/imgs/products/default.png'),
                     'price' => $product->price,
                     'formatted_price' => number_format($product->price, 0, ',', '.') . 'đ',
-                    'url' => route('products.show', $product->name),
+                    'url' => route('products.show', $product->slug),
                 ];
             });
 

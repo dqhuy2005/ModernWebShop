@@ -77,7 +77,7 @@
                                                         <div>
                                                             <h6 class="mb-0">
                                                                 @if ($detail->product)
-                                                                    <a href="{{ route('products.show', $detail->product->name) }}"
+                                                                    <a href="{{ route('products.show', $detail->product->slug) }}"
                                                                         class="text-dark text-decoration-none">
                                                                         {{ $detail->product_name }}
                                                                     </a>

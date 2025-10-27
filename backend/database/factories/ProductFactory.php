@@ -38,6 +38,7 @@ class ProductFactory extends Factory
         $hotStatuses = [true, false, false, false]; // 25% hot
 
         $name = fake()->randomElement($brands) . ' ' . fake()->randomElement($productNames) . ' ' . fake()->randomElement(['Pro', 'Max', 'Ultra', 'Plus', 'Elite', 'Premium', '']);
+        $slug = Str::slug($name) . '-' . fake()->unique()->numberBetween(1000, 999999);
 
         // Generate specifications
         $specifications = [
@@ -48,11 +49,22 @@ class ProductFactory extends Factory
             'Warranty' => fake()->randomElement(['6 months', '1 year', '2 years', '3 years']),
         ];
 
+        // Price ranges based on product type
+        $price = fake()->randomElement([
+            fake()->numberBetween(500000, 2000000),      // Low range
+            fake()->numberBetween(2000000, 10000000),    // Mid range
+            fake()->numberBetween(10000000, 30000000),   // High range
+            fake()->numberBetween(30000000, 100000000),  // Premium range
+        ]);
+
         return [
             'category_id' => Category::inRandomOrder()->first()?->id ?? 1,
             'name' => $name,
+            'slug' => $slug,
             'description' => fake()->optional(0.8)->text(200), // Max 200 chars to fit in VARCHAR(255)
             'specifications' => json_encode($specifications),
+            'price' => $price,
+            'currency' => 'VND',
             'image' => null, // We'll handle this separately if needed
             'status' => fake()->randomElement($statuses),
             'parent_id' => null,
