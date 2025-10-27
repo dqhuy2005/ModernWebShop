@@ -27,13 +27,13 @@
 
                                 <div class="mb-3">
                                     <label for="password" class="form-label fw-semibold">Mật khẩu</label>
-                                    <div class="position-relative">
+                                    <div class="position-relative password-input-wrapper">
                                         <input type="password"
-                                            class="form-control pe-5 @error('password') is-invalid @enderror" id="password"
+                                            class="form-control @error('password') is-invalid @enderror" id="password"
                                             name="password" required>
                                         <button
-                                            class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted"
-                                            type="button" id="togglePassword" style="z-index: 10; text-decoration: none;">
+                                            class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted password-toggle-btn d-none"
+                                            type="button" id="togglePassword" style="text-decoration: none;">
                                             <i class="far fa-eye"></i>
                                         </button>
                                     </div>
@@ -105,21 +105,32 @@
 
 @push('styles')
     <style>
-        .position-relative input.form-control {
+        .password-input-wrapper {
+            position: relative;
+        }
+
+        .password-input-wrapper input.form-control {
+            padding-right: 1rem;
+            transition: padding-right 0.2s ease;
+        }
+
+        .password-input-wrapper.has-content input.form-control {
             padding-right: 3rem;
         }
 
-        #togglePassword {
+        .password-toggle-btn {
             border: none;
             background: transparent;
             padding: 0.375rem 0.75rem;
+            z-index: 10;
+            transition: opacity 0.2s ease-in-out;
         }
 
-        #togglePassword:hover {
+        .password-toggle-btn:hover {
             color: #202732 !important;
         }
 
-        #togglePassword:focus {
+        .password-toggle-btn:focus {
             box-shadow: none;
         }
 
@@ -144,19 +155,50 @@
 
 @push('scripts')
     <script>
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const password = document.getElementById('password');
-            const icon = this.querySelector('i');
+        $(document).ready(function() {
+            const $passwordInput = $('#password');
+            const $togglePasswordBtn = $('#togglePassword');
+            const $passwordWrapper = $('.password-input-wrapper');
 
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                password.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+            // Function to toggle password visibility
+            function togglePasswordVisibility() {
+                const $icon = $togglePasswordBtn.find('i');
+
+                if ($passwordInput.attr('type') === 'password') {
+                    $passwordInput.attr('type', 'text');
+                    $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    $passwordInput.attr('type', 'password');
+                    $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
             }
+
+            // Function to toggle button visibility based on input content
+            function toggleButtonVisibility() {
+                if ($passwordInput.val().length > 0) {
+                    $togglePasswordBtn.removeClass('d-none');
+                    $passwordWrapper.addClass('has-content');
+                } else {
+                    $togglePasswordBtn.addClass('d-none');
+                    $passwordWrapper.removeClass('has-content');
+                    // Reset password type to password when empty
+                    $passwordInput.attr('type', 'password');
+                    $togglePasswordBtn.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            }
+
+            // Show/hide toggle button on input
+            $passwordInput.on('input', function() {
+                toggleButtonVisibility();
+            });
+
+            // Toggle password visibility on button click
+            $togglePasswordBtn.on('click', function() {
+                togglePasswordVisibility();
+            });
+
+            // Check on page load (in case of validation errors or autofill)
+            toggleButtonVisibility();
         });
     </script>
 @endpush

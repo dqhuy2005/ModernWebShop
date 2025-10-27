@@ -65,11 +65,6 @@
                     title="Thêm vào giỏ hàng">
                 <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
             </button>
-            <button class="btn btn-sm btn-outline-secondary quick-view-btn"
-                    data-product-id="{{ isset($product) ? $product->id : '' }}"
-                    title="Xem nhanh">
-                <i class="far fa-eye"></i>
-            </button>
         </div>
     </div>
 </div>

@@ -100,8 +100,6 @@
                                 </button>
                             </form>
 
-                            <hr class="my-4">
-
                             <div class="text-center">
                                 <p class="text-muted mb-0">
                                     Đã có tài khoản?
