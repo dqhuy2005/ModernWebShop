@@ -233,61 +233,64 @@
 </style>
 
 <script>
-    let currentBrandSlide = 0;
+    $(document).ready(function() {
+        let currentBrandSlide = 0;
 
-    function getBrandsPerView() {
-        if (window.innerWidth <= 576) return 2;
-        if (window.innerWidth <= 768) return 3;
-        if (window.innerWidth <= 992) return 4;
-        if (window.innerWidth <= 1200) return 5;
-        return 6;
-    }
-
-    function moveBrandSlide(direction) {
-        const track = document.getElementById('brandTrack');
-        const slides = track.querySelectorAll('.brand-slide');
-        const totalSlides = slides.length;
-        const brandsPerView = getBrandsPerView();
-        const maxSlide = Math.ceil(totalSlides / brandsPerView) - 1;
-
-        currentBrandSlide += direction;
-
-        // Wrap around
-        if (currentBrandSlide < 0) {
-            currentBrandSlide = maxSlide;
-        } else if (currentBrandSlide > maxSlide) {
-            currentBrandSlide = 0;
+        function getBrandsPerView() {
+            const width = $(window).width();
+            if (width <= 576) return 2;
+            if (width <= 768) return 3;
+            if (width <= 992) return 4;
+            if (width <= 1200) return 5;
+            return 6;
         }
 
-        showBrandSlide();
-    }
+        window.moveBrandSlide = function(direction) {
+            const $track = $('#brandTrack');
+            const $slides = $track.find('.brand-slide');
+            const totalSlides = $slides.length;
+            const brandsPerView = getBrandsPerView();
+            const maxSlide = Math.ceil(totalSlides / brandsPerView) - 1;
 
-    function goToBrandSlide(slideIndex) {
-        currentBrandSlide = slideIndex;
-        showBrandSlide();
-    }
+            currentBrandSlide += direction;
 
-    function showBrandSlide() {
-        const track = document.getElementById('brandTrack');
-        const indicators = document.querySelectorAll('.brand-indicator');
-        const brandsPerView = getBrandsPerView();
+            // Wrap around
+            if (currentBrandSlide < 0) {
+                currentBrandSlide = maxSlide;
+            } else if (currentBrandSlide > maxSlide) {
+                currentBrandSlide = 0;
+            }
 
-        const offset = -currentBrandSlide * 100;
-        track.style.transform = `translateX(${offset}%)`;
-
-        // Update indicators
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentBrandSlide);
-        });
-    }
-
-    // Recalculate on window resize
-    let brandResizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(brandResizeTimer);
-        brandResizeTimer = setTimeout(function() {
-            currentBrandSlide = 0;
             showBrandSlide();
-        }, 250);
+        };
+
+        window.goToBrandSlide = function(slideIndex) {
+            currentBrandSlide = slideIndex;
+            showBrandSlide();
+        };
+
+        function showBrandSlide() {
+            const $track = $('#brandTrack');
+            const $indicators = $('.brand-indicator');
+            const brandsPerView = getBrandsPerView();
+
+            const offset = -currentBrandSlide * 100;
+            $track.css('transform', `translateX(${offset}%)`);
+
+            // Update indicators
+            $indicators.each(function(index) {
+                $(this).toggleClass('active', index === currentBrandSlide);
+            });
+        }
+
+        // Recalculate on window resize
+        let brandResizeTimer;
+        $(window).on('resize', function() {
+            clearTimeout(brandResizeTimer);
+            brandResizeTimer = setTimeout(function() {
+                currentBrandSlide = 0;
+                showBrandSlide();
+            }, 250);
+        });
     });
 </script>

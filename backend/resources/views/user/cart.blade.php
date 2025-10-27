@@ -259,8 +259,8 @@
         let quantityUpdateTimer;
 
         function updateQuantity(cartId, change) {
-            const input = document.querySelector(`input[data-cart-id="${cartId}"]`);
-            let newQuantity = parseInt(input.value) + change;
+            const $input = $(`input[data-cart-id="${cartId}"]`);
+            let newQuantity = parseInt($input.val()) + change;
 
             if (newQuantity < 1) {
                 if (confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?')) {

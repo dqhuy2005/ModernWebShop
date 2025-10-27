@@ -52,30 +52,59 @@
 
 @push('scripts')
     <script>
-        function updateCountdown() {
-            const targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + 2);
-            targetDate.setHours(10, 34, 60);
+        $(document).ready(function() {
+            function updateCountdown() {
+                const targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + 2);
+                targetDate.setHours(10, 34, 60);
 
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+                const now = new Date().getTime();
+                const distance = targetDate - now;
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            const timeBoxes = document.querySelectorAll('.countdown-timer .time-box h3');
-            if (timeBoxes.length === 4) {
-                timeBoxes[0].textContent = String(days).padStart(2, '0');
-                timeBoxes[1].textContent = String(hours).padStart(2, '0');
-                timeBoxes[2].textContent = String(minutes).padStart(2, '0');
-                timeBoxes[3].textContent = String(seconds).padStart(2, '0');
+                const $timeBoxes = $('.countdown-timer .time-box h3');
+                if ($timeBoxes.length === 4) {
+                    $timeBoxes.eq(0).text(String(days).padStart(2, '0'));
+                    $timeBoxes.eq(1).text(String(hours).padStart(2, '0'));
+                    $timeBoxes.eq(2).text(String(minutes).padStart(2, '0'));
+                    $timeBoxes.eq(3).text(String(seconds).padStart(2, '0'));
+                }
             }
-        }
 
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            // Lazy load images
+            const $images = $('img[data-src]');
+
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const $img = $(entry.target);
+                            $img.attr('src', $img.data('src'));
+                            $img.removeAttr('data-src');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                $images.each(function() {
+                    imageObserver.observe(this);
+                });
+            } else {
+                // Fallback for browsers that don't support IntersectionObserver
+                $images.each(function() {
+                    const $img = $(this);
+                    $img.attr('src', $img.data('src'));
+                    $img.removeAttr('data-src');
+                });
+            }
+        });
 
         $(document).on('click', '.btn-outline-secondary', function(e) {
             e.preventDefault();
@@ -90,23 +119,6 @@
                 $(this).removeClass('btn-danger text-white').addClass('btn-outline-secondary');
                 toastr.info('Removed from wishlist!');
             }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('img[data-src]');
-
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-
-            images.forEach(img => imageObserver.observe(img));
         });
     </script>
 @endpush

@@ -266,7 +266,7 @@
     <script>
         let productIndex = 0;
         const selectedProducts = new Set();
-        const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        const productModal = new bootstrap.Modal($('#productModal')[0]);
 
         $('#addProductBtn').on('click', function() {
             productModal.show();

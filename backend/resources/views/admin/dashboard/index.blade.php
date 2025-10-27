@@ -409,7 +409,7 @@
     });
 
     function initRevenueChart(data) {
-        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const ctx = $('#revenueChart')[0].getContext('2d');
 
         if (revenueChart) {
             revenueChart.destroy();
@@ -473,7 +473,7 @@
     }
 
     function initCategoryChart(data) {
-        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const ctx = $('#categoryChart')[0].getContext('2d');
 
         if (categoryChart) {
             categoryChart.destroy();

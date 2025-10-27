@@ -315,7 +315,7 @@
     <script>
         let productIndex = {{ $order->orderDetails->count() }};
         const selectedProducts = new Set(@json($order->orderDetails->pluck('product_id')));
-        const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        const productModal = new bootstrap.Modal($('#productModal')[0]);
 
         $('#addProductBtn').on('click', function() {
             productModal.show();

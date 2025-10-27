@@ -142,55 +142,52 @@
 
 @push('scripts')
     <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const password = document.getElementById('password');
-            const icon = this.querySelector('i');
+        $(document).ready(function() {
+            // Toggle password visibility
+            $('#togglePassword').on('click', function() {
+                const $password = $('#password');
+                const $icon = $(this).find('i');
 
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                password.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                if ($password.attr('type') === 'password') {
+                    $password.attr('type', 'text');
+                    $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    $password.attr('type', 'password');
+                    $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            $('#togglePasswordConfirm').on('click', function() {
+                const $password = $('#password_confirmation');
+                const $icon = $(this).find('i');
+
+                if ($password.attr('type') === 'password') {
+                    $password.attr('type', 'text');
+                    $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    $password.attr('type', 'password');
+                    $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Password strength indicator
+            $('#password').on('input', function() {
+                const password = $(this).val();
+                const strength = getPasswordStrength(password);
+
+                // You can add visual feedback here
+            });
+
+            function getPasswordStrength(password) {
+                let strength = 0;
+                if (password.length >= 8) strength++;
+                if (password.match(/[a-z]+/)) strength++;
+                if (password.match(/[A-Z]+/)) strength++;
+                if (password.match(/[0-9]+/)) strength++;
+                if (password.match(/[$@#&!]+/)) strength++;
+
+                return strength;
             }
         });
-
-        document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
-            const password = document.getElementById('password_confirmation');
-            const icon = this.querySelector('i');
-
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                password.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-
-        // Password strength indicator
-        const passwordInput = document.getElementById('password');
-        passwordInput.addEventListener('input', function() {
-            const password = this.value;
-            const strength = getPasswordStrength(password);
-
-            // You can add visual feedback here
-        });
-
-        function getPasswordStrength(password) {
-            let strength = 0;
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]+/)) strength++;
-            if (password.match(/[A-Z]+/)) strength++;
-            if (password.match(/[0-9]+/)) strength++;
-            if (password.match(/[$@#&!]+/)) strength++;
-
-            return strength;
-        }
     </script>
 @endpush

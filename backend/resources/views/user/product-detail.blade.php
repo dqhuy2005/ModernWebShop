@@ -202,10 +202,10 @@
             $(function() {
                 $('.pw-thumb-item').on('click', function() {
                     var idx = $(this).data('index');
-                    var carousel = document.querySelector('#pwCarousel');
-                    if (carousel && typeof bootstrap !== 'undefined') {
-                        var bsCarousel = bootstrap.Carousel.getInstance(carousel) || new bootstrap
-                            .Carousel(carousel, {
+                    var $carousel = $('#pwCarousel');
+                    if ($carousel.length && typeof bootstrap !== 'undefined') {
+                        var bsCarousel = bootstrap.Carousel.getInstance($carousel[0]) || new bootstrap
+                            .Carousel($carousel[0], {
                                 ride: false
                             });
                         bsCarousel.to(idx);

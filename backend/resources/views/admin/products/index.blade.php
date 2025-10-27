@@ -232,23 +232,26 @@
 
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/admin/products/' + productId;
+                var form = $('<form>', {
+                    method: 'POST',
+                    action: '/admin/products/' + productId
+                });
 
-                var methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                methodInput.value = 'DELETE';
-                form.appendChild(methodInput);
+                var methodInput = $('<input>', {
+                    type: 'hidden',
+                    name: '_method',
+                    value: 'DELETE'
+                });
+                form.append(methodInput);
 
-                var tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = '_token';
-                tokenInput.value = '{{ csrf_token() }}';
-                form.appendChild(tokenInput);
+                var tokenInput = $('<input>', {
+                    type: 'hidden',
+                    name: '_token',
+                    value: '{{ csrf_token() }}'
+                });
+                form.append(tokenInput);
 
-                document.body.appendChild(form);
+                $('body').append(form);
                 form.submit();
             }
         }

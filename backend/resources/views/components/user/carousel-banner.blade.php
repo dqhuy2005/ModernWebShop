@@ -319,32 +319,34 @@
 </style>
 
 <script>
-    let currentBannerSlide = 0;
+    $(document).ready(function() {
+        let currentBannerSlide = 0;
 
-    function showBannerSlide(index) {
-        const slides = document.querySelectorAll('.banner-slide');
-        const indicators = document.querySelectorAll('.banner-indicators .indicator');
+        window.showBannerSlide = function(index) {
+            const $slides = $('.banner-slide');
+            const $indicators = $('.banner-indicators .indicator');
 
-        slides.forEach(slide => slide.classList.remove('active'));
-        indicators.forEach(indicator => indicator.classList.remove('active'));
+            $slides.removeClass('active');
+            $indicators.removeClass('active');
 
-        if (index >= slides.length) {
-            currentBannerSlide = 0;
-        } else if (index < 0) {
-            currentBannerSlide = slides.length - 1;
-        } else {
-            currentBannerSlide = index;
-        }
+            if (index >= $slides.length) {
+                currentBannerSlide = 0;
+            } else if (index < 0) {
+                currentBannerSlide = $slides.length - 1;
+            } else {
+                currentBannerSlide = index;
+            }
 
-        slides[currentBannerSlide].classList.add('active');
-        indicators[currentBannerSlide].classList.add('active');
-    }
+            $slides.eq(currentBannerSlide).addClass('active');
+            $indicators.eq(currentBannerSlide).addClass('active');
+        };
 
-    function moveBannerSlide(direction) {
-        showBannerSlide(currentBannerSlide + direction);
-    }
+        window.moveBannerSlide = function(direction) {
+            showBannerSlide(currentBannerSlide + direction);
+        };
 
-    function goToBannerSlide(index) {
-        showBannerSlide(index);
-    }
+        window.goToBannerSlide = function(index) {
+            showBannerSlide(index);
+        };
+    });
 </script>

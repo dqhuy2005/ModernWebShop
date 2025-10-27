@@ -57,7 +57,7 @@
                                 <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
                                     name="image" accept="image/*" onchange="previewImage(event)">
                                 <button type="button" class="btn-select-image w-100 mt-3"
-                                    onclick="document.getElementById('image').click()">
+                                    onclick="$('#image').trigger('click')">
                                     <i class="fas fa-image me-2"></i>Select Image
                                 </button>
                             </div>

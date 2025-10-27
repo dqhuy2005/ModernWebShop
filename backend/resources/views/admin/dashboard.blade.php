@@ -161,43 +161,44 @@
 
 @push('scripts')
 <script>
-    // Revenue Chart
-    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    new Chart(revenueCtx, {
-        type: 'line',
-        data: {
-            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-            datasets: [{
-                label: 'Doanh thu (triệu đồng)',
-                data: [12, 19, 15, 25, 22, 30, 28, 32, 35, 40, 38, 45],
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
+    $(document).ready(function() {
+        // Revenue Chart
+        const revenueCtx = $('#revenueChart')[0].getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Doanh thu (triệu đồng)',
+                    data: [12, 19, 15, 25, 22, 30, 28, 32, 35, 40, 38, 45],
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                }
             }
-        }
-    });
+        });
 
-    // Category Chart
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-    new Chart(categoryCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Điện tử', 'Thời trang', 'Gia dụng', 'Sách', 'Khác'],
-            datasets: [{
-                data: [30, 25, 20, 15, 10],
-                backgroundColor: [
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 99, 132)',
-                    'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)',
+        // Category Chart
+        const categoryCtx = $('#categoryChart')[0].getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Điện tử', 'Thời trang', 'Gia dụng', 'Sách', 'Khác'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: [
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
                     'rgb(153, 102, 255)'
                 ]
             }]
@@ -210,6 +211,7 @@
                 }
             }
         }
+    });
     });
 </script>
 @endpush

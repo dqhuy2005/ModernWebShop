@@ -375,23 +375,27 @@
     </div>
 
     <script>
-        // Handle form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const btn = document.getElementById('loginBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span>Đang đăng nhập...';
-        });
-
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 0.5s ease';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
+        $(document).ready(function() {
+            // Handle form submission
+            $('#loginForm').on('submit', function(e) {
+                const $btn = $('#loginBtn');
+                $btn.prop('disabled', true);
+                $btn.html('<span class="spinner"></span>Đang đăng nhập...');
             });
-        }, 5000);
+
+            setTimeout(function() {
+                $('.alert').each(function() {
+                    const $alert = $(this);
+                    $alert.css({
+                        'transition': 'opacity 0.5s ease',
+                        'opacity': '0'
+                    });
+                    setTimeout(function() {
+                        $alert.remove();
+                    }, 500);
+                });
+            }, 5000);
+        });
     </script>
 </body>
 
