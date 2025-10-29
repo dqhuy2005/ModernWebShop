@@ -277,41 +277,6 @@ class CsvService
         return $labels[$method] ?? $method;
     }
 
-    public function getDownloadHeaders(string $filename): array
-    {
-        return [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-    }
-
-    /**
-     * Get download headers for Excel files
-     *
-     * @param string $filename
-     * @return array
-     */
-    public function getExcelDownloadHeaders(string $filename): array
-    {
-        return [
-            'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-    }
-
-    /**
-     * Generate Excel HTML format
-     * Excel can open HTML tables as native Excel format
-     *
-     * @param array $config
-     * @return string
-     */
     protected function generateExcelHtml(array $config): string
     {
         $title = $config['title'] ?? 'Export';
@@ -326,7 +291,6 @@ class CsvService
         $html .= ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
         $html .= ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
 
-        // Styles
         $html .= '<Styles>' . "\n";
         $html .= '<Style ss:ID="Header">' . "\n";
         $html .= '<Font ss:Bold="1" ss:Color="#FFFFFF"/>' . "\n";
@@ -338,28 +302,23 @@ class CsvService
         $html .= '</Style>' . "\n";
         $html .= '</Styles>' . "\n";
 
-        // Worksheet
         $html .= '<Worksheet ss:Name="' . htmlspecialchars($title) . '">' . "\n";
         $html .= '<Table>' . "\n";
 
-        // Column widths
         foreach ($headers as $header) {
-            $width = strlen($header) * 10; // Approximate width
+            $width = strlen($header) * 10;
             $html .= '<Column ss:Width="' . max($width, 60) . '"/>' . "\n";
         }
 
-        // Header row
         $html .= '<Row>' . "\n";
         foreach ($headers as $header) {
             $html .= '<Cell ss:StyleID="Header"><Data ss:Type="String">' . htmlspecialchars($header) . '</Data></Cell>' . "\n";
         }
         $html .= '</Row>' . "\n";
 
-        // Data rows
         foreach ($data as $row) {
             $html .= '<Row>' . "\n";
             foreach ($row as $cell) {
-                // Detect data type
                 $type = is_numeric($cell) ? 'Number' : 'String';
                 $html .= '<Cell ss:StyleID="Default"><Data ss:Type="' . $type . '">' . htmlspecialchars($cell) . '</Data></Cell>' . "\n";
             }
