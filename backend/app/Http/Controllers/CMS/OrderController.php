@@ -119,7 +119,7 @@ class OrderController extends Controller
     public function create()
     {
         try {
-            $users = User::select('id', 'fullname', 'role_id')
+            $users = User::select('id', 'fullname', 'role_id', 'email')
                 ->where('status', true)
                 ->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))
                 ->orderBy('fullname')

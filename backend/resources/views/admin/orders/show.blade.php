@@ -7,14 +7,15 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-file-invoice me-2"></i>Order #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
+                    <i class="fas fa-file-invoice me-2"></i>Order #{{ $order->id }}
                 </h1>
                 <span class="badge bg-{{ $order->status_badge_color }} mt-2 px-3 py-2">
                     {{ $order->status_label }}
                 </span>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-warning {{ $order->status === 'cancelled' ? 'd-none' : '' }}">
+                <a href="{{ route('admin.orders.edit', $order->id) }}"
+                    class="btn btn-warning {{ $order->status === 'cancelled' ? 'd-none' : '' }}">
                     <i class="fas fa-edit me-1"></i>Edit
                 </a>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">
@@ -27,9 +28,6 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Information</h5>
-                </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -63,9 +61,6 @@
             </div>
 
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Products</h5>
-                </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
@@ -118,12 +113,12 @@
             <!-- Activity Timeline -->
             <div class="card mt-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Order Activity Timeline</h5>
+                    <h5 class="mb-0">Order Activity Timeline</h5>
                 </div>
                 <div class="card-body">
-                    @if($order->activities->count() > 0)
+                    @if ($order->activities->count() > 0)
                         <div class="timeline">
-                            @foreach($order->activities as $activity)
+                            @foreach ($order->activities as $activity)
                                 <div class="timeline-item">
                                     <div class="timeline-marker bg-{{ $activity->action_color }}">
                                         <i class="fas {{ $activity->action_icon }} text-white"></i>
@@ -131,16 +126,18 @@
                                     <div class="timeline-content">
                                         <div class="d-flex justify-content-between align-items-start mb-1">
                                             <h6 class="mb-0">{{ $activity->formatted_description }}</h6>
-                                            <small class="text-muted">{{ $activity->created_at->format('d/m/Y H:i') }}</small>
+                                            <small
+                                                class="text-muted">{{ $activity->created_at->format('d/m/Y H:i') }}</small>
                                         </div>
                                         <div class="text-muted small">
-                                            @if($activity->user)
+                                            @if ($activity->user)
                                                 <i class="fas fa-user me-1"></i>{{ $activity->user->fullname }}
                                             @else
                                                 <i class="fas fa-robot me-1"></i>System
                                             @endif
-                                            @if($activity->ip_address)
-                                                <span class="ms-2"><i class="fas fa-globe me-1"></i>{{ $activity->ip_address }}</span>
+                                            @if ($activity->ip_address)
+                                                <span class="ms-2"><i
+                                                        class="fas fa-globe me-1"></i>{{ $activity->ip_address }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -159,9 +156,6 @@
 
         <div class="col-lg-4">
             <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Summary</h5>
-                </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Total Products:</span>

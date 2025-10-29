@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-edit me-2"></i>Edit Order #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
+                    <i class="fas fa-edit me-2"></i>Edit Order #{{ $order->id  }}
                 </h1>
             </div>
             <div class="d-flex gap-2">
@@ -36,11 +36,6 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle me-2"></i>Order Information
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="user_id" class="form-label fw-bold">
@@ -113,9 +108,7 @@
 
                 <div class="card mb-4">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-shopping-cart me-2"></i>Products
-                        </h5>
+                        <h5 class="card-title mb-0">Products</h5>
                         <button type="button" class="btn btn-sm btn-primary" id="addProductBtn">
                             <i class="fas fa-plus me-1"></i>Select Products
                         </button>
@@ -184,11 +177,6 @@
 
             <div class="col-lg-4">
                 <div class="card">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-calculator me-2"></i>Order Summary
-                        </h5>
-                    </div>
                     <div class="card-body">
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">

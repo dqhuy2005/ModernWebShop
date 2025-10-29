@@ -38,9 +38,7 @@
                         @if ($user->id === auth()->id())
                             <span class="badge bg-primary mb-2">You</span>
                         @endif
-                        <p class="text-muted mb-0">
-                            <i class="fas fa-envelope me-1"></i>{{ $user->email }}
-                        </p>
+                        <p class="text-muted mb-0">{{ $user->email }}</p>
                     </div>
                 </div>
 
