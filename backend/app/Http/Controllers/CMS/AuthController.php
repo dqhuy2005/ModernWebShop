@@ -135,8 +135,10 @@ class AuthController extends Controller
 
             $this->mergeSessionCartToDatabase($user->id);
 
-            return redirect()->route('home')
-                ->with('success', 'Đăng nhập thành công!');
+            return response()->view('user.auth.oauth-close', [
+                'success' => true,
+                'message' => 'Đăng nhập thành công!'
+            ]);
 
         } catch (\Exception $e) {
             logger()->error('Google OAuth login error: ' . $e->getMessage());

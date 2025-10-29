@@ -69,7 +69,7 @@
                                     Facebook
                                 </button>
 
-                                <a href="{{ route('auth.google') }}"
+                                <button type="button" id="googleLoginBtn"
                                     class="btn btn-outline-danger d-flex align-items-center justify-content-center py-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                         viewBox="0 0 48 48" class="me-2">
@@ -83,8 +83,9 @@
                                             d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
                                         <path fill="none" d="M0 0h48v48H0z" />
                                     </svg>
-                                    Google
-                                </a>
+                                    <span id="googleLoginText">Google</span>
+                                    <span id="googleLoginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                                </button>
                             </div>
 
                             <div class="text-center mt-4">
@@ -150,6 +151,17 @@
             padding: 0 10px;
             z-index: 1;
         }
+
+        #googleLoginBtn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
     </style>
 @endpush
 
@@ -160,7 +172,6 @@
             const $togglePasswordBtn = $('#togglePassword');
             const $passwordWrapper = $('.password-input-wrapper');
 
-            // Function to toggle password visibility
             function togglePasswordVisibility() {
                 const $icon = $togglePasswordBtn.find('i');
 
@@ -173,7 +184,6 @@
                 }
             }
 
-            // Function to toggle button visibility based on input content
             function toggleButtonVisibility() {
                 if ($passwordInput.val().length > 0) {
                     $togglePasswordBtn.removeClass('d-none');
@@ -181,24 +191,114 @@
                 } else {
                     $togglePasswordBtn.addClass('d-none');
                     $passwordWrapper.removeClass('has-content');
-                    // Reset password type to password when empty
                     $passwordInput.attr('type', 'password');
                     $togglePasswordBtn.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
                 }
             }
 
-            // Show/hide toggle button on input
             $passwordInput.on('input', function() {
                 toggleButtonVisibility();
             });
 
-            // Toggle password visibility on button click
             $togglePasswordBtn.on('click', function() {
                 togglePasswordVisibility();
             });
 
-            // Check on page load (in case of validation errors or autofill)
             toggleButtonVisibility();
+
+            /* OAuth Login  */
+            let oauthPopup = null;
+            let oauthCheckInterval = null;
+
+            $('#googleLoginBtn').on('click', function() {
+                const $btn = $(this);
+                const $btnText = $('#googleLoginText');
+                const $btnSpinner = $('#googleLoginSpinner');
+
+                $btn.prop('disabled', true);
+                $btnText.text('Đang xử lý...');
+                $btnSpinner.removeClass('d-none');
+
+                const width = 800;
+                const height = 600;
+                const left = (screen.width / 2) - (width / 2);
+                const top = (screen.height / 2) - (height / 2);
+
+                oauthPopup = window.open(
+                    '{{ route('auth.google') }}',
+                    'GoogleOAuthLogin',
+                    `width=${width},height=${height},top=${top},left=${left},toolbar=no,menubar=no,scrollbars=yes,resizable=yes,status=no`
+                );
+
+                if (!oauthPopup || oauthPopup.closed || typeof oauthPopup.closed === 'undefined') {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Popup bị chặn! Vui lòng cho phép popup cho trang web này.');
+                    } else {
+                        alert('Popup bị chặn! Vui lòng cho phép popup cho trang web này.');
+                    }
+                    resetButton();
+                    return;
+                }
+
+                oauthCheckInterval = setInterval(checkOAuthStatus, 500);
+            });
+
+            function checkOAuthStatus() {
+                try {
+                    // Check if popup is closed
+                    if (!oauthPopup || oauthPopup.closed) {
+                        clearInterval(oauthCheckInterval);
+
+                        // Show success message and redirect
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success('Đăng nhập thành công!');
+                        }
+
+                        // Redirect to home page
+                        setTimeout(() => {
+                            window.location.href = '{{ route('home') }}';
+                        }, 500);
+                        return;
+                    }
+
+                    // Try to detect if popup has completed OAuth
+                    try {
+                        // This will throw error if popup is on different domain (Google)
+                        const popupUrl = oauthPopup.location.href;
+
+                        // If we can access the URL and it's our callback
+                        if (popupUrl.indexOf(window.location.origin) !== -1 &&
+                            popupUrl.indexOf('auth/google/callback') !== -1) {
+                            // OAuth callback detected, popup will close itself
+                            // Just wait for it to close
+                        }
+                    } catch (e) {
+                        // Cross-origin error is expected when on Google's domain
+                        // Just continue checking
+                    }
+                } catch (e) {
+                    console.error('OAuth check error:', e);
+                }
+            }
+
+            function resetButton() {
+                const $btn = $('#googleLoginBtn');
+                const $btnText = $('#googleLoginText');
+                const $btnSpinner = $('#googleLoginSpinner');
+
+                $btn.prop('disabled', false);
+                $btnText.text('Google');
+                $btnSpinner.addClass('d-none');
+            }
+
+            $(window).on('beforeunload', function() {
+                if (oauthPopup && !oauthPopup.closed) {
+                    oauthPopup.close();
+                }
+                if (oauthCheckInterval) {
+                    clearInterval(oauthCheckInterval);
+                }
+            });
         });
     </script>
 @endpush
