@@ -49,19 +49,19 @@
                         <tbody>
                             <tr>
                                 <th width="200" class="text-muted">
-                                    <i class="fas fa-id-card me-2"></i>User ID:
+                                    User ID:
                                 </th>
                                 <td><strong>#{{ $user->id }}</strong></td>
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-user me-2"></i>Full Name:
+                                    Full Name:
                                 </th>
                                 <td><strong>{{ $user->fullname }}</strong></td>
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-envelope me-2"></i>Email:
+                                    Email:
                                 </th>
                                 <td>
                                     <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
@@ -69,7 +69,7 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-phone me-2"></i>Phone:
+                                    Phone:
                                 </th>
                                 <td>
                                     @if ($user->phone)
@@ -81,7 +81,7 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-birthday-cake me-2"></i>Birthday:
+                                    Birthday:
                                 </th>
                                 <td>
                                     @if ($user->birthday)
@@ -95,7 +95,7 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-user-tag me-2"></i>Role:
+                                    Role:
                                 </th>
                                 <td>
                                     @if ($user->role)
@@ -109,11 +109,11 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-toggle-on me-2"></i>Status:
+                                    Status:
                                 </th>
                                 <td>
                                     <span class="badge {{ $user->status ? 'bg-success' : 'bg-secondary' }}">
-                                        <i class="fas fa-circle me-1"></i>{{ $user->status ? 'Active' : 'Inactive' }}
+                                        {{ $user->status ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
                             </tr>
@@ -126,7 +126,7 @@
 
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-clock me-2"></i>Created At:
+                                    Created At:
                                 </th>
                                 <td>
                                     {{ $user->created_at->format('d/m/Y H:i:s') }}
@@ -135,7 +135,7 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">
-                                    <i class="fas fa-sync me-2"></i>Updated At:
+                                    Updated At:
                                 </th>
                                 <td>
                                     {{ $user->updated_at->format('d/m/Y H:i:s') }}
@@ -145,7 +145,7 @@
                             @if ($user->deleted_at)
                                 <tr>
                                     <th class="text-muted">
-                                        <i class="fas fa-trash me-2"></i>Deleted At:
+                                        Deleted At:
                                     </th>
                                     <td class="text-danger">
                                         {{ $user->deleted_at->format('d/m/Y H:i:s') }}

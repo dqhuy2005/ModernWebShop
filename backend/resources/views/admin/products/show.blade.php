@@ -40,7 +40,6 @@
                                 <td>
                                     @if ($product->category)
                                         <span class="badge bg-info">
-                                            <i class="fas fa-folder me-1"></i>
                                             {{ $product->category->name }}
                                         </span>
                                     @else
@@ -77,7 +76,7 @@
                                 <td>
                                     @if ($product->is_hot)
                                         <span class="badge bg-warning">
-                                            <i class="fas fa-fire me-1"></i>Hot
+                                            Hot
                                         </span>
                                     @else
                                         <span class="badge bg-secondary">Normal</span>
@@ -98,7 +97,6 @@
                                 <td class="fw-bold">Views:</td>
                                 <td>
                                     <span class="badge bg-primary">
-                                        <i class="fas fa-eye me-1"></i>
                                         {{ number_format($product->views ?? 0) }}
                                     </span>
                                 </td>
@@ -109,7 +107,6 @@
                                     <td>
                                         <a href="{{ route('admin.products.show', $product->parent_id) }}"
                                             class="text-decoration-none">
-                                            <i class="fas fa-link me-1"></i>
                                             Product #{{ $product->parent_id }}
                                         </a>
                                     </td>
@@ -118,7 +115,6 @@
                             <tr>
                                 <td class="fw-bold">Created At:</td>
                                 <td>
-                                    <i class="fas fa-calendar-plus text-success me-2"></i>
                                     <strong>{{ $product->created_at->format('d M Y, H:i') }}</strong>
                                     <span class="text-muted ms-2">({{ $product->created_at->diffForHumans() }})</span>
                                 </td>
@@ -126,7 +122,6 @@
                             <tr>
                                 <td class="fw-bold">Last Updated:</td>
                                 <td>
-                                    <i class="fas fa-calendar-edit text-warning me-2"></i>
                                     <strong>{{ $product->updated_at->format('d M Y, H:i') }}</strong>
                                     <span class="text-muted ms-2">({{ $product->updated_at->diffForHumans() }})</span>
                                 </td>

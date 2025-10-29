@@ -15,9 +15,9 @@
                     <i class="fas fa-file-excel me-2"></i>Export Excel
                 </a>
 
-                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importModal">
+                {{-- <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importModal">
                     <i class="fas fa-file-import me-2"></i>Import Excel
-                </button>
+                </button> --}}
 
                 <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Add
