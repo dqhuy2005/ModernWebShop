@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
+use App\Models\OauthAccount;
 use App\Repository\CartRepository;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -70,6 +72,78 @@ class AuthController extends Controller
         return redirect()->back()
             ->with('error', 'Email hoặc mật khẩu không đúng.')
             ->withInput();
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+
+            $oauthAccount = OauthAccount::where('provider', 'google')
+                ->where('provider_id', $googleUser->getId())
+                ->first();
+
+            if ($oauthAccount) {
+                $user = $oauthAccount->user;
+
+                $oauthAccount->update([
+                    'provider_token' => $googleUser->token,
+                    'provider_refresh_token' => $googleUser->refreshToken,
+                ]);
+            } else {
+                $user = User::where('email', $googleUser->getEmail())->first();
+
+                if ($user) {
+                    OauthAccount::create([
+                        'user_id' => $user->id,
+                        'provider' => 'google',
+                        'provider_id' => $googleUser->getId(),
+                        'provider_token' => $googleUser->token,
+                        'provider_refresh_token' => $googleUser->refreshToken,
+                    ]);
+                } else {
+                    $user = User::create([
+                        'fullname' => $googleUser->getName(),
+                        'email' => $googleUser->getEmail(),
+                        'image' => $googleUser->getAvatar(),
+                        'role_id' => 2,
+                        'status' => 1,
+                        'password' => Hash::make(uniqid()),
+                    ]);
+
+                    OauthAccount::create([
+                        'user_id' => $user->id,
+                        'provider' => 'google',
+                        'provider_id' => $googleUser->getId(),
+                        'provider_token' => $googleUser->token,
+                        'provider_refresh_token' => $googleUser->refreshToken,
+                    ]);
+                }
+            }
+
+            if ($user->status == 0) {
+                return redirect()->route('login')
+                    ->with('error', 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.');
+            }
+
+            Auth::login($user, true);
+
+            $this->mergeSessionCartToDatabase($user->id);
+
+            return redirect()->route('home')
+                ->with('success', 'Đăng nhập thành công!');
+
+        } catch (\Exception $e) {
+            logger()->error('Google OAuth login error: ' . $e->getMessage());
+
+            return redirect()->route('login')
+                ->with('error', 'Đăng nhập Google thất bại. Vui lòng thử lại.');
+        }
     }
 
     public function logout(Request $request)

@@ -61,6 +61,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Role::class);
     }
 
+    public function oauthAccounts()
+    {
+        return $this->hasMany(OauthAccount::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role && $this->role->isAdmin();

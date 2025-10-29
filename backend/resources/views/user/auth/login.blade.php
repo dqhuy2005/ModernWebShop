@@ -69,7 +69,7 @@
                                     Facebook
                                 </button>
 
-                                <button type="button"
+                                <a href="{{ route('auth.google') }}"
                                     class="btn btn-outline-danger d-flex align-items-center justify-content-center py-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                         viewBox="0 0 48 48" class="me-2">
@@ -84,7 +84,7 @@
                                         <path fill="none" d="M0 0h48v48H0z" />
                                     </svg>
                                     Google
-                                </button>
+                                </a>
                             </div>
 
                             <div class="text-center mt-4">

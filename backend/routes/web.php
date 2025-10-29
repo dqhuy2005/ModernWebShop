@@ -62,6 +62,9 @@ Route::middleware('guest')->group(function () {
     })->name('login');
     Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
 
+    Route::get('auth/google', [CMSAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('auth/google/callback', [CMSAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
     Route::get('register', function() {
         return view('user.auth.register');
     })->name('register');
