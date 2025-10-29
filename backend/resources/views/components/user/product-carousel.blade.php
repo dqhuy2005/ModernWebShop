@@ -230,58 +230,58 @@
 </style>
 
 <script>
-    $(document).ready(function() {
-        let currentProductSlides = {};
+    let currentProductSlides = {};
 
-        @foreach ($categories ?? [] as $index => $category)
-            currentProductSlides[{{ $index }}] = 0;
-        @endforeach
+    @foreach ($categories ?? [] as $index => $category)
+        currentProductSlides[{{ $index }}] = 0;
+    @endforeach
 
-        window.switchCategory = function(categoryIndex) {
-            $('.category-tab').removeClass('active');
-            $('.carousel-container').removeClass('active');
+    function switchCategory(categoryIndex) {
+        $('.category-tab').removeClass('active');
+        $('.carousel-container').removeClass('active');
 
-            $('.category-tab').eq(categoryIndex).addClass('active');
-            $('#carousel-' + categoryIndex).addClass('active');
-        };
+        $('.category-tab').eq(categoryIndex).addClass('active');
+        $('#carousel-' + categoryIndex).addClass('active');
+    }
 
-        window.moveProductSlide = function(direction, categoryIndex) {
-            const $track = $('#track-' + categoryIndex);
-            const $slides = $track.find('.carousel-slide');
-            const totalSlides = $slides.length;
+    function moveProductSlide(direction, categoryIndex) {
+        const $track = $('#track-' + categoryIndex);
+        const $slides = $track.find('.carousel-slide');
+        const totalSlides = $slides.length;
 
-            let slidesPerView = 4;
-            if ($(window).width() <= 480) slidesPerView = 1;
-            else if ($(window).width() <= 768) slidesPerView = 2;
-            else if ($(window).width() <= 1024) slidesPerView = 3;
+        let slidesPerView = 4;
+        if ($(window).width() <= 480) slidesPerView = 1;
+        else if ($(window).width() <= 768) slidesPerView = 2;
+        else if ($(window).width() <= 1024) slidesPerView = 3;
 
-            const maxSlide = Math.ceil(totalSlides / slidesPerView) - 1;
+        const maxSlide = Math.ceil(totalSlides / slidesPerView) - 1;
 
-            currentProductSlides[categoryIndex] += direction;
+        currentProductSlides[categoryIndex] += direction;
 
-            if (currentProductSlides[categoryIndex] < 0) {
-                currentProductSlides[categoryIndex] = maxSlide;
-            } else if (currentProductSlides[categoryIndex] > maxSlide) {
-                currentProductSlides[categoryIndex] = 0;
-            }
-
-            showProductSlide(categoryIndex);
-        };
-
-        function showProductSlide(categoryIndex) {
-            const $track = $('#track-' + categoryIndex);
-
-            let slidesPerView = 4;
-            if ($(window).width() <= 480) slidesPerView = 1;
-            else if ($(window).width() <= 768) slidesPerView = 2;
-            else if ($(window).width() <= 1024) slidesPerView = 3;
-
-            const slideWidth = 100 / slidesPerView;
-            const offset = -currentProductSlides[categoryIndex] * 100;
-
-            $track.css('transform', `translateX(${offset}%)`);
+        if (currentProductSlides[categoryIndex] < 0) {
+            currentProductSlides[categoryIndex] = maxSlide;
+        } else if (currentProductSlides[categoryIndex] > maxSlide) {
+            currentProductSlides[categoryIndex] = 0;
         }
 
+        showProductSlide(categoryIndex);
+    }
+
+    function showProductSlide(categoryIndex) {
+        const $track = $('#track-' + categoryIndex);
+
+        let slidesPerView = 4;
+        if ($(window).width() <= 480) slidesPerView = 1;
+        else if ($(window).width() <= 768) slidesPerView = 2;
+        else if ($(window).width() <= 1024) slidesPerView = 3;
+
+        const slideWidth = 100 / slidesPerView;
+        const offset = -currentProductSlides[categoryIndex] * 100;
+
+        $track.css('transform', `translateX(${offset}%)`);
+    }
+
+    $(document).ready(function() {
         let resizeTimer;
         $(window).on('resize', function() {
             clearTimeout(resizeTimer);

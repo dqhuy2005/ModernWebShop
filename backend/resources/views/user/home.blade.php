@@ -97,27 +97,11 @@
                     imageObserver.observe(this);
                 });
             } else {
-                // Fallback for browsers that don't support IntersectionObserver
                 $images.each(function() {
                     const $img = $(this);
                     $img.attr('src', $img.data('src'));
                     $img.removeAttr('data-src');
                 });
-            }
-        });
-
-        $(document).on('click', '.btn-outline-secondary', function(e) {
-            e.preventDefault();
-            const icon = $(this).find('i');
-
-            if (icon.hasClass('far')) {
-                icon.removeClass('far').addClass('fas');
-                $(this).removeClass('btn-outline-secondary').addClass('btn-danger text-white');
-                toastr.success('Added to wishlist!');
-            } else {
-                icon.removeClass('fas').addClass('far');
-                $(this).removeClass('btn-danger text-white').addClass('btn-outline-secondary');
-                toastr.info('Removed from wishlist!');
             }
         });
     </script>
