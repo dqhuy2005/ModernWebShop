@@ -1,49 +1,41 @@
 <header class="admin-header bg-white shadow-sm">
-    <nav class="navbar navbar-expand-lg navbar-light px-4">
-        <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard.index') }}">
-            <i class="fas fa-store"></i> CMS - ModernWebShop
-        </a>
+    <nav class="navbar navbar-light px-4">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-link d-lg-none me-2" id="sidebarToggle" type="button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard.index') }}">
+                <i class="fas fa-store"></i> CMS - ModernWebShop
+            </a>
+        </div>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="adminNavbar">
-            <ul class="navbar-nav ms-auto">
-                {{-- <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> Xem trang chủ
-                    </a>
-                </li> --}}
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="adminUserDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-shield"></i> {{ Auth::user()->name }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-user-cog"></i> Tài khoản
-                            </a>
-                        </li>
-                        {{-- <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-cog"></i> Cài đặt
-                            </a>
-                        </li> --}}
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{{ route('admin.logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+        <div class="ms-auto">
+            <span class="text-muted">
+                <i class="fas fa-user-shield"></i> {{ Auth::user()->fullname }}
+            </span>
         </div>
     </nav>
 </header>
+
+<style>
+    #sidebarToggle {
+        color: #333;
+        font-size: 1.25rem;
+        padding: 0.25rem 0.5rem;
+        text-decoration: none;
+    }
+
+    #sidebarToggle:hover {
+        color: #0d6efd;
+    }
+
+    #sidebarToggle:focus {
+        box-shadow: none;
+    }
+
+    @media (min-width: 769px) {
+        #sidebarToggle {
+            display: none !important;
+        }
+    }
+</style>

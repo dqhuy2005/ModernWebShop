@@ -63,8 +63,22 @@
                 </a>
             </li> --}}
         </ul>
+
+        <!-- Logout button at bottom -->
+        <div class="sidebar-footer mt-auto">
+            <form action="{{ route('admin.logout') }}" method="POST" id="logoutForm">
+                @csrf
+                <button type="submit" class="nav-link logout-btn w-100 text-start border-0">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
     </nav>
 </aside>
+
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <style>
     .admin-sidebar {
@@ -74,7 +88,49 @@
         top: 60px;
         left: 0;
         overflow-y: auto;
-        z-index: 100;
+        z-index: 1001;
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        flex: 1;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 60px);
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        transition: opacity 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .admin-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .admin-sidebar.show {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
     }
 
     .admin-sidebar .nav-link {
@@ -97,6 +153,26 @@
     }
 
     .admin-sidebar .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .logout-btn {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+    .logout-btn:hover {
+        color: #fff;
+        background-color: rgba(220, 53, 69, 0.2);
+        border-left-color: #dc3545;
+    }
+
+    .logout-btn i {
         width: 20px;
         margin-right: 10px;
     }

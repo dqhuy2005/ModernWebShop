@@ -137,6 +137,32 @@
                     }
                 });
             }
+
+            $('#sidebarToggle').on('click', function() {
+                $('.admin-sidebar').toggleClass('show');
+                $('#sidebarOverlay').toggleClass('show');
+            });
+
+            $('#sidebarOverlay').on('click', function() {
+                $('.admin-sidebar').removeClass('show');
+                $('#sidebarOverlay').removeClass('show');
+            });
+
+            $(document).on('click', function(e) {
+                if ($(window).width() <= 768) {
+                    if (!$(e.target).closest('.admin-sidebar, #sidebarToggle').length) {
+                        $('.admin-sidebar').removeClass('show');
+                        $('#sidebarOverlay').removeClass('show');
+                    }
+                }
+            });
+
+            $(window).on('resize', function() {
+                if ($(window).width() > 768) {
+                    $('.admin-sidebar').removeClass('show');
+                    $('#sidebarOverlay').removeClass('show');
+                }
+            });
         });
 
         setTimeout(function() {
