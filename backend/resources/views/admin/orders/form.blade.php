@@ -10,7 +10,8 @@
                 <div class="col-md-6">
                     <label for="search" class="form-label small text-muted">Search</label>
                     <div class="position-relative">
-                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                        <i
+                            class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                         <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
                             placeholder="Order ID, customer name, phone, email..." value="{{ request('search') }}">
                         @if (request('search'))
@@ -28,12 +29,18 @@
                     <select name="status" id="status_filter" class="form-select">
                         <option value="">All Statuses</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                        <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
-                        <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping</option>
-                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                        <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only</option>
+                        <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed
+                        </option>
+                        <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing
+                        </option>
+                        <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping
+                        </option>
+                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed
+                        </option>
+                        <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled
+                        </option>
+                        <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only
+                        </option>
                     </select>
                 </div>
 
@@ -66,8 +73,8 @@
 
                     <div class="col-md-3">
                         <label for="price_min" class="form-label small text-muted">Min Price (₫)</label>
-                        <input type="number" name="price_min" id="price_min" class="form-control"
-                            placeholder="0" value="{{ request('price_min') }}" min="0" step="1000">
+                        <input type="number" name="price_min" id="price_min" class="form-control" placeholder="0"
+                            value="{{ request('price_min') }}" min="0" step="1000">
                     </div>
                     <div class="col-md-3">
                         <label for="price_max" class="form-label small text-muted">Max Price (₫)</label>
@@ -76,13 +83,17 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label small text-muted">Quick Date Filters</label>
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setDateFilter('today')">Today</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setDateFilter('yesterday')">Yesterday</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setDateFilter('week')">This Week</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setDateFilter('month')">This Month</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setDateFilter('last30')">Last 30 Days</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('today')">Today</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('yesterday')">Yesterday</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('week')">This Week</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('month')">This Month</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('last30')">Last 30 Days</button>
                         </div>
                     </div>
                 </div>
@@ -92,7 +103,12 @@
             <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
         </form>
 
-        @if (request('search') || request('status') || request('date_from') || request('date_to') || request('price_min') || request('price_max'))
+        @if (request('search') ||
+                request('status') ||
+                request('date_from') ||
+                request('date_to') ||
+                request('price_min') ||
+                request('price_max'))
             <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
                 <small class="text-muted">Active filters:</small>
 
@@ -189,7 +205,7 @@
             const today = new Date();
             let dateFrom, dateTo;
 
-            switch(period) {
+            switch (period) {
                 case 'today':
                     dateFrom = dateTo = formatDate(today);
                     break;

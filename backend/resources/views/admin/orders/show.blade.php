@@ -113,7 +113,7 @@
             <!-- Activity Timeline -->
             <div class="card mt-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">Order Activity Timeline</h5>
+                    <h5 class="mb-0">Activity Timeline</h5>
                 </div>
                 <div class="card-body">
                     @if ($order->activities->count() > 0)

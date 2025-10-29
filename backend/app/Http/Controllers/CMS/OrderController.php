@@ -295,8 +295,6 @@ class OrderController extends Controller
                 'note' => $request->note,
             ]);
 
-            $order->logActivity('order_updated', 'Order details updated');
-
             if ($oldStatus !== $request->status) {
                 $order->logActivity(
                     'status_changed',
