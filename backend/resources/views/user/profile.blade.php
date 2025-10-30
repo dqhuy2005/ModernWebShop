@@ -92,7 +92,7 @@
                                         <div class="row g-2">
                                             <div class="col-4">
                                                 <div class="custom-select-wrapper">
-                                                    <input type="text" class="form-control custom-select-input"
+                                                    <input type="text" class="form-control custom-select-input text-black"
                                                         id="birthday_day_display" readonly>
                                                     <input type="hidden" id="birthday_day" name="birthday_day">
                                                     <ul class="custom-select-dropdown" id="birthday_day_dropdown">
@@ -105,9 +105,9 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="custom-select-wrapper">
-                                                    <input type="text" class="form-control custom-select-input"
+                                                    <input type="text" class="form-control custom-select-input text-black"
                                                         id="birthday_month_display" readonly>
-                                                    <input type="hidden" id="birthday_month" name="birthday_month">
+                                                    <input type="hidden" id="birthday_month" name="birthday_month text-black">
                                                     <ul class="custom-select-dropdown" id="birthday_month_dropdown">
                                                         @for ($i = 1; $i <= 12; $i++)
                                                             <li data-value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
@@ -118,7 +118,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="custom-select-wrapper">
-                                                    <input type="text" class="form-control custom-select-input"
+                                                    <input type="text" class="form-control custom-select-input text-black"
                                                         id="birthday_year_display" readonly>
                                                     <input type="hidden" id="birthday_year" name="birthday_year">
                                                     <ul class="custom-select-dropdown" id="birthday_year_dropdown">
@@ -245,7 +245,7 @@
 
         .custom-select-input {
             cursor: pointer;
-            background-color: #fff;
+            color: #202732;
             padding-right: 2rem;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -255,6 +255,7 @@
 
         .custom-select-input:focus {
             border-color: #dc3545;
+            color: #202732;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
             outline: 0;
         }
