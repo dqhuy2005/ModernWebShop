@@ -76,13 +76,17 @@ class AuthController extends Controller
 
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->stateless()
+            ->redirect();
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')
+                ->stateless()
+                ->user();
 
             $oauthAccount = OauthAccount::where('provider', 'google')
                 ->where('provider_id', $googleUser->getId())
@@ -141,10 +145,26 @@ class AuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            logger()->error('Google OAuth login error: ' . $e->getMessage());
+            logger()->error('Google OAuth login error: ' . $e->getMessage(), [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-            return redirect()->route('login')
-                ->with('error', 'Đăng nhập Google thất bại. Vui lòng thử lại.');
+            // If it's an OAuth error in popup, return error view instead of redirect
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đăng nhập Google thất bại: ' . $e->getMessage()
+                ], 500);
+            }
+
+            // Return error view for popup
+            return response()->view('user.auth.oauth-close', [
+                'success' => false,
+                'message' => 'Đăng nhập thất bại. Vui lòng thử lại.'
+            ]);
         }
     }
 
