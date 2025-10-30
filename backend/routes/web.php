@@ -12,11 +12,13 @@ use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\PurchaseController;
+use App\Http\Controllers\User\ProductController as UserProductController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
+Route::get('/hot-products', [UserProductController::class, 'hotProducts'])->name('products.hot');
 Route::get('/danh-muc/{slug}.html', [HomeController::class, 'showCategory'])->name('categories.show');
-Route::get('/products/{slug}', [HomeController::class, 'showProduct'])->name('products.show');
+Route::get('/products/{slug}.html', [UserProductController::class, 'show'])->name('products.show');
 
 // Search Suggestions
 Route::get('/products/search/suggestions', [HomeController::class, 'searchSuggestions'])->name('products.search.suggestions');

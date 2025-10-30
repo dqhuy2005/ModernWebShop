@@ -81,15 +81,21 @@
 
             <div class="col-lg-6">
                 <div class="pw-product-info p-3 border rounded bg-white">
-                    <h1 class="pw-product-title">{{ $product->name }}</h1>
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <h1 class="pw-product-title mb-0">{{ $product->name }}</h1>
+                        @if ($product->is_hot)
+                            <span class="badge bg-danger ms-2">
+                                <i class="bi bi-fire"></i> HOT
+                            </span>
+                        @endif
+                    </div>
 
-                    <div class="pw-product-meta d-flex align-items-center gap-3 mb-3">
+                    <div class="pw-product-meta d-flex align-items-center flex-wrap gap-3 mb-3">
                         <div class="pw-rate">
                             {{-- placeholder rating: if you have reviews, replace accordingly --}}
                             <span class="text-warning">★★★★☆</span>
                             <small class="text-muted ms-2">(0 đánh giá)</small>
                         </div>
-                        <div class="pw-sold text-muted">Lượt xem: {{ $product->views ?? 0 }}</div>
                     </div>
 
                     <div class="pw-product-price-large mb-3">{{ $product->formatted_price }}</div>
@@ -143,6 +149,16 @@
     <style>
         .product-detail-page {
             color: #23262b;
+        }
+
+        .badge.bg-danger {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.6rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
         .pw-product-gallery {

@@ -105,4 +105,16 @@ class Product extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+
+    public function productViews()
+    {
+        return $this->hasMany(ProductView::class);
+    }
+
+    public function getRecentViewsCount(int $days = 7): int
+    {
+        return $this->productViews()
+            ->where('viewed_at', '>=', now()->subDays($days))
+            ->count();
+    }
 }
