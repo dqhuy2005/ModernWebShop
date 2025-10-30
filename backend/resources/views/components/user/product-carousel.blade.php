@@ -7,8 +7,7 @@
         <div class="category-tabs mb-4">
             <div class="category-tabs-wrapper">
                 @foreach ($categories ?? [] as $index => $category)
-                    <button class="category-tab {{ $index === 0 ? 'active' : '' }}"
-                        onclick="switchCategory({{ $index }})">
+                    <button class="category-tab {{ $index === 0 ? 'active' : '' }}" data-category="{{ $index }}">
                         {{ $category->name }}
                     </button>
                 @endforeach
@@ -19,7 +18,7 @@
             <div class="carousel-container {{ $categoryIndex === 0 ? 'active' : '' }}"
                 id="carousel-{{ $categoryIndex }}">
 
-                <button class="carousel-btn carousel-prev" onclick="moveProductSlide(-1, {{ $categoryIndex }})">
+                <button class="carousel-btn carousel-prev" data-direction="-1" data-category="{{ $categoryIndex }}">
                     <i class="fas fa-chevron-left"></i>
                 </button>
 
@@ -44,7 +43,7 @@
                     </div>
                 </div>
 
-                <button class="carousel-btn carousel-next" onclick="moveProductSlide(1, {{ $categoryIndex }})">
+                <button class="carousel-btn carousel-next" data-direction="1" data-category="{{ $categoryIndex }}">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
@@ -230,60 +229,85 @@
 </style>
 
 <script>
-    let currentProductSlides = {};
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentProductSlides = {};
 
-    @foreach ($categories ?? [] as $index => $category)
-        currentProductSlides[{{ $index }}] = 0;
-    @endforeach
+        @foreach ($categories ?? [] as $index => $category)
+            currentProductSlides[{{ $index }}] = 0;
+        @endforeach
 
-    function switchCategory(categoryIndex) {
-        $('.category-tab').removeClass('active');
-        $('.carousel-container').removeClass('active');
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const carouselContainers = document.querySelectorAll('.carousel-container');
 
-        $('.category-tab').eq(categoryIndex).addClass('active');
-        $('#carousel-' + categoryIndex).addClass('active');
-    }
-
-    function moveProductSlide(direction, categoryIndex) {
-        const $track = $('#track-' + categoryIndex);
-        const $slides = $track.find('.carousel-slide');
-        const totalSlides = $slides.length;
-
-        let slidesPerView = 4;
-        if ($(window).width() <= 480) slidesPerView = 1;
-        else if ($(window).width() <= 768) slidesPerView = 2;
-        else if ($(window).width() <= 1024) slidesPerView = 3;
-
-        const maxSlide = Math.ceil(totalSlides / slidesPerView) - 1;
-
-        currentProductSlides[categoryIndex] += direction;
-
-        if (currentProductSlides[categoryIndex] < 0) {
-            currentProductSlides[categoryIndex] = maxSlide;
-        } else if (currentProductSlides[categoryIndex] > maxSlide) {
-            currentProductSlides[categoryIndex] = 0;
+        function getSlidesPerView() {
+            const width = window.innerWidth;
+            if (width <= 480) return 1;
+            if (width <= 768) return 2;
+            if (width <= 1024) return 3;
+            return 4;
         }
 
-        showProductSlide(categoryIndex);
-    }
+        function switchCategory(categoryIndex) {
+            categoryTabs.forEach(tab => tab.classList.remove('active'));
+            carouselContainers.forEach(container => container.classList.remove('active'));
 
-    function showProductSlide(categoryIndex) {
-        const $track = $('#track-' + categoryIndex);
+            if (categoryTabs[categoryIndex]) {
+                categoryTabs[categoryIndex].classList.add('active');
+            }
+            const targetContainer = document.getElementById('carousel-' + categoryIndex);
+            if (targetContainer) {
+                targetContainer.classList.add('active');
+            }
+        }
 
-        let slidesPerView = 4;
-        if ($(window).width() <= 480) slidesPerView = 1;
-        else if ($(window).width() <= 768) slidesPerView = 2;
-        else if ($(window).width() <= 1024) slidesPerView = 3;
+        function moveProductSlide(direction, categoryIndex) {
+            const track = document.getElementById('track-' + categoryIndex);
+            if (!track) return;
 
-        const slideWidth = 100 / slidesPerView;
-        const offset = -currentProductSlides[categoryIndex] * 100;
+            const slides = track.querySelectorAll('.carousel-slide');
+            const totalSlides = slides.length;
+            const slidesPerView = getSlidesPerView();
+            const maxSlide = Math.ceil(totalSlides / slidesPerView) - 1;
 
-        $track.css('transform', `translateX(${offset}%)`);
-    }
+            currentProductSlides[categoryIndex] += direction;
 
-    $(document).ready(function() {
+            if (currentProductSlides[categoryIndex] < 0) {
+                currentProductSlides[categoryIndex] = maxSlide;
+            } else if (currentProductSlides[categoryIndex] > maxSlide) {
+                currentProductSlides[categoryIndex] = 0;
+            }
+
+            showProductSlide(categoryIndex);
+        }
+
+        function showProductSlide(categoryIndex) {
+            const track = document.getElementById('track-' + categoryIndex);
+            if (!track) return;
+
+            const slidesPerView = getSlidesPerView();
+            const offset = -currentProductSlides[categoryIndex] * 100;
+
+            track.style.transform = `translateX(${offset}%)`;
+        }
+
+        categoryTabs.forEach((tab, index) => {
+            tab.addEventListener('click', function() {
+                const categoryIndex = parseInt(this.getAttribute('data-category'));
+                switchCategory(categoryIndex);
+            });
+        });
+
+        const carouselButtons = document.querySelectorAll('.carousel-btn');
+        carouselButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const direction = parseInt(this.getAttribute('data-direction'));
+                const categoryIndex = parseInt(this.getAttribute('data-category'));
+                moveProductSlide(direction, categoryIndex);
+            });
+        });
+
         let resizeTimer;
-        $(window).on('resize', function() {
+        window.addEventListener('resize', function() {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
                 @foreach ($categories ?? [] as $index => $category)
@@ -291,5 +315,9 @@
                 @endforeach
             }, 250);
         });
+
+        @foreach ($categories ?? [] as $index => $category)
+            showProductSlide({{ $index }});
+        @endforeach
     });
 </script>

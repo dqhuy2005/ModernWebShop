@@ -21,6 +21,7 @@ class CartController extends Controller
 
     public function index()
     {
+        // User is not login -> redirect to login page
         if (!Auth::check()) return redirect()->route('login');
 
         if (Auth::check()) {
@@ -47,6 +48,7 @@ class CartController extends Controller
         $quantity = $request->quantity ?? 1;
 
         if (Auth::check()) {
+            // Find existing cart item
             try {
                 $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
 
@@ -63,6 +65,7 @@ class CartController extends Controller
 
                 $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
             } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                // Handle unique constraint violation by updating the existing cart item
                 $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
                 if ($cartItem) {
                     $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);

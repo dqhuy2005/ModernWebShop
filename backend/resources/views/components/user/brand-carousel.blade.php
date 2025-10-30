@@ -5,7 +5,7 @@
         </div>
 
         <div class="brand-carousel-wrapper">
-            <button class="brand-carousel-btn brand-prev" onclick="moveBrandSlide(-1)">
+            <button class="brand-carousel-btn brand-prev" id="brandPrevBtn">
                 <i class="fas fa-chevron-left"></i>
             </button>
 
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <button class="brand-carousel-btn brand-next" onclick="moveBrandSlide(1)">
+            <button class="brand-carousel-btn brand-next" id="brandNextBtn">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -45,8 +45,7 @@
                 $totalSlides = ceil(count($brands) / 6);
             @endphp
             @for ($i = 0; $i < $totalSlides; $i++)
-                <span class="brand-indicator {{ $i === 0 ? 'active' : '' }}"
-                    onclick="goToBrandSlide({{ $i }})"></span>
+                <span class="brand-indicator {{ $i === 0 ? 'active' : '' }}" data-slide="{{ $i }}"></span>
             @endfor
         </div>
     </div>
@@ -233,11 +232,15 @@
 </style>
 
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         let currentBrandSlide = 0;
+        const track = document.getElementById('brandTrack');
+        const prevBtn = document.getElementById('brandPrevBtn');
+        const nextBtn = document.getElementById('brandNextBtn');
+        const indicators = document.querySelectorAll('.brand-indicator');
 
         function getBrandsPerView() {
-            const width = $(window).width();
+            const width = window.innerWidth;
             if (width <= 576) return 2;
             if (width <= 768) return 3;
             if (width <= 992) return 4;
@@ -245,16 +248,14 @@
             return 6;
         }
 
-        window.moveBrandSlide = function(direction) {
-            const $track = $('#brandTrack');
-            const $slides = $track.find('.brand-slide');
-            const totalSlides = $slides.length;
+        function moveBrandSlide(direction) {
+            const slides = track.querySelectorAll('.brand-slide');
+            const totalSlides = slides.length;
             const brandsPerView = getBrandsPerView();
             const maxSlide = Math.ceil(totalSlides / brandsPerView) - 1;
 
             currentBrandSlide += direction;
 
-            // Wrap around
             if (currentBrandSlide < 0) {
                 currentBrandSlide = maxSlide;
             } else if (currentBrandSlide > maxSlide) {
@@ -262,35 +263,55 @@
             }
 
             showBrandSlide();
-        };
+        }
 
-        window.goToBrandSlide = function(slideIndex) {
+        function goToBrandSlide(slideIndex) {
             currentBrandSlide = slideIndex;
             showBrandSlide();
-        };
+        }
 
         function showBrandSlide() {
-            const $track = $('#brandTrack');
-            const $indicators = $('.brand-indicator');
             const brandsPerView = getBrandsPerView();
-
             const offset = -currentBrandSlide * 100;
-            $track.css('transform', `translateX(${offset}%)`);
+            track.style.transform = `translateX(${offset}%)`;
 
-            // Update indicators
-            $indicators.each(function(index) {
-                $(this).toggleClass('active', index === currentBrandSlide);
+            indicators.forEach(function(indicator, index) {
+                if (index === currentBrandSlide) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
             });
         }
 
-        // Recalculate on window resize
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                moveBrandSlide(-1);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                moveBrandSlide(1);
+            });
+        }
+
+        indicators.forEach(function(indicator) {
+            indicator.addEventListener('click', function() {
+                const slideIndex = parseInt(this.getAttribute('data-slide'));
+                goToBrandSlide(slideIndex);
+            });
+        });
+
         let brandResizeTimer;
-        $(window).on('resize', function() {
+        window.addEventListener('resize', function() {
             clearTimeout(brandResizeTimer);
             brandResizeTimer = setTimeout(function() {
                 currentBrandSlide = 0;
                 showBrandSlide();
             }, 250);
         });
+
+        showBrandSlide();
     });
 </script>

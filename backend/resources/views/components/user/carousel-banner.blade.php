@@ -89,7 +89,7 @@
                 @php
                     $banners = [
                         [
-                            'title' => 'Bộ Sưu Tập Laptop Mới 2025',
+                            'title' => 'Bộ Sưu Tập Laptop Mới',
                             'subtitle' => 'Giảm giá lên đến 30% cho các sản phẩm được chọn',
                             'image' => 'shop01.png',
                         ],
@@ -132,17 +132,16 @@
                     @endforeach
                 </div>
 
-                <button class="banner-nav banner-prev" onclick="moveBannerSlide(-1)">
+                <button class="banner-nav banner-prev" id="bannerPrevBtn">
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <button class="banner-nav banner-next" onclick="moveBannerSlide(1)">
+                <button class="banner-nav banner-next" id="bannerNextBtn">
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
-                <div class="banner-indicators">
+                <div class="banner-indicators" id="bannerIndicators">
                     @foreach ($banners as $index => $banner)
-                        <button class="indicator {{ $index === 0 ? 'active' : '' }}"
-                            onclick="goToBannerSlide({{ $index }})" data-slide="{{ $index }}">
+                        <button class="indicator {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}">
                         </button>
                     @endforeach
                 </div>
@@ -319,34 +318,84 @@
 </style>
 
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         let currentBannerSlide = 0;
+        const slides = document.querySelectorAll('.banner-slide');
+        const indicators = document.querySelectorAll('.banner-indicators .indicator');
+        const prevBtn = document.getElementById('bannerPrevBtn');
+        const nextBtn = document.getElementById('bannerNextBtn');
 
-        window.showBannerSlide = function(index) {
-            const $slides = $('.banner-slide');
-            const $indicators = $('.banner-indicators .indicator');
+        function showBannerSlide(index) {
+            // Remove active class from all slides and indicators
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
 
-            $slides.removeClass('active');
-            $indicators.removeClass('active');
-
-            if (index >= $slides.length) {
+            // Handle wrap around
+            if (index >= slides.length) {
                 currentBannerSlide = 0;
             } else if (index < 0) {
-                currentBannerSlide = $slides.length - 1;
+                currentBannerSlide = slides.length - 1;
             } else {
                 currentBannerSlide = index;
             }
 
-            $slides.eq(currentBannerSlide).addClass('active');
-            $indicators.eq(currentBannerSlide).addClass('active');
-        };
+            // Add active class to current slide and indicator
+            if (slides[currentBannerSlide]) {
+                slides[currentBannerSlide].classList.add('active');
+            }
+            if (indicators[currentBannerSlide]) {
+                indicators[currentBannerSlide].classList.add('active');
+            }
+        }
 
-        window.moveBannerSlide = function(direction) {
+        function moveBannerSlide(direction) {
             showBannerSlide(currentBannerSlide + direction);
-        };
+        }
 
-        window.goToBannerSlide = function(index) {
+        function goToBannerSlide(index) {
             showBannerSlide(index);
-        };
+        }
+
+        // Bind navigation button events
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                moveBannerSlide(-1);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                moveBannerSlide(1);
+            });
+        }
+
+        // Bind indicator button events
+        indicators.forEach(function(indicator, index) {
+            indicator.addEventListener('click', function() {
+                goToBannerSlide(index);
+            });
+        });
+
+        // Auto-play carousel (optional - every 5 seconds)
+        let autoPlayInterval = setInterval(function() {
+            moveBannerSlide(1);
+        }, 5000);
+
+        // Pause auto-play on hover
+        const carouselWrapper = document.querySelector('.banner-carousel-wrapper');
+        if (carouselWrapper) {
+            carouselWrapper.addEventListener('mouseenter', function() {
+                clearInterval(autoPlayInterval);
+            });
+
+            carouselWrapper.addEventListener('mouseleave', function() {
+                autoPlayInterval = setInterval(function() {
+                    moveBannerSlide(1);
+                }, 5000);
+            });
+        }
+
+        // Initialize first slide
+        showBannerSlide(0);
     });
 </script>
