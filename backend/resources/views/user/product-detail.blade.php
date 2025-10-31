@@ -24,24 +24,31 @@
             <div class="col-lg-6">
                 <div class="pw-product-gallery">
                     @php
+                        // Prefer product_images relationship if present
                         $images = [];
-                        if (is_array($product->image)) {
-                            $images = $product->image;
+                        if ($product->relationLoaded('images') || $product->images()->exists()) {
+                            $images = $product->images->map(function ($img) {
+                                return str_starts_with($img->path, 'http') ? $img->path : asset('storage/' . $img->path);
+                            })->values()->all();
                         } else {
-                            $decoded = @json_decode($product->image, true);
-                            if (is_array($decoded)) {
-                                $images = $decoded;
+                            if (is_array($product->image)) {
+                                $images = $product->image;
                             } else {
-                                $images = [$product->image ?: 'assets/imgs/products/default.png'];
+                                $decoded = @json_decode($product->image, true);
+                                if (is_array($decoded)) {
+                                    $images = $decoded;
+                                } else {
+                                    $images = [$product->image ?: 'assets/imgs/products/default.png'];
+                                }
                             }
-                        }
 
-                        $images = collect($images)
-                            ->map(function ($i) {
-                                return str_starts_with($i, 'http') ? $i : asset('storage/' . $i);
-                            })
-                            ->values()
-                            ->all();
+                            $images = collect($images)
+                                ->map(function ($i) {
+                                    return str_starts_with($i, 'http') ? $i : asset('storage/' . $i);
+                                })
+                                ->values()
+                                ->all();
+                        }
                     @endphp
 
                     <div id="pwCarousel" class="carousel slide pw-carousel" data-bs-ride="false">

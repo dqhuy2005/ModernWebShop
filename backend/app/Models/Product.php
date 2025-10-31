@@ -111,6 +111,38 @@ class Product extends Model
         return $this->hasMany(ProductView::class);
     }
 
+    /**
+     * Product images (1 - N)
+     */
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * Get main image path or fallback to single image field
+     */
+    public function getMainImageAttribute()
+    {
+        $first = $this->images()->first();
+        if ($first) {
+            return $first->path;
+        }
+
+        if ($this->image) {
+            if (is_array($this->image)) {
+                return $this->image[0] ?? null;
+            }
+            $decoded = @json_decode($this->image, true);
+            if (is_array($decoded)) {
+                return $decoded[0] ?? null;
+            }
+            return $this->image;
+        }
+
+        return null;
+    }
+
     public function getRecentViewsCount(int $days = 7): int
     {
         return $this->productViews()

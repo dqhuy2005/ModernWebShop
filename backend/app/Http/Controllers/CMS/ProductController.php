@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\ImageService;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -129,6 +130,7 @@ class ProductController extends BaseController
             'price' => 'required|integer|min:0|max:999999999',
             'currency' => 'nullable|string|max:10',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
@@ -164,9 +166,9 @@ class ProductController extends BaseController
                 $data['specifications'] = null;
             }
 
-            if ($request->hasFile('image')) {
-                $imageService = new ImageService();
+            $imageService = new ImageService();
 
+            if ($request->hasFile('image')) {
                 if (!$imageService->validateImage($request->file('image'))) {
                     return back()
                         ->withInput()
@@ -176,7 +178,34 @@ class ProductController extends BaseController
                 $data['image'] = $imageService->uploadProductImage($request->file('image'));
             }
 
-            $product = Product::create($data);
+            // Create product and then handle multiple images (if any)
+            DB::beginTransaction();
+            try {
+                $product = Product::create($data);
+
+                if ($request->hasFile('images')) {
+                    $files = $request->file('images');
+                    $sort = 0;
+                    foreach ($files as $file) {
+                        if (!$imageService->validateImage($file)) {
+                            continue;
+                        }
+                        $path = $imageService->uploadProductImage($file);
+                        ProductImage::create([
+                            'product_id' => $product->id,
+                            'path' => $path,
+                            'alt' => null,
+                            'sort_order' => $sort++,
+                            'is_primary' => false,
+                        ]);
+                    }
+                }
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
 
             if ($request->input('action') === 'save_and_continue') {
                 return redirect()
@@ -230,6 +259,7 @@ class ProductController extends BaseController
             'price' => 'required|integer|min:0|max:999999999',
             'currency' => 'nullable|string|max:10',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
@@ -266,9 +296,9 @@ class ProductController extends BaseController
                 $data['specifications'] = null;
             }
 
-            if ($request->hasFile('image')) {
-                $imageService = new ImageService();
+            $imageService = new ImageService();
 
+            if ($request->hasFile('image')) {
                 if (!$imageService->validateImage($request->file('image'))) {
                     return back()
                         ->withInput()
@@ -281,7 +311,34 @@ class ProductController extends BaseController
                 );
             }
 
-            $product->update($data);
+            DB::beginTransaction();
+            try {
+                $product->update($data);
+
+                if ($request->hasFile('images')) {
+                    $files = $request->file('images');
+                    $currentMax = $product->images()->max('sort_order') ?? 0;
+                    $sort = $currentMax + 1;
+                    foreach ($files as $file) {
+                        if (!$imageService->validateImage($file)) {
+                            continue;
+                        }
+                        $path = $imageService->uploadProductImage($file);
+                        ProductImage::create([
+                            'product_id' => $product->id,
+                            'path' => $path,
+                            'alt' => null,
+                            'sort_order' => $sort++,
+                            'is_primary' => false,
+                        ]);
+                    }
+                }
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
 
             return redirect()
                 ->route('admin.products.show', $product->id)

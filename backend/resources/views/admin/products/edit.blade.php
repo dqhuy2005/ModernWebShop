@@ -179,36 +179,38 @@
 
                 <div class="card mb-4">
                     <div class="card-body">
-                        <label for="" class="form-label fw-bold">Product Image</label>
-                        @if ($product->image)
-                            <div class="mb-3 text-center">
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                    class="img-fluid rounded"
-                                    style="max-height: 300px; padding: 4px; border: 1px solid #ddd;" id="current-image">
-                            </div>
-                        @endif
+                        <label for="" class="form-label fw-bold">Product Images</label>
 
                         <div class="mb-3">
+                            <div class="existing-images d-flex gap-2 flex-wrap mb-2">
+                                @foreach ($product->images as $img)
+                                    <div class="img-thumb text-center">
+                                        <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $product->name }}"
+                                            class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;" />
+                                    </div>
+                                @endforeach
+                                @if($product->image && count($product->images) == 0)
+                                    <div class="img-thumb text-center">
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                            class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;" />
+                                    </div>
+                                @endif
+                            </div>
+
                             <div class="custom-file-upload">
-                                <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
-                                    name="image" accept="image/*" onchange="previewImage(event)">
+                                <div id="images-preview" class="d-flex gap-2 flex-wrap"></div>
+
+                                <input type="file" class="d-none @error('images.*') is-invalid @enderror" id="images"
+                                    name="images[]" accept="image/*" multiple onchange="previewImages(event)">
                                 <button type="button" class="btn-select-image w-100 mt-3"
-                                    onclick="$('#image').trigger('click')">
-                                    Select image
+                                    onclick="$('#images').trigger('click')">
+                                    Select images
                                 </button>
                             </div>
 
-                            @error('image')
+                            @error('images.*')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
-                        </div>
-
-                        <div id="image-preview" class="text-center d-none">
-                            <div class="d-flex flex-column align-items-center">
-                                <label class="form-label fw-bold d-block">New Image Preview</label>
-                                <img src="" alt="Preview" class="img-fluid rounded"
-                                    style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -319,6 +321,21 @@
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        function previewImages(event) {
+            const files = event.target.files;
+            $('#images-preview').empty();
+            if (!files || !files.length) return;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const $img = $(`<div class="img-thumb"><img src="${e.target.result}" class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;"/></div>`);
+                    $('#images-preview').append($img);
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         function removeImage() {

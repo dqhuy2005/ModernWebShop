@@ -134,21 +134,19 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="" class="form-label fw-bold">Product Image</label>
+                            <label for="" class="form-label fw-bold">Product Images</label>
                             <div class="custom-file-upload">
-                                <div id="image-preview" class="text-center d-none">
-                                    <img src="" alt="Preview" class="img-fluid rounded"
-                                        style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
-                                </div>
-                                <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
-                                    name="image" accept="image/*" onchange="previewImage(event)">
+                                <div id="images-preview" class="d-flex gap-2 flex-wrap"></div>
+
+                                <input type="file" class="d-none @error('images.*') is-invalid @enderror" id="images"
+                                    name="images[]" accept="image/*" multiple onchange="previewImages(event)">
                                 <button type="button" class="btn-select-image w-100 mt-3"
-                                    onclick="$('#image').trigger('click')">
-                                    Select image
+                                    onclick="$('#images').trigger('click')">
+                                    Select images
                                 </button>
                             </div>
 
-                            @error('image')
+                            @error('images.*')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
@@ -279,6 +277,21 @@
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        function previewImages(event) {
+            const files = event.target.files;
+            $('#images-preview').empty();
+            if (!files || !files.length) return;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const $img = $(`<div class="img-thumb"><img src="${e.target.result}" class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;"/></div>`);
+                    $('#images-preview').append($img);
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         function removeImage() {
