@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use App\Models\Role;
+use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -48,10 +50,28 @@ class UserSeeder extends Seeder
 
     public function run(): void
     {
+        $adminRole = Role::where('slug', Role::ADMIN)->first();
+        
+        if ($adminRole) {
+            User::updateOrCreate(
+                ['email' => 'admin@gmail.com'],
+                [
+                    'fullname' => 'Administrator',
+                    'phone' => '0909999999',
+                    'address' => '123 Admin Street, TP. Hồ Chí Minh',
+                    'password' => Hash::make('12345@54321'),
+                    'role_id' => $adminRole->id,
+                    'status' => 1,
+                    'language' => 'vi',
+                    'birthday' => Carbon::now()->subYears(30)->format('Y-m-d'),
+                ]
+            );
+        }
+
         $users = [];
         $password = Hash::make('12345@54321');
-        $usedEmails = [];
-        $usedPhones = [];
+        $usedEmails = ['admin@gmail.com']; // Reserve admin email
+        $usedPhones = ['0909999999']; // Reserve admin phone
 
         for ($i = 1; $i <= 1000; $i++) {
             $lastName = $this->lastNames[array_rand($this->lastNames)];
@@ -77,7 +97,8 @@ class UserSeeder extends Seeder
 
             $createdAt = Carbon::now()->subDays(rand(1, 730));
 
-            $roleId = ($i === 1) ? 1 : 2;
+            // Assign role_id: 90% users (2), 10% admins (1) for variety
+            $roleId = (rand(1, 100) <= 90) ? 2 : 1;
 
             $users[] = [
                 'fullname' => $fullname,

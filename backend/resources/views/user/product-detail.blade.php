@@ -24,7 +24,6 @@
             <div class="col-lg-6">
                 <div class="pw-product-gallery">
                     @php
-                        // Prefer product_images relationship if present
                         $images = [];
                         if ($product->relationLoaded('images') || $product->images()->exists()) {
                             $images = $product->images->map(function ($img) {
@@ -167,11 +166,6 @@
         .badge.bg-danger {
             font-size: 0.85rem;
             padding: 0.4rem 0.6rem;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
         }
 
         .pw-product-gallery {
