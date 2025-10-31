@@ -21,28 +21,26 @@ class ProductController extends Controller
     public function show(Request $request, string $slug)
     {
         try {
-            // Get product with relationships (cache 10 minutes)
             $product = Cache::remember(
                 "product_detail_{$slug}",
                 now()->addMinutes(10),
                 function () use ($slug) {
-                    return Product::with(['category', 'orderDetails'])
+                    return Product::with(['category', 'images' => function($query) {
+                        $query->orderBy('sort_order')->orderBy('id');
+                    }])
                         ->where('slug', $slug)
                         ->firstOrFail();
                 }
             );
 
-            // Track view (async via event)
             $this->viewService->trackView(
                 $product,
                 $request->ip(),
                 $request->userAgent()
             );
 
-            // Get related products
             $relatedProducts = $this->getRelatedProducts($product);
 
-            // Get view statistics (cached)
             $viewStats = [
                 'total_views' => $product->view_count ?? $product->views ?? 0,
                 'recent_views_7days' => $this->viewService->getRecentViewCount($product->id, 7),
@@ -73,6 +71,8 @@ class ProductController extends Controller
             function () use ($product, $limit) {
                 return Product::where('category_id', $product->category_id)
                     ->where('id', '!=', $product->id)
+                    ->where('status', true)
+                    ->select('id', 'name', 'slug', 'image', 'price', 'views', 'is_hot')
                     ->orderBy('views', 'desc')
                     ->limit($limit)
                     ->get();
@@ -85,9 +85,11 @@ class ProductController extends Controller
      */
     public function hotProducts()
     {
-        // Get hot products with pagination
         $hotProducts = Product::where('is_hot', true)
-            ->orderBy('view_count', 'desc')
+            ->where('status', true)
+            ->select('id', 'name', 'slug', 'image', 'price', 'views', 'is_hot', 'category_id')
+            ->with('category:id,name')
+            ->orderBy('views', 'desc')
             ->paginate(20);
 
         return view('user.hot-products', compact('hotProducts'));

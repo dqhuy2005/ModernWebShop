@@ -14,11 +14,9 @@ class ProductImage extends Model
         'path',
         'alt',
         'sort_order',
-        'is_primary',
     ];
 
     protected $casts = [
-        'is_primary' => 'boolean',
         'sort_order' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

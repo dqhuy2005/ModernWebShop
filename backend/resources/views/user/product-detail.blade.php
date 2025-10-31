@@ -51,32 +51,38 @@
                         }
                     @endphp
 
-                    <div id="pwCarousel" class="carousel slide pw-carousel" data-bs-ride="false">
-                        <div class="carousel-inner pw-carousel-inner">
-                            @foreach ($images as $index => $img)
-                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }} pw-carousel-item">
-                                    <img src="{{ $img }}" class="d-block w-100 pw-main-img"
-                                        alt="{{ $product->name }}">
-                                </div>
-                            @endforeach
+                    {{-- Main Image Carousel --}}
+                    <div class="pw-main-image-wrapper mb-3">
+                        <div id="pwCarousel" class="carousel slide pw-carousel" data-bs-ride="false">
+                            <div class="carousel-inner pw-carousel-inner">
+                                @foreach ($images as $index => $img)
+                                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }} pw-carousel-item">
+                                        <img src="{{ $img }}" class="d-block w-100 pw-main-img"
+                                            alt="{{ $product->name }}">
+                                    </div>
+                                @endforeach
+
+                                @if (count($images) > 1)
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#pwCarousel"
+                                        data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#pwCarousel"
+                                        data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                @endif
+                            </div>
                         </div>
+                    </div>
 
-                        @if (count($images) > 1)
-                            <button class="carousel-control-prev" type="button" data-bs-target="#pwCarousel"
-                                data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#pwCarousel"
-                                data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        @endif
-
-                        <div class="pw-thumbs d-flex gap-2 mt-3">
+                    {{-- Thumbnails --}}
+                    <div class="pw-thumbnails-wrapper">
+                        <div class="pw-thumbs d-flex gap-2">
                             @foreach ($images as $index => $img)
-                                <div class="pw-thumb-item" data-index="{{ $index }}">
+                                <div class="pw-thumb-item {{ $index == 0 ? 'active' : '' }}" data-index="{{ $index }}">
                                     <img src="{{ $img }}" alt="thumb-{{ $index }}"
                                         class="img-thumbnail pw-thumb-img">
                                 </div>
@@ -173,21 +179,77 @@
             padding: .5rem;
         }
 
+        .pw-main-image-wrapper {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pw-carousel-inner {
+            position: relative;
+        }
+
+        .pw-carousel-inner .carousel-control-prev,
+        .pw-carousel-inner .carousel-control-next {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.8;
+        }
+
+        .pw-carousel-inner .carousel-control-prev {
+            left: 10px;
+        }
+
+        .pw-carousel-inner .carousel-control-next {
+            right: 10px;
+        }
+
+        .pw-carousel-inner .carousel-control-prev:hover,
+        .pw-carousel-inner .carousel-control-next:hover {
+            opacity: 1;
+        }
+
         .pw-main-img {
             object-fit: contain;
-            height: 480px;
+            height: 360px;
+            width: 100%;
+        }
+
+        .pw-thumbnails-wrapper {
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+
+        .pw-thumbs {
+            min-width: min-content;
+        }
+
+        .pw-thumb-item {
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
         .pw-thumb-img {
             width: 80px;
             height: 60px;
             object-fit: cover;
-            cursor: pointer;
-            border: 2px solid transparent;
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+        }
+
+        .pw-thumb-item:hover .pw-thumb-img {
+            border-color: #adb5bd;
         }
 
         .pw-thumb-item.active .pw-thumb-img {
             border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
         }
 
         .pw-product-title {

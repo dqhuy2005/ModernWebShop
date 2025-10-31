@@ -183,21 +183,37 @@
 
         <div class="col-lg-4">
             <div class="card mb-4">
-
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Product Images</h5>
+                </div>
                 <div class="card-body">
-                    <label class="form-label fw-bold text-start">Product Image</label>
-
-                    <div class="text-center">
-                        @if ($product->image)
+                    @if ($product->images && $product->images->count() > 0)
+                        <div class="product-images-list">
+                            @foreach ($product->images as $index => $img)
+                                <div class="image-item mb-3">
+                                    <div class="image-wrapper text-center bg-light rounded p-2">
+                                        <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $product->name }}"
+                                            class="img-fluid rounded" style="max-height: 150px;">
+                                    </div>
+                                    <div class="image-info mt-2 text-center">
+                                        <small class="text-muted d-block">Order: {{ $img->sort_order }}</small>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @elseif ($product->image)
+                        <div class="text-center">
+                            <label class="form-label fw-bold text-start d-block mb-2">Legacy Image</label>
                             <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                 class="img-fluid rounded shadow-sm" style="max-height: 300px;">
-                        @else
-                            <div class="bg-light rounded p-5">
-                                <i class="fas fa-image fa-4x text-muted"></i>
-                                <p class="text-muted mt-3 mb-0">No image available</p>
-                            </div>
-                        @endif
-                    </div>
+                            <p class="text-muted mt-2 small">This is a legacy single image. Upload new images via Edit to use the multi-image system.</p>
+                        </div>
+                    @else
+                        <div class="text-center bg-light rounded p-5">
+                            <i class="fas fa-image fa-4x text-muted"></i>
+                            <p class="text-muted mt-3 mb-0">No images available</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -231,5 +247,25 @@
         .shadow-sm {
             box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
         }
+
+        .image-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            transition: box-shadow 0.2s;
+        }
+
+        .image-item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-wrapper {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 @endpush
+
+

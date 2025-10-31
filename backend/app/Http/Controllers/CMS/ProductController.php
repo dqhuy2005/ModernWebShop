@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\ImageService;
+use App\Services\ProductService;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends BaseController
 {
+    protected ProductService $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
     protected function getProductStatistics($query = null)
     {
         $baseQuery = $query ? clone $query : Product::query();
@@ -148,64 +155,19 @@ class ProductController extends BaseController
         }
 
         try {
-            $data = $request->except(['image', 'specifications', 'action']);
+            $data = $request->except(['image', 'images', 'specifications', 'action']);
 
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
             $data['currency'] = $request->input('currency', 'VND');
+            $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
 
-            if ($request->has('specifications') && is_array($request->specifications)) {
-                $specs = [];
-                foreach ($request->specifications as $spec) {
-                    if (is_array($spec) && !empty($spec['key']) && !empty($spec['value'])) {
-                        $specs[$spec['key']] = $spec['value'];
-                    }
-                }
-                $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
-            } else {
-                $data['specifications'] = null;
-            }
-
-            $imageService = new ImageService();
-
-            if ($request->hasFile('image')) {
-                if (!$imageService->validateImage($request->file('image'))) {
-                    return back()
-                        ->withInput()
-                        ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
-                }
-
-                $data['image'] = $imageService->uploadProductImage($request->file('image'));
-            }
-
-            // Create product and then handle multiple images (if any)
-            DB::beginTransaction();
-            try {
-                $product = Product::create($data);
-
-                if ($request->hasFile('images')) {
-                    $files = $request->file('images');
-                    $sort = 0;
-                    foreach ($files as $file) {
-                        if (!$imageService->validateImage($file)) {
-                            continue;
-                        }
-                        $path = $imageService->uploadProductImage($file);
-                        ProductImage::create([
-                            'product_id' => $product->id,
-                            'path' => $path,
-                            'alt' => null,
-                            'sort_order' => $sort++,
-                            'is_primary' => false,
-                        ]);
-                    }
-                }
-
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
+            // Create product with images using service
+            $product = $this->productService->createProduct(
+                $data,
+                $request->file('image'),
+                $request->file('images', [])
+            );
 
             if ($request->input('action') === 'save_and_continue') {
                 return redirect()
@@ -226,7 +188,7 @@ class ProductController extends BaseController
     public function show($id)
     {
         try {
-            $product = Product::with('category')->findOrFail($id);
+            $product = Product::with(['category', 'images'])->findOrFail($id);
 
             return view('admin.products.show', compact('product'));
         } catch (\Exception $e) {
@@ -237,7 +199,7 @@ class ProductController extends BaseController
     public function edit($id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = Product::with('images')->findOrFail($id);
 
             $categories = Category::select('id', 'name')
                 ->orderBy('name')
@@ -278,67 +240,20 @@ class ProductController extends BaseController
 
         try {
             $product = Product::findOrFail($id);
-            $data = $request->except(['image', 'specifications', '_method', '_token']);
+            $data = $request->except(['image', 'images', 'specifications', '_method', '_token']);
 
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
             $data['currency'] = $request->input('currency', 'VND');
+            $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
 
-            if ($request->has('specifications') && is_array($request->specifications)) {
-                $specs = [];
-                foreach ($request->specifications as $spec) {
-                    if (is_array($spec) && !empty($spec['key']) && !empty($spec['value'])) {
-                        $specs[$spec['key']] = $spec['value'];
-                    }
-                }
-                $data['specifications'] = !empty($specs) ? json_encode($specs) : null;
-            } else {
-                $data['specifications'] = null;
-            }
-
-            $imageService = new ImageService();
-
-            if ($request->hasFile('image')) {
-                if (!$imageService->validateImage($request->file('image'))) {
-                    return back()
-                        ->withInput()
-                        ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
-                }
-
-                $data['image'] = $imageService->uploadProductImage(
-                    $request->file('image'),
-                    $product->image
-                );
-            }
-
-            DB::beginTransaction();
-            try {
-                $product->update($data);
-
-                if ($request->hasFile('images')) {
-                    $files = $request->file('images');
-                    $currentMax = $product->images()->max('sort_order') ?? 0;
-                    $sort = $currentMax + 1;
-                    foreach ($files as $file) {
-                        if (!$imageService->validateImage($file)) {
-                            continue;
-                        }
-                        $path = $imageService->uploadProductImage($file);
-                        ProductImage::create([
-                            'product_id' => $product->id,
-                            'path' => $path,
-                            'alt' => null,
-                            'sort_order' => $sort++,
-                            'is_primary' => false,
-                        ]);
-                    }
-                }
-
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
+            // Update product with images using service
+            $product = $this->productService->updateProduct(
+                $product,
+                $data,
+                $request->file('image'),
+                $request->file('images', [])
+            );
 
             return redirect()
                 ->route('admin.products.show', $product->id)
@@ -354,13 +269,7 @@ class ProductController extends BaseController
     {
         try {
             $product = Product::findOrFail($id);
-
-            if ($product->image) {
-                $imageService = new ImageService();
-                $imageService->deleteImage($product->image);
-            }
-
-            $product->delete();
+            $this->productService->deleteProduct($product);
 
             return redirect()
                 ->route('admin.products.index')
@@ -478,6 +387,32 @@ class ProductController extends BaseController
                 ->with('success', 'Product permanently deleted!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to permanently delete product: ' . $e->getMessage());
+        }
+    }
+
+    public function deleteImage($productId, $imageId)
+    {
+        try {
+            $product = Product::findOrFail($productId);
+            $this->productService->deleteProductImage($product, $imageId);
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Image deleted successfully!',
+                ]);
+            }
+
+            return back()->with('success', 'Image deleted successfully!');
+        } catch (\Exception $e) {
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete image: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return back()->with('error', 'Failed to delete image: ' . $e->getMessage());
         }
     }
 

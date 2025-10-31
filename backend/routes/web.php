@@ -97,6 +97,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
 
         Route::post('{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('{product}/toggle-hot', [ProductController::class, 'toggleHot'])->name('toggle-hot');
+        Route::delete('{product}/images/{image}', [ProductController::class, 'deleteImage'])->name('images.delete');
     });
 
     // Categories Management

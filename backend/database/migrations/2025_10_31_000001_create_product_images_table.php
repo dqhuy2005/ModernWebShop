@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->string('path');
             $table->string('alt')->nullable();
             $table->unsignedInteger('sort_order')->default(0)->index();
-            $table->boolean('is_primary')->default(false)->index();
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

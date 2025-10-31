@@ -184,15 +184,23 @@
                         <div class="mb-3">
                             <div class="existing-images d-flex gap-2 flex-wrap mb-2">
                                 @foreach ($product->images as $img)
-                                    <div class="img-thumb text-center">
+                                    <div class="img-thumb text-center position-relative" id="image-{{ $img->id }}">
                                         <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $product->name }}"
                                             class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;" />
+                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-image-btn"
+                                            data-image-id="{{ $img->id }}"
+                                            data-product-id="{{ $product->id }}"
+                                            style="padding: 2px 6px; font-size: 12px;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <small class="d-block text-muted mt-1">Order: {{ $img->sort_order }}</small>
                                     </div>
                                 @endforeach
                                 @if($product->image && count($product->images) == 0)
                                     <div class="img-thumb text-center">
                                         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                             class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;" />
+                                        <small class="d-block text-muted mt-1">Legacy</small>s
                                     </div>
                                 @endif
                             </div>
@@ -369,6 +377,44 @@
                 e.preventDefault();
                 toastr.error('Please fill in all required fields!');
             }
+        });
+
+        // Delete image functionality
+        $('.delete-image-btn').on('click', function(e) {
+            e.preventDefault();
+            const imageId = $(this).data('image-id');
+            const productId = $(this).data('product-id');
+            const $imageItem = $(`#image-${imageId}`);
+
+            if (!confirm('Are you sure you want to delete this image? This action cannot be undone.')) {
+                return;
+            }
+
+            $.ajax({
+                url: `/admin/products/${productId}/images/${imageId}`,
+                method: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                beforeSend: function() {
+                    $imageItem.css('opacity', '0.5');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message || 'Image deleted successfully!');
+                        $imageItem.fadeOut(300, function() {
+                            $(this).remove();
+                        });
+                    } else {
+                        toastr.error(response.message || 'Failed to delete image');
+                        $imageItem.css('opacity', '1');
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error(xhr.responseJSON?.message || 'An error occurred while deleting the image');
+                    $imageItem.css('opacity', '1');
+                }
+            });
         });
     </script>
 @endpush
