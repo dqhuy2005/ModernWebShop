@@ -550,13 +550,11 @@
                 });
             });
 
-            // Clear validation errors when user starts typing
             $('#changePasswordForm input').on('input', function() {
                 $(this).removeClass('is-invalid');
                 $(this).next('.invalid-feedback').remove();
             });
 
-            // Clear all validation when modal is closed
             $('#changePasswordModal').on('hidden.bs.modal', function() {
                 $('#changePasswordForm')[0].reset();
                 $('#changePasswordForm input').removeClass('is-invalid');
