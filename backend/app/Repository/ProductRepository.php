@@ -100,9 +100,6 @@ class ProductRepository extends BaseRepository
         return $query;
     }
 
-    /**
-     * Get new products
-     */
     public function getNewProducts($limit = 8)
     {
         return $this->model
@@ -113,9 +110,6 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
-    /**
-     * Get top selling/most viewed products
-     */
     public function getTopSellingProducts($limit = 12)
     {
         return $this->model
@@ -125,9 +119,6 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
-    /**
-     * Get hot deals products
-     */
     public function getHotDeals($limit = 8)
     {
         return $this->model
@@ -138,9 +129,6 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
-    /**
-     * Get paginated hot deals
-     */
     public function getPaginatedHotDeals($perPage = 12)
     {
         return $this->model
@@ -150,9 +138,6 @@ class ProductRepository extends BaseRepository
             ->paginate($perPage);
     }
 
-    /**
-     * Search products for suggestions
-     */
     public function searchSuggestions($keyword, $limit = 10)
     {
         if (strlen($keyword) < 2) {
@@ -164,6 +149,7 @@ class ProductRepository extends BaseRepository
             ->search($keyword)
             ->select('id', 'name', 'slug', 'image', 'price')
             ->limit($limit)
-            ->get();
+            ->get()
+            ->map->toSearchSuggestion();
     }
 }

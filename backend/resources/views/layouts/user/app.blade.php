@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +20,8 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
         }
@@ -33,13 +35,15 @@
             flex: 1 0 auto;
         }
 
-        .main-footer, .copyright-bar {
+        .main-footer,
+        .copyright-bar {
             flex-shrink: 0;
         }
     </style>
 
     @stack('styles')
 </head>
+
 <body>
     @include('components.user.header')
 
@@ -71,26 +75,26 @@
             "hideMethod": "fadeOut"
         };
 
-        @if(session('success'))
+        @if (session('success'))
             toastr.success("{{ session('success') }}");
         @endif
 
-        @if(session('error'))
+        @if (session('error'))
             toastr.error("{{ session('error') }}");
         @endif
 
-        @if(session('warning'))
+        @if (session('warning'))
             toastr.warning("{{ session('warning') }}");
         @endif
 
-        @if(session('info'))
+        @if (session('info'))
             toastr.info("{{ session('info') }}");
         @endif
 
         function addToCart(productId, quantity = 1) {
 
             $.ajax({
-                url: '{{ route("cart.add") }}',
+                url: '{{ route('cart.add') }}',
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
@@ -104,7 +108,11 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('AJAX Error:', {xhr: xhr, status: status, error: error});
+                    console.error('AJAX Error:', {
+                        xhr: xhr,
+                        status: status,
+                        error: error
+                    });
                     console.error('Response:', xhr.responseText);
 
                     if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -240,4 +248,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

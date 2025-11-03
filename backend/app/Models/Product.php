@@ -89,6 +89,31 @@ class Product extends Model
         return number_format($this->price, 0, ',', '.') . ' ' . strtoupper($this->currency ?? 'VND');
     }
 
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return asset('assets/imgs/products/default.png');
+    }
+
+    public function getUrlAttribute(): string
+    {
+        return route('products.show', $this->slug);
+    }
+
+    public function toSearchSuggestion(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'image' => $this->image_url,
+            'price' => $this->price,
+            'formatted_price' => $this->formatted_price,
+            'url' => $this->url,
+        ];
+    }
+
     // Relationships
 
     public function category()
@@ -111,17 +136,11 @@ class Product extends Model
         return $this->hasMany(ProductView::class);
     }
 
-    /**
-     * Product images (1 - N)
-     */
     public function images()
     {
         return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
     }
 
-    /**
-     * Get main image path or fallback to single image field
-     */
     public function getMainImageAttribute()
     {
         $first = $this->images()->first();

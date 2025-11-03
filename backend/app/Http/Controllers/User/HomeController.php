@@ -77,18 +77,7 @@ class HomeController extends Controller
     {
         $keyword = $request->input('keyword', '');
 
-        $products = $this->productRepository
-            ->searchSuggestions($keyword, 10)
-            ->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'image' => $product->image ? asset('storage/' . $product->image) : asset('assets/imgs/products/default.png'),
-                    'price' => $product->price,
-                    'formatted_price' => number_format($product->price, 0, ',', '.') . 'đ',
-                    'url' => route('products.show', $product->slug),
-                ];
-            });
+        $products = $this->productRepository->searchSuggestions($keyword, 10);
 
         return response()->json([
             'success' => true,
