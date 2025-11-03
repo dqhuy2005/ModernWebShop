@@ -91,14 +91,79 @@ class ProductRepository extends BaseRepository
             ->where('products.category_id', $categoryId)
             ->with(['category:id,name,slug']);
 
-        // Apply price filter
         if (!empty($filters['price_range'])) {
             $query = $this->filterByPrice($query, $filters['price_range']);
         }
 
-        // Apply sorting (with JOIN for best_selling)
         $query = $this->sortProducts($query, $filters['sort'] ?? 'best_selling');
 
         return $query;
+    }
+
+    /**
+     * Get new products
+     */
+    public function getNewProducts($limit = 8)
+    {
+        return $this->model
+            ->active()
+            ->with('category')
+            ->latest('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get top selling/most viewed products
+     */
+    public function getTopSellingProducts($limit = 12)
+    {
+        return $this->model
+            ->active()
+            ->with('category')
+            ->mostViewed($limit)
+            ->get();
+    }
+
+    /**
+     * Get hot deals products
+     */
+    public function getHotDeals($limit = 8)
+    {
+        return $this->model
+            ->active()
+            ->hot()
+            ->with('category')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get paginated hot deals
+     */
+    public function getPaginatedHotDeals($perPage = 12)
+    {
+        return $this->model
+            ->active()
+            ->hot()
+            ->with('category')
+            ->paginate($perPage);
+    }
+
+    /**
+     * Search products for suggestions
+     */
+    public function searchSuggestions($keyword, $limit = 10)
+    {
+        if (strlen($keyword) < 2) {
+            return collect([]);
+        }
+
+        return $this->model
+            ->active()
+            ->search($keyword)
+            ->select('id', 'name', 'slug', 'image', 'price')
+            ->limit($limit)
+            ->get();
     }
 }

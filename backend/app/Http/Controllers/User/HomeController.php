@@ -4,53 +4,36 @@ namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use App\Models\Category;
 use App\Http\Requests\ProductFilterRequest;
 use App\Repository\ProductRepository;
+use App\Repository\CategoryRepository;
 
 class HomeController extends Controller
 {
     protected $productRepository;
+    protected $categoryRepository;
 
-    public function __construct(ProductRepository $productRepository)
-    {
+    public function __construct(
+        ProductRepository $productRepository,
+        CategoryRepository $categoryRepository
+    ) {
         $this->productRepository = $productRepository;
+        $this->categoryRepository = $categoryRepository;
     }
+
     public function index()
     {
-        $featuredCategories = Category::active()
-            ->withCount('products')
-            ->limit(3)
-            ->get();
+        $featuredCategories = $this->categoryRepository->getFeaturedCategories(3);
 
-        $newProducts = Product::active()
-            ->with('category')
-            ->latest('created_at')
-            ->limit(8)
-            ->get();
+        $newProducts = $this->productRepository->getNewProducts(8);
 
-        $categories = Category::active()
-            ->with(['products' => function ($query) {
-                $query->active()
-                    ->where('is_hot', true)
-                    ->latest('updated_at')
-                    ->limit(15);
-            }])
-            ->limit(value: 5)
-            ->get();
+        $categories = $this->categoryRepository->getCategoriesWithHotProducts(5, 15);
 
-        $topSellingProducts = Product::active()
-            ->with('category')
-            ->mostViewed(12)
-            ->get()
+        $topSellingProducts = $this->productRepository
+            ->getTopSellingProducts(12)
             ->chunk(6);
 
-        $hotDeals = Product::active()
-            ->hot()
-            ->with('category')
-            ->limit(8)
-            ->get();
+        $hotDeals = $this->productRepository->getHotDeals(8);
 
         return view('user.home', compact(
             'featuredCategories',
@@ -63,9 +46,7 @@ class HomeController extends Controller
 
     public function showCategory($slug, ProductFilterRequest $request)
     {
-        $category = Category::where('slug', $slug)
-            ->select('id', 'name', 'slug', 'image')
-            ->firstOrFail();
+        $category = $this->categoryRepository->findBySlug($slug);
 
         $filters = $request->getFilters();
 
@@ -87,10 +68,7 @@ class HomeController extends Controller
 
     public function hotDeals()
     {
-        $hotDeals = Product::active()
-            ->hot()
-            ->with('category')
-            ->paginate(12);
+        $hotDeals = $this->productRepository->getPaginatedHotDeals(12);
 
         return view('user.hot-deals', compact('hotDeals'));
     }
@@ -99,18 +77,8 @@ class HomeController extends Controller
     {
         $keyword = $request->input('keyword', '');
 
-        if (strlen($keyword) < 2) {
-            return response()->json([
-                'success' => true,
-                'products' => []
-            ]);
-        }
-
-        $products = Product::active()
-            ->search($keyword)
-            ->select('id', 'name', 'slug', 'image', 'price')
-            ->limit(10)
-            ->get()
+        $products = $this->productRepository
+            ->searchSuggestions($keyword, 10)
             ->map(function ($product) {
                 return [
                     'id' => $product->id,
