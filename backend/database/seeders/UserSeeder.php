@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $adminRole = Role::where('slug', Role::ADMIN)->first();
-        
+
         if ($adminRole) {
             User::updateOrCreate(
                 ['email' => 'admin@gmail.com'],

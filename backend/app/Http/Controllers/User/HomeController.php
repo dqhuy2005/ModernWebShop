@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers\User;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Http\Requests\ProductFilterRequest;
+use App\Repository\ProductRepository;
 
 class HomeController extends Controller
 {
+    protected $productRepository;
+
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
     public function index()
     {
         $featuredCategories = Category::active()
@@ -35,7 +44,7 @@ class HomeController extends Controller
             ->with('category')
             ->mostViewed(12)
             ->get()
-            ->chunk(6); // 2 rows of 6 products each
+            ->chunk(6);
 
         $hotDeals = Product::active()
             ->hot()
@@ -52,15 +61,28 @@ class HomeController extends Controller
         ));
     }
 
-    public function showCategory($slug)
+    public function showCategory($slug, ProductFilterRequest $request)
     {
         $category = Category::where('slug', $slug)
-            ->with(['products' => function($query) {
-                $query->active();
-            }])
+            ->select('id', 'name', 'slug', 'image')
             ->firstOrFail();
 
-        return view('user.category', compact('category'));
+        $filters = $request->getFilters();
+
+        $products = $this->productRepository
+            ->getFilteredProducts($category->id, $filters)
+            ->paginate(12)
+            ->withQueryString();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('user.partials.product-grid', compact('products'))->render(),
+                'pagination' => view('user.partials.pagination', compact('products'))->render()
+            ]);
+        }
+
+        return view('user.category', compact('category', 'products', 'filters'));
     }
 
     public function hotDeals()
@@ -73,7 +95,7 @@ class HomeController extends Controller
         return view('user.hot-deals', compact('hotDeals'));
     }
 
-    public function searchSuggestions(\Illuminate\Http\Request $request)
+    public function searchSuggestions(Request $request)
     {
         $keyword = $request->input('keyword', '');
 

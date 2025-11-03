@@ -50,7 +50,7 @@
                                             <ul class="list-unstyled category-list">
                                                 @foreach ($category->children as $child)
                                                     <li class="mb-2">
-                                                        <a href="#"
+                                                        <a href="{{ route('categories.show', $child->slug) }}"
                                                             class="text-muted text-decoration-none category-link">
                                                             <i class="fas fa-angle-right me-2"></i>
                                                             {{ $child->name }}

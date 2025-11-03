@@ -126,30 +126,51 @@
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="pw-product-bottom bg-white p-3 border rounded">
-                    <h4>Thông số kỹ thuật</h4>
-                    @if (!empty($product->specifications) && is_array($product->specifications))
-                        <table class="table table-striped pw-specs-table">
-                            <tbody>
-                                @foreach ($product->specifications as $key => $val)
-                                    <tr>
-                                        <th style="width:25%;">{{ is_string($key) ? $key : 'Thuộc tính' }}</th>
-                                        <td>{{ is_array($val) ? implode(', ', $val) : $val }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <p class="text-muted">Chưa có thông số kỹ thuật cho sản phẩm này.</p>
-                    @endif
+        <div class="row mt-4 g-3">
+            {{-- Specifications Card --}}
+            <div class="col-lg-6">
+                <div class="card pw-specs-card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-check"></i> Thông số kỹ thuật
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!empty($product->specifications) && is_array($product->specifications))
+                            <table class="table table-hover pw-specs-table mb-0">
+                                <tbody>
+                                    @foreach ($product->specifications as $key => $val)
+                                        <tr>
+                                            <th class="pw-spec-label">
+                                                {{ is_string($key) ? $key : 'Thuộc tính' }}
+                                            </th>
+                                            <td class="pw-spec-value">
+                                                {{ is_array($val) ? implode(', ', $val) : $val }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                                <p class="mb-0">Chưa có thông số kỹ thuật cho sản phẩm này.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
-                    <hr />
-
-                    <h4>Mô tả</h4>
-                    <div class="pw-product-desc">
-                        {!! $product->description ?? '<p class="text-muted">Chưa có mô tả.</p>' !!}
+            {{-- Description Card --}}
+            <div class="col-lg-6">
+                <div class="card pw-desc-card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-file-text"></i> Mô tả sản phẩm
+                        </h5>
+                    </div>
+                    <div class="card-body pw-product-desc">
+                        {!! $product->description ?? '<div class="text-center text-muted"><i class="bi bi-info-circle fs-3 d-block mb-2"></i><p class="mb-0">Chưa có mô tả.</p></div>' !!}
                     </div>
                 </div>
             </div>
@@ -257,9 +278,84 @@
             font-weight: 700;
         }
 
-        .pw-specs-table th {
-            width: 30%;
+        /* Specifications Card Styling */
+        .pw-specs-card, .pw-desc-card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pw-specs-card .card-header,
+        .pw-desc-card .card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .pw-specs-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        .pw-desc-card .card-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+        }
+
+        .pw-specs-table {
+            font-size: 0.9rem;
+        }
+
+        .pw-specs-table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .pw-specs-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .pw-specs-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .pw-spec-label {
+            width: 40%;
+            padding: 0.95rem 1.25rem;
             font-weight: 600;
+            color: #374151;
+            background-color: #f8f9fa;
+            border-right: 2px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .pw-spec-value {
+            padding: 0.95rem 1.25rem;
+            color: #1f2937;
+            background-color: white;
+            vertical-align: middle;
+        }
+
+        .pw-product-desc {
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        .pw-product-desc h1, 
+        .pw-product-desc h2, 
+        .pw-product-desc h3, 
+        .pw-product-desc h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .pw-product-desc p {
+            margin-bottom: 1rem;
+        }
+
+        .pw-product-desc ul, 
+        .pw-product-desc ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         @media(max-width:767px) {
@@ -270,6 +366,22 @@
             .pw-thumb-img {
                 width: 60px;
                 height: 48px;
+            }
+
+            .pw-spec-label {
+                width: 35%;
+                font-size: 0.85rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .pw-spec-value {
+                font-size: 0.85rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .pw-specs-card .card-header h5,
+            .pw-desc-card .card-header h5 {
+                font-size: 1rem;
             }
         }
     </style>
