@@ -189,7 +189,6 @@
                             </label>
                             <input type="password" class="form-control" id="new_password" name="new_password" required
                                 minlength="8">
-                            <small class="text-muted">Tối thiểu 8 ký tự</small>
                         </div>
                         <div class="mb-3">
                             <label for="new_password_confirmation" class="form-label fw-semibold">
@@ -471,6 +470,9 @@
                 const $btn = $(this);
                 const originalText = $btn.html();
 
+                $('#changePasswordForm input').removeClass('is-invalid');
+                $('#changePasswordForm .invalid-feedback').remove();
+
                 if (!$('#current_password').val() || !$('#new_password').val() || !$(
                         '#new_password_confirmation').val()) {
                     toastr.error('Vui lòng điền đầy đủ thông tin');
@@ -479,6 +481,7 @@
 
                 if ($('#new_password').val() !== $('#new_password_confirmation').val()) {
                     toastr.error('Mật khẩu xác nhận không khớp');
+                    $('#new_password, #new_password_confirmation').addClass('is-invalid');
                     return;
                 }
 
@@ -502,15 +505,42 @@
                         }
                     },
                     error: function(xhr) {
+
+                        $('#changePasswordForm input').removeClass('is-invalid');
+                        $('#changePasswordForm .invalid-feedback').remove();
+
                         if (xhr.status === 400) {
-                            toastr.error(xhr.responseJSON.message);
+                            $('#current_password').addClass('is-invalid');
+                            $('#current_password').after('<div class="invalid-feedback d-block">' +
+                                (xhr.responseJSON.message || 'Mật khẩu hiện tại không đúng') +
+                                '</div>');
+                            toastr.error(xhr.responseJSON.message || 'Mật khẩu hiện tại không đúng');
                         } else if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            Object.keys(errors).forEach(key => {
-                                toastr.error(errors[key][0]);
-                            });
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                const errors = xhr.responseJSON.errors;
+
+                                Object.keys(errors).forEach(key => {
+                                    const $field = $('#' + key);
+                                    if ($field.length) {
+                                        $field.addClass('is-invalid');
+
+                                        errors[key].forEach(error => {
+                                            $field.after('<div class="invalid-feedback d-block">' + error + '</div>');
+                                        });
+                                    }
+                                });
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                toastr.error(xhr.responseJSON.message);
+                            } else {
+                                toastr.error('Dữ liệu không hợp lệ');
+                            }
+                        } else if (xhr.status === 401) {
+                            toastr.error('Vui lòng đăng nhập lại');
+                            setTimeout(() => {
+                                window.location.href = '{{ route("login") }}';
+                            }, 2000);
                         } else {
-                            toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
+                            toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
                         }
                     },
                     complete: function() {
@@ -518,6 +548,19 @@
                         $btn.html(originalText);
                     }
                 });
+            });
+
+            // Clear validation errors when user starts typing
+            $('#changePasswordForm input').on('input', function() {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback').remove();
+            });
+
+            // Clear all validation when modal is closed
+            $('#changePasswordModal').on('hidden.bs.modal', function() {
+                $('#changePasswordForm')[0].reset();
+                $('#changePasswordForm input').removeClass('is-invalid');
+                $('#changePasswordForm .invalid-feedback').remove();
             });
 
             $('#phone').on('input', function() {

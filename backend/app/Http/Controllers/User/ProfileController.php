@@ -82,10 +82,23 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
-        ]);
+        try {
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|min:8|confirmed',
+            ], [
+                'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại',
+                'new_password.required' => 'Vui lòng nhập mật khẩu mới',
+                'new_password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự',
+                'new_password.confirmed' => 'Xác nhận mật khẩu không khớp',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
         $user = Auth::user();
 
