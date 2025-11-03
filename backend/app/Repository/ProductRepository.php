@@ -42,7 +42,7 @@ class ProductRepository extends BaseRepository
 
     public function filterByPrice($query, $priceRange)
     {
-        return match($priceRange) {
+        return match ($priceRange) {
             'under_10' => $query->where('products.price', '<', 10000000),
             '10_20' => $query->whereBetween('products.price', [10000000, 20000000]),
             '20_30' => $query->whereBetween('products.price', [20000000, 30000000]),
@@ -53,7 +53,7 @@ class ProductRepository extends BaseRepository
 
     public function sortProducts($query, $sortBy)
     {
-        return match($sortBy) {
+        return match ($sortBy) {
             'best_selling' => $query->leftJoin(DB::raw('(
                     SELECT order_details.product_id,
                            COALESCE(SUM(order_details.quantity), 0) as total_sold

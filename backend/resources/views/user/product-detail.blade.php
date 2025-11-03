@@ -26,9 +26,14 @@
                     @php
                         $images = [];
                         if ($product->relationLoaded('images') || $product->images()->exists()) {
-                            $images = $product->images->map(function ($img) {
-                                return str_starts_with($img->path, 'http') ? $img->path : asset('storage/' . $img->path);
-                            })->values()->all();
+                            $images = $product->images
+                                ->map(function ($img) {
+                                    return str_starts_with($img->path, 'http')
+                                        ? $img->path
+                                        : asset('storage/' . $img->path);
+                                })
+                                ->values()
+                                ->all();
                         } else {
                             if (is_array($product->image)) {
                                 $images = $product->image;
@@ -81,7 +86,8 @@
                     <div class="pw-thumbnails-wrapper">
                         <div class="pw-thumbs d-flex gap-2">
                             @foreach ($images as $index => $img)
-                                <div class="pw-thumb-item {{ $index == 0 ? 'active' : '' }}" data-index="{{ $index }}">
+                                <div class="pw-thumb-item {{ $index == 0 ? 'active' : '' }}"
+                                    data-index="{{ $index }}">
                                     <img src="{{ $img }}" alt="thumb-{{ $index }}"
                                         class="img-thumbnail pw-thumb-img">
                                 </div>
@@ -170,7 +176,8 @@
                         </h5>
                     </div>
                     <div class="card-body pw-product-desc">
-                        {!! $product->description ?? '<div class="text-center text-muted"><i class="bi bi-info-circle fs-3 d-block mb-2"></i><p class="mb-0">Chưa có mô tả.</p></div>' !!}
+                        {!! $product->description ??
+                            '<div class="text-center text-muted"><i class="bi bi-info-circle fs-3 d-block mb-2"></i><p class="mb-0">Chưa có mô tả.</p></div>' !!}
                     </div>
                 </div>
             </div>
@@ -279,9 +286,10 @@
         }
 
         /* Specifications Card Styling */
-        .pw-specs-card, .pw-desc-card {
+        .pw-specs-card,
+        .pw-desc-card {
             border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             overflow: hidden;
         }
@@ -289,15 +297,7 @@
         .pw-specs-card .card-header,
         .pw-desc-card .card-header {
             padding: 1rem 1.25rem;
-            border-bottom: 2px solid rgba(255,255,255,0.2);
-        }
-
-        .pw-specs-card .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        }
-
-        .pw-desc-card .card-header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .pw-specs-table {

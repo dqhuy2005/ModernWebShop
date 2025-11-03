@@ -25,9 +25,12 @@ class ProductController extends Controller
                 "product_detail_{$slug}",
                 now()->addMinutes(10),
                 function () use ($slug) {
-                    return Product::with(['category', 'images' => function($query) {
-                        $query->orderBy('sort_order')->orderBy('id');
-                    }])
+                    return Product::with([
+                        'category',
+                        'images' => function ($query) {
+                            $query->orderBy('sort_order')->orderBy('id');
+                        }
+                    ])
                         ->where('slug', $slug)
                         ->firstOrFail();
                 }
@@ -60,9 +63,6 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Get related products (same category)
-     */
     private function getRelatedProducts(Product $product, int $limit = 4)
     {
         return Cache::remember(
@@ -80,9 +80,6 @@ class ProductController extends Controller
         );
     }
 
-    /**
-     * Display hot products page
-     */
     public function hotProducts()
     {
         $hotProducts = Product::where('is_hot', true)
