@@ -326,11 +326,9 @@
         const nextBtn = document.getElementById('bannerNextBtn');
 
         function showBannerSlide(index) {
-            // Remove active class from all slides and indicators
             slides.forEach(slide => slide.classList.remove('active'));
             indicators.forEach(indicator => indicator.classList.remove('active'));
 
-            // Handle wrap around
             if (index >= slides.length) {
                 currentBannerSlide = 0;
             } else if (index < 0) {
@@ -339,7 +337,6 @@
                 currentBannerSlide = index;
             }
 
-            // Add active class to current slide and indicator
             if (slides[currentBannerSlide]) {
                 slides[currentBannerSlide].classList.add('active');
             }
@@ -356,7 +353,6 @@
             showBannerSlide(index);
         }
 
-        // Bind navigation button events
         if (prevBtn) {
             prevBtn.addEventListener('click', function() {
                 moveBannerSlide(-1);
@@ -369,19 +365,16 @@
             });
         }
 
-        // Bind indicator button events
         indicators.forEach(function(indicator, index) {
             indicator.addEventListener('click', function() {
                 goToBannerSlide(index);
             });
         });
 
-        // Auto-play carousel (optional - every 5 seconds)
         let autoPlayInterval = setInterval(function() {
             moveBannerSlide(1);
         }, 5000);
 
-        // Pause auto-play on hover
         const carouselWrapper = document.querySelector('.banner-carousel-wrapper');
         if (carouselWrapper) {
             carouselWrapper.addEventListener('mouseenter', function() {
@@ -395,7 +388,6 @@
             });
         }
 
-        // Initialize first slide
         showBannerSlide(0);
     });
 </script>

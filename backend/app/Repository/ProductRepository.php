@@ -42,10 +42,10 @@ class ProductRepository extends BaseRepository
     public function filterByPrice($query, $priceRange)
     {
         return match($priceRange) {
-            'under_10' => $query->where('price', '<', 10000000),
-            '10_20' => $query->whereBetween('price', [10000000, 20000000]),
-            '20_30' => $query->whereBetween('price', [20000000, 30000000]),
-            'over_30' => $query->where('price', '>', 30000000),
+            'under_10' => $query->where('products.price', '<', 10000000),
+            '10_20' => $query->whereBetween('products.price', [10000000, 20000000]),
+            '20_30' => $query->whereBetween('products.price', [20000000, 30000000]),
+            'over_30' => $query->where('products.price', '>', 30000000),
             default => $query
         };
     }
@@ -53,35 +53,46 @@ class ProductRepository extends BaseRepository
     public function sortProducts($query, $sortBy)
     {
         return match($sortBy) {
+            'best_selling' => $query->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
+                ->leftJoin('orders', function($join) {
+                    $join->on('order_details.order_id', '=', 'orders.id')
+                         ->where('orders.status', '=', 'completed');
+                })
+                ->selectRaw('products.*, COALESCE(SUM(order_details.quantity), 0) as total_sold')
+                ->groupBy('products.id')
+                ->orderByRaw('total_sold DESC, products.created_at DESC'),
+
+            'newest' => $query->latest('created_at'),
             'name_asc' => $query->orderBy('name', 'asc'),
             'name_desc' => $query->orderBy('name', 'desc'),
             'price_asc' => $query->orderBy('price', 'asc'),
             'price_desc' => $query->orderBy('price', 'desc'),
-            'newest' => $query->latest('created_at'),
-            'popular' => $query->orderBy('views', 'desc'),
-            default => $query->latest('updated_at')
+
+            default => $query->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
+                ->leftJoin('orders', function($join) {
+                    $join->on('order_details.order_id', '=', 'orders.id')
+                         ->where('orders.status', '=', 'completed');
+                })
+                ->selectRaw('products.*, COALESCE(SUM(order_details.quantity), 0) as total_sold')
+                ->groupBy('products.id')
+                ->orderByRaw('total_sold DESC, products.created_at DESC')
         };
     }
 
     public function getFilteredProducts($categoryId, $filters = [])
     {
         $query = $this->model
-            ->where('status', true)
-            ->where('category_id', $categoryId)
+            ->where('products.status', true)
+            ->where('products.category_id', $categoryId)
             ->with(['category:id,name,slug']);
 
+        // Apply price filter
         if (!empty($filters['price_range'])) {
             $query = $this->filterByPrice($query, $filters['price_range']);
         }
 
-        if (!empty($filters['search'])) {
-            $query->where(function($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
-            });
-        }
-
-        $query = $this->sortProducts($query, $filters['sort'] ?? 'default');
+        // Apply sorting (with JOIN for best_selling)
+        $query = $this->sortProducts($query, $filters['sort'] ?? 'best_selling');
 
         return $query;
     }

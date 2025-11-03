@@ -56,18 +56,9 @@
                             </div>
                         </div>
 
-                        {{-- Search Filter --}}
-                        <div class="pw-filter-group mt-3">
-                            <h6 class="pw-filter-label">Tìm kiếm</h6>
-                            <input type="text"
-                                   class="form-control form-control-sm"
-                                   id="search-input"
-                                   placeholder="Tìm sản phẩm..."
-                                   value="{{ $filters['search'] ?? '' }}">
-                        </div>
-
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-3" id="clear-filters">
-                            <i class="bi bi-x-circle"></i> Bỏ chọn
+                        {{-- Clear Filters --}}
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100 mt-3" id="clear-filters">
+                            <i class="bi bi-x-circle"></i> Xóa bộ lọc
                         </button>
                     </div>
                 </div>
@@ -75,34 +66,38 @@
 
             {{-- Products Grid --}}
             <div class="col-lg-9">
-                {{-- Toolbar --}}
-                <div class="pw-toolbar d-flex justify-content-between align-items-center mb-3">
-                    <div class="pw-results-count text-muted">
-                        <strong>{{ $products->total() }}</strong> sản phẩm
-                    </div>
-
-                    <div class="pw-sort-dropdown">
-                        <select class="form-select form-select-sm" id="sort-select" style="width: auto;">
-                            <option value="">Sắp xếp: Mặc định</option>
-                            <option value="name_asc" {{ ($filters['sort'] ?? '') === 'name_asc' ? 'selected' : '' }}>
-                                Tên A → Z
-                            </option>
-                            <option value="name_desc" {{ ($filters['sort'] ?? '') === 'name_desc' ? 'selected' : '' }}>
-                                Tên Z → A
-                            </option>
-                            <option value="price_asc" {{ ($filters['sort'] ?? '') === 'price_asc' ? 'selected' : '' }}>
-                                Giá: Thấp → Cao
-                            </option>
-                            <option value="price_desc" {{ ($filters['sort'] ?? '') === 'price_desc' ? 'selected' : '' }}>
-                                Giá: Cao → Thấp
-                            </option>
-                            <option value="newest" {{ ($filters['sort'] ?? '') === 'newest' ? 'selected' : '' }}>
+                {{-- Toolbar with Quick Sort Tags --}}
+                <div class="pw-toolbar mb-3">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        {{-- Quick Sort Tags --}}
+                        <div class="pw-quick-tags d-flex gap-2">
+                            <button class="tag-btn {{ ($filters['sort'] ?? 'best_selling') === 'best_selling' ? 'active' : '' }}"
+                                    data-sort="best_selling">
+                                Bán chạy
+                            </button>
+                            <button class="tag-btn {{ ($filters['sort'] ?? '') === 'newest' ? 'active' : '' }}"
+                                    data-sort="newest">
                                 Mới nhất
-                            </option>
-                            <option value="popular" {{ ($filters['sort'] ?? '') === 'popular' ? 'selected' : '' }}>
-                                Phổ biến nhất
-                            </option>
-                        </select>
+                            </button>
+                        </div>
+
+                        {{-- Dropdown Sort --}}
+                        <div class="pw-sort-dropdown ms-auto">
+                            <select class="form-select form-select-sm" id="sort-select">
+                                <option value="name_asc" {{ ($filters['sort'] ?? '') === 'name_asc' ? 'selected' : '' }}>
+                                    Tên A → Z
+                                </option>
+                                <option value="name_desc" {{ ($filters['sort'] ?? '') === 'name_desc' ? 'selected' : '' }}>
+                                    Tên Z → A
+                                </option>
+                                <option value="price_asc" {{ ($filters['sort'] ?? '') === 'price_asc' ? 'selected' : '' }}>
+                                    Giá thấp → cao
+                                </option>
+                                <option value="price_desc" {{ ($filters['sort'] ?? '') === 'price_desc' ? 'selected' : '' }}>
+                                    Giá cao → thấp
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -129,37 +124,32 @@
 
 @push('styles')
     <style>
+        /* Black & Red Color Scheme */
         .product-listing-page {
-            background: #f8f9fa;
+            background: #0a0a0a;
             min-height: 100vh;
         }
 
-        .pw-category-header {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
         }
 
-        .pw-category-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: .5rem;
-            color: #1f2937;
+        .breadcrumb-item a {
+            color: #f5f5f5;
+            text-decoration: none;
         }
 
-        .pw-category-desc {
-            color: #6b7280;
-            margin-bottom: 0;
-            font-size: 0.95rem;
+        .breadcrumb-item.active {
+            color: #DC2626;
         }
 
-        /* Filter Sidebar */
+        /* Filter Sidebar - Black with Red Accents */
         .pw-filter-sidebar {
-            background: white;
+            background: #1a1a1a;
             padding: 1.5rem;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #333333;
             position: sticky;
             top: 20px;
         }
@@ -168,9 +158,13 @@
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 1.25rem;
-            color: #1f2937;
-            border-bottom: 2px solid #e5e7eb;
+            color: #ffffff;
+            border-bottom: 2px solid #DC2626;
             padding-bottom: 0.75rem;
+        }
+
+        .pw-filter-title i {
+            color: #DC2626;
         }
 
         .pw-filter-group {
@@ -181,32 +175,89 @@
             font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #374151;
+            color: #f5f5f5;
         }
 
         .form-check {
             margin-bottom: 0.5rem;
         }
 
+        .form-check-input:checked {
+            background-color: #DC2626;
+            border-color: #DC2626;
+        }
+
+        .form-check-input:focus {
+            border-color: #DC2626;
+            box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
+        }
+
         .form-check-label {
             font-size: 0.9rem;
-            color: #4b5563;
+            color: #f5f5f5;
             cursor: pointer;
         }
 
-        /* Toolbar */
+        /* Toolbar - Black Background */
         .pw-toolbar {
-            background: white;
+            background: #1a1a1a;
             padding: 1rem 1.25rem;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #333333;
         }
 
-        .pw-results-count {
-            font-size: 0.95rem;
+        /* Quick Sort Tags - Red Active State */
+        .pw-quick-tags {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        /* Product Grid */
+        .tag-btn {
+            padding: 0.5rem 1.25rem;
+            border: 2px solid #333333;
+            background: #000000;
+            color: #f5f5f5;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tag-btn:hover {
+            border-color: #DC2626;
+            background: #1a1a1a;
+        }
+
+        .tag-btn.active {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: #ffffff;
+        }
+
+        /* Sort Dropdown */
+        .pw-sort-dropdown select {
+            background: #000000;
+            color: #f5f5f5;
+            border: 2px solid #333333;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .pw-sort-dropdown select:focus {
+            border-color: #DC2626;
+            box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
+            background: #000000;
+            color: #f5f5f5;
+        }
+
+        .pw-sort-dropdown select option {
+            background: #000000;
+            color: #f5f5f5;
+        }
+
+        /* Product Grid - Black Cards with Red Accents */
         #product-grid-container {
             position: relative;
             min-height: 400px;
@@ -217,24 +268,24 @@
         }
 
         .pw-product-card {
-            border: 1px solid #e5e7eb;
+            border: 2px solid #333333;
             border-radius: 8px;
             padding: 1rem;
-            background: white;
+            background: #1a1a1a;
             height: 100%;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .pw-product-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #DC2626;
             transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
         }
 
         .pw-product-link {
-            color: inherit;
+            color: #f5f5f5;
             text-decoration: none;
             flex: 1;
             display: flex;
@@ -248,9 +299,10 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: #f9fafb;
+            background: #000000;
             border-radius: 6px;
             margin-bottom: 0.75rem;
+            border: 1px solid #333333;
         }
 
         .pw-product-img {
@@ -276,8 +328,8 @@
         }
 
         .pw-badge-hot {
-            background: #dc2626;
-            color: white;
+            background: #DC2626;
+            color: #ffffff;
         }
 
         .pw-product-body {
@@ -290,7 +342,7 @@
             font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #1f2937;
+            color: #ffffff;
             line-height: 1.4;
             min-height: 2.8em;
             display: -webkit-box;
@@ -303,7 +355,7 @@
             list-style: none;
             padding: 0;
             margin: 0 0 0.75rem 0;
-            color: #6b7280;
+            color: #999999;
             font-size: 0.8rem;
             flex: 1;
         }
@@ -321,18 +373,18 @@
             align-items: center;
             margin-top: auto;
             padding-top: 0.5rem;
-            border-top: 1px solid #f3f4f6;
+            border-top: 1px solid #333333;
         }
 
         .pw-product-price {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #dc2626;
+            color: #DC2626;
         }
 
         .pw-product-views {
             font-size: 0.8rem;
-            color: #9ca3af;
+            color: #666666;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -345,16 +397,24 @@
         .pw-product-actions .btn {
             font-size: 0.875rem;
             padding: 0.5rem 1rem;
+            background: #DC2626;
+            border-color: #DC2626;
+            color: #ffffff;
         }
 
-        /* Loading Overlay */
+        .pw-product-actions .btn:hover {
+            background: #B91C1C;
+            border-color: #B91C1C;
+        }
+
+        /* Loading Overlay - Black with Red Spinner */
         .pw-loading-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(10, 10, 10, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -362,28 +422,52 @@
             border-radius: 8px;
         }
 
-        /* Empty State */
+        .spinner-border {
+            color: #DC2626 !important;
+        }
+
+        /* Empty State - Red Text */
         .pw-empty-state {
             padding: 3rem 1rem;
+            color: #f5f5f5;
         }
 
         .pw-empty-state i {
             font-size: 4rem;
+            color: #666666;
         }
 
-        /* Pagination */
+        /* Pagination - Black & Red */
         .pagination {
             margin-top: 2rem;
         }
 
         .page-link {
-            color: #4f46e5;
-            border-color: #e5e7eb;
+            color: #f5f5f5;
+            background: #1a1a1a;
+            border-color: #333333;
+        }
+
+        .page-link:hover {
+            background: #000000;
+            border-color: #DC2626;
+            color: #DC2626;
         }
 
         .page-item.active .page-link {
-            background-color: #4f46e5;
-            border-color: #4f46e5;
+            background-color: #DC2626;
+            border-color: #DC2626;
+            color: #ffffff;
+        }
+
+        .page-item.disabled .page-link {
+            background: #1a1a1a;
+            border-color: #333333;
+            color: #666666;
+        }
+
+        .pagination .text-muted {
+            color: #999999 !important;
         }
 
         /* Responsive */
@@ -423,8 +507,7 @@
                 const params = new URLSearchParams(window.location.search);
                 return {
                     price_range: params.get('price_range') || '',
-                    sort: params.get('sort') || '',
-                    search: params.get('search') || '',
+                    sort: params.get('sort') || 'best_selling',
                     page: params.get('page') || '1'
                 };
             }
@@ -443,11 +526,10 @@
             }
 
             // Apply filters with AJAX
-            function applyFilters() {
+            function applyFilters(sortValue = null) {
                 const params = {
                     price_range: $('input[name="price_range"]:checked').val() || '',
-                    sort: $('#sort-select').val() || '',
-                    search: $('#search-input').val() || '',
+                    sort: sortValue || $('.tag-btn.active').data('sort') || $('#sort-select').val() || 'best_selling',
                     page: 1 // Reset to first page on filter change
                 };
 
@@ -486,30 +568,44 @@
                 });
             }
 
+            // Tag button click - Quick Sort
+            $('.tag-btn').on('click', function() {
+                const sortValue = $(this).data('sort');
+
+                // Update active state
+                $('.tag-btn').removeClass('active');
+                $(this).addClass('active');
+
+                // Clear dropdown selection
+                $('#sort-select').val('');
+
+                // Apply filter with tag sort
+                applyFilters(sortValue);
+            });
+
+            // Sort dropdown change
+            $('#sort-select').on('change', function() {
+                const sortValue = $(this).val();
+
+                // Clear tag active state
+                $('.tag-btn').removeClass('active');
+
+                // Apply filter
+                applyFilters(sortValue);
+            });
+
             // Price filter change
             $('.price-filter').on('change', function() {
                 applyFilters();
             });
 
-            // Sort change
-            $('#sort-select').on('change', function() {
-                applyFilters();
-            });
-
-            // Search input with debounce
-            $('#search-input').on('input', function() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(function() {
-                    applyFilters();
-                }, 500);
-            });
-
             // Clear filters
             $('#clear-filters').on('click', function() {
                 $('input[name="price_range"][value=""]').prop('checked', true);
+                $('.tag-btn').removeClass('active');
+                $('.tag-btn[data-sort="best_selling"]').addClass('active');
                 $('#sort-select').val('');
-                $('#search-input').val('');
-                applyFilters();
+                applyFilters('best_selling');
             });
 
             // Handle pagination clicks

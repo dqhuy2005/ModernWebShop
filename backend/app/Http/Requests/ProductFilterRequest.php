@@ -23,8 +23,7 @@ class ProductFilterRequest extends FormRequest
     {
         return [
             'price_range' => 'nullable|in:under_10,10_20,20_30,over_30',
-            'sort' => 'nullable|in:name_asc,name_desc,price_asc,price_desc,newest,popular',
-            'search' => 'nullable|string|max:255',
+            'sort' => 'nullable|in:best_selling,newest,name_asc,name_desc,price_asc,price_desc',
             'page' => 'nullable|integer|min:1'
         ];
     }
@@ -37,7 +36,6 @@ class ProductFilterRequest extends FormRequest
         return [
             'price_range.in' => 'Khoảng giá không hợp lệ',
             'sort.in' => 'Tiêu chí sắp xếp không hợp lệ',
-            'search.max' => 'Từ khóa tìm kiếm không được vượt quá 255 ký tự',
             'page.integer' => 'Trang phải là số nguyên',
             'page.min' => 'Trang phải lớn hơn 0'
         ];
@@ -50,8 +48,7 @@ class ProductFilterRequest extends FormRequest
     {
         return [
             'price_range' => $this->input('price_range'),
-            'sort' => $this->input('sort', 'default'),
-            'search' => $this->input('search'),
+            'sort' => $this->input('sort', 'best_selling'),
         ];
     }
 }
