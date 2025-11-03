@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="container py-4 product-listing-page">
-        {{-- Breadcrumb --}}
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
@@ -13,7 +12,6 @@
         </nav>
 
         <div class="row">
-            {{-- Filter Sidebar --}}
             <div class="col-lg-3 mb-4">
                 <div class="pw-filter-sidebar">
                     <div class="pw-filter-section">
@@ -21,7 +19,6 @@
                             <i class="bi bi-funnel"></i> Bộ lọc tìm kiếm
                         </h5>
 
-                        {{-- Price Filter --}}
                         <div class="pw-filter-group">
                             <h6 class="pw-filter-label">Giá</h6>
                             <div class="form-check">
@@ -56,7 +53,6 @@
                             </div>
                         </div>
 
-                        {{-- Clear Filters --}}
                         <button type="button" class="btn btn-outline-danger btn-sm w-100 mt-3" id="clear-filters">
                             <i class="bi bi-x-circle"></i> Xóa bộ lọc
                         </button>
@@ -64,12 +60,9 @@
                 </div>
             </div>
 
-            {{-- Products Grid --}}
             <div class="col-lg-9">
-                {{-- Toolbar with Quick Sort Tags --}}
                 <div class="pw-toolbar mb-3">
                     <div class="d-flex flex-wrap gap-3 align-items-center">
-                        {{-- Quick Sort Tags --}}
                         <div class="pw-quick-tags d-flex gap-2">
                             <button class="tag-btn {{ ($filters['sort'] ?? 'best_selling') === 'best_selling' ? 'active' : '' }}"
                                     data-sort="best_selling">
@@ -81,7 +74,6 @@
                             </button>
                         </div>
 
-                        {{-- Dropdown Sort --}}
                         <div class="pw-sort-dropdown ms-auto">
                             <select class="form-select form-select-sm" id="sort-select">
                                 <option value="name_asc" {{ ($filters['sort'] ?? '') === 'name_asc' ? 'selected' : '' }}>
@@ -101,19 +93,16 @@
                     </div>
                 </div>
 
-                {{-- Loading Overlay --}}
                 <div class="pw-loading-overlay" id="loading-overlay" style="display: none;">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
 
-                {{-- Product Grid --}}
                 <div id="product-grid-container">
                     @include('user.partials.product-grid', ['products' => $products])
                 </div>
 
-                {{-- Pagination --}}
                 <div id="pagination-container">
                     @include('user.partials.pagination', ['products' => $products])
                 </div>
@@ -213,6 +202,10 @@
             background: #4f46e5;
             border-color: #4f46e5;
             color: #ffffff;
+        }
+
+        #sort-select {
+            width: 150px;
         }
 
         /* Sort Dropdown */

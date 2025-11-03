@@ -2,3 +2,20 @@
     background-color: #e9ecef;
     pointer-events: none;
 }
+
+.add-to-cart-btn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    border-radius: 0;
+    color: #fff;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: #fff;
+}
+
+.breadcrumb-item a {
+    text-decoration: none ;
+}

@@ -256,7 +256,7 @@ class ProductController extends BaseController
             );
 
             return redirect()
-                ->route('admin.products.show', $product->id)
+                ->route('admin.products.index')
                 ->with('success', 'Product updated successfully!');
         } catch (\Exception $e) {
             return back()

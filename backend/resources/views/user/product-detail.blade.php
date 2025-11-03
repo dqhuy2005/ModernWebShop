@@ -11,7 +11,7 @@
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
                         @if ($product->category)
                             <li class="breadcrumb-item"><a
-                                    href="{{ route('categories.show', $product->category->name) }}">{{ $product->category->name }}</a>
+                                    href="{{ route('categories.show', $product->category->slug) }}">{{ $product->category->name }}</a>
                             </li>
                         @endif
                         <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
@@ -338,9 +338,9 @@
             color: #4b5563;
         }
 
-        .pw-product-desc h1, 
-        .pw-product-desc h2, 
-        .pw-product-desc h3, 
+        .pw-product-desc h1,
+        .pw-product-desc h2,
+        .pw-product-desc h3,
         .pw-product-desc h4 {
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
@@ -352,7 +352,7 @@
             margin-bottom: 1rem;
         }
 
-        .pw-product-desc ul, 
+        .pw-product-desc ul,
         .pw-product-desc ol {
             padding-left: 1.5rem;
             margin-bottom: 1rem;
