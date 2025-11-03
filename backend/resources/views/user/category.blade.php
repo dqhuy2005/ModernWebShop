@@ -124,9 +124,8 @@
 
 @push('styles')
     <style>
-        /* Black & Red Color Scheme */
         .product-listing-page {
-            background: #0a0a0a;
+            background: #f8f9fa;
             min-height: 100vh;
         }
 
@@ -136,20 +135,15 @@
         }
 
         .breadcrumb-item a {
-            color: #f5f5f5;
             text-decoration: none;
         }
 
-        .breadcrumb-item.active {
-            color: #DC2626;
-        }
-
-        /* Filter Sidebar - Black with Red Accents */
+        /* Filter Sidebar */
         .pw-filter-sidebar {
-            background: #1a1a1a;
+            background: white;
             padding: 1.5rem;
             border-radius: 8px;
-            border: 1px solid #333333;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             position: sticky;
             top: 20px;
         }
@@ -158,13 +152,9 @@
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 1.25rem;
-            color: #ffffff;
-            border-bottom: 2px solid #DC2626;
+            color: #1f2937;
+            border-bottom: 2px solid #e5e7eb;
             padding-bottom: 0.75rem;
-        }
-
-        .pw-filter-title i {
-            color: #DC2626;
         }
 
         .pw-filter-group {
@@ -175,38 +165,28 @@
             font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #f5f5f5;
+            color: #374151;
         }
 
         .form-check {
             margin-bottom: 0.5rem;
         }
 
-        .form-check-input:checked {
-            background-color: #DC2626;
-            border-color: #DC2626;
-        }
-
-        .form-check-input:focus {
-            border-color: #DC2626;
-            box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
-        }
-
         .form-check-label {
             font-size: 0.9rem;
-            color: #f5f5f5;
+            color: #4b5563;
             cursor: pointer;
         }
 
-        /* Toolbar - Black Background */
+        /* Toolbar */
         .pw-toolbar {
-            background: #1a1a1a;
+            background: white;
             padding: 1rem 1.25rem;
             border-radius: 8px;
-            border: 1px solid #333333;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* Quick Sort Tags - Red Active State */
+        /* Quick Sort Tags */
         .pw-quick-tags {
             display: flex;
             gap: 0.5rem;
@@ -214,50 +194,35 @@
 
         .tag-btn {
             padding: 0.5rem 1.25rem;
-            border: 2px solid #333333;
-            background: #000000;
-            color: #f5f5f5;
+            border: 2px solid #e5e7eb;
+            background: white;
             border-radius: 6px;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            color: #374151;
         }
 
         .tag-btn:hover {
-            border-color: #DC2626;
-            background: #1a1a1a;
+            border-color: #4f46e5;
+            background: #f9fafb;
         }
 
         .tag-btn.active {
-            background: #DC2626;
-            border-color: #DC2626;
+            background: #4f46e5;
+            border-color: #4f46e5;
             color: #ffffff;
         }
 
         /* Sort Dropdown */
         .pw-sort-dropdown select {
-            background: #000000;
-            color: #f5f5f5;
-            border: 2px solid #333333;
             padding: 0.5rem 1rem;
             border-radius: 6px;
             font-size: 0.9rem;
         }
 
-        .pw-sort-dropdown select:focus {
-            border-color: #DC2626;
-            box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
-            background: #000000;
-            color: #f5f5f5;
-        }
-
-        .pw-sort-dropdown select option {
-            background: #000000;
-            color: #f5f5f5;
-        }
-
-        /* Product Grid - Black Cards with Red Accents */
+        /* Product Grid */
         #product-grid-container {
             position: relative;
             min-height: 400px;
@@ -268,24 +233,24 @@
         }
 
         .pw-product-card {
-            border: 2px solid #333333;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 1rem;
-            background: #1a1a1a;
+            background: white;
             height: 100%;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .pw-product-card:hover {
-            border-color: #DC2626;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
         }
 
         .pw-product-link {
-            color: #f5f5f5;
+            color: inherit;
             text-decoration: none;
             flex: 1;
             display: flex;
@@ -299,10 +264,9 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: #000000;
+            background: #f9fafb;
             border-radius: 6px;
             margin-bottom: 0.75rem;
-            border: 1px solid #333333;
         }
 
         .pw-product-img {
@@ -328,8 +292,8 @@
         }
 
         .pw-badge-hot {
-            background: #DC2626;
-            color: #ffffff;
+            background: #dc2626;
+            color: white;
         }
 
         .pw-product-body {
@@ -342,7 +306,7 @@
             font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #ffffff;
+            color: #1f2937;
             line-height: 1.4;
             min-height: 2.8em;
             display: -webkit-box;
@@ -355,7 +319,7 @@
             list-style: none;
             padding: 0;
             margin: 0 0 0.75rem 0;
-            color: #999999;
+            color: #6b7280;
             font-size: 0.8rem;
             flex: 1;
         }
@@ -373,18 +337,18 @@
             align-items: center;
             margin-top: auto;
             padding-top: 0.5rem;
-            border-top: 1px solid #333333;
+            border-top: 1px solid #f3f4f6;
         }
 
         .pw-product-price {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #DC2626;
+            color: #dc2626;
         }
 
         .pw-product-views {
             font-size: 0.8rem;
-            color: #666666;
+            color: #9ca3af;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -397,24 +361,16 @@
         .pw-product-actions .btn {
             font-size: 0.875rem;
             padding: 0.5rem 1rem;
-            background: #DC2626;
-            border-color: #DC2626;
-            color: #ffffff;
         }
 
-        .pw-product-actions .btn:hover {
-            background: #B91C1C;
-            border-color: #B91C1C;
-        }
-
-        /* Loading Overlay - Black with Red Spinner */
+        /* Loading Overlay */
         .pw-loading-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(10, 10, 10, 0.9);
+            background: rgba(255, 255, 255, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -422,52 +378,28 @@
             border-radius: 8px;
         }
 
-        .spinner-border {
-            color: #DC2626 !important;
-        }
-
-        /* Empty State - Red Text */
+        /* Empty State */
         .pw-empty-state {
             padding: 3rem 1rem;
-            color: #f5f5f5;
         }
 
         .pw-empty-state i {
             font-size: 4rem;
-            color: #666666;
         }
 
-        /* Pagination - Black & Red */
+        /* Pagination */
         .pagination {
             margin-top: 2rem;
         }
 
         .page-link {
-            color: #f5f5f5;
-            background: #1a1a1a;
-            border-color: #333333;
-        }
-
-        .page-link:hover {
-            background: #000000;
-            border-color: #DC2626;
-            color: #DC2626;
+            color: #4f46e5;
+            border-color: #e5e7eb;
         }
 
         .page-item.active .page-link {
-            background-color: #DC2626;
-            border-color: #DC2626;
-            color: #ffffff;
-        }
-
-        .page-item.disabled .page-link {
-            background: #1a1a1a;
-            border-color: #333333;
-            color: #666666;
-        }
-
-        .pagination .text-muted {
-            color: #999999 !important;
+            background-color: #4f46e5;
+            border-color: #4f46e5;
         }
 
         /* Responsive */
@@ -502,7 +434,6 @@
             const categorySlug = '{{ $category->slug }}';
             const baseUrl = '{{ route("categories.show", $category->slug) }}';
 
-            // Get current URL parameters
             function getUrlParams() {
                 const params = new URLSearchParams(window.location.search);
                 return {
@@ -512,7 +443,6 @@
                 };
             }
 
-            // Update URL without reload
             function updateUrl(params) {
                 const url = new URL(window.location);
                 Object.keys(params).forEach(key => {
@@ -525,21 +455,17 @@
                 window.history.pushState({}, '', url);
             }
 
-            // Apply filters with AJAX
             function applyFilters(sortValue = null) {
                 const params = {
                     price_range: $('input[name="price_range"]:checked').val() || '',
                     sort: sortValue || $('.tag-btn.active').data('sort') || $('#sort-select').val() || 'best_selling',
-                    page: 1 // Reset to first page on filter change
+                    page: 1
                 };
 
-                // Show loading
                 $('#loading-overlay').fadeIn(200);
 
-                // Update URL
                 updateUrl(params);
 
-                // AJAX request
                 $.ajax({
                     url: baseUrl,
                     method: 'GET',
@@ -552,7 +478,6 @@
                             $('#product-grid-container').html(response.html);
                             $('#pagination-container').html(response.pagination);
 
-                            // Scroll to top of results
                             $('html, body').animate({
                                 scrollTop: $('#product-grid-container').offset().top - 100
                             }, 400);
@@ -568,38 +493,29 @@
                 });
             }
 
-            // Tag button click - Quick Sort
             $('.tag-btn').on('click', function() {
                 const sortValue = $(this).data('sort');
 
-                // Update active state
                 $('.tag-btn').removeClass('active');
                 $(this).addClass('active');
 
-                // Clear dropdown selection
                 $('#sort-select').val('');
 
-                // Apply filter with tag sort
                 applyFilters(sortValue);
             });
 
-            // Sort dropdown change
             $('#sort-select').on('change', function() {
                 const sortValue = $(this).val();
 
-                // Clear tag active state
                 $('.tag-btn').removeClass('active');
 
-                // Apply filter
                 applyFilters(sortValue);
             });
 
-            // Price filter change
             $('.price-filter').on('change', function() {
                 applyFilters();
             });
 
-            // Clear filters
             $('#clear-filters').on('click', function() {
                 $('input[name="price_range"][value=""]').prop('checked', true);
                 $('.tag-btn').removeClass('active');
@@ -608,7 +524,6 @@
                 applyFilters('best_selling');
             });
 
-            // Handle pagination clicks
             $(document).on('click', '.pagination a', function(e) {
                 e.preventDefault();
                 const url = new URL($(this).attr('href'));
@@ -617,10 +532,8 @@
                 const params = getUrlParams();
                 params.page = page;
 
-                // Show loading
                 $('#loading-overlay').fadeIn(200);
 
-                // Update URL
                 updateUrl(params);
 
                 $.ajax({

@@ -44,13 +44,6 @@
                         </div>
                     </div>
                 </a>
-
-                <div class="pw-product-actions">
-                    <button class="btn btn-sm btn-primary w-100 add-to-cart-btn"
-                            data-product-id="{{ $product->id }}">
-                        <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
-                    </button>
-                </div>
             </div>
         </div>
     @empty

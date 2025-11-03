@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class ProductRepository extends BaseRepository
 {
@@ -53,14 +54,16 @@ class ProductRepository extends BaseRepository
     public function sortProducts($query, $sortBy)
     {
         return match($sortBy) {
-            'best_selling' => $query->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
-                ->leftJoin('orders', function($join) {
-                    $join->on('order_details.order_id', '=', 'orders.id')
-                         ->where('orders.status', '=', 'completed');
-                })
-                ->selectRaw('products.*, COALESCE(SUM(order_details.quantity), 0) as total_sold')
-                ->groupBy('products.id')
-                ->orderByRaw('total_sold DESC, products.created_at DESC'),
+            'best_selling' => $query->leftJoin(DB::raw('(
+                    SELECT order_details.product_id,
+                           COALESCE(SUM(order_details.quantity), 0) as total_sold
+                    FROM order_details
+                    INNER JOIN orders ON order_details.order_id = orders.id
+                                     AND orders.status = "completed"
+                    GROUP BY order_details.product_id
+                ) as sales'), 'sales.product_id', '=', 'products.id')
+                ->selectRaw('products.*, COALESCE(sales.total_sold, 0) as total_sold')
+                ->orderByRaw('COALESCE(sales.total_sold, 0) DESC, products.created_at DESC'),
 
             'newest' => $query->latest('created_at'),
             'name_asc' => $query->orderBy('name', 'asc'),
@@ -68,14 +71,16 @@ class ProductRepository extends BaseRepository
             'price_asc' => $query->orderBy('price', 'asc'),
             'price_desc' => $query->orderBy('price', 'desc'),
 
-            default => $query->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
-                ->leftJoin('orders', function($join) {
-                    $join->on('order_details.order_id', '=', 'orders.id')
-                         ->where('orders.status', '=', 'completed');
-                })
-                ->selectRaw('products.*, COALESCE(SUM(order_details.quantity), 0) as total_sold')
-                ->groupBy('products.id')
-                ->orderByRaw('total_sold DESC, products.created_at DESC')
+            default => $query->leftJoin(DB::raw('(
+                    SELECT order_details.product_id,
+                           COALESCE(SUM(order_details.quantity), 0) as total_sold
+                    FROM order_details
+                    INNER JOIN orders ON order_details.order_id = orders.id
+                                     AND orders.status = "completed"
+                    GROUP BY order_details.product_id
+                ) as sales'), 'sales.product_id', '=', 'products.id')
+                ->selectRaw('products.*, COALESCE(sales.total_sold, 0) as total_sold')
+                ->orderByRaw('COALESCE(sales.total_sold, 0) DESC, products.created_at DESC')
         };
     }
 
