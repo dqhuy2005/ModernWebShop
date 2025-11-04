@@ -132,6 +132,7 @@ class ProductController extends BaseController
         $validator = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:products,slug',
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
@@ -142,6 +143,8 @@ class ProductController extends BaseController
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
         ], [
+            'slug.required' => 'Slug là bắt buộc',
+            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác',
             'price.required' => 'Giá sản phẩm là bắt buộc',
             'price.integer' => 'Giá phải là số nguyên',
             'price.min' => 'Giá phải là số dương',
@@ -216,6 +219,7 @@ class ProductController extends BaseController
         $validator = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:products,slug,' . $id,
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
@@ -226,6 +230,8 @@ class ProductController extends BaseController
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
         ], [
+            'slug.required' => 'Slug là bắt buộc',
+            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác',
             'price.required' => 'Giá sản phẩm là bắt buộc',
             'price.integer' => 'Giá phải là số nguyên',
             'price.min' => 'Giá phải là số dương',

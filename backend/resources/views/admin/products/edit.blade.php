@@ -43,6 +43,17 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="slug" class="form-label fw-bold">
+                                Slug <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug"
+                                name="slug" value="{{ old('slug', $product->slug) }}" placeholder="product-slug-here" required>
+                            @error('slug')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="price" class="form-label fw-bold">
                                 Price (VNĐ) <span class="text-danger">*</span>
                             </label>
@@ -60,7 +71,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label fw-bold">Description</label>
+                            <label for="description" class="form-label fw-bold">
+                                Description
+                            </label>
                             <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                                 rows="5" placeholder="Enter product description...">{{ old('description', $product->description) }}</textarea>
                             @error('description')
@@ -237,8 +250,103 @@
 @endsection
 
 @push('scripts')
+    <!-- CKEditor 5 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+
     <script>
+        let descriptionEditor;
+
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                        'alignment', '|',
+                        'numberedList', 'bulletedList', '|',
+                        'outdent', 'indent', '|',
+                        'link', 'blockQuote', 'insertTable', '|',
+                        'imageUpload', 'mediaEmbed', '|',
+                        'undo', 'redo', '|',
+                        'code', 'codeBlock', 'htmlEmbed'
+                    ],
+                    shouldNotGroupWhenFull: true
+                },
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                        { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+                    ]
+                },
+                fontSize: {
+                    options: [
+                        'tiny', 'small', 'default', 'big', 'huge'
+                    ]
+                },
+                alignment: {
+                    options: ['left', 'center', 'right', 'justify']
+                },
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                image: {
+                    toolbar: [
+                        'imageStyle:inline',
+                        'imageStyle:block',
+                        'imageStyle:side',
+                        '|',
+                        'toggleImageCaption',
+                        'imageTextAlternative'
+                    ]
+                },
+                link: {
+                    decorators: {
+                        openInNewTab: {
+                            mode: 'manual',
+                            label: 'Open in a new tab',
+                            attributes: {
+                                target: '_blank',
+                                rel: 'noopener noreferrer'
+                            }
+                        }
+                    }
+                },
+                placeholder: 'Enter detailed product description here...',
+                language: 'en'
+            })
+            .then(editor => {
+                descriptionEditor = editor;
+                console.log('CKEditor initialized successfully!');
+
+                editor.model.document.on('change:data', () => {
+                    document.querySelector('#description').value = editor.getData();
+                });
+            })
+            .catch(error => {
+                console.error('CKEditor initialization error:', error);
+            });
+
         let specIndex = {{ $specCount ?? 1 }};
+
+        $('#name').on('input', function() {
+            const name = $(this).val();
+            const slug = name
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/Đ/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-+|-+$/g, '');
+
+            $('#slug').val(slug);
+        });
 
         function formatPrice(value) {
             const numericValue = value.replace(/[^0-9]/g, '');
@@ -356,9 +464,21 @@
         $('#productForm').on('submit', function(e) {
             let isValid = true;
 
+            if (descriptionEditor) {
+                document.querySelector('#description').value = descriptionEditor.getData();
+            }
+
+            $('#name, #slug, #category_id, #price_display').removeClass('is-invalid');
+
             if (!$('#name').val().trim()) {
                 isValid = false;
                 $('#name').addClass('is-invalid');
+            }
+
+            if (!$('#slug').val().trim()) {
+                isValid = false;
+                $('#slug').addClass('is-invalid');
+                toastr.error('Slug is required!');
             }
 
             if (!$('#category_id').val()) {
@@ -379,7 +499,6 @@
             }
         });
 
-        // Delete image functionality
         $('.delete-image-btn').on('click', function(e) {
             e.preventDefault();
             const imageId = $(this).data('image-id');
@@ -468,6 +587,41 @@
 
         .custom-file-upload {
             margin-bottom: 10px;
+        }
+
+        /* CKEditor Custom Styles */
+        .ck-editor__editable {
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .ck.ck-editor__main > .ck-editor__editable {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+        }
+
+        .ck.ck-editor__main > .ck-editor__editable:focus {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .ck.ck-toolbar {
+            border: 1px solid #dee2e6 !important;
+            border-bottom: none !important;
+            background-color: #f8f9fa !important;
+            border-radius: 0.375rem 0.375rem 0 0 !important;
+        }
+
+        .ck.ck-toolbar .ck-toolbar__items {
+            flex-wrap: wrap;
+        }
+
+        /* Hide original textarea */
+        #description {
+            display: none;
         }
     </style>
 @endpush
