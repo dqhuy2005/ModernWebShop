@@ -86,29 +86,29 @@ class ProductController extends BaseController
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $q->where('products.name', 'like', "%{$search}%")
+                    ->orWhere('products.description', 'like', "%{$search}%");
             });
         }
 
         if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+            $query->where('products.category_id', $request->category_id);
         }
 
         if ($request->filled('status')) {
-            $query->where('status', (bool) $request->status);
+            $query->where('products.status', (bool) $request->status);
         }
 
         if ($request->filled('is_hot')) {
-            $query->where('is_hot', (bool) $request->is_hot);
+            $query->where('products.is_hot', (bool) $request->is_hot);
         }
 
         if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
+            $query->where('products.price', '>=', $request->price_min);
         }
 
         if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
+            $query->where('products.price', '<=', $request->price_max);
         }
 
         return $query;
