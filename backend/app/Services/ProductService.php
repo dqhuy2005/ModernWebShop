@@ -130,7 +130,7 @@ class ProductService
     /**
      * Parse and format product specifications
      */
-    public function formatSpecifications($specifications): ?string
+    public function formatSpecifications($specifications): ?array
     {
         if (!is_array($specifications)) {
             return null;
@@ -143,7 +143,7 @@ class ProductService
             }
         }
 
-        return !empty($specs) ? json_encode($specs) : null;
+        return !empty($specs) ? $specs : null;
     }
 
     /**

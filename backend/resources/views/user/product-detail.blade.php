@@ -142,10 +142,17 @@
                         </h5>
                     </div>
                     <div class="card-body p-0">
-                        @if (!empty($product->specifications) && is_array($product->specifications))
+                        @php
+                            $specs = $product->specifications;
+                            if (is_string($specs)) {
+                                $specs = json_decode($specs, true);
+                            }
+                        @endphp
+
+                        @if (!empty($specs) && is_array($specs))
                             <table class="table table-hover pw-specs-table mb-0">
                                 <tbody>
-                                    @foreach ($product->specifications as $key => $val)
+                                    @foreach ($specs as $key => $val)
                                         <tr>
                                             <th class="pw-spec-label">
                                                 {{ is_string($key) ? $key : 'Thuộc tính' }}

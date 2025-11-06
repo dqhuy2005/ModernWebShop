@@ -36,11 +36,6 @@
 
                         <div class="pw-product-footer">
                             <div class="pw-product-price">{{ $product->formatted_price }}</div>
-                            @if($product->views > 0)
-                                <div class="pw-product-views">
-                                    <i class="bi bi-eye"></i> {{ number_format($product->views) }}
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </a>
