@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CMS;
 
+use App\Events\OrderStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -302,6 +303,12 @@ class OrderController extends Controller
                     $oldStatus,
                     $request->status
                 );
+
+                event(new OrderStatusChanged(
+                    $order,
+                    $oldStatus,
+                    $request->status
+                ));
             }
 
             if ($oldAddress !== $request->address) {
