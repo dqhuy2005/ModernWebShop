@@ -43,17 +43,20 @@ class NotificationService
                 throw new Exception("Order #{$order->id} has no valid recipient email");
             }
 
+            // Prepare email data from template
+            $emailData = is_array($template->preview_data) ? $template->preview_data : [];
+
+            // Replace variables in subject
+            $subject = $this->replaceSubjectVariables($template->subject, $order);
+
             // Create notification log
             $log = $this->createNotificationLog(
                 $notificationType,
                 $template,
                 $recipient,
-                $order
+                $order,
+                $subject
             );
-
-            // Prepare email data from template
-            $emailData = is_array($template->preview_data) ? $template->preview_data : [];
-            $subject = $template->subject;
 
             // Send email
             Mail::to($recipient->email)
@@ -97,7 +100,8 @@ class NotificationService
         NotificationType $notificationType,
         EmailTemplate $template,
         User $recipient,
-        Order $order
+        Order $order,
+        $subject = null
     ) {
         return NotificationLog::create([
             'notification_type_id' => $notificationType->id,
@@ -110,7 +114,7 @@ class NotificationService
             'related_id' => $order->id,
             'channel' => 'email',
             'status' => 'pending',
-            'subject' => $template->subject,
+            'subject' => $subject ?? $template->subject,
             'template_data' => [
                 'order_id' => $order->id,
                 'order_status' => $order->status,
@@ -215,5 +219,25 @@ class NotificationService
             'read' => (clone $query)->where('status', 'read')->count(),
             'clicked' => (clone $query)->where('status', 'clicked')->count(),
         ];
+    }
+
+    /**
+     * Replace variables in email subject
+     */
+    private function replaceSubjectVariables($subject, Order $order)
+    {
+        $orderId = str_pad($order->id, 6, '0', STR_PAD_LEFT);
+
+        $replacements = [
+            '{{order_id}}' => $orderId,
+            '{{orderId}}' => $orderId,
+            '{order_id}' => $orderId,
+            '{orderId}' => $orderId,
+            '{{customer_name}}' => $order->user->fullname ?? 'Quý khách',
+            '{{order_status}}' => $order->status,
+            '{{total_amount}}' => number_format($order->total_amount, 0, ',', '.') . ' ₫',
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $subject);
     }
 }
