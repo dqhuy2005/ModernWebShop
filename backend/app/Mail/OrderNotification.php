@@ -118,23 +118,7 @@ class OrderNotification extends Mailable
      */
     private function getTrackingUrl($orderId)
     {
-        try {
-            // Try to generate the route if it exists
-            if (\Illuminate\Support\Facades\Route::has('user.orders.show')) {
-                return route('user.orders.show', $orderId);
-            }
-
-            // Fallback to admin order URL
-            if (\Illuminate\Support\Facades\Route::has('admin.orders.show')) {
-                return route('admin.orders.show', $orderId);
-            }
-
-            // Default fallback
-            return config('app.url') . '/orders/' . $orderId;
-        } catch (\Exception $e) {
-            // Return a generic URL if route generation fails
-            return config('app.url');
-        }
+        return route('purchase.show', $orderId);
     }
 
     /**
