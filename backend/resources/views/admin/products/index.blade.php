@@ -18,81 +18,14 @@
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-primary-soft rounded">
-                                <i class="fas fa-box fa-lg text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Total Products</h6>
-                            <h4 class="mb-0" id="totalProductsCount">{{ $totalProducts ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            @include('admin.products.form')
         </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-success-soft rounded">
-                                <i class="fas fa-check-circle fa-lg text-success"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0" id="activeProductsCount">{{ $activeProducts ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-danger-soft rounded">
-                                <i class="fas fa-times-circle fa-lg text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0" id="inactiveProductsCount">{{ $inactiveProducts ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-warning-soft rounded">
-                                <i class="fas fa-fire fa-lg text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Hot Products</h6>
-                            <h4 class="mb-0" id="hotProductsCount">{{ $hotProducts ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    @include('admin.products.form')
-
-    <div id="products-table-container">
-        @include('admin.products.table')
+        <div id="products-table-container">
+            @include('admin.products.table')
+        </div>
     </div>
 
 @endsection
@@ -109,7 +42,7 @@
                     if (counts.total !== undefined) $('#totalProductsCount').text(counts.total);
                     if (counts.active !== undefined) $('#activeProductsCount').text(counts.active);
                     if (counts.inactive !== undefined) $('#inactiveProductsCount').text(counts
-                    .inactive);
+                        .inactive);
                     if (counts.hot !== undefined) $('#hotProductsCount').text(counts.hot);
                 },
                 onAfterLoad: function(response) {

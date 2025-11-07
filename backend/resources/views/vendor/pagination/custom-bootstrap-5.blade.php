@@ -21,7 +21,8 @@
                 </li>
             @else
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="@lang('pagination.previous')">
+                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev"
+                        aria-label="@lang('pagination.previous')">
                         <i class="fas fa-angle-left"></i>
                     </a>
                 </li>
@@ -73,7 +74,8 @@
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="@lang('pagination.next')">
+                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next"
+                        aria-label="@lang('pagination.next')">
                         <i class="fas fa-angle-right"></i>
                     </a>
                 </li>
@@ -86,7 +88,8 @@
             {{-- Last Page Link --}}
             @if ($paginator->hasMorePages())
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->url($paginator->lastPage()) }}" rel="last" aria-label="@lang('Last')">
+                    <a class="page-link" href="{{ $paginator->url($paginator->lastPage()) }}" rel="last"
+                        aria-label="@lang('Last')">
                         <i class="fas fa-angle-double-right"></i>
                     </a>
                 </li>

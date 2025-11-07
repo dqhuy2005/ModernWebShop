@@ -1,46 +1,37 @@
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="card-title mb-0">
-            <i class="fas fa-search me-2"></i>Search Categories
-        </h5>
-    </div>
-    <div class="card-body">
-        <form action="{{ route('admin.categories.index') }}" method="GET" id="searchForm" class="clean-form">
-            <div class="position-relative">
-                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                    placeholder="Search by category name..." value="{{ request('search') }}"
-                    style="height: 45px;">
-                @if (request('search'))
-                    <button type="button"
-                        class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
-                        onclick="clearSearch()" title="Clear search">
+<div>
+    <form action="{{ route('admin.categories.index') }}" method="GET" id="searchForm" class="clean-form">
+        <div class="position-relative">
+            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
+                placeholder="Search by category name..." value="{{ request('search') }}" style="height: 45px;">
+            @if (request('search'))
+                <button type="button" class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                    onclick="clearSearch()" title="Clear search">
+                    <i class="fas fa-times"></i>
+                </button>
+            @endif
+        </div>
+    </form>
+
+    @if (request('search'))
+        <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
+            <small class="text-muted">Active filters:</small>
+
+            @if (request('search'))
+                <span class="badge bg-primary">
+                    Search: "{{ request('search') }}"
+                    <a href="{{ route('admin.categories.index', array_filter(request()->except('search'))) }}"
+                        class="text-white ms-1">
                         <i class="fas fa-times"></i>
-                    </button>
-                @endif
-            </div>
-        </form>
+                    </a>
+                </span>
+            @endif
 
-        @if (request('search'))
-            <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
-                <small class="text-muted">Active filters:</small>
-
-                @if (request('search'))
-                    <span class="badge bg-primary">
-                        Search: "{{ request('search') }}"
-                        <a href="{{ route('admin.categories.index', array_filter(request()->except('search'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
-
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-outline-danger">
-                    <i class="fas fa-times me-1"></i>Clear All
-                </a>
-            </div>
-        @endif
-    </div>
+            <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-times me-1"></i>Clear All
+            </a>
+        </div>
+    @endif
 </div>
 
 @push('scripts')

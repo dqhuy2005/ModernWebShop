@@ -1,21 +1,27 @@
-<div class="card-body">
+<div class="border-top mt-3 pt-3">
     @if ($products->count() > 0)
         <div class="table-responsive">
             <table class="table table-hover align-middle" id="productsTable">
                 <thead class="table-light">
                     <tr>
-                        <th width="5%" class="sortable {{ request('sort_by') === 'id' ? request('sort_order', 'desc') : '' }}"
+                        <th width="5%"
+                            class="sortable {{ request('sort_by') === 'id' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('id')">
-                            ID <i class="fas fa-sort{{ request('sort_by') === 'id' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                            ID <i
+                                class="fas fa-sort{{ request('sort_by') === 'id' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
                         <th width="8%">Image</th>
-                        <th width="20%" class="sortable {{ request('sort_by') === 'name' ? request('sort_order', 'desc') : '' }}"
+                        <th width="20%"
+                            class="sortable {{ request('sort_by') === 'name' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('name')">
-                            Product Name <i class="fas fa-sort{{ request('sort_by') === 'name' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                            Product Name <i
+                                class="fas fa-sort{{ request('sort_by') === 'name' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
-                        <th width="12%" class="sortable {{ request('sort_by') === 'category_id' ? request('sort_order', 'desc') : '' }}"
+                        <th width="12%"
+                            class="sortable {{ request('sort_by') === 'category_id' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('category_id')">
-                            Category <i class="fas fa-sort{{ request('sort_by') === 'category_id' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                            Category <i
+                                class="fas fa-sort{{ request('sort_by') === 'category_id' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
                         <th width="8%" class="text-center">Status</th>
                         <th width="8%" class="text-center">Hot</th>
@@ -31,7 +37,8 @@
 
                             <td>
                                 @if ($product->image)
-                                    <img src="{{ asset('/storage/' . $product->image) }}" alt="Image Product" class="product-image">
+                                    <img src="{{ asset('/storage/' . $product->image) }}" alt="Image Product"
+                                        class="product-image">
                                 @else
                                     <div
                                         class="product-image bg-light d-flex align-items-center justify-content-center">
@@ -103,7 +110,7 @@
             </table>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center m-3">
             <div class="d-flex align-items-center gap-3">
                 <div class="d-flex align-items-center gap-2">
                     <label for="per_page_bottom" class="text-muted mb-0" style="white-space: nowrap;">

@@ -22,132 +22,14 @@
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-primary-soft rounded">
-                                <i class="fas fa-shopping-cart fa-lg text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Total</h6>
-                            <h4 class="mb-0" id="totalOrdersCount">{{ $totalOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            @include('admin.orders.form')
         </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-warning-soft rounded">
-                                <i class="fas fa-clock fa-lg text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Pending</h6>
-                            <h4 class="mb-0" id="pendingOrdersCount">{{ $pendingOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-secondary-soft rounded">
-                                <i class="fas fa-check fa-lg text-secondary"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Confirmed</h6>
-                            <h4 class="mb-0" id="confirmedOrdersCount">{{ $confirmedOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-primary-soft rounded">
-                                <i class="fas fa-cog fa-lg text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Processing</h6>
-                            <h4 class="mb-0" id="processingOrdersCount">{{ $processingOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-info-soft rounded">
-                                <i class="fas fa-truck fa-lg text-info"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Shipping</h6>
-                            <h4 class="mb-0" id="shippingOrdersCount">{{ $shippingOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-success-soft rounded">
-                                <i class="fas fa-check-circle fa-lg text-success"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Completed</h6>
-                            <h4 class="mb-0" id="completedOrdersCount">{{ $completedOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-danger-soft rounded">
-                                <i class="fas fa-times-circle fa-lg text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Cancelled</h6>
-                            <h4 class="mb-0" id="cancelledOrdersCount">{{ $cancelledOrders ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    @include('admin.orders.form')
-
-    <div id="orders-table-container">
-        @include('admin.orders.table')
+        <div id="orders-table-container">
+            @include('admin.orders.table')
+        </div>
     </div>
 @endsection
 

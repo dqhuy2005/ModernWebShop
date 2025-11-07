@@ -1,4 +1,4 @@
-<div class="card-body">
+<div class="border-top mt-3 pt-3">
     @if ($users->count() > 0)
         <div class="table-responsive">
             <table class="table table-hover align-middle" id="usersTable">
@@ -129,7 +129,7 @@
             </table>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex justify-content-between align-items-center m-3">
             <div class="d-flex align-items-center gap-3">
                 <div class="d-flex align-items-center gap-2">
                     <label for="per_page_bottom" class="text-muted mb-0" style="white-space: nowrap;">

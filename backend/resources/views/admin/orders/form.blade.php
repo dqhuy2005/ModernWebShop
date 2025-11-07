@@ -1,183 +1,180 @@
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="card-title mb-0">
-            <i class="fas fa-search me-2"></i>Search & Filter Orders
-        </h5>
-    </div>
-    <div class="card-body">
-        <form action="{{ route('admin.orders.index') }}" method="GET" id="searchForm" class="clean-form">
-            <div class="row g-3 align-items-end mb-3">
-                <div class="col-md-6">
-                    <label for="search" class="form-label small text-muted">Search</label>
-                    <div class="position-relative">
-                        <i
-                            class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                            placeholder="Order ID, customer name, phone, email..." value="{{ request('search') }}">
-                        @if (request('search'))
-                            <button type="button"
-                                class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
-                                onclick="clearSearch()" title="Clear search">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        @endif
-                    </div>
+<div>
+    <h5 class="mb-3">
+        <i class="fas fa-search me-2"></i>Search & Filter Orders
+    </h5>
+
+    <form action="{{ route('admin.orders.index') }}" method="GET" id="searchForm" class="clean-form">
+        <div class="row g-3 align-items-end mb-3">
+            <div class="col-md-6">
+                <label for="search" class="form-label small text-muted">Search</label>
+                <div class="position-relative">
+                    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
+                        placeholder="Order ID, customer name, phone, email..." value="{{ request('search') }}">
+                    @if (request('search'))
+                        <button type="button"
+                            class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                            onclick="clearSearch()" title="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    @endif
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="status_filter" class="form-label small text-muted">Status</label>
+                <select name="status" id="status_filter" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed
+                    </option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing
+                    </option>
+                    <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping
+                    </option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed
+                    </option>
+                    <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled
+                    </option>
+                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <a href="#advancedFilters" data-bs-toggle="collapse" class="text-decoration-none">
+                <i class="fas fa-sliders-h me-2"></i>Advanced Filters
+                <i class="fas fa-chevron-down ms-1"></i>
+            </a>
+        </div>
+
+        <div class="collapse" id="advancedFilters">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label small text-muted">Date From</label>
+                    <input type="date" name="date_from" id="date_from" class="form-control"
+                        value="{{ request('date_from') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label small text-muted">Date To</label>
+                    <input type="date" name="date_to" id="date_to" class="form-control"
+                        value="{{ request('date_to') }}">
                 </div>
 
                 <div class="col-md-3">
-                    <label for="status_filter" class="form-label small text-muted">Status</label>
-                    <select name="status" id="status_filter" class="form-select">
-                        <option value="">All Statuses</option>
-                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed
-                        </option>
-                        <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing
-                        </option>
-                        <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping
-                        </option>
-                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed
-                        </option>
-                        <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled
-                        </option>
-                        <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only
-                        </option>
-                    </select>
+                    <label for="price_min" class="form-label small text-muted">Min Price (₫)</label>
+                    <input type="number" name="price_min" id="price_min" class="form-control" placeholder="0"
+                        value="{{ request('price_min') }}" min="0" step="1000">
                 </div>
-
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search me-2"></i>Search
-                    </button>
+                    <label for="price_max" class="form-label small text-muted">Max Price (₫)</label>
+                    <input type="number" name="price_max" id="price_max" class="form-control" placeholder="999,999,999"
+                        value="{{ request('price_max') }}" min="0" step="1000">
                 </div>
-            </div>
 
-            <div class="mb-3">
-                <a href="#advancedFilters" data-bs-toggle="collapse" class="text-decoration-none">
-                    <i class="fas fa-sliders-h me-2"></i>Advanced Filters
-                    <i class="fas fa-chevron-down ms-1"></i>
-                </a>
-            </div>
-
-            <div class="collapse" id="advancedFilters">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label for="date_from" class="form-label small text-muted">Date From</label>
-                        <input type="date" name="date_from" id="date_from" class="form-control"
-                            value="{{ request('date_from') }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="date_to" class="form-label small text-muted">Date To</label>
-                        <input type="date" name="date_to" id="date_to" class="form-control"
-                            value="{{ request('date_to') }}">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="price_min" class="form-label small text-muted">Min Price (₫)</label>
-                        <input type="number" name="price_min" id="price_min" class="form-control" placeholder="0"
-                            value="{{ request('price_min') }}" min="0" step="1000">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="price_max" class="form-label small text-muted">Max Price (₫)</label>
-                        <input type="number" name="price_max" id="price_max" class="form-control"
-                            placeholder="999,999,999" value="{{ request('price_max') }}" min="0" step="1000">
-                    </div>
-
-                    <div class="col-12">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="setDateFilter('today')">Today</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="setDateFilter('yesterday')">Yesterday</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="setDateFilter('week')">This Week</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="setDateFilter('month')">This Month</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="setDateFilter('last30')">Last 30 Days</button>
-                        </div>
+                <div class="col-12">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="setDateFilter('today')">Today</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="setDateFilter('yesterday')">Yesterday</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="setDateFilter('week')">This Week</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="setDateFilter('month')">This Month</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="setDateFilter('last30')">Last 30 Days</button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
-            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
-        </form>
+        <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
+        <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
+    </form>
 
-        @if (request('search') ||
-                request('status') ||
-                request('date_from') ||
-                request('date_to') ||
-                request('price_min') ||
-                request('price_max'))
-            <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
-                <small class="text-muted">Active filters:</small>
+    @if (request('search') ||
+            request('status') ||
+            request('date_from') ||
+            request('date_to') ||
+            request('price_min') ||
+            request('price_max'))
+        <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
+            <small class="text-muted">Active filters:</small>
 
-                @if (request('search'))
-                    <span class="badge bg-primary">
-                        Search: "{{ request('search') }}"
-                        <a href="{{ route('admin.orders.index', array_filter(request()->except('search'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('search'))
+                <span class="badge bg-primary">
+                    Search: "{{ request('search') }}"
+                    <a href="{{ route('admin.orders.index', array_filter(request()->except('search'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('status'))
-                    <span class="badge bg-info">
-                        Status: {{ ucfirst(request('status')) }}
-                        <a href="{{ route('admin.orders.index', array_filter(request()->except('status'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('status'))
+                <span class="badge bg-info">
+                    Status: {{ ucfirst(request('status')) }}
+                    <a href="{{ route('admin.orders.index', array_filter(request()->except('status'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('date_from'))
-                    <span class="badge bg-secondary">
-                        From: {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
-                        <a href="{{ route('admin.orders.index', array_filter(request()->except('date_from'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('date_from'))
+                <span class="badge bg-secondary">
+                    From: {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
+                    <a href="{{ route('admin.orders.index', array_filter(request()->except('date_from'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('date_to'))
-                    <span class="badge bg-secondary">
-                        To: {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
-                        <a href="{{ route('admin.orders.index', array_filter(request()->except('date_to'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('date_to'))
+                <span class="badge bg-secondary">
+                    To: {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
+                    <a href="{{ route('admin.orders.index', array_filter(request()->except('date_to'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('price_min'))
-                    <span class="badge bg-success">
-                        Min: {{ number_format(request('price_min')) }} ₫
-                        <a href="{{ route('admin.orders.index', array_filter(request()->except('price_min'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('price_min'))
+                <span class="badge bg-success">
+                    Min: {{ number_format(request('price_min')) }} ₫
+                    <a href="{{ route('admin.orders.index', array_filter(request()->except('price_min'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('price_max'))
-                    <span class="badge bg-success">
-                        Max: {{ number_format(request('price_max')) }} ₫
-                        <a href="{{ route('admin.orders.index', array_filter(request()->except('price_max'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('price_max'))
+                <span class="badge bg-success">
+                    Max: {{ number_format(request('price_max')) }} ₫
+                    <a href="{{ route('admin.orders.index', array_filter(request()->except('price_max'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-outline-danger">
-                    <i class="fas fa-times me-1"></i>Clear All
-                </a>
-            </div>
-        @endif
-    </div>
+            <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-times me-1"></i>Clear All
+            </a>
+        </div>
+    @endif
+    </form>
 </div>
 
 @push('scripts')

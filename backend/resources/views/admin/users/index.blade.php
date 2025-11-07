@@ -26,81 +26,14 @@
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-primary-soft rounded">
-                                <i class="fas fa-users fa-lg text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Total Users</h6>
-                            <h4 class="mb-0" id="totalUsersCount">{{ $totalUsers ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            @include('admin.users.form')
         </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-success-soft rounded">
-                                <i class="fas fa-check-circle fa-lg text-success"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Active</h6>
-                            <h4 class="mb-0" id="activeUsersCount">{{ $activeUsers ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-danger-soft rounded">
-                                <i class="fas fa-times-circle fa-lg text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Inactive</h6>
-                            <h4 class="mb-0" id="inactiveUsersCount">{{ $inactiveUsers ?? 0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-lg bg-warning-soft rounded">
-                                <i class="fas fa-trash fa-lg text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Deleted</h6>
-                            <h4 class="mb-0" id="deletedUsersCount">{{ $deletedUsers }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    @include('admin.users.form')
-
-    <div id="users-table-container">
-        @include('admin.users.table')
+        <div id="users-table-container">
+            @include('admin.users.table')
+        </div>
     </div>
 
 @endsection
@@ -417,15 +350,16 @@
 
                     <div class="mb-3">
                         <label for="excel_file" class="form-label fw-bold">Select Excel File</label>
-                        <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                        <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".xlsx,.xls"
+                            required>
                         <small class="text-muted">Accepted formats: Excel (*.xlsx, *.xls)</small>
                     </div>
 
-                    @if(session('import_errors'))
+                    @if (session('import_errors'))
                         <div class="alert alert-warning">
                             <strong>Import Errors:</strong>
                             <ul class="mb-0 mt-2" style="max-height: 200px; overflow-y: auto;">
-                                @foreach(session('import_errors') as $error)
+                                @foreach (session('import_errors') as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
                             </ul>

@@ -1,10 +1,9 @@
-<div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">
+<div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">
             <i class="fas fa-search me-2"></i>Search Products
         </h5>
-        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-            data-bs-target="#filterModal">
+        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
             <i class="fas fa-filter me-2"></i>Filters
             @if (request('category_id') || request('status') !== null || request('is_hot') !== null)
                 <span class="badge bg-danger ms-1">
@@ -13,86 +12,85 @@
             @endif
         </button>
     </div>
-    <div class="card-body">
-        <form action="{{ route('admin.products.index') }}" method="GET" id="searchForm" class="clean-form">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-12">
-                    <div class="position-relative">
-                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                            placeholder="Search by product name or description..."
-                            value="{{ request('search') }}" style="height: 45px;">
-                        @if (request('search'))
-                            <button type="button"
-                                class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
-                                onclick="clearSearch()" title="Clear search">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        @endif
-                    </div>
+
+    <form action="{{ route('admin.products.index') }}" method="GET" id="searchForm" class="clean-form">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-12">
+                <div class="position-relative">
+                    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
+                        placeholder="Search by product name or description..." value="{{ request('search') }}"
+                        style="height: 45px;">
+                    @if (request('search'))
+                        <button type="button"
+                            class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                            onclick="clearSearch()" title="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    @endif
                 </div>
             </div>
+        </div>
 
-            <input type="hidden" name="category_id" id="hidden_category_id" value="{{ request('category_id') }}">
-            <input type="hidden" name="status" id="hidden_status" value="{{ request('status') }}">
-            <input type="hidden" name="is_hot" id="hidden_is_hot" value="{{ request('is_hot') }}">
-            <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
-            <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
-        </form>
+        <input type="hidden" name="category_id" id="hidden_category_id" value="{{ request('category_id') }}">
+        <input type="hidden" name="status" id="hidden_status" value="{{ request('status') }}">
+        <input type="hidden" name="is_hot" id="hidden_is_hot" value="{{ request('is_hot') }}">
+        <input type="hidden" name="sort_by" id="hidden_sort_by" value="{{ request('sort_by') }}">
+        <input type="hidden" name="sort_order" id="hidden_sort_order" value="{{ request('sort_order') }}">
+    </form>
 
-        @if (request('search') || request('category_id') || request('status') !== null || request('is_hot') !== null)
-            <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
-                <small class="text-muted">Active filters:</small>
+    @if (request('search') || request('category_id') || request('status') !== null || request('is_hot') !== null)
+        <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
+            <small class="text-muted">Active filters:</small>
 
-                @if (request('search'))
-                    <span class="badge bg-primary">
-                        Search: "{{ request('search') }}"
-                        <a href="{{ route('admin.products.index', array_filter(request()->except('search'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('search'))
+                <span class="badge bg-primary">
+                    Search: "{{ request('search') }}"
+                    <a href="{{ route('admin.products.index', array_filter(request()->except('search'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('category_id'))
-                    @php
-                        $category = $categories->firstWhere('id', request('category_id'));
-                    @endphp
-                    <span class="badge bg-info">
-                        Category: {{ $category->name ?? 'Unknown' }}
-                        <a href="{{ route('admin.products.index', array_filter(request()->except('category_id'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('category_id'))
+                @php
+                    $category = $categories->firstWhere('id', request('category_id'));
+                @endphp
+                <span class="badge bg-info">
+                    Category: {{ $category->name ?? 'Unknown' }}
+                    <a href="{{ route('admin.products.index', array_filter(request()->except('category_id'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('status') !== null && request('status') !== '')
-                    <span class="badge bg-success">
-                        Status: {{ request('status') == '1' ? 'Active' : 'Inactive' }}
-                        <a href="{{ route('admin.products.index', array_filter(request()->except('status'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('status') !== null && request('status') !== '')
+                <span class="badge bg-success">
+                    Status: {{ request('status') == '1' ? 'Active' : 'Inactive' }}
+                    <a href="{{ route('admin.products.index', array_filter(request()->except('status'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                @if (request('is_hot') !== null && request('is_hot') !== '')
-                    <span class="badge bg-warning">
-                        {{ request('is_hot') == '1' ? 'Hot Only' : 'Normal Only' }}
-                        <a href="{{ route('admin.products.index', array_filter(request()->except('is_hot'))) }}"
-                            class="text-white ms-1">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </span>
-                @endif
+            @if (request('is_hot') !== null && request('is_hot') !== '')
+                <span class="badge bg-warning">
+                    {{ request('is_hot') == '1' ? 'Hot Only' : 'Normal Only' }}
+                    <a href="{{ route('admin.products.index', array_filter(request()->except('is_hot'))) }}"
+                        class="text-white ms-1">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </span>
+            @endif
 
-                <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-danger">
-                    <i class="fas fa-times me-1"></i>Clear All
-                </a>
-            </div>
-        @endif
-    </div>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-times me-1"></i>Clear All
+            </a>
+        </div>
+    @endif
 </div>
 
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
