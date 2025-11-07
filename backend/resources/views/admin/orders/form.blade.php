@@ -1,16 +1,12 @@
 <div>
-    <h5 class="mb-3">
-        <i class="fas fa-search me-2"></i>Search & Filter Orders
-    </h5>
-
     <form action="{{ route('admin.orders.index') }}" method="GET" id="searchForm" class="clean-form">
-        <div class="row g-3 align-items-end mb-3">
-            <div class="col-md-6">
-                <label for="search" class="form-label small text-muted">Search</label>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-8">
                 <div class="position-relative">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                     <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                        placeholder="Order ID, customer name, phone, email..." value="{{ request('search') }}">
+                        placeholder="Search by order ID, customer name, phone, email..." value="{{ request('search') }}"
+                        style="height: 45px;">
                     @if (request('search'))
                         <button type="button"
                             class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
@@ -21,34 +17,22 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <label for="status_filter" class="form-label small text-muted">Status</label>
-                <select name="status" id="status_filter" class="form-select">
+            <div class="col-md-4">
+                <select name="status" id="status_filter" class="form-select" style="height: 45px;" 
+                    onchange="$('#searchForm').submit()">
                     <option value="">All Statuses</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed
-                    </option>
-                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing
-                    </option>
-                    <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping
-                    </option>
-                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed
-                    </option>
-                    <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled
-                    </option>
-                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only
-                    </option>
+                    <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
+                    <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only</option>
                 </select>
-            </div>
-
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="fas fa-search me-2"></i>Search
-                </button>
             </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mt-3">
             <a href="#advancedFilters" data-bs-toggle="collapse" class="text-decoration-none">
                 <i class="fas fa-sliders-h me-2"></i>Advanced Filters
                 <i class="fas fa-chevron-down ms-1"></i>

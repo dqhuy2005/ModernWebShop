@@ -9,8 +9,7 @@
                 <div class="position-relative">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                     <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                        placeholder="Search by name, email, or phone..." value="{{ request('search') }}"
-                        style="height: 45px;">
+                        placeholder="Search by name, email, or phone..." value="{{ request('search') }}">
                     @if (request('search'))
                         <button type="button"
                             class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
@@ -22,8 +21,7 @@
             </div>
 
             <div class="col-md-4">
-                <select name="status" id="status_filter" class="form-select" style="height: 45px;"
-                    onchange="$('#searchForm').submit()">
+                <select name="status" id="status_filter" class="form-select" onchange="$('#searchForm').submit()">
                     <option value="">All Status</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>
                         <i class="fas fa-check-circle"></i> Active Only

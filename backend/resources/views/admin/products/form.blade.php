@@ -19,8 +19,7 @@
                 <div class="position-relative">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                     <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                        placeholder="Search by product name or description..." value="{{ request('search') }}"
-                        style="height: 45px;">
+                        placeholder="Search by product name or description..." value="{{ request('search') }}">
                     @if (request('search'))
                         <button type="button"
                             class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"

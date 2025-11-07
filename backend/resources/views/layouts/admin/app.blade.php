@@ -31,6 +31,7 @@
 
         * {
             font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 14px;
         }
 
         .admin-header {
