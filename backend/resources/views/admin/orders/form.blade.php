@@ -5,8 +5,8 @@
                 <div class="position-relative">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                     <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
-                        placeholder="Search by order ID, customer name, phone, email..." value="{{ request('search') }}"
-                        style="height: 45px;">
+                        placeholder="Search by order ID, customer name, phone, email..."
+                        value="{{ request('search') }}">
                     @if (request('search'))
                         <button type="button"
                             class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
@@ -18,16 +18,20 @@
             </div>
 
             <div class="col-md-4">
-                <select name="status" id="status_filter" class="form-select" style="height: 45px;" 
-                    onchange="$('#searchForm').submit()">
+                <select name="status" id="status_filter" class="form-select" onchange="$('#searchForm').submit()">
                     <option value="">All Statuses</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
+                    <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed
+                    </option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing
+                    </option>
                     <option value="shipping" {{ request('status') === 'shipping' ? 'selected' : '' }}>Shipping</option>
-                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                    <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed
+                    </option>
+                    <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled
+                    </option>
+                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted Only
+                    </option>
                 </select>
             </div>
         </div>

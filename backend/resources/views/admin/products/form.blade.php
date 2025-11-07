@@ -1,21 +1,7 @@
 <div>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">
-            <i class="fas fa-search me-2"></i>Search Products
-        </h5>
-        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
-            <i class="fas fa-filter me-2"></i>Filters
-            @if (request('category_id') || request('status') !== null || request('is_hot') !== null)
-                <span class="badge bg-danger ms-1">
-                    {{ collect([request('category_id'), request('status'), request('is_hot')])->filter()->count() }}
-                </span>
-            @endif
-        </button>
-    </div>
-
     <form action="{{ route('admin.products.index') }}" method="GET" id="searchForm" class="clean-form">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-12">
+        <div class="d-flex gap-3 align-items-center">
+            <div class="flex-grow-1">
                 <div class="position-relative">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                     <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
@@ -28,6 +14,18 @@
                         </button>
                     @endif
                 </div>
+            </div>
+
+            <div class="flex-shrink-0">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                    data-bs-target="#filterModal">
+                    <i class="fas fa-filter me-2"></i>Filters
+                    @if (request('category_id') || request('status') !== null || request('is_hot') !== null)
+                        <span class="badge bg-danger ms-1">
+                            {{ collect([request('category_id'), request('status'), request('is_hot')])->filter()->count() }}
+                        </span>
+                    @endif
+                </button>
             </div>
         </div>
 

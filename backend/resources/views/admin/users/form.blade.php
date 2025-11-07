@@ -1,8 +1,4 @@
 <div>
-    <h5 class="mb-3">
-        <i class="fas fa-search me-2"></i>Search Users
-    </h5>
-
     <form action="{{ route('admin.users.index') }}" method="GET" id="searchForm" class="clean-form">
         <div class="row g-3 align-items-center">
             <div class="col-md-8">
