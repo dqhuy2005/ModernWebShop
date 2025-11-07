@@ -28,26 +28,17 @@ class CategoryController extends Controller
 
         $query->orderBy('created_at', 'desc');
 
-        $stats = $this->getCategoryStatistics();
-
         // Pagination
         $perPage = $request->get('per_page', 15);
         $categories = $query->paginate($perPage);
         if ($request->ajax()) {
-            return view('admin.categories.table', compact('categories', 'stats'))->render();
+            return view('admin.categories.table', compact('categories'))->render();
         }
 
-        return view('admin.categories.index', compact('categories', 'stats'));
+        return view('admin.categories.index', compact('categories'));
     }
 
-    protected function getCategoryStatistics()
-    {
-        return Category::selectRaw('
-            COUNT(*) as total,
-            SUM(CASE WHEN deleted_at IS NULL THEN 1 ELSE 0 END) as active,
-            SUM(CASE WHEN deleted_at IS NOT NULL THEN 1 ELSE 0 END) as inactive
-        ')->withTrashed()->first();
-    }
+
 
     public function create()
     {

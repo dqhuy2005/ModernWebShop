@@ -54,19 +54,12 @@ class UserController extends BaseController
 
             $users = $query->paginate($perPage)->withQueryString();
 
-            $stats = $this->getUserStatistics();
-
             $roles = Role::select('id', 'name', 'slug')->get();
 
             return view('admin.users.index', compact(
                 'users',
                 'roles'
-            ))->with([
-                'totalUsers' => $stats->total,
-                'activeUsers' => $stats->active,
-                'inactiveUsers' => $stats->inactive,
-                'deletedUsers' => $stats->deleted
-            ]);
+            ));
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load users: ' . $e->getMessage());
         }
@@ -78,8 +71,8 @@ class UserController extends BaseController
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('fullname', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -88,24 +81,6 @@ class UserController extends BaseController
         }
 
         return $query;
-    }
-
-    protected function getUserStatistics()
-    {
-        return DB::table('users')
-            ->selectRaw('
-                COUNT(*) as total,
-                SUM(CASE WHEN status = 1 AND deleted_at IS NULL THEN 1 ELSE 0 END) as active,
-                SUM(CASE WHEN status = 0 AND deleted_at IS NULL THEN 1 ELSE 0 END) as inactive,
-                SUM(CASE WHEN deleted_at IS NOT NULL THEN 1 ELSE 0 END) as deleted
-            ')
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('roles')
-                    ->whereRaw('roles.id = users.role_id')
-                    ->where('roles.slug', Role::ADMIN);
-            })
-            ->first();
     }
 
     public function create()
@@ -261,17 +236,9 @@ class UserController extends BaseController
             $user->delete();
 
             if (request()->ajax()) {
-                $stats = $this->getUserStatistics();
-
                 return response()->json([
                     'success' => true,
-                    'message' => 'User deleted successfully! You can restore it later.',
-                    'counts' => [
-                        'total' => $stats->total,
-                        'active' => $stats->active,
-                        'inactive' => $stats->inactive,
-                        'deleted' => $stats->deleted,
-                    ],
+                    'message' => 'User deleted successfully! You can restore it later.'
                 ]);
             }
 
@@ -290,18 +257,10 @@ class UserController extends BaseController
             $user->restore();
 
             if (request()->ajax()) {
-                $stats = $this->getUserStatistics();
-
                 return response()->json([
                     'success' => true,
                     'message' => 'User restored successfully!',
-                    'status' => $user->status,
-                    'counts' => [
-                        'total' => $stats->total,
-                        'active' => $stats->active,
-                        'inactive' => $stats->inactive,
-                        'deleted' => $stats->deleted,
-                    ],
+                    'status' => $user->status
                 ]);
             }
 
@@ -328,17 +287,9 @@ class UserController extends BaseController
             $user->forceDelete();
 
             if (request()->ajax()) {
-                $stats = $this->getUserStatistics();
-
                 return response()->json([
                     'success' => true,
-                    'message' => 'User permanently deleted!',
-                    'counts' => [
-                        'total' => $stats->total,
-                        'active' => $stats->active,
-                        'inactive' => $stats->inactive,
-                        'deleted' => $stats->deleted,
-                    ],
+                    'message' => 'User permanently deleted!'
                 ]);
             }
 
@@ -372,18 +323,10 @@ class UserController extends BaseController
             $status = $user->status ? 'active' : 'inactive';
 
             if (request()->ajax()) {
-                $stats = $this->getUserStatistics();
-
                 return response()->json([
                     'success' => true,
                     'message' => "User marked as {$status} successfully!",
-                    'status' => $user->status,
-                    'counts' => [
-                        'total' => $stats->total,
-                        'active' => $stats->active,
-                        'inactive' => $stats->inactive,
-                        'deleted' => $stats->deleted,
-                    ],
+                    'status' => $user->status
                 ]);
             }
 

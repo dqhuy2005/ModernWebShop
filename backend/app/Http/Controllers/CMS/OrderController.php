@@ -15,21 +15,7 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
-    protected function getOrderStatistics()
-    {
-        return DB::table('orders')
-            ->selectRaw('
-                COUNT(*) as total,
-                SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending,
-                SUM(CASE WHEN status = "confirmed" THEN 1 ELSE 0 END) as confirmed,
-                SUM(CASE WHEN status = "processing" THEN 1 ELSE 0 END) as processing,
-                SUM(CASE WHEN status = "shipping" THEN 1 ELSE 0 END) as shipping,
-                SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled
-            ')
-            ->whereNull('deleted_at')
-            ->first();
-    }
+
 
     public function show($id)
     {
@@ -88,29 +74,11 @@ class OrderController extends Controller
             $perPage = $request->get('per_page', 15);
             $orders = $query->paginate($perPage)->withQueryString();
 
-            $stats = $this->getOrderStatistics();
-
             if ($request->ajax()) {
-                return view('admin.orders.table', compact('orders'))->with([
-                    'totalOrders' => $stats->total,
-                    'pendingOrders' => $stats->pending,
-                    'confirmedOrders' => $stats->confirmed,
-                    'processingOrders' => $stats->processing,
-                    'shippingOrders' => $stats->shipping,
-                    'completedOrders' => $stats->completed,
-                    'cancelledOrders' => $stats->cancelled
-                ]);
+                return view('admin.orders.table', compact('orders'));
             }
 
-            return view('admin.orders.index', compact('orders'))->with([
-                'totalOrders' => $stats->total,
-                'pendingOrders' => $stats->pending,
-                'confirmedOrders' => $stats->confirmed,
-                'processingOrders' => $stats->processing,
-                'shippingOrders' => $stats->shipping,
-                'completedOrders' => $stats->completed,
-                'cancelledOrders' => $stats->cancelled
-            ]);
+            return view('admin.orders.index', compact('orders'));
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error loading orders: ' . $e->getMessage());
@@ -343,20 +311,9 @@ class OrderController extends Controller
             $order->logActivity('order_cancelled', 'Order was cancelled by admin');
 
             if ($request->ajax()) {
-                $stats = $this->getOrderStatistics();
-
                 return response()->json([
                     'success' => true,
-                    'message' => 'Order cancelled successfully!',
-                    'counts' => [
-                        'total' => $stats->total,
-                        'pending' => $stats->pending,
-                        'confirmed' => $stats->confirmed,
-                        'processing' => $stats->processing,
-                        'shipping' => $stats->shipping,
-                        'completed' => $stats->completed,
-                        'cancelled' => $stats->cancelled,
-                    ]
+                    'message' => 'Order cancelled successfully!'
                 ]);
             }
 
@@ -385,20 +342,9 @@ class OrderController extends Controller
             $order->logActivity('order_restored', 'Order was restored from trash');
 
             if ($request->ajax()) {
-                $stats = $this->getOrderStatistics();
-
                 return response()->json([
                     'success' => true,
-                    'message' => 'Order restored successfully!',
-                    'counts' => [
-                        'total' => $stats->total,
-                        'pending' => $stats->pending,
-                        'confirmed' => $stats->confirmed,
-                        'processing' => $stats->processing,
-                        'shipping' => $stats->shipping,
-                        'completed' => $stats->completed,
-                        'cancelled' => $stats->cancelled,
-                    ]
+                    'message' => 'Order restored successfully!'
                 ]);
             }
 
