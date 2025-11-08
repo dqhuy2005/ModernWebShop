@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\ProductViewService;
+use App\Services\ReviewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     protected ProductViewService $viewService;
+    protected ReviewService $reviewService;
 
-    public function __construct(ProductViewService $viewService)
+    public function __construct(ProductViewService $viewService, ReviewService $reviewService)
     {
         $this->viewService = $viewService;
+        $this->reviewService = $reviewService;
     }
 
     public function show(Request $request, string $slug)
@@ -51,7 +54,15 @@ class ProductController extends Controller
                 'is_hot' => $product->is_hot,
             ];
 
-            return view('user.product-detail', compact('product', 'relatedProducts', 'viewStats'));
+            // Get reviews data
+            $reviews = $product->approvedReviews()
+                ->with('user')
+                ->latest()
+                ->paginate(10);
+
+            $reviewStats = $this->reviewService->getProductReviewStats($product);
+
+            return view('user.product-detail', compact('product', 'relatedProducts', 'viewStats', 'reviews', 'reviewStats'));
 
         } catch (\Exception $e) {
             Log::error('Product detail error', [

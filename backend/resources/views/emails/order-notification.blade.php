@@ -441,7 +441,27 @@
             </div>
 
             <!-- Action Button -->
-            @if (isset($trackingUrl))
+            @if ($orderStatus === 'completed')
+                <!-- Review Products Buttons for Completed Orders -->
+                <div style="background-color: #f0f8ff; border: 1px solid #cce7ff; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                    <h3 style="color: #667eea; margin-top: 0; margin-bottom: 15px; text-align: center;">
+                        ⭐ Đánh giá sản phẩm
+                    </h3>
+                    <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                        Hãy chia sẻ trải nghiệm của bạn về những sản phẩm đã mua!
+                    </p>
+                    
+                    @foreach ($orderItems as $item)
+                        <div style="background-color: #ffffff; border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="color: #333; font-weight: 500;">{{ $item['product_name'] }}</span>
+                            <a href="{{ route('reviews.create', ['order' => $orderId, 'product' => $item['product_id']]) }}" 
+                               style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #ffffff !important; text-decoration: none; border-radius: 20px; font-weight: 600; font-size: 13px;">
+                                Đánh giá ngay
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @elseif (isset($trackingUrl))
                 <div class="btn-container">
                     <a href="{{ $trackingUrl }}" class="btn">Theo dõi đơn hàng</a>
                 </div>

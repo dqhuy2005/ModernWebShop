@@ -110,9 +110,30 @@
 
                     <div class="pw-product-meta d-flex align-items-center flex-wrap gap-3 mb-3">
                         <div class="pw-rate">
-                            {{-- placeholder rating: if you have reviews, replace accordingly --}}
-                            <span class="text-warning">★★★★☆</span>
-                            <small class="text-muted ms-2">(0 đánh giá)</small>
+                            @if ($reviewStats['total_reviews'] > 0)
+                                <span class="text-warning">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @if ($i <= floor($reviewStats['average_rating']))
+                                            ★
+                                        @elseif($i - 0.5 <= $reviewStats['average_rating'])
+                                            <span style="position: relative; display: inline-block;">
+                                                <span style="color: #ddd;">★</span>
+                                                <span
+                                                    style="position: absolute; left: 0; overflow: hidden; width: 50%; color: #ffc107;">★</span>
+                                            </span>
+                                        @else
+                                            <span style="color: #ddd;">★</span>
+                                        @endif
+                                    @endfor
+                                </span>
+                                <small class="text-muted ms-2">
+                                    {{ number_format($reviewStats['average_rating'], 1) }}
+                                    ({{ $reviewStats['total_reviews'] }} đánh giá)
+                                </small>
+                            @else
+                                <span class="text-muted">☆☆☆☆☆</span>
+                                <small class="text-muted ms-2">(Chưa có đánh giá)</small>
+                            @endif
                         </div>
                     </div>
 
@@ -185,6 +206,168 @@
                     <div class="card-body pw-product-desc">
                         {!! $product->description ??
                             '<div class="text-center text-muted"><i class="bi bi-info-circle fs-3 d-block mb-2"></i><p class="mb-0">Chưa có mô tả.</p></div>' !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Reviews Section --}}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card pw-reviews-card">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0 fw-bold">
+                            Đánh giá & Nhận xét {{ $product->name }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if ($reviewStats['total_reviews'] > 0)
+                            {{-- Review Summary - Compact Design --}}
+                            <div class="review-summary-compact mb-4 pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <span class="display-6 fw-bold text-dark mb-0">
+                                        {{ number_format($reviewStats['average_rating'], 2) }}
+                                    </span>
+                                    <div class="d-flex flex-column">
+                                        <div class="stars-inline">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= floor($reviewStats['average_rating']))
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                @elseif($i - 0.5 <= $reviewStats['average_rating'])
+                                                    <i class="bi bi-star-half text-warning"></i>
+                                                @else
+                                                    <i class="bi bi-star text-warning"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <small class="text-muted">({{ $reviewStats['total_reviews'] }} đánh giá)</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Reviews List --}}
+                            <div class="reviews-list">
+                                @foreach ($reviews as $review)
+                                    <div class="review-item pb-3 mb-3">
+                                        <div class="d-flex align-items-start gap-3">
+                                            {{-- User Avatar --}}
+                                            <div class="review-avatar flex-shrink-0">
+                                                @if ($review->user->avatar)
+                                                    <img src="{{ asset('storage/' . $review->user->avatar) }}"
+                                                        alt="{{ $review->user->fullname }}" class="rounded-circle"
+                                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                                @else
+                                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                                                        style="width: 40px; height: 40px; font-size: 16px;">
+                                                        <strong>{{ strtoupper(substr($review->user->fullname, 0, 1)) }}</strong>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            {{-- Review Content --}}
+                                            <div class="flex-grow-1">
+                                                {{-- User Name (masked) --}}
+                                                <div class="d-flex align-items-center gap-2 mb-1">
+                                                    <span class="fw-semibold text-dark">{{ $review->user->username ?? substr($review->user->email, 0, 2) . '******' . substr($review->user->email, -2) }}</span>
+                                                    <span class="text-muted">|</span>
+                                                    <small class="text-muted">{{ $review->created_at->format('d-m-Y H:i:s') }}</small>
+                                                    @if ($review->order_id)
+                                                        <span class="text-muted">|</span>
+                                                        <small class="text-success">
+                                                            <i class="bi bi-check-circle-fill"></i> Đã mua hàng
+                                                        </small>
+                                                    @endif
+                                                </div>
+
+                                                {{-- Star Rating --}}
+                                                <div class="review-stars text-warning mb-2">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $review->rating)
+                                                            <i class="bi bi-star-fill"></i>
+                                                        @else
+                                                            <i class="bi bi-star"></i>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+
+                                                {{-- Review Title --}}
+                                                @if ($review->title)
+                                                    <h6 class="review-title mb-2 fw-semibold">{{ $review->title }}</h6>
+                                                @endif
+
+                                                {{-- Review Comment --}}
+                                                <p class="review-comment mb-2 text-dark">{{ $review->comment }}</p>
+
+                                                {{-- Review Images --}}
+                                                @if ($review->images && count($review->images) > 0)
+                                                    <div class="review-images d-flex gap-2 mb-2 flex-wrap">
+                                                        @foreach ($review->images as $image)
+                                                            <a href="{{ asset('storage/' . $image) }}"
+                                                                data-lightbox="review-{{ $review->id }}"
+                                                                class="review-image-thumb">
+                                                                <img src="{{ asset('storage/' . $image) }}"
+                                                                    alt="Review image" class="rounded"
+                                                                    style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+
+                                                {{-- Review Videos --}}
+                                                @if ($review->videos && count($review->videos) > 0)
+                                                    <div class="review-videos d-flex gap-2 mb-2 flex-wrap">
+                                                        @foreach ($review->videos as $video)
+                                                            <video width="120" height="120" controls class="rounded">
+                                                                <source src="{{ asset('storage/' . $video) }}"
+                                                                    type="video/mp4">
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+
+                                                {{-- Helpful Buttons --}}
+                                                <div class="review-actions mt-2">
+                                                    <button class="btn btn-sm btn-outline-secondary helpful-btn"
+                                                        data-review-id="{{ $review->id }}">
+                                                        <i class="bi bi-hand-thumbs-up"></i>
+                                                        Hữu ích (<span
+                                                            class="helpful-count">{{ $review->helpful_count }}</span>)
+                                                    </button>
+                                                </div>
+
+                                                {{-- Admin Reply --}}
+                                                @if ($review->admin_reply)
+                                                    <div class="admin-reply mt-3 p-3 bg-light rounded">
+                                                        <strong class="text-primary">
+                                                            <i class="bi bi-person-badge"></i> Phản hồi từ người bán:
+                                                        </strong>
+                                                        <p class="mb-0 mt-2">{{ $review->admin_reply }}</p>
+                                                        @if ($review->admin_reply_at)
+                                                            <small
+                                                                class="text-muted">{{ $review->admin_reply_at->format('d/m/Y H:i') }}</small>
+                                                        @endif
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Pagination --}}
+                            @if ($reviews->hasPages())
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $reviews->links() }}
+                                </div>
+                            @endif
+                        @else
+                            <div class="text-center py-5">
+                                <i class="bi bi-star fs-1 text-muted d-block mb-3"></i>
+                                <h5 class="text-muted">Chưa có đánh giá nào</h5>
+                                <p class="text-muted">Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -365,6 +548,89 @@
             margin-bottom: 1rem;
         }
 
+        /* Reviews Section Styling */
+        .pw-reviews-card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pw-reviews-card .card-header {
+            padding: 1rem 1.25rem;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .review-summary-compact {
+            padding: 0;
+            background: transparent;
+        }
+
+        .stars-inline i {
+            font-size: 1rem;
+        }
+
+        .review-item {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+        }
+
+        .review-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .review-comment {
+            color: #333;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .review-stars {
+            font-size: 0.95rem;
+        }
+
+        .review-image-thumb img {
+            transition: transform 0.2s;
+            border: 1px solid #dee2e6;
+        }
+
+        .review-image-thumb:hover img {
+            transform: scale(1.05);
+            border-color: #ffc107;
+        }
+
+        .helpful-btn {
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .helpful-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+
+        .helpful-btn.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+        .admin-reply {
+            border-left: 3px solid #0d6efd;
+            background-color: #f8f9fa !important;
+        }
+
         @media(max-width:767px) {
             .pw-main-img {
                 height: 320px;
@@ -417,6 +683,34 @@
                 });
 
                 $('.pw-thumb-item').first().addClass('active');
+
+                // Helpful button functionality
+                $('.helpful-btn').on('click', function() {
+                    const $btn = $(this);
+                    const reviewId = $btn.data('review-id');
+                    const $count = $btn.find('.helpful-count');
+
+                    if ($btn.hasClass('active')) {
+                        return; // Already marked as helpful
+                    }
+
+                    $.ajax({
+                        url: `/reviews/${reviewId}/helpful`,
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $count.text(response.helpful_count);
+                                $btn.addClass('active');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('Error marking review as helpful:', xhr);
+                        }
+                    });
+                });
             });
         })(jQuery);
     </script>

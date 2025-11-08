@@ -142,6 +142,16 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->reviews()->approved()->with('user');
+    }
+
     public function getMainImageAttribute()
     {
         $first = $this->images()->first();
@@ -168,5 +178,33 @@ class Product extends Model
         return $this->productViews()
             ->where('viewed_at', '>=', now()->subDays($days))
             ->count();
+    }
+
+    /**
+     * Get average rating from approved reviews
+     */
+    public function getAverageRating(): float
+    {
+        return (float) $this->approvedReviews()->avg('rating') ?: 0;
+    }
+
+    /**
+     * Get total count of approved reviews
+     */
+    public function getReviewsCount(): int
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    /**
+     * Get rating breakdown (count per star)
+     */
+    public function getRatingBreakdown(): array
+    {
+        $breakdown = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $breakdown[$i] = $this->approvedReviews()->where('rating', $i)->count();
+        }
+        return $breakdown;
     }
 }

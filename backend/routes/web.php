@@ -13,6 +13,7 @@ use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\PurchaseController;
 use App\Http\Controllers\User\ProductController as UserProductController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
@@ -48,6 +49,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.index');
     Route::get('/purchase/{orderId}', [PurchaseController::class, 'show'])->name('purchase.show');
     Route::post('/purchase/{orderId}/cancel', [PurchaseController::class, 'cancel'])->name('purchase.cancel');
+
+    // Review Routes
+    Route::get('/orders/{order}/products/{product}/review', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/orders/{order}/products/{product}/review/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 Route::get('/wishlist', function () {
@@ -57,6 +65,11 @@ Route::get('/wishlist', function () {
 Route::post('/newsletter/subscribe', function () {
     return redirect()->back()->with('success', 'Successfully subscribed to newsletter!');
 })->name('newsletter.subscribe');
+
+// Public Review Routes
+Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('products.reviews');
+Route::post('/reviews/{review}/helpful', [ReviewController::class, 'markHelpful'])->name('reviews.helpful');
+Route::post('/reviews/{review}/not-helpful', [ReviewController::class, 'markNotHelpful'])->name('reviews.not-helpful');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', function() {

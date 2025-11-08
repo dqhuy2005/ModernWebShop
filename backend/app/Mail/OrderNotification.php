@@ -94,6 +94,7 @@ class OrderNotification extends Mailable
             // Order items
             'orderItems' => $order->orderDetails->map(function ($detail) {
                 return [
+                    'product_id' => $detail->product_id,
                     'product_name' => $detail->product_name,
                     'quantity' => $detail->quantity,
                     'unit_price' => $detail->unit_price,
