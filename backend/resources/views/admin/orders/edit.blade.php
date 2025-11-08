@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-edit me-2"></i>Edit Order #{{ $order->id  }}
+                    <i class="fas fa-edit me-2"></i>Edit Order #{{ $order->id }}
                 </h1>
             </div>
             <div class="d-flex gap-2">
@@ -54,6 +54,43 @@
                             @error('user_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="customer_email" class="form-label fw-bold">
+                                    Email get notifications
+                                </label>
+                                <input type="email" class="form-control is-readonly @error('customer_email') is-invalid @enderror"
+                                    id="customer_email" name="customer_email"
+                                    value="{{ old('customer_email', $order->customer_email) }}"
+                                    placeholder="email@example.com">
+                                @error('customer_email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="customer_name" class="form-label fw-bold">
+                                    Customer Name
+                                </label>
+                                <input type="text" class="form-control is-readonly @error('customer_name') is-invalid @enderror"
+                                    id="customer_name" name="customer_name"
+                                    value="{{ old('customer_name', $order->customer_name) }}" placeholder="Nguyễn Văn A">
+                                @error('customer_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="customer_phone" class="form-label fw-bold">
+                                    Phone Number
+                                </label>
+                                <input type="text" class="form-control is-readonly @error('customer_phone') is-invalid @enderror"
+                                    id="customer_phone" name="customer_phone"
+                                    value="{{ old('customer_phone', $order->customer_phone) }}" placeholder="0987654321">
+                                @error('customer_phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -133,7 +170,8 @@
                                                 @endif
                                                 <div>
                                                     <strong>{{ $detail->product_name }}</strong>
-                                                    <input type="hidden" name="products[{{ $index }}][product_id]"
+                                                    <input type="hidden"
+                                                        name="products[{{ $index }}][product_id]"
                                                         value="{{ $detail->product_id }}">
                                                     <br><small class="text-muted">Price: <span
                                                             class="product-price">{{ number_format($detail->product->price ?? 0, 0, ',', '.') }}</span>
@@ -304,6 +342,34 @@
         let productIndex = {{ $order->orderDetails->count() }};
         const selectedProducts = new Set(@json($order->orderDetails->pluck('product_id')));
         const productModal = new bootstrap.Modal($('#productModal')[0]);
+
+        // Auto-fill customer info when user is selected
+        const usersData = json($users - > map(function($user) {
+            return [
+                'id' => $user - > id,
+                'email' => $user - > email,
+                'fullname' => $user - > fullname,
+                'phone' => $user - > phone ?? ''
+            ];
+        }));
+
+        $('#user_id').on('change', function() {
+            const userId = $(this).val();
+            const user = usersData.find(u => u.id == userId);
+
+            if (user) {
+                // Only fill if fields are empty
+                if (!$('#customer_email').val()) {
+                    $('#customer_email').val(user.email);
+                }
+                if (!$('#customer_name').val()) {
+                    $('#customer_name').val(user.fullname);
+                }
+                if (!$('#customer_phone').val()) {
+                    $('#customer_phone').val(user.phone);
+                }
+            }
+        });
 
         $('#addProductBtn').on('click', function() {
             productModal.show();

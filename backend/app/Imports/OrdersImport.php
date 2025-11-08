@@ -35,6 +35,9 @@ class OrdersImport implements ToCollection, WithHeadingRow
 
             Order::create([
                 'user_id' => $user->id,
+                'customer_email' => $row['customer_email'] ?? $user->email,
+                'customer_name' => $row['customer_name'] ?? $user->fullname,
+                'customer_phone' => $row['customer_phone'] ?? $user->phone,
                 'total_amount' => $totalAmount,
                 'total_items' => $row['total_items'] ?? 0,
                 'status' => $row['status'] ?? 'pending',

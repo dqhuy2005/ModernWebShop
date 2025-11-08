@@ -37,9 +37,12 @@ class NotificationService
                 throw new Exception("No active email template found for notification type '{$notificationTypeCode}'");
             }
 
-            // Prepare recipient
-            $recipient = $order->user;
-            if (!$recipient || !$recipient->email) {
+            // Prepare recipient - prioritize order's customer email over user email
+            $recipientEmail = $order->customer_email ?? $order->user?->email;
+            $recipientName = $order->customer_name ?? $order->user?->fullname ?? 'Quý khách';
+            $recipientPhone = $order->customer_phone ?? $order->user?->phone ?? null;
+
+            if (!$recipientEmail) {
                 throw new Exception("Order #{$order->id} has no valid recipient email");
             }
 
@@ -53,13 +56,15 @@ class NotificationService
             $log = $this->createNotificationLog(
                 $notificationType,
                 $template,
-                $recipient,
                 $order,
+                $recipientEmail,
+                $recipientName,
+                $recipientPhone,
                 $subject
             );
 
             // Send email
-            Mail::to($recipient->email)
+            Mail::to($recipientEmail, $recipientName)
                 ->send(new OrderNotification($order, $emailData, $subject));
 
             // Mark as sent
@@ -99,17 +104,19 @@ class NotificationService
     private function createNotificationLog(
         NotificationType $notificationType,
         EmailTemplate $template,
-        User $recipient,
         Order $order,
+        string $recipientEmail,
+        ?string $recipientName = null,
+        ?string $recipientPhone = null,
         $subject = null
     ) {
         return NotificationLog::create([
             'notification_type_id' => $notificationType->id,
             'email_template_id' => $template->id,
-            'user_id' => $recipient->id,
-            'recipient_email' => $recipient->email,
-            'recipient_name' => $recipient->fullname,
-            'recipient_phone' => $recipient->phone,
+            'user_id' => $order->user_id,
+            'recipient_email' => $recipientEmail,
+            'recipient_name' => $recipientName,
+            'recipient_phone' => $recipientPhone,
             'related_type' => 'Order',
             'related_id' => $order->id,
             'channel' => 'email',
@@ -118,7 +125,7 @@ class NotificationService
             'template_data' => [
                 'order_id' => $order->id,
                 'order_status' => $order->status,
-                'customer_name' => $recipient->fullname,
+                'customer_name' => $recipientName,
             ],
             'max_retry' => $notificationType->getDefaultRetryCount(),
             'scheduled_at' => now(),

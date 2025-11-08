@@ -152,8 +152,14 @@ class OrderController extends Controller
                 $totalItems += $quantity;
             }
 
+            // Get user info to populate customer fields
+            $user = User::find($request->user_id);
+
             $order = Order::create([
                 'user_id' => $request->user_id,
+                'customer_email' => $user->email ?? null,
+                'customer_name' => $user->fullname ?? null,
+                'customer_phone' => $user->phone ?? null,
                 'total_amount' => $totalAmount,
                 'total_items' => $totalItems,
                 'status' => $request->status ?? 'pending',
@@ -206,6 +212,9 @@ class OrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
+            'customer_email' => 'nullable|email|max:255',
+            'customer_name' => 'nullable|string|max:255',
+            'customer_phone' => 'nullable|string|max:20',
             'status' => 'required|in:pending,confirmed,processing,shipping,shipped,completed,cancelled,refunded',
             'address' => 'nullable|string|max:500',
             'note' => 'nullable|string|max:1000',
@@ -214,6 +223,7 @@ class OrderController extends Controller
             'products.*.quantity' => 'required|integer|min:1|max:9999',
         ], [
             'user_id.required' => 'Please select a customer',
+            'customer_email.email' => 'Invalid email format',
             'products.required' => 'Please add at least one product',
             'products.*.quantity.min' => 'Quantity must be at least 1',
         ]);
@@ -257,6 +267,9 @@ class OrderController extends Controller
 
             $order->update([
                 'user_id' => $request->user_id,
+                'customer_email' => $request->customer_email,
+                'customer_name' => $request->customer_name,
+                'customer_phone' => $request->customer_phone,
                 'total_amount' => $totalAmount,
                 'total_items' => $totalItems,
                 'status' => $request->status,

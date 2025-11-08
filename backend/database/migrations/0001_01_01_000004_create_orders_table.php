@@ -25,6 +25,9 @@ return new class extends Migration {
                 'cancelled',    // Đã hủy
                 'refunded'      // Đã hoàn tiền
             ])->default('pending')->index();
+            $table->string('customer_email')->nullable()->after('user_id');
+            $table->string('customer_name')->nullable()->after('customer_email');
+            $table->string('customer_phone')->nullable()->after('customer_name');
             $table->text('address')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
