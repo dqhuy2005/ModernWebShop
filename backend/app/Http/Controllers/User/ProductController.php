@@ -28,11 +28,11 @@ class ProductController extends Controller
                 "product_detail_{$slug}",
                 now()->addMinutes(10),
                 function () use ($slug) {
-                    return Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'view_count', 'created_at', 'updated_at')
+                    return Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at', 'updated_at')
                         ->with([
                             'category:id,name,slug',
                             'images' => function ($query) {
-                                $query->select('id', 'product_id', 'image_path', 'sort_order')
+                                $query->select('id', 'product_id', 'path', 'sort_order')
                                     ->orderBy('sort_order')
                                     ->orderBy('id');
                             }
@@ -51,7 +51,7 @@ class ProductController extends Controller
             $relatedProducts = $this->getRelatedProducts($product);
 
             $viewStats = [
-                'total_views' => $product->view_count ?? $product->views ?? 0,
+                'total_views' => $product->views ?? 0,
                 'recent_views_7days' => $this->viewService->getRecentViewCount($product->id, 7),
                 'unique_visitors' => $this->viewService->getUniqueVisitorsCount($product->id, 7),
                 'is_hot' => $product->is_hot,

@@ -27,7 +27,7 @@ class ProductController extends AppBaseController
     public function show($id)
     {
         try {
-            $product = Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'view_count', 'created_at', 'updated_at')
+            $product = Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at', 'updated_at')
                 ->with('category:id,name,slug')
                 ->find($id);
 
