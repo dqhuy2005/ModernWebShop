@@ -37,7 +37,8 @@ class ReviewController extends Controller
     public function index(Product $product)
     {
         $reviews = $product->approvedReviews()
-            ->with('user')
+            ->select('id', 'product_id', 'user_id', 'rating', 'title', 'comment', 'images', 'videos', 'status', 'created_at', 'updated_at')
+            ->with('user:id,fullname,email,image')
             ->latest()
             ->paginate(10);
 
@@ -69,7 +70,7 @@ class ReviewController extends Controller
                     'order' => $order->id,
                     'product' => $product->id,
                 ])
-                ->with('info', 'Bạn đã đánh giá sản phẩm này. Bạn có thể chỉnh sửa đánh giá.');
+                    ->with('info', 'Bạn đã đánh giá sản phẩm này. Bạn có thể chỉnh sửa đánh giá.');
             }
 
             return back()->with('error', $eligibility['reason']);
@@ -156,7 +157,8 @@ class ReviewController extends Controller
     {
         $user = Auth::user();
 
-        $review = ProductReview::where('user_id', $user->id)
+        $review = ProductReview::select('id', 'product_id', 'user_id', 'order_id', 'order_detail_id', 'rating', 'title', 'comment', 'images', 'videos', 'status', 'created_at', 'updated_at')
+            ->where('user_id', $user->id)
             ->where('product_id', $product->id)
             ->where('order_id', $order->id)
             ->firstOrFail();

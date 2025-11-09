@@ -28,12 +28,15 @@ class ProductController extends Controller
                 "product_detail_{$slug}",
                 now()->addMinutes(10),
                 function () use ($slug) {
-                    return Product::with([
-                        'category',
-                        'images' => function ($query) {
-                            $query->orderBy('sort_order')->orderBy('id');
-                        }
-                    ])
+                    return Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'view_count', 'created_at', 'updated_at')
+                        ->with([
+                            'category:id,name,slug',
+                            'images' => function ($query) {
+                                $query->select('id', 'product_id', 'image_path', 'sort_order')
+                                    ->orderBy('sort_order')
+                                    ->orderBy('id');
+                            }
+                        ])
                         ->where('slug', $slug)
                         ->firstOrFail();
                 }
@@ -56,7 +59,8 @@ class ProductController extends Controller
 
             // Get reviews data
             $reviews = $product->approvedReviews()
-                ->with('user')
+                ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'media', 'status', 'created_at')
+                ->with('user:id,fullname,email,image')
                 ->latest()
                 ->paginate(10);
 

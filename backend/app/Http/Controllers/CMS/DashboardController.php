@@ -78,7 +78,7 @@ class DashboardController extends Controller
             SUM(CASE WHEN DATE(created_at) = ? THEN 1 ELSE 0 END) as today_orders,
             SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as month_orders
         ", [$today, $thisMonth, $thisYear, $today, $thisMonth])
-        ->first();
+            ->first();
 
         $productStats = Product::selectRaw("
             COUNT(*) as total_products,
@@ -92,8 +92,8 @@ class DashboardController extends Controller
             SUM(CASE WHEN DATE(created_at) = ? THEN 1 ELSE 0 END) as new_users_today,
             SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as new_users_month
         ", [$today, $thisMonth])
-        ->whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))
-        ->first();
+            ->whereDoesntHave('role', fn($q) => $q->where('slug', 'admin'))
+            ->first();
 
         $categoryStats = Category::selectRaw("
             COUNT(*) as total_categories,
@@ -269,8 +269,16 @@ class DashboardController extends Controller
         $data = [];
         $quantities = [];
         $colors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF',
+            '#FF9F40',
+            '#FF6384',
+            '#C9CBCF',
+            '#4BC0C0',
+            '#FF6384'
         ];
 
         foreach ($categorySales as $index => $category) {
@@ -297,7 +305,8 @@ class DashboardController extends Controller
     {
         $limit = $request->get('limit', 10);
 
-        $orders = Order::with('user:id,fullname,email')
+        $orders = Order::select('id', 'user_id', 'total_amount', 'total_items', 'status', 'created_at')
+            ->with('user:id,fullname,email')
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get();
@@ -313,7 +322,7 @@ class DashboardController extends Controller
         $limit = $request->get('limit', 10);
         $period = $request->get('period', 'month');
 
-        $startDate = match($period) {
+        $startDate = match ($period) {
             'week' => Carbon::now()->startOfWeek(),
             'month' => Carbon::now()->startOfMonth(),
             'year' => Carbon::now()->startOfYear(),

@@ -81,7 +81,6 @@ class CheckoutController extends Controller
                 $totalItems += $cartItem->quantity;
             }
 
-            // Get user information for customer fields
             $user = Auth::user();
 
             $order = $this->orderRepository->create([
@@ -153,7 +152,14 @@ class CheckoutController extends Controller
             return redirect()->route('login');
         }
 
-        $order = $this->orderRepository->with(['orderDetails.product'])
+        $order = $this->orderRepository
+            ->select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at')
+            ->with([
+                'orderDetails' => function ($q) {
+                    $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price')
+                        ->with('product:id,name,slug,image,price');
+                }
+            ])
             ->find($orderId);
 
         if (!$order || $order->user_id !== Auth::id()) {

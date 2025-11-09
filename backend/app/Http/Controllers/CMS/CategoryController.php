@@ -19,7 +19,9 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $query = Category::withCount('products')->withTrashed();
+        $query = Category::select('id', 'name', 'slug', 'image', 'status', 'created_at', 'updated_at', 'deleted_at')
+            ->withCount('products')
+            ->withTrashed();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -28,7 +30,6 @@ class CategoryController extends Controller
 
         $query->orderBy('created_at', 'desc');
 
-        // Pagination
         $perPage = $request->get('per_page', 15);
         $categories = $query->paginate($perPage);
         if ($request->ajax()) {
@@ -58,7 +59,6 @@ class CategoryController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        // Handle image upload
         if ($request->hasFile('image')) {
             $imageService = new ImageService();
 
@@ -92,7 +92,8 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        $categories = Category::whereNull('deleted_at')
+        $categories = Category::select('id', 'name', 'slug')
+            ->whereNull('deleted_at')
             ->where('id', '!=', $category->id)
             ->get();
 
@@ -113,7 +114,6 @@ class CategoryController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        // Handle image upload using ImageService
         if ($request->hasFile('image')) {
             if (!$this->imageService->validateImage($request->file('image'))) {
                 return back()
@@ -175,7 +175,6 @@ class CategoryController extends Controller
     {
         $category = Category::withTrashed()->findOrFail($id);
 
-        // Delete category image if exists
         if ($category->image) {
             $this->imageService->deleteImage($category->image);
         }

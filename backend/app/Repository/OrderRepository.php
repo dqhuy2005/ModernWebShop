@@ -18,14 +18,22 @@ class OrderRepository extends BaseRepository
 
     public function findBuild()
     {
-        return $this->with(['user', 'orderDetails', 'orderDetails.product']);
+        return $this->select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->with([
+                'user:id,fullname,email,phone',
+                'orderDetails' => function ($q) {
+                    $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                        ->with('product:id,name,slug,image,price');
+                }
+            ]);
     }
 
     public function findByUser($userId)
     {
-        return $this->scopeQuery(function($query) use ($userId) {
-            return $query->where('user_id', $userId)->orderBy('created_at', 'desc');
-        })->all();
+        return $this->select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->scopeQuery(function($query) use ($userId) {
+                return $query->where('user_id', $userId)->orderBy('created_at', 'desc');
+            })->all();
     }
 
     public function findByStatus($status)
@@ -72,8 +80,9 @@ class OrderRepository extends BaseRepository
 
     public function findRecent($limit = 10)
     {
-        return $this->scopeQuery(function($query) use ($limit) {
-            return $query->orderBy('created_at', 'desc')->limit($limit);
-        })->all();
+        return $this->select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->scopeQuery(function($query) use ($limit) {
+                return $query->orderBy('created_at', 'desc')->limit($limit);
+            })->all();
     }
 }

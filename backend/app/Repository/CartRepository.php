@@ -18,8 +18,9 @@ class CartRepository extends BaseRepository
 
     public function findByUser($userId)
     {
-        return $this->scopeQuery(function($query) use ($userId) {
-            return $query->where('user_id', $userId)->with('product');
+        return $this->scopeQuery(function ($query) use ($userId) {
+            return $query->where('user_id', $userId)
+                ->with('product:id,name,slug,image,price,status,category_id');
         })->all();
     }
 
@@ -34,7 +35,7 @@ class CartRepository extends BaseRepository
     public function calculateUserCartTotal($userId)
     {
         $cartItems = $this->findByUser($userId);
-        return $cartItems->sum(function($item) {
+        return $cartItems->sum(function ($item) {
             return $item->quantity * $item->price;
         });
     }

@@ -22,11 +22,17 @@ class OrderController extends Controller
     public function show($id)
     {
         try {
-            $order = Order::with([
-                'user:id,fullname,email,phone',
-                'orderDetails.product:id,name,image',
-                'activities.user:id,fullname'
-            ])->findOrFail($id);
+            $order = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+                ->with([
+                    'user:id,fullname,email,phone',
+                    'orderDetails' => function ($q) {
+                        $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                            ->with('product:id,name,image');
+                    },
+                    'activities' => function ($q) {
+                        $q->with('user:id,fullname');
+                    }
+                ])->findOrFail($id);
 
             $calculatedTotal = $order->calculateTotalAmount();
             $calculatedItems = $order->calculateTotalItems();
@@ -65,7 +71,8 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Order::with(['user:id,fullname,email,phone']);
+            $query = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+                ->with(['user:id,fullname,email,phone']);
 
             $query = $this->applyFilters($request, $query);
 
@@ -183,7 +190,14 @@ class OrderController extends Controller
     public function edit($id)
     {
         try {
-            $order = Order::with(['orderDetails.product:id,name,price', 'user:id,fullname'])
+            $order = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+                ->with([
+                    'orderDetails' => function ($q) {
+                        $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                            ->with('product:id,name,price');
+                    },
+                    'user:id,fullname'
+                ])
                 ->findOrFail($id);
 
             $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')

@@ -26,7 +26,7 @@ class ProductController extends BaseController
     public function index(Request $request)
     {
         try {
-            $query = Product::query();
+            $query = Product::select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at');
 
             $this->applyProductFilters($query, $request);
 
@@ -40,7 +40,7 @@ class ProductController extends BaseController
 
             if ($request->get('sort_by') === 'category_id') {
                 $query->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                    ->select('products.*', 'categories.name as category_name')
+                    ->select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at', 'categories.name as category_name')
                     ->orderBy('categories.name', $request->get('sort_order', 'desc'));
             }
 
@@ -50,7 +50,7 @@ class ProductController extends BaseController
                 $perPage = 15;
             }
 
-            $products = $query->with('category')->paginate($perPage)->withQueryString();
+            $products = $query->with('category:id,name,slug')->paginate($perPage)->withQueryString();
 
             $categories = Category::select('id', 'name')->orderBy('name')->get();
 

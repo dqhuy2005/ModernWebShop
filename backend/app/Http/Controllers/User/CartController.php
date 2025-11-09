@@ -22,14 +22,15 @@ class CartController extends Controller
     public function index()
     {
         // User is not login -> redirect to login page
-        if (!Auth::check()) return redirect()->route('login');
+        if (!Auth::check())
+            return redirect()->route('login');
 
         if (Auth::check()) {
             $cartItems = $this->cartRepository->findByUser(Auth::id());
             $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
         } else {
             $cartItems = collect(Session::get('cart', []));
-            $total = $cartItems->sum(function($item) {
+            $total = $cartItems->sum(function ($item) {
                 return $item['quantity'] * $item['price'];
             });
         }
@@ -44,7 +45,7 @@ class CartController extends Controller
             'quantity' => 'integer|min:1'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::select('id', 'name', 'slug', 'price', 'image', 'status')->findOrFail($request->product_id);
         $quantity = $request->quantity ?? 1;
 
         if (Auth::check()) {
@@ -117,7 +118,7 @@ class CartController extends Controller
                 $cart[$request->cart_id]['quantity'] = $request->quantity;
                 Session::put('cart', $cart);
 
-                $total = collect($cart)->sum(function($item) {
+                $total = collect($cart)->sum(function ($item) {
                     return $item['quantity'] * $item['price'];
                 });
             }
@@ -146,7 +147,7 @@ class CartController extends Controller
             Session::put('cart', $cart);
 
             $cartCount = count($cart);
-            $total = collect($cart)->sum(function($item) {
+            $total = collect($cart)->sum(function ($item) {
                 return $item['quantity'] * $item['price'];
             });
         }

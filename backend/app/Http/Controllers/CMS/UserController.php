@@ -20,7 +20,9 @@ class UserController extends BaseController
     public function index(Request $request)
     {
         try {
-            $query = User::withTrashed()->with('role')
+            $query = User::select('id', 'fullname', 'email', 'phone', 'image', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+                ->withTrashed()
+                ->with('role:id,name,slug')
                 ->whereDoesntHave('role', function ($q) {
                     $q->where('slug', Role::ADMIN);
                 });
@@ -150,8 +152,18 @@ class UserController extends BaseController
     public function show($id)
     {
         try {
-            $user = User::withTrashed()
-                ->with(['role', 'carts', 'orders'])
+            $user = User::select('id', 'fullname', 'email', 'phone', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+                ->withTrashed()
+                ->with([
+                    'role:id,name,slug',
+                    'carts' => function ($q) {
+                        $q->select('id', 'user_id', 'product_id', 'quantity', 'created_at')
+                            ->with('product:id,name,slug,image,price');
+                    },
+                    'orders' => function ($q) {
+                        $q->select('id', 'user_id', 'customer_name', 'total_amount', 'total_items', 'status', 'created_at');
+                    }
+                ])
                 ->findOrFail($id);
 
             return view('admin.users.show', compact('user'));
@@ -163,7 +175,9 @@ class UserController extends BaseController
     public function edit($id)
     {
         try {
-            $user = User::withTrashed()->findOrFail($id);
+            $user = User::select('id', 'fullname', 'email', 'phone', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+                ->withTrashed()
+                ->findOrFail($id);
             $roles = Role::select('id', 'name', 'slug')->get();
 
             return view('admin.users.edit', compact('user', 'roles'));
@@ -175,7 +189,9 @@ class UserController extends BaseController
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-            $user = User::withTrashed()->findOrFail($id);
+            $user = User::select('id', 'fullname', 'email', 'phone', 'image', 'address', 'password', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+                ->withTrashed()
+                ->findOrFail($id);
             $data = $request->except(['image', 'password', 'password_confirmation', '_method', '_token']);
 
             if ($request->filled('password')) {

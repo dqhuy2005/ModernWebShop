@@ -24,7 +24,12 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = NotificationLog::with(['notificationType', 'user', 'emailTemplate'])
+        $query = NotificationLog::select('id', 'notification_type_id', 'user_id', 'email_template_id', 'recipient_email', 'status', 'sent_at', 'error_message', 'created_at', 'updated_at')
+            ->with([
+                'notificationType:id,name,code',
+                'user:id,fullname,email',
+                'emailTemplate:id,name,subject'
+            ])
             ->orderBy('created_at', 'desc');
 
         if ($request->filled('status')) {
@@ -46,7 +51,7 @@ class NotificationController extends Controller
         }
 
         $logs = $query->paginate(20);
-        $types = NotificationType::active()->get();
+        $types = NotificationType::select('id', 'name', 'code')->active()->get();
         $stats = $this->notificationService->getStatistics();
 
         return view('admin.notifications.index', compact('logs', 'types', 'stats'));
@@ -57,12 +62,16 @@ class NotificationController extends Controller
      */
     public function preview($templateId)
     {
-        $template = EmailTemplate::findOrFail($templateId);
+        $template = EmailTemplate::select('id', 'name', 'subject', 'body', 'preview_data')->findOrFail($templateId);
         $previewData = $template->preview_data ? json_decode($template->preview_data, true) : [];
 
-        // Get sample order if no preview data
         if (empty($previewData)) {
-            $order = Order::with(['user', 'orderDetails'])->first();
+            $order = Order::select('id', 'user_id', 'customer_name', 'total_amount', 'status', 'created_at')
+                ->with([
+                    'user:id,fullname,email',
+                    'orderDetails:id,order_id,product_name,quantity,unit_price'
+                ])
+                ->first();
             if ($order) {
                 $previewData = [
                     'orderId' => $order->id,
@@ -92,8 +101,7 @@ class NotificationController extends Controller
         ]);
 
         $order = Order::findOrFail($request->order_id);
-        
-        // Override recipient if test email provided
+
         if ($request->filled('test_email')) {
             $order->user->email = $request->test_email;
         }

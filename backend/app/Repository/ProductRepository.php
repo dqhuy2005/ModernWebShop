@@ -87,6 +87,7 @@ class ProductRepository extends BaseRepository
     public function getFilteredProducts($categoryId, $filters = [])
     {
         $query = $this->model
+            ->select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at')
             ->where('products.status', true)
             ->where('products.category_id', $categoryId)
             ->with(['category:id,name,slug']);
@@ -103,8 +104,9 @@ class ProductRepository extends BaseRepository
     public function getNewProducts($limit = 8)
     {
         return $this->model
+            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
-            ->with('category')
+            ->with('category:id,name,slug')
             ->latest('created_at')
             ->limit($limit)
             ->get();
@@ -113,8 +115,9 @@ class ProductRepository extends BaseRepository
     public function getTopSellingProducts($limit = 12)
     {
         return $this->model
+            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
-            ->with('category')
+            ->with('category:id,name,slug')
             ->mostViewed($limit)
             ->get();
     }
@@ -122,9 +125,10 @@ class ProductRepository extends BaseRepository
     public function getHotDeals($limit = 8)
     {
         return $this->model
+            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->hot()
-            ->with('category')
+            ->with('category:id,name,slug')
             ->limit($limit)
             ->get();
     }
@@ -132,9 +136,10 @@ class ProductRepository extends BaseRepository
     public function getPaginatedHotDeals($perPage = 12)
     {
         return $this->model
+            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->hot()
-            ->with('category')
+            ->with('category:id,name,slug')
             ->paginate($perPage);
     }
 

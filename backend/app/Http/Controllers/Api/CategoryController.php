@@ -12,7 +12,9 @@ class CategoryController extends AppBaseController
     public function index()
     {
         try {
-            $categories = Category::with('children')->get();
+            $categories = Category::select('id', 'name', 'slug', 'image', 'parent_id', 'status', 'created_at')
+                ->with('children:id,name,slug,image,parent_id,status')
+                ->get();
             return $this->sendResponse($categories, 'Categories retrieved successfully');
         } catch (\Exception $e) {
             return $this->sendError('Failed to retrieve categories: ' . $e->getMessage(), 500);
@@ -22,8 +24,9 @@ class CategoryController extends AppBaseController
     public function getParentCategories()
     {
         try {
-            $categories = Category::parent()
-                ->with('children')
+            $categories = Category::select('id', 'name', 'slug', 'image', 'parent_id', 'status', 'created_at')
+                ->parent()
+                ->with('children:id,name,slug,image,parent_id,status')
                 ->get();
             return $this->sendResponse($categories, 'Parent categories retrieved successfully');
         } catch (\Exception $e) {
@@ -34,8 +37,9 @@ class CategoryController extends AppBaseController
     public function getChildCategories()
     {
         try {
-            $categories = Category::child()
-                ->with('parent')
+            $categories = Category::select('id', 'name', 'slug', 'image', 'parent_id', 'status', 'created_at')
+                ->child()
+                ->with('parent:id,name,slug')
                 ->get();
             return $this->sendResponse($categories, 'Child categories retrieved successfully');
         } catch (\Exception $e) {
@@ -46,7 +50,14 @@ class CategoryController extends AppBaseController
     public function show($id)
     {
         try {
-            $category = Category::with(['children', 'products'])->find($id);
+            $category = Category::select('id', 'name', 'slug', 'image', 'parent_id', 'status', 'created_at', 'updated_at')
+                ->with([
+                    'children:id,name,slug,image,parent_id,status',
+                    'products' => function ($q) {
+                        $q->select('id', 'name', 'slug', 'price', 'image', 'category_id', 'status');
+                    }
+                ])
+                ->find($id);
 
             if (!$category) {
                 return $this->sendError('Category not found', 404);
@@ -95,7 +106,8 @@ class CategoryController extends AppBaseController
         }
 
         try {
-            $category = Category::find($id);
+            $category = Category::select('id', 'name', 'slug', 'image', 'parent_id', 'status')
+                ->find($id);
 
             if (!$category) {
                 return $this->sendError('Category not found', 404);
@@ -115,7 +127,7 @@ class CategoryController extends AppBaseController
     public function destroy($id)
     {
         try {
-            $category = Category::find($id);
+            $category = Category::select('id')->find($id);
 
             if (!$category) {
                 return $this->sendError('Category not found', 404);

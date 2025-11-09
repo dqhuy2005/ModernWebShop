@@ -27,27 +27,29 @@ class PurchaseController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        $query = $this->orderRepository->with(['orderDetails.product'])
-            ->scopeQuery(function ($q) use ($userId, $search, $status) {
-                $q = $q->where('user_id', $userId);
+        $query = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->with([
+                'orderDetails' => function ($q) {
+                    $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                        ->with('product:id,name,slug,image,price');
+                }
+            ])
+            ->where('user_id', $userId);
 
-                if ($search) {
-                    $q = $q->where(function ($query) use ($search) {
-                        $query->where('id', 'like', '%' . $search . '%')
-                            ->orWhereHas('orderDetails', function ($q) use ($search) {
-                                $q->where('product_name', 'like', '%' . $search . '%');
-                            });
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                    ->orWhereHas('orderDetails', function ($subQuery) use ($search) {
+                        $subQuery->where('product_name', 'like', '%' . $search . '%');
                     });
-                }
-
-                if ($status) {
-                    $q = $q->where('status', $status);
-                }
-
-                return $q->orderBy('created_at', 'desc');
             });
+        }
 
-        $orders = $query->paginate(10);
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('user.purchase', compact('orders', 'search', 'status'));
     }
@@ -58,7 +60,13 @@ class PurchaseController extends Controller
             return redirect()->route('login');
         }
 
-        $order = $this->orderRepository->with(['orderDetails.product'])
+        $order = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->with([
+                'orderDetails' => function ($q) {
+                    $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                        ->with('product:id,name,slug,image,price');
+                }
+            ])
             ->find($orderId);
 
         if (!$order || $order->user_id !== Auth::id()) {
@@ -77,7 +85,7 @@ class PurchaseController extends Controller
             ], 401);
         }
 
-        $order = $this->orderRepository->find($orderId);
+        $order = Order::select('id', 'user_id', 'status')->find($orderId);
 
         if (!$order || $order->user_id !== Auth::id()) {
             return response()->json([

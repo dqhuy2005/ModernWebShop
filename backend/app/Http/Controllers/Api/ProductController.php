@@ -13,7 +13,8 @@ class ProductController extends AppBaseController
     public function index()
     {
         try {
-            $products = Product::with('category')
+            $products = Product::select('id', 'name', 'slug', 'description', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+                ->with('category:id,name,slug')
                 ->parentOnly()
                 ->active()
                 ->get();
@@ -26,7 +27,9 @@ class ProductController extends AppBaseController
     public function show($id)
     {
         try {
-            $product = Product::with('category')->find($id);
+            $product = Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'view_count', 'created_at', 'updated_at')
+                ->with('category:id,name,slug')
+                ->find($id);
 
             if (!$product) {
                 return $this->sendError('Product not found', 404);
@@ -44,13 +47,14 @@ class ProductController extends AppBaseController
     public function getByCategory($categoryId)
     {
         try {
-            $category = Category::find($categoryId);
+            $category = Category::select('id', 'name', 'slug')->find($categoryId);
 
             if (!$category) {
                 return $this->sendError('Category not found', 404);
             }
 
-            $products = Product::with('category')
+            $products = Product::select('id', 'name', 'slug', 'description', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+                ->with('category:id,name,slug')
                 ->where('category_id', $categoryId)
                 ->active()
                 ->get();
@@ -66,7 +70,8 @@ class ProductController extends AppBaseController
         try {
             $limit = $request->query('limit', default: 10);
 
-            $products = Product::with('category')
+            $products = Product::select('id', 'name', 'slug', 'description', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+                ->with('category:id,name,slug')
                 ->active()
                 ->mostViewed($limit)
                 ->get();
@@ -80,7 +85,8 @@ class ProductController extends AppBaseController
     public function getHotProducts()
     {
         try {
-            $products = Product::with('category')
+            $products = Product::select('id', 'name', 'slug', 'description', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+                ->with('category:id,name,slug')
                 ->hot()
                 ->active()
                 ->get();
