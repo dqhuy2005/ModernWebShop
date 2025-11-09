@@ -506,10 +506,6 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
-        .pw-specs-table tbody tr:last-child {
-            border-bottom: none;
-        }
-
         .pw-specs-table tbody tr:hover {
             background-color: #f9fafb;
         }
