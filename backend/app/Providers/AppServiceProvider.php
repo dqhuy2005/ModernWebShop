@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Repository\CartRepository;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Order;
+use App\Observers\ProductObserver;
+use App\Observers\CategoryObserver;
+use App\Observers\OrderObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +31,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Observers for Cache Invalidation
+        Product::observe(ProductObserver::class);
+        Category::observe(CategoryObserver::class);
+        Order::observe(OrderObserver::class);
+
         View::composer('*', function ($view) {
             if (Auth::check()) {
                 $cartRepository = app(CartRepository::class);

@@ -7,41 +7,29 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductFilterRequest;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
+use App\Services\HomePageService;
 
 class HomeController extends Controller
 {
     protected $productRepository;
     protected $categoryRepository;
+    protected $homePageService;
 
     public function __construct(
         ProductRepository $productRepository,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
+        HomePageService $homePageService
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->homePageService = $homePageService;
     }
 
     public function index()
     {
-        $featuredCategories = $this->categoryRepository->getFeaturedCategories(3);
+        $data = $this->homePageService->getHomePageData();
 
-        $newProducts = $this->productRepository->getNewProducts(8);
-
-        $categories = $this->categoryRepository->getCategoriesWithHotProducts(5, 15);
-
-        $topSellingProducts = $this->productRepository
-            ->getTopSellingProducts(12)
-            ->chunk(6);
-
-        $hotDeals = $this->productRepository->getHotDeals(8);
-
-        return view('user.home', compact(
-            'featuredCategories',
-            'newProducts',
-            'categories',
-            'topSellingProducts',
-            'hotDeals'
-        ));
+        return view('user.home', $data);
     }
 
     public function showCategory($slug, ProductFilterRequest $request)

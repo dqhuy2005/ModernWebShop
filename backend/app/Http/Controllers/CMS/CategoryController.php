@@ -19,7 +19,7 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $query = Category::select('id', 'name', 'slug', 'image', 'status', 'created_at', 'updated_at', 'deleted_at')
+        $query = Category::select('id', 'name', 'slug', 'image', 'created_at', 'updated_at', 'deleted_at')
             ->withCount('products')
             ->withTrashed();
 
