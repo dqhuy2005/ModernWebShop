@@ -30,10 +30,6 @@ return new class extends Migration {
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('approved')->index();
             $table->text('admin_note')->nullable()->comment('Admin note for rejection reason');
 
-            // Helpful votes
-            $table->unsignedInteger('helpful_count')->default(0);
-            $table->unsignedInteger('not_helpful_count')->default(0);
-
             // Verification
             $table->boolean('is_verified_purchase')->default(true)->comment('Verified from completed order');
 

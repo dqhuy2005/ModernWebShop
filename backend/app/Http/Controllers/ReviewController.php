@@ -255,34 +255,4 @@ class ReviewController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Mark review as helpful
-     *
-     * POST /reviews/{review}/helpful
-     */
-    public function markHelpful(ProductReview $review)
-    {
-        $this->reviewService->markAsHelpful($review);
-
-        return response()->json([
-            'success' => true,
-            'helpful_count' => $review->fresh()->helpful_count,
-        ]);
-    }
-
-    /**
-     * Mark review as not helpful
-     *
-     * POST /reviews/{review}/not-helpful
-     */
-    public function markNotHelpful(ProductReview $review)
-    {
-        $this->reviewService->markAsNotHelpful($review);
-
-        return response()->json([
-            'success' => true,
-            'not_helpful_count' => $review->fresh()->not_helpful_count,
-        ]);
-    }
 }

@@ -33,6 +33,7 @@
 
         .main-content {
             flex: 1 0 auto;
+            background-color: #ECECEC;
         }
 
         .main-footer,

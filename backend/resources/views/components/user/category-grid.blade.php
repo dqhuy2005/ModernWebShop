@@ -1,4 +1,4 @@
-<section class="category-grid py-5" style="background-color: #FFFFFF;">
+<section class="category-grid py-5">
     <div class="container">
         <div class="section-header text-center mb-4">
             <h2 class="section-title">DANH MỤC SẢN PHẨM</h2>

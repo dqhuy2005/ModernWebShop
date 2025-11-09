@@ -1,4 +1,4 @@
-<section class="product-carousel py-5" style="background-color: #FFFFFF;">
+<section class="product-carousel py-5">
     <div class="container">
         <div class="section-header text-center mb-4">
             <h2 class="section-title">SẢN PHẨM NỔI BẬT</h2>

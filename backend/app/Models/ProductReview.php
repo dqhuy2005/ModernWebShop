@@ -46,8 +46,6 @@ class ProductReview extends Model
         'videos',
         'status',
         'admin_note',
-        'helpful_count',
-        'not_helpful_count',
         'is_verified_purchase',
     ];
 
@@ -62,8 +60,6 @@ class ProductReview extends Model
             'rating' => 'integer',
             'images' => 'array',
             'videos' => 'array',
-            'helpful_count' => 'integer',
-            'not_helpful_count' => 'integer',
             'is_verified_purchase' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -176,22 +172,6 @@ class ProductReview extends Model
             'status' => self::STATUS_REJECTED,
             'admin_note' => $reason,
         ]);
-    }
-
-    /**
-     * Increment helpful count.
-     */
-    public function incrementHelpful(): void
-    {
-        $this->increment('helpful_count');
-    }
-
-    /**
-     * Increment not helpful count.
-     */
-    public function incrementNotHelpful(): void
-    {
-        $this->increment('not_helpful_count');
     }
 
     /**

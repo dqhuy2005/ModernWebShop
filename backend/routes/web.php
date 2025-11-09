@@ -68,8 +68,6 @@ Route::post('/newsletter/subscribe', function () {
 
 // Public Review Routes
 Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('products.reviews');
-Route::post('/reviews/{review}/helpful', [ReviewController::class, 'markHelpful'])->name('reviews.helpful');
-Route::post('/reviews/{review}/not-helpful', [ReviewController::class, 'markNotHelpful'])->name('reviews.not-helpful');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', function() {

@@ -267,20 +267,4 @@ class ReviewService
 
         return $stats;
     }
-
-    /**
-     * Mark review as helpful
-     */
-    public function markAsHelpful(ProductReview $review): void
-    {
-        $review->incrementHelpful();
-    }
-
-    /**
-     * Mark review as not helpful
-     */
-    public function markAsNotHelpful(ProductReview $review): void
-    {
-        $review->incrementNotHelpful();
-    }
 }
