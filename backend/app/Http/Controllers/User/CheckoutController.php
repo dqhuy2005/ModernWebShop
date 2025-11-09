@@ -81,8 +81,14 @@ class CheckoutController extends Controller
                 $totalItems += $cartItem->quantity;
             }
 
+            // Get user information for customer fields
+            $user = Auth::user();
+
             $order = $this->orderRepository->create([
                 'user_id' => $userId,
+                'customer_name' => $user->fullname ?? $request->name,
+                'customer_phone' => $user->phone ?? $request->phone,
+                'customer_email' => $user->email,
                 'total_amount' => $totalAmount,
                 'total_items' => $totalItems,
                 'status' => Order::STATUS_PENDING,
