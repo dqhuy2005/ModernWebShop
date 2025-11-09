@@ -29,7 +29,6 @@ class UpdateProductHotStatus implements ShouldQueue
             $product = $event->product;
             $productId = $product->id;
 
-            // 1. Lưu view tracking
             ProductView::create([
                 'product_id' => $productId,
                 'ip_address' => $event->ipAddress,
@@ -38,16 +37,12 @@ class UpdateProductHotStatus implements ShouldQueue
                 'viewed_at' => now(),
             ]);
 
-            // 2. Tăng views
             $product->increment('views');
 
-            // 3. Tính views trong 7 ngày gần nhất
             $recentViews = $this->getRecentViewCount($productId);
 
-            // 4. Update is_hot dựa trên rule
             $this->updateHotStatus($product, $recentViews);
 
-            // 5. Clear cache để refresh data
             Cache::forget("product_{$productId}");
             Cache::forget("hot_products");
 
@@ -94,14 +89,14 @@ class UpdateProductHotStatus implements ShouldQueue
             $shouldBeHot = false;
         }
 
-        if ($shouldBeHot !== null && $product->is_hot !== $shouldBeHot) {
+        if ($shouldBeHot !== null) {
             $product->update(['is_hot' => $shouldBeHot]);
 
             Log::info('Product hot status updated', [
                 'product_id' => $product->id,
                 'product_name' => $product->name,
                 'recent_views' => $recentViews,
-                'is_hot' => $shouldBeHot,
+                'is_hot' => $product->is_hot,
             ]);
         }
     }
