@@ -17,7 +17,8 @@
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ Auth::user()->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ Auth::user()->email }}</p>
                             <div class="d-grid gap-2">
-                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-outline-secondary" style="border: none">
+                                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-outline-secondary"
+                                    style="border: none">
                                     <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                 </a>
                                 <a href="{{ route('purchase.index') }}" class="btn btn-sm btn-danger active">
@@ -111,7 +112,8 @@
                                                         <div class="flex-grow-1">
                                                             <h6 class="mb-0">
                                                                 @if ($detail->product)
-                                                                    <a href="{{ route('products.show', $detail->product->slug) }}" class="text-dark text-decoration-none">
+                                                                    <a href="{{ route('products.show', $detail->product->slug) }}"
+                                                                        class="text-dark text-decoration-none">
                                                                         {{ $detail->product_name }}
                                                                     </a>
                                                                 @else
@@ -141,7 +143,7 @@
                                                 <div>
                                                     <span class="text-muted">Tổng tiền:</span>
                                                     <strong class="text-danger fs-5 ms-2">
-                                                        ₫{{ number_format($order->total_amount) }}
+                                                        {{ number_format($order->total_amount) }}₫
                                                     </strong>
                                                 </div>
                                                 <div class="d-flex gap-2">

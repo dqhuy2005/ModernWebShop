@@ -149,7 +149,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('create', [OrderController::class, 'create'])->name('create');
-
+        Route::get('search-customers', [OrderController::class, 'searchCustomers'])->name('search-customers');
         Route::get('export', [OrderController::class, 'export'])->name('export');
 
         Route::post('/', [OrderController::class, 'store'])->name('store');

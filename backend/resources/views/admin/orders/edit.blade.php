@@ -38,21 +38,29 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="user_id" class="form-label fw-bold">
+                            <label for="customer_search" class="form-label fw-bold">
                                 Customer <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id" name="user_id"
-                                required>
-                                <option value="">-- Select Customer --</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}"
-                                        {{ old('user_id', $order->user_id) == $user->id ? 'selected' : '' }}>
-                                        {{ $user->fullname }} ({{ $user->email }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="position-relative">
+                                <input type="text" class="form-control @error('user_id') is-invalid @enderror"
+                                    id="customer_search" placeholder="Type to search customer by name or email..."
+                                    autocomplete="off" value="{{ old('customer_name', $order->user->fullname ?? '') }}">
+                                <input type="hidden" id="user_id" name="user_id"
+                                    value="{{ old('user_id', $order->user_id) }}">
+
+                                <div id="customer_dropdown" class="list-group position-absolute w-100"
+                                    style="max-height: 300px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                </div>
+
+                                <div id="customer_loading" class="position-absolute top-50 end-0 translate-middle-y me-2"
+                                    style="display: none;">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
                             @error('user_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -61,7 +69,8 @@
                                 <label for="customer_email" class="form-label fw-bold">
                                     Email get notifications
                                 </label>
-                                <input type="email" class="form-control is-readonly @error('customer_email') is-invalid @enderror"
+                                <input type="email" readonly
+                                    class="form-control is-readonly @error('customer_email') is-invalid @enderror"
                                     id="customer_email" name="customer_email"
                                     value="{{ old('customer_email', $order->customer_email) }}"
                                     placeholder="email@example.com">
@@ -73,7 +82,8 @@
                                 <label for="customer_name" class="form-label fw-bold">
                                     Customer Name
                                 </label>
-                                <input type="text" class="form-control is-readonly @error('customer_name') is-invalid @enderror"
+                                <input type="text" readonly
+                                    class="form-control is-readonly @error('customer_name') is-invalid @enderror"
                                     id="customer_name" name="customer_name"
                                     value="{{ old('customer_name', $order->customer_name) }}" placeholder="Nguyễn Văn A">
                                 @error('customer_name')
@@ -84,7 +94,8 @@
                                 <label for="customer_phone" class="form-label fw-bold">
                                     Phone Number
                                 </label>
-                                <input type="text" class="form-control is-readonly @error('customer_phone') is-invalid @enderror"
+                                <input type="text" readonly
+                                    class="form-control is-readonly @error('customer_phone') is-invalid @enderror"
                                     id="customer_phone" name="customer_phone"
                                     value="{{ old('customer_phone', $order->customer_phone) }}" placeholder="0987654321">
                                 @error('customer_phone')
@@ -97,9 +108,10 @@
                             <label for="status" class="form-label fw-bold">
                                 Status <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status"
-                                required>
-                                <option value="pending" {{ old('status', $order->status) == 'pending' ? 'selected' : '' }}>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status"
+                                name="status" required>
+                                <option value="pending"
+                                    {{ old('status', $order->status) == 'pending' ? 'selected' : '' }}>
                                     Pending</option>
                                 <option value="confirmed"
                                     {{ old('status', $order->status) == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
@@ -122,8 +134,8 @@
                             <label for="address" class="form-label fw-bold">
                                 Delivery Address
                             </label>
-                            <input type="text" class="form-control @error('address') is-invalid @enderror" id="address"
-                                name="address" value="{{ old('address', $order->address) }}"
+                            <input type="text" class="form-control @error('address') is-invalid @enderror"
+                                id="address" name="address" value="{{ old('address', $order->address) }}"
                                 placeholder="Enter delivery address...">
                             @error('address')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -334,6 +346,12 @@
         .product-item:hover {
             background-color: rgba(0, 123, 255, 0.1);
         }
+
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: 600;
+            padding: 0 2px;
+        }
     </style>
 @endpush
 
@@ -343,31 +361,131 @@
         const selectedProducts = new Set(@json($order->orderDetails->pluck('product_id')));
         const productModal = new bootstrap.Modal($('#productModal')[0]);
 
-        // Auto-fill customer info when user is selected
-        const usersData = json($users - > map(function($user) {
-            return [
-                'id' => $user - > id,
-                'email' => $user - > email,
-                'fullname' => $user - > fullname,
-                'phone' => $user - > phone ?? ''
-            ];
-        }));
+        // Customer autocomplete (edit page)
+        let editSearchTimeout;
+        let editCustomers = [];
+        let editCurrentIndex = -1;
 
-        $('#user_id').on('change', function() {
-            const userId = $(this).val();
-            const user = usersData.find(u => u.id == userId);
+        function editDebounce(fn, delay) {
+            return function(...args) {
+                clearTimeout(editSearchTimeout);
+                editSearchTimeout = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
 
-            if (user) {
-                // Only fill if fields are empty
-                if (!$('#customer_email').val()) {
-                    $('#customer_email').val(user.email);
+        function editHighlight(text, q) {
+            if (!q) return text;
+            const regex = new RegExp(`(${q})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function editSearchCustomers(q) {
+            if ((q || '').length < 2) {
+                $('#customer_dropdown').hide().empty();
+                return;
+            }
+            $('#customer_loading').show();
+            $.get('{{ route('admin.orders.search-customers') }}', {
+                q: q
+            }, function(resp) {
+                $('#customer_loading').hide();
+                editCustomers = resp.users || [];
+                editCurrentIndex = -1;
+                if (editCustomers.length) {
+                    const dropdown = $('#customer_dropdown');
+                    dropdown.empty();
+                    editCustomers.forEach((c, idx) => {
+                        const name = editHighlight(c.fullname, q);
+                        const email = editHighlight(c.email, q);
+                        const item = $(
+                            `<a href="#" class="list-group-item list-group-item-action customer-item" data-index="${idx}"><div class="d-flex justify-content-between align-items-center"><div><strong>${name}</strong><br><small class="text-muted">${email}</small><br>${c.phone ? `<small class="text-muted">${c.phone}</small>` : ''}</div></div></a>`
+                            );
+                        dropdown.append(item);
+                    });
+                    dropdown.show();
+                } else {
+                    $('#customer_dropdown').html(
+                        '<div class="list-group-item text-muted text-center py-3"><i class="fas fa-info-circle me-2"></i>No customers found</div>'
+                        ).show();
                 }
-                if (!$('#customer_name').val()) {
-                    $('#customer_name').val(user.fullname);
+            }).fail(function() {
+                $('#customer_loading').hide();
+                $('#customer_dropdown').html(
+                    '<div class="list-group-item text-danger text-center py-3"><i class="fas fa-exclamation-triangle me-2"></i>Error searching customers</div>'
+                    ).show();
+            });
+        }
+
+        function editSelectCustomer(c) {
+            $('#user_id').val(c.id);
+            $('#customer_search').val('');
+            $('#customer_dropdown').hide();
+            $('#customer_email').val(c.email);
+            $('#customer_name').val(c.fullname);
+            $('#customer_phone').val(c.phone && c.phone !== 'N/A' ? c.phone : '');
+            $('#selected_customer_name').text(c.fullname);
+            $('#selected_customer_email').text(c.email);
+            $('#selected_customer_phone').text(c.phone && c.phone !== 'N/A' ? c.phone : '');
+            $('#selected_customer').show();
+            if (typeof c.can_receive_email !== 'undefined') {
+                $('#send_email_checkbox').prop('checked', !!c.can_receive_email);
+            }
+            // fill address only if address field is empty (don't overwrite existing order address)
+            if (!$('#address').val()) {
+                $('#address').val(c.address || '');
+            }
+            editCustomers = [];
+            editCurrentIndex = -1;
+        }
+
+        $('#customer_search').on('input', editDebounce(function() {
+            editSearchCustomers($(this).val().trim());
+        }, 350));
+
+        $('#customer_search').on('keydown', function(e) {
+            const dropdown = $('#customer_dropdown');
+            if (!dropdown.is(':visible')) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                editCurrentIndex = Math.min(editCurrentIndex + 1, editCustomers.length - 1);
+                $('.customer-item').removeClass('active');
+                $(`.customer-item[data-index="${editCurrentIndex}"]`).addClass('active');
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                editCurrentIndex = Math.max(editCurrentIndex - 1, 0);
+                $('.customer-item').removeClass('active');
+                $(`.customer-item[data-index="${editCurrentIndex}"]`).addClass('active');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (editCurrentIndex >= 0 && editCustomers[editCurrentIndex]) {
+                    editSelectCustomer(editCustomers[editCurrentIndex]);
                 }
-                if (!$('#customer_phone').val()) {
-                    $('#customer_phone').val(user.phone);
-                }
+            } else if (e.key === 'Escape') {
+                dropdown.hide();
+            }
+        });
+
+        $(document).on('click', '.customer-item', function(e) {
+            e.preventDefault();
+            const idx = $(this).data('index');
+            if (editCustomers[idx]) editSelectCustomer(editCustomers[idx]);
+        });
+
+        $('#clear_customer').on('click', function() {
+            $('#user_id').val('');
+            $('#customer_search').val('').focus();
+            $('#customer_email').val('');
+            $('#customer_name').val('');
+            $('#customer_phone').val('');
+            $('#selected_customer').hide();
+            $('#send_email_checkbox').prop('checked', false);
+        });
+
+        // Hide dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#customer_search, #customer_dropdown').length) {
+                $('#customer_dropdown').hide();
+                editCurrentIndex = -1;
             }
         });
 

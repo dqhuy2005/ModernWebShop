@@ -31,7 +31,7 @@
                                     </div>
                                     <div class="col-md-6 text-start mb-3">
                                         <small class="text-muted d-block mb-1">Tổng tiền</small>
-                                        <strong class="text-danger">₫{{ number_format($order->total_amount) }}</strong>
+                                        <strong class="text-danger">{{ number_format($order->total_amount) }}₫</strong>
                                     </div>
                                     <div class="col-md-6 text-start mb-3">
                                         <small class="text-muted d-block mb-1">Trạng thái</small>
@@ -77,7 +77,8 @@
                                                         <div>
                                                             <h6 class="mb-0">
                                                                 @if ($detail->product)
-                                                                    <a href="{{ route('products.show', $detail->product->slug) }}" class="text-dark text-decoration-none">
+                                                                    <a href="{{ route('products.show', $detail->product->slug) }}"
+                                                                        class="text-dark text-decoration-none">
                                                                         {{ $detail->product_name }}
                                                                     </a>
                                                                 @else
@@ -95,11 +96,11 @@
                                                     <span class="badge bg-secondary">{{ $detail->quantity }}</span>
                                                 </td>
                                                 <td class="text-end align-middle">
-                                                    ₫{{ number_format($detail->unit_price) }}
+                                                    {{ number_format($detail->unit_price) }}₫
                                                 </td>
                                                 <td class="text-end align-middle">
                                                     <strong
-                                                        class="text-danger">₫{{ number_format($detail->total_price) }}</strong>
+                                                        class="text-danger">{{ number_format($detail->total_price) }}₫</strong>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -109,14 +110,12 @@
                                             <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
                                             <td class="text-end">
                                                 <strong
-                                                    class="text-danger fs-5">₫{{ number_format($order->total_amount) }}</strong>
+                                                    class="text-danger fs-5">{{ number_format($order->total_amount) }}₫</strong>
                                             </td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
-
-                            <hr class="my-4">
 
                             <div class="row">
                                 <div class="col-md-12 mb-3">

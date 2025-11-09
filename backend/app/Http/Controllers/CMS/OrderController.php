@@ -12,6 +12,8 @@ use App\Services\ExcelService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
 
 class OrderController extends Controller
 {
@@ -88,20 +90,14 @@ class OrderController extends Controller
     public function create()
     {
         try {
-            $users = User::select('id', 'fullname', 'role_id', 'email')
-                ->where('status', true)
-                ->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))
-                ->orderBy('fullname')
-                ->get();
-
             $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')
                 ->where('status', true)
                 ->with('category:id,name')
                 ->get();
 
-            return view('admin.orders.create', compact('users', 'products'));
+            return view('admin.orders.create', compact('products'));
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load create form: ' . $e->getMessage());
+            return back()->with('error', 'Error loading create form: ' . $e->getMessage());
         }
     }
 
@@ -152,7 +148,6 @@ class OrderController extends Controller
                 $totalItems += $quantity;
             }
 
-            // Get user info to populate customer fields
             $user = User::find($request->user_id);
 
             $order = Order::create([
@@ -191,18 +186,12 @@ class OrderController extends Controller
             $order = Order::with(['orderDetails.product:id,name,price', 'user:id,fullname'])
                 ->findOrFail($id);
 
-            $users = User::select('id', 'fullname', 'email', 'role_id')
-                ->where('status', true)
-                ->whereDoesntHave('role', fn($query) => $query->where('name', 'admin'))
-                ->orderBy('fullname')
-                ->get();
-
             $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')
                 ->where('status', true)
                 ->with('category:id,name')
                 ->get();
 
-            return view('admin.orders.edit', compact('order', 'users', 'products'));
+            return view('admin.orders.edit', compact('order', 'products'));
         } catch (\Exception $e) {
             return back()->with('error', 'Order not found: ' . $e->getMessage());
         }
@@ -381,6 +370,82 @@ class OrderController extends Controller
         $filename = 'orders_export_' . date('Y-m-d_His') . '.xls';
 
         return response($excel, 200, $excelService->getDownloadHeaders($filename));
+    }
+
+    /**
+     * Search customers for autocomplete
+     */
+    public function searchCustomers(Request $request)
+    {
+        $search = $request->get('q', '');
+        $limit = $request->get('limit', 15);
+
+        if ($request->filled('id') && is_numeric($request->get('id'))) {
+            $user = User::select('id', 'fullname', 'email', 'phone')
+                ->where('id', $request->get('id'))
+                ->where('status', true)
+                ->first();
+
+            if (!$user) {
+                return response()->json(['users' => []]);
+            }
+
+            $u = [
+                'id' => $user->id,
+                'fullname' => $user->fullname,
+                'email' => $user->email,
+                'phone' => $user->phone ?? 'N/A',
+                'display' => $user->fullname . ' (' . $user->email . ')',
+                'address' => $user->address ?? '',
+                'highlighted_name' => $this->highlightTerm($user->fullname, ''),
+                'highlighted_email' => $this->highlightTerm($user->email, ''),
+                'can_receive_email' => !empty($user->email),
+            ];
+
+            return response()->json(['users' => [$u]]);
+        }
+
+        if (strlen($search) < 2) {
+            return response()->json(['users' => []]);
+        }
+
+        $customers = User::select('id', 'fullname', 'email', 'phone', 'address')
+            ->where('status', true)
+            ->whereDoesntHave('role', fn($query) => $query->where('slug', 'admin'))
+            ->where(function ($query) use ($search) {
+                $query->where('fullname', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->orderBy('fullname')
+            ->limit($limit)
+            ->get()
+            ->map(function ($user) use ($search) {
+                return [
+                    'id' => $user->id,
+                    'fullname' => $user->fullname,
+                    'email' => $user->email,
+                    'phone' => $user->phone ?? 'N/A',
+                    'address' => $user->address ?? '',
+                    'display' => $user->fullname . ' (' . $user->email . ')',
+                    'highlighted_name' => $this->highlightTerm($user->fullname, $search),
+                    'highlighted_email' => $this->highlightTerm($user->email, $search),
+                ];
+            });
+
+        return response()->json(['users' => $customers]);
+    }
+
+    private function highlightTerm($text, $term)
+    {
+        if (empty($term)) {
+            return $text;
+        }
+
+        return preg_replace(
+            '/(' . preg_quote($term, '/') . ')/i',
+            '<mark>$1</mark>',
+            $text
+        );
     }
 
     private function applyFilters(Request $request, $query)

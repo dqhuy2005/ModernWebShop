@@ -26,21 +26,72 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="user_id" class="form-label fw-bold">
+                            <label for="customer_search" class="form-label fw-bold">
                                 Customer <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id" name="user_id"
-                                required>
-                                <option value="">-- Select Customer --</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->fullname }} ({{ $user->email }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="position-relative">
+                                <input type="text" class="form-control @error('user_id') is-invalid @enderror"
+                                    id="customer_search" placeholder="Type to search customer by name or email..."
+                                    autocomplete="off">
+                                <input type="hidden" id="user_id" name="user_id" value="{{ old('user_id') }}">
+
+                                <div id="customer_dropdown" class="list-group position-absolute w-100"
+                                    style="max-height: 300px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                </div>
+
+                                <div id="customer_loading" class="position-absolute top-50 end-0 translate-middle-y me-2"
+                                    style="display: none;">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="customer_email_hidden" name="customer_email"
+                                    value="{{ old('customer_email') }}">
+                                <input type="hidden" id="customer_name_hidden" name="customer_name"
+                                    value="{{ old('customer_name') }}">
+                                <input type="hidden" id="customer_phone_hidden" name="customer_phone"
+                                    value="{{ old('customer_phone') }}">
+                            </div>
                             @error('user_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="customer_email" class="form-label fw-bold">
+                                    Email get notifications
+                                </label>
+                                <input type="email" readonly
+                                    class="form-control is-readonly @error('customer_email') is-invalid @enderror"
+                                    id="customer_email" name="customer_email" value="{{ old('customer_email') }}">
+                                @error('customer_email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="customer_name" class="form-label fw-bold">
+                                    Customer Name
+                                </label>
+                                <input type="text" readonly
+                                    class="form-control is-readonly @error('customer_name') is-invalid @enderror"
+                                    id="customer_name" name="customer_name" value="{{ old('customer_name') }}">
+                                @error('customer_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="customer_phone" class="form-label fw-bold">
+                                    Phone Number
+                                </label>
+                                <input type="text" readonly
+                                    class="form-control is-readonly @error('customer_phone') is-invalid @enderror"
+                                    id="customer_phone" name="customer_phone" value="{{ old('customer_phone') }}">
+                                @error('customer_phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -247,11 +298,268 @@
             font-size: 1rem;
             font-weight: 600;
         }
+
+        /* Autocomplete Styles */
+        #customer_dropdown .list-group-item {
+            cursor: pointer;
+            border-left: 0;
+            border-right: 0;
+            border-top: 0;
+            transition: background-color 0.2s ease;
+        }
+
+        #customer_dropdown .list-group-item:first-child {
+            border-top: 1px solid #dee2e6;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+        }
+
+        #customer_dropdown .list-group-item:last-child {
+            border-bottom: 1px solid #dee2e6;
+            border-bottom-left-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        #customer_dropdown .list-group-item:hover,
+        #customer_dropdown .list-group-item.active {
+            background-color: #f8f9fa;
+            z-index: 1;
+        }
+
+        #customer_dropdown .list-group-item.active {
+            background-color: #e7f1ff;
+            border-color: #dee2e6;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: 600;
+            padding: 0 2px;
+        }
+
+        #customer_search:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
+        let searchTimeout;
+        let currentCustomerIndex = -1;
+        let customers = [];
+
+        function debounce(func, delay) {
+            return function(...args) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function searchCustomers(query) {
+            if (query.length < 2) {
+                $('#customer_dropdown').hide().empty();
+                return;
+            }
+
+            $('#customer_loading').show();
+
+            $.ajax({
+                url: '{{ route('admin.orders.search-customers') }}',
+                method: 'GET',
+                data: {
+                    q: query
+                },
+                success: function(response) {
+                    $('#customer_loading').hide();
+                    customers = response.users || [];
+                    currentCustomerIndex = -1;
+
+                    if (customers.length > 0) {
+                        displayCustomers(customers, query);
+                    } else {
+                        $('#customer_dropdown').html(
+                            '<div class="list-group-item text-muted text-center py-3">' +
+                            '<i class="fas fa-info-circle me-2"></i>No customers found' +
+                            '</div>'
+                        ).show();
+                    }
+                },
+                error: function() {
+                    $('#customer_loading').hide();
+                    $('#customer_dropdown').html(
+                        '<div class="list-group-item text-danger text-center py-3">' +
+                        '<i class="fas fa-exclamation-triangle me-2"></i>Error searching customers' +
+                        '</div>'
+                    ).show();
+                }
+            });
+        }
+
+        function displayCustomers(customers, query) {
+            const dropdown = $('#customer_dropdown');
+            dropdown.empty();
+
+            customers.forEach((customer, index) => {
+                const highlightedName = highlightText(customer.fullname, query);
+                const highlightedEmail = highlightText(customer.email, query);
+
+                const item = $(`
+                    <a href="#" class="list-group-item list-group-item-action customer-item" data-index="${index}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${highlightedName}</strong>
+                                <br><small class="text-muted">${highlightedEmail}</small>
+                                ${customer.phone ? `<br><small class="text-muted"><i class="fas fa-phone me-1"></i>${customer.phone}</small>` : ''}
+                            </div>
+                            <i class="fas fa-check-circle text-success" style="opacity: 0;"></i>
+                        </div>
+                    </a>
+                `);
+
+                dropdown.append(item);
+            });
+
+            dropdown.show();
+        }
+
+        function selectCustomer(customer) {
+            $('#user_id').val(customer.id);
+            $('#customer_search').val('');
+            $('#customer_dropdown').hide();
+
+            $('#selected_customer_name').text(customer.fullname);
+            $('#selected_customer_email').text(customer.email);
+            $('#selected_customer_phone').text(customer.phone && customer.phone !== 'N/A' ? customer.phone : 'No phone');
+            $('#selected_customer').show();
+
+            $('#customer_email_hidden').val(customer.email);
+            $('#customer_name_hidden').val(customer.fullname);
+            $('#customer_phone_hidden').val(customer.phone && customer.phone !== 'N/A' ? customer.phone : '');
+
+            $('#customer_email').val(customer.email);
+            $('#customer_name').val(customer.fullname);
+            $('#customer_phone').val(customer.phone && customer.phone !== 'N/A' ? customer.phone : '');
+            $('#address').val(customer.address || '');
+
+            if (typeof customer.can_receive_email !== 'undefined') {
+                $('#send_email_checkbox').prop('checked', !!customer.can_receive_email);
+            } else {
+                $('#send_email_checkbox').prop('checked', !!customer.email);
+            }
+
+            currentCustomerIndex = -1;
+            customers = [];
+        }
+
+        $('#customer_search').on('input', debounce(function() {
+            const query = $(this).val().trim();
+            searchCustomers(query);
+        }, 400));
+
+        $('#customer_search').on('keydown', function(e) {
+            const dropdown = $('#customer_dropdown');
+
+            if (!dropdown.is(':visible')) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                currentCustomerIndex = Math.min(currentCustomerIndex + 1, customers.length - 1);
+                updateActiveItem();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                currentCustomerIndex = Math.max(currentCustomerIndex - 1, 0);
+                updateActiveItem();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentCustomerIndex >= 0 && currentCustomerIndex < customers.length) {
+                    selectCustomer(customers[currentCustomerIndex]);
+                }
+            } else if (e.key === 'Escape') {
+                dropdown.hide();
+                currentCustomerIndex = -1;
+            }
+        });
+
+        function updateActiveItem() {
+            $('.customer-item').removeClass('active');
+            if (currentCustomerIndex >= 0) {
+                const activeItem = $(`.customer-item[data-index="${currentCustomerIndex}"]`);
+                activeItem.addClass('active');
+
+                const dropdown = $('#customer_dropdown');
+                const itemTop = activeItem.position().top;
+                const itemBottom = itemTop + activeItem.outerHeight();
+                const dropdownHeight = dropdown.height();
+
+                if (itemBottom > dropdownHeight) {
+                    dropdown.scrollTop(dropdown.scrollTop() + itemBottom - dropdownHeight);
+                } else if (itemTop < 0) {
+                    dropdown.scrollTop(dropdown.scrollTop() + itemTop);
+                }
+            }
+        }
+
+        $(document).on('click', '.customer-item', function(e) {
+            e.preventDefault();
+            const index = $(this).data('index');
+            if (customers[index]) {
+                selectCustomer(customers[index]);
+            }
+        });
+
+        $(document).on('mouseenter', '.customer-item', function() {
+            currentCustomerIndex = $(this).data('index');
+            updateActiveItem();
+        });
+
+        $('#clear_customer').on('click', function() {
+            $('#user_id').val('');
+            $('#customer_search').val('').focus();
+            $('#selected_customer').hide();
+            $('#customer_email_hidden').val('');
+            $('#customer_name_hidden').val('');
+            $('#customer_phone_hidden').val('');
+            $('#customer_email').val('');
+            $('#customer_name').val('');
+            $('#customer_phone').val('');
+            $('#address').val('');
+            $('#selected_customer_phone').text('');
+            $('#send_email_checkbox').prop('checked', false);
+        });
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#customer_search, #customer_dropdown').length) {
+                $('#customer_dropdown').hide();
+                currentCustomerIndex = -1;
+            }
+        });
+
+        @if (old('user_id'))
+            $(document).ready(function() {
+                $.ajax({
+                    url: '{{ route('admin.orders.search-customers') }}',
+                    method: 'GET',
+                    data: {
+                        id: '{{ old('user_id') }}'
+                    },
+                    success: function(response) {
+                        if (response.users && response.users.length > 0) {
+                            const customer = response.users[0];
+                            selectCustomer(customer);
+                        }
+                    }
+                });
+            });
+        @endif
+
         let productIndex = 0;
         const selectedProducts = new Set();
         const productModal = new bootstrap.Modal($('#productModal')[0]);
