@@ -59,7 +59,7 @@ class ProductController extends Controller
 
             // Get reviews data
             $reviews = $product->approvedReviews()
-                ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'media', 'status', 'created_at')
+                ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'created_at')
                 ->with('user:id,fullname,email,image')
                 ->latest()
                 ->paginate(10);

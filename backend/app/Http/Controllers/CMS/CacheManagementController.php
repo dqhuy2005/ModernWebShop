@@ -7,12 +7,6 @@ use App\Services\HomePageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-/**
- * Cache Management Controller
- *
- * Provides admin interface for cache management
- * Access: /admin/cache
- */
 class CacheManagementController extends Controller
 {
     protected HomePageService $homePageService;
@@ -22,9 +16,6 @@ class CacheManagementController extends Controller
         $this->homePageService = $homePageService;
     }
 
-    /**
-     * Show cache management dashboard
-     */
     public function index()
     {
         $stats = $this->homePageService->getCacheStats();
@@ -43,9 +34,6 @@ class CacheManagementController extends Controller
         ));
     }
 
-    /**
-     * Clear homepage cache via AJAX
-     */
     public function clearHomePage(Request $request)
     {
         try {
@@ -76,9 +64,6 @@ class CacheManagementController extends Controller
         }
     }
 
-    /**
-     * Warm up cache via AJAX
-     */
     public function warmUp()
     {
         try {
@@ -100,9 +85,6 @@ class CacheManagementController extends Controller
         }
     }
 
-    /**
-     * Get cache stats via AJAX
-     */
     public function getStats()
     {
         try {
@@ -131,9 +113,6 @@ class CacheManagementController extends Controller
         }
     }
 
-    /**
-     * Clear all application cache
-     */
     public function clearAll(Request $request)
     {
         try {

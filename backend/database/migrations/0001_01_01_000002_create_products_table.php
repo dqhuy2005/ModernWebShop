@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->json('specifications')->nullable();
             $table->unsignedBigInteger('price')->default(0);
             $table->string('currency', 10)->default('VND');
-            $table->string('image')->nullable();
             $table->boolean('status')->default(true)->index();
             $table->unsignedInteger('parent_id')->nullable();
             $table->string('language', 10)->nullable();
