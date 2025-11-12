@@ -104,6 +104,14 @@
                             @endif
 
                             <div id="ordersContainer">
+                                <!-- Loading overlay -->
+                                <div class="loading-overlay" id="loadingOverlay">
+                                    <div class="spinner-container">
+                                        <div class="spinner-border-custom"></div>
+                                        <div class="loading-text">Đang tải đơn hàng...</div>
+                                    </div>
+                                </div>
+
                                 @include('user.partials.orders-list', [
                                     'orders' => $orders,
                                     'status' => $status ?? null,
@@ -174,11 +182,132 @@
         #ordersContainer {
             transition: opacity 0.2s ease;
             min-height: 200px;
+            position: relative;
         }
 
-        #ordersContainer.opacity-50 {
-            opacity: 0.5;
+        #ordersContainer.loading {
+            opacity: 0.3;
             pointer-events: none;
+        }
+
+        /* Loading spinner overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .loading-overlay.active {
+            display: block;
+        }
+
+        .spinner-container {
+            text-align: center;
+        }
+
+        .spinner-border-custom {
+            width: 3rem;
+            height: 3rem;
+            border: 0.3em solid #f3f3f3;
+            border-top: 0.3em solid #dc3545;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Tab loading indicator */
+        .nav-tabs .nav-link.loading::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 8px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #dc3545;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+        }
+
+        /* Skeleton loader for orders */
+        .skeleton-loader {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-order {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+        }
+
+        .skeleton-header {
+            height: 20px;
+            width: 40%;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-image {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        .skeleton-text {
+            flex: 1;
+        }
+
+        .skeleton-line {
+            height: 14px;
+            margin-bottom: 0.5rem;
+        }
+
+        .skeleton-line.short {
+            width: 60%;
+        }
+
+        .skeleton-footer {
+            height: 16px;
+            width: 30%;
+            margin-top: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -201,13 +330,108 @@
     <script>
         $(document).ready(function() {
             let currentStatus = '{{ request('status') ?? '' }}';
+            let currentSearch = '{{ $search ?? '' }}';
+            let currentPage = 1;
             let isLoading = false;
 
-            function loadOrders(status = '', search = '', page = 1) {
+            const orderCache = {
+                data: {},
+
+                getCacheKey: function(status, search, page) {
+                    return `orders_${status || 'all'}_${search || 'none'}_${page || 1}`;
+                },
+
+                has: function(status, search, page) {
+                    const key = this.getCacheKey(status, search, page);
+                    return this.data.hasOwnProperty(key);
+                },
+
+                get: function(status, search, page) {
+                    const key = this.getCacheKey(status, search, page);
+                    return this.data[key];
+                },
+
+                set: function(status, search, page, html) {
+                    const key = this.getCacheKey(status, search, page);
+                    this.data[key] = {
+                        html: html,
+                        timestamp: Date.now(),
+                        status: status,
+                        search: search,
+                        page: page
+                    };
+                },
+
+                clear: function(status, search, page) {
+                    if (status === undefined) {
+                        this.data = {};
+                    } else {
+                        const key = this.getCacheKey(status, search, page);
+                        delete this.data[key];
+                    }
+                },
+
+                size: function() {
+                    return Object.keys(this.data).length;
+                }
+            };
+
+            function showLoading(useSkeletonLoader = false) {
+                if (useSkeletonLoader) {
+                    showSkeletonLoader();
+                } else {
+                    $('#ordersContainer').addClass('loading');
+                    $('#loadingOverlay').addClass('active');
+                }
+            }
+
+            function hideLoading() {
+                $('#ordersContainer').removeClass('loading');
+                $('#loadingOverlay').removeClass('active');
+                $('.skeleton-container').remove();
+            }
+
+            function showSkeletonLoader() {
+                const skeletonHTML = `
+                    <div class="skeleton-container">
+                        ${generateSkeletonOrder()}
+                        ${generateSkeletonOrder()}
+                        ${generateSkeletonOrder()}
+                    </div>
+                `;
+                $('#ordersContainer').html(skeletonHTML);
+            }
+
+            function generateSkeletonOrder() {
+                return `
+                    <div class="skeleton-order">
+                        <div class="skeleton-loader skeleton-header"></div>
+                        <div class="skeleton-item">
+                            <div class="skeleton-loader skeleton-image"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton-loader skeleton-line"></div>
+                                <div class="skeleton-loader skeleton-line short"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-loader skeleton-footer"></div>
+                    </div>
+                `;
+            }
+
+            function loadOrders(status = '', search = '', page = 1, forceReload = false) {
                 if (isLoading) return;
 
+                if (!forceReload && orderCache.has(status, search, page)) {
+                    const cachedData = orderCache.get(status, search, page);
+                    $('#ordersContainer').html(cachedData.html);
+
+                    updateUIState(status, search, page);
+
+                    return;
+                }
+
                 isLoading = true;
-                $('#ordersContainer').addClass('opacity-50');
+                showLoading(page === 1);
 
                 const params = new URLSearchParams();
                 if (status) params.append('status', status);
@@ -224,48 +448,58 @@
                     },
                     success: function(response) {
                         if (response.success) {
+                            orderCache.set(status, search, page, response.html);
+
                             $('#ordersContainer').html(response.html);
 
-                            $('.order-tab').removeClass('active');
-                            if (status) {
-                                $(`.order-tab[data-status="${status}"]`).addClass('active');
-                            } else {
-                                $('.order-tab[data-status=""]').addClass('active');
-                            }
-
-                            if (status) {
-                                $('#purchaseSearchForm').hide();
-                            } else {
-                                $('#purchaseSearchForm').show();
-                            }
-
-                            let newUrl = '{{ route('purchase.index') }}';
-                            const urlParams = new URLSearchParams();
-                            if (status) urlParams.append('status', status);
-                            if (search) urlParams.append('search', search);
-                            if (page > 1) urlParams.append('page', page);
-
-                            if (urlParams.toString()) {
-                                newUrl += '?' + urlParams.toString();
-                            }
-
-                            window.history.pushState({
-                                status: status,
-                                search: search,
-                                page: page
-                            }, '', newUrl);
-
-                            currentStatus = status;
+                            updateUIState(status, search, page);
                         }
                     },
                     error: function(xhr) {
+                        console.error('❌ Error loading orders:', xhr);
                         toastr.error('Có lỗi xảy ra khi tải đơn hàng. Vui lòng thử lại!');
+                        hideLoading();
                     },
                     complete: function() {
                         isLoading = false;
-                        $('#ordersContainer').removeClass('opacity-50');
+                        hideLoading();
                     }
                 });
+            }
+
+            function updateUIState(status, search, page) {
+                $('.order-tab').removeClass('active');
+                if (status) {
+                    $(`.order-tab[data-status="${status}"]`).addClass('active');
+                } else {
+                    $('.order-tab[data-status=""]').addClass('active');
+                }
+
+                if (status) {
+                    $('#purchaseSearchForm').slideUp(200);
+                } else {
+                    $('#purchaseSearchForm').slideDown(200);
+                }
+
+                let newUrl = '{{ route('purchase.index') }}';
+                const urlParams = new URLSearchParams();
+                if (status) urlParams.append('status', status);
+                if (search) urlParams.append('search', search);
+                if (page > 1) urlParams.append('page', page);
+
+                if (urlParams.toString()) {
+                    newUrl += '?' + urlParams.toString();
+                }
+
+                window.history.pushState({
+                    status: status,
+                    search: search,
+                    page: page
+                }, '', newUrl);
+
+                currentStatus = status;
+                currentSearch = search;
+                currentPage = page;
             }
 
             $(document).on('click', '.order-tab', function(e) {
@@ -274,7 +508,7 @@
                 const status = $(this).data('status');
                 const search = status === '' ? $('#purchaseSearchInput').val() : '';
 
-                loadOrders(status, search);
+                loadOrders(status, search, 1);
             });
 
             $(document).on('click', '.pagination-container a', function(e) {
@@ -282,16 +516,16 @@
 
                 const url = $(this).attr('href');
                 const urlParams = new URLSearchParams(url.split('?')[1]);
-                const page = urlParams.get('page') || 1;
-                const search = $('#purchaseSearchInput').val();
+                const page = parseInt(urlParams.get('page')) || 1;
+                const search = currentStatus === '' ? $('#purchaseSearchInput').val() : '';
 
                 loadOrders(currentStatus, search, page);
             });
 
             $('#purchaseSearchForm').on('submit', function(e) {
                 e.preventDefault();
-                const search = $('#purchaseSearchInput').val();
-                loadOrders('', search);
+                const search = $('#purchaseSearchInput').val().trim();
+                loadOrders('', search, 1);
             });
 
             $('#purchaseSearchInput').on('keypress', function(e) {
@@ -318,6 +552,11 @@
                     return;
                 }
 
+                const $btn = $(this);
+                const originalHtml = $btn.html();
+                $btn.prop('disabled', true).html(
+                    '<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...');
+
                 $.ajax({
                     url: `/purchase/${orderId}/cancel`,
                     method: 'POST',
@@ -330,11 +569,14 @@
 
                             $orderCard.find('.badge').removeClass().addClass('badge bg-danger')
                                 .text('Đã hủy');
-
                             $orderCard.find('.cancel-order-btn').remove();
+
+                            orderCache.clear(currentStatus, currentSearch, currentPage);
                         }
                     },
                     error: function(xhr) {
+                        $btn.prop('disabled', false).html(originalHtml);
+
                         if (xhr.status === 400) {
                             toastr.error(xhr.responseJSON.message);
                         } else if (xhr.status === 404) {
@@ -345,6 +587,11 @@
                     }
                 });
             });
+
+            @if (isset($orders))
+                const initialHTML = $('#ordersContainer').html();
+                orderCache.set(currentStatus, currentSearch, currentPage, initialHTML);
+            @endif
         });
     </script>
 @endpush
