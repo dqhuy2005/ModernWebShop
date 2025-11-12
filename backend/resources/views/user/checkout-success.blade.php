@@ -22,8 +22,7 @@
                                 <div class="row">
                                     <div class="col-md-6 text-start mb-3">
                                         <small class="text-muted d-block mb-1">Mã đơn hàng</small>
-                                        <strong
-                                            class="text-danger">#{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</strong>
+                                        <strong class="text-danger">#{{ $order->id }}</strong>
                                     </div>
                                     <div class="col-md-6 text-start mb-3">
                                         <small class="text-muted d-block mb-1">Ngày đặt</small>

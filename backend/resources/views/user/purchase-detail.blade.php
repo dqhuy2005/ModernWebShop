@@ -22,7 +22,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
                                     <h5 class="fw-bold mb-1" style="color: #202732;">
-                                        Đơn hàng #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
+                                        Đơn hàng #{{ $order->id }}
                                     </h5>
                                     <small class="text-muted">
                                         <i class="far fa-clock me-1"></i>
@@ -96,11 +96,11 @@
                                                     <span class="badge bg-secondary">{{ $detail->quantity }}</span>
                                                 </td>
                                                 <td class="text-end align-middle">
-                                                    ₫{{ number_format($detail->unit_price) }}
+                                                    {{ number_format($detail->unit_price) }}₫
                                                 </td>
                                                 <td class="text-end align-middle">
                                                     <strong
-                                                        class="text-danger">₫{{ number_format($detail->total_price) }}</strong>
+                                                        class="text-danger">{{ number_format($detail->total_price) }}₫</strong>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -150,7 +150,7 @@
 
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Tạm tính:</span>
-                                <span class="fw-semibold">₫{{ number_format($order->total_amount) }}</span>
+                                <span class="fw-semibold">{{ number_format($order->total_amount) }}₫</span>
                             </div>
 
                             <div class="d-flex justify-content-between mb-2">
@@ -162,7 +162,7 @@
 
                             <div class="d-flex justify-content-between mb-4">
                                 <span class="fw-bold fs-5" style="color: #202732;">Tổng cộng:</span>
-                                <span class="fw-bold fs-5 text-danger">₫{{ number_format($order->total_amount) }}</span>
+                                <span class="fw-bold fs-5 text-danger">{{ number_format($order->total_amount) }}₫</span>
                             </div>
 
                             <div class="d-grid gap-2">

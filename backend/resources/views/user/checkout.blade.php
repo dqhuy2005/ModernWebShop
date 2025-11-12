@@ -92,7 +92,7 @@
                                             </div>
                                             <div class="text-end">
                                                 <span class="fw-semibold text-danger">
-                                                    ₫{{ number_format($item->price * $item->quantity) }}
+                                                    {{ number_format($item->price * $item->quantity) }}₫
                                                 </span>
                                             </div>
                                         </div>
@@ -102,7 +102,7 @@
                                 <div class="order-summary">
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-muted">Tạm tính:</span>
-                                        <span class="fw-semibold">₫{{ number_format($total) }}</span>
+                                        <span class="fw-semibold">{{ number_format($total) }}₫</span>
                                     </div>
 
                                     <div class="d-flex justify-content-between mb-2">
@@ -114,7 +114,7 @@
 
                                     <div class="d-flex justify-content-between mb-4">
                                         <span class="fw-bold fs-5" style="color: #202732;">Tổng cộng:</span>
-                                        <span class="fw-bold fs-5 text-danger">₫{{ number_format($total) }}</span>
+                                        <span class="fw-bold fs-5 text-danger">{{ number_format($total) }}₫</span>
                                     </div>
 
                                     <button type="submit" class="btn btn-danger w-100 py-3 fw-semibold"

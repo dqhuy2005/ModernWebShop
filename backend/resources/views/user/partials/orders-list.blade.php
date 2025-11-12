@@ -5,7 +5,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
                     <div>
                         <h6 class="fw-bold mb-1">
-                            Đơn hàng #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
+                            Đơn hàng #{{ $order->id }}
                         </h6>
                         <small class="text-muted">
                             <i class="far fa-clock me-1"></i>
@@ -57,7 +57,7 @@
                                 <small class="text-muted">Số lượng: {{ $detail->quantity }}</small>
                             </div>
                             <div class="text-end">
-                                <span class="text-danger fw-semibold">₫{{ number_format($detail->total_price) }}</span>
+                                <span class="text-danger fw-semibold">{{ number_format($detail->total_price) }}₫</span>
                             </div>
                         </div>
                     @endforeach

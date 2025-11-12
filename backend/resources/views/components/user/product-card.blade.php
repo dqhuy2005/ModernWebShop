@@ -38,10 +38,11 @@
         </h6>
         <div class="product-price mb-2">
             @if (isset($product))
-                <span class="text-danger fw-bold fs-5">₫{{ number_format($product->price) }}</span>
+                            <div class="d-flex align-items-center justify-content-between flex-wrap">
+                <span class="text-danger fw-bold fs-5">{{ number_format($product->price) }}₫</span>
                 @if ($product->compare_price && $product->compare_price > $product->price)
                     <span
-                        class="text-muted text-decoration-line-through ms-2 small">₫{{ number_format($product->compare_price) }}</span>
+                        class="text-muted text-decoration-line-through ms-2 small">{{ number_format($product->compare_price) }}₫</span>
                 @endif
             @else
                 <span class="text-danger fw-bold fs-5">{{ $price ?? '₫980.000' }}</span>

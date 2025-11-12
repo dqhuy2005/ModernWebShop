@@ -12,7 +12,7 @@
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('purchase.index') }}">Đơn hàng</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('purchase.show', $order->id) }}">Đơn hàng
-                                #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</a></li>
+                                #{{ $order->id }}</a></li>
                         <li class="breadcrumb-item active">Đánh giá sản phẩm</li>
                     </ol>
                 </nav>
@@ -25,7 +25,7 @@
                                 class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
                             <div>
                                 <h5 class="mb-1">{{ $product->name }}</h5>
-                                <p class="text-muted mb-0">Đơn hàng: #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</p>
+                                <p class="text-muted mb-0">Đơn hàng: #{{ $order->id }}</p>
                                 <p class="text-success mb-0"><small>✓ Đã mua hàng</small></p>
                             </div>
                         </div>

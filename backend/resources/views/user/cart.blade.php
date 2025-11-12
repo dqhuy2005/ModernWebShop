@@ -58,7 +58,7 @@
                                                     </td>
                                                     <td class="text-center">
                                                         <span
-                                                            class="text-danger fw-semibold">₫{{ number_format($itemPrice) }}</span>
+                                                            class="text-danger fw-semibold">{{ number_format($itemPrice) }}₫</span>
                                                     </td>
                                                     <td>
                                                         <div class="input-group input-group-sm mx-auto"
@@ -81,7 +81,7 @@
                                                     </td>
                                                     <td class="text-end">
                                                         <span class="fw-bold item-total" style="color: #202732;">
-                                                            ₫{{ number_format($itemPrice * $itemQuantity) }}
+                                                            {{ number_format($itemPrice * $itemQuantity) }}₫
                                                         </span>
                                                     </td>
                                                     <td class="text-center">
@@ -117,7 +117,7 @@
 
                                 <div class="d-flex justify-content-between mb-3">
                                     <span class="text-muted">Tạm tính:</span>
-                                    <span class="fw-semibold" id="subtotal">₫{{ number_format($total) }}</span>
+                                    <span class="fw-semibold" id="subtotal">{{ number_format($total) }}₫</span>
                                 </div>
 
                                 <div class="d-flex justify-content-between mb-3">
@@ -130,7 +130,7 @@
                                 <div class="d-flex justify-content-between mb-4">
                                     <span class="fw-bold fs-5" style="color: #202732;">Tổng cộng:</span>
                                     <span class="fw-bold fs-5 text-danger"
-                                        id="total">₫{{ number_format($total) }}</span>
+                                        id="total">{{ number_format($total) }}₫</span>
                                 </div>
 
                                 <a href="{{ route('checkout.index') }}" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
@@ -324,7 +324,7 @@
                         const price = parseInt(priceText.replace(/[₫,]/g, ''));
 
                         const itemTotal = price * quantity;
-                        $row.find('.item-total').text('₫' + itemTotal.toLocaleString('vi-VN'));
+                        $row.find('.item-total').text(itemTotal.toLocaleString('vi-VN') + '₫');
 
                         updateCartTotals();
 
@@ -359,8 +359,8 @@
             const $subtotal = $('#subtotal');
             const $total = $('#total');
 
-            $subtotal.text('₫' + subtotal.toLocaleString('vi-VN'));
-            $total.text('₫' + subtotal.toLocaleString('vi-VN'));
+            $subtotal.text(subtotal.toLocaleString('vi-VN') + '₫');
+            $total.text(subtotal.toLocaleString('vi-VN') + '₫');
         }
 
         function removeFromCart(cartId) {
@@ -385,8 +385,8 @@
                             if (response.cart_count === 0) {
                                 location.reload();
                             } else {
-                                $('#subtotal').text('₫' + response.total);
-                                $('#total').text('₫' + response.total);
+                                $('#subtotal').text(response.total + '₫');
+                                $('#total').text(response.total + '₫');
                             }
                         });
 
