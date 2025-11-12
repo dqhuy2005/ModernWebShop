@@ -92,7 +92,7 @@
                                         <div class="row g-2">
                                             <div class="col-4">
                                                 <div class="custom-select-wrapper">
-                                                    <input type="text" class="form-control custom-select-input text-black"
+                                                    <input type="text" class="form-control custom-select-input"
                                                         id="birthday_day_display" readonly>
                                                     <input type="hidden" id="birthday_day" name="birthday_day">
                                                     <ul class="custom-select-dropdown" id="birthday_day_dropdown">
@@ -105,9 +105,9 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="custom-select-wrapper">
-                                                    <input type="text" class="form-control custom-select-input text-black"
+                                                    <input type="text" class="form-control custom-select-input"
                                                         id="birthday_month_display" readonly>
-                                                    <input type="hidden" id="birthday_month" name="birthday_month text-black">
+                                                    <input type="hidden" id="birthday_month" name="birthday_month">
                                                     <ul class="custom-select-dropdown" id="birthday_month_dropdown">
                                                         @for ($i = 1; $i <= 12; $i++)
                                                             <li data-value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
@@ -118,7 +118,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="custom-select-wrapper">
-                                                    <input type="text" class="form-control custom-select-input text-black"
+                                                    <input type="text" class="form-control custom-select-input"
                                                         id="birthday_year_display" readonly>
                                                     <input type="hidden" id="birthday_year" name="birthday_year">
                                                     <ul class="custom-select-dropdown" id="birthday_year_dropdown">
@@ -275,7 +275,7 @@
             border: 1px solid #dee2e6;
             border-top: none;
             border-radius: 0 0 0.25rem 0.25rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #202732 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .custom-select-dropdown.show {
@@ -294,7 +294,7 @@
 
         .custom-select-dropdown li.selected {
             background-color: #dc3545;
-            color: #fff;
+            color: #202732;
         }
 
         .custom-select-dropdown::-webkit-scrollbar {
@@ -511,10 +511,13 @@
 
                         if (xhr.status === 400) {
                             $('#current_password').addClass('is-invalid');
-                            $('#current_password').after('<div class="invalid-feedback d-block">' +
-                                (xhr.responseJSON.message || 'Mật khẩu hiện tại không đúng') +
+                            $('#current_password').after(
+                                '<div class="invalid-feedback d-block">' +
+                                (xhr.responseJSON.message ||
+                                'Mật khẩu hiện tại không đúng') +
                                 '</div>');
-                            toastr.error(xhr.responseJSON.message || 'Mật khẩu hiện tại không đúng');
+                            toastr.error(xhr.responseJSON.message ||
+                                'Mật khẩu hiện tại không đúng');
                         } else if (xhr.status === 422) {
                             if (xhr.responseJSON && xhr.responseJSON.errors) {
                                 const errors = xhr.responseJSON.errors;
@@ -525,7 +528,9 @@
                                         $field.addClass('is-invalid');
 
                                         errors[key].forEach(error => {
-                                            $field.after('<div class="invalid-feedback d-block">' + error + '</div>');
+                                            $field.after(
+                                                '<div class="invalid-feedback d-block">' +
+                                                error + '</div>');
                                         });
                                     }
                                 });
@@ -537,10 +542,11 @@
                         } else if (xhr.status === 401) {
                             toastr.error('Vui lòng đăng nhập lại');
                             setTimeout(() => {
-                                window.location.href = '{{ route("login") }}';
+                                window.location.href = '{{ route('login') }}';
                             }, 2000);
                         } else {
-                            toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
+                            toastr.error(xhr.responseJSON?.message ||
+                                'Có lỗi xảy ra. Vui lòng thử lại!');
                         }
                     },
                     complete: function() {
