@@ -166,7 +166,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                @if (in_array($order->status, ['pending', 'confirmed']))
+                                @if ($order->status === 'pending')
                                     <button type="button" class="btn btn-danger" id="cancelOrderBtn" style="border: none;">
                                         <i class="fas fa-times me-2"></i>Hủy đơn hàng
                                     </button>

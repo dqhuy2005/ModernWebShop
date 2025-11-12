@@ -51,6 +51,15 @@ class PurchaseController extends Controller
 
         $orders = $query->orderBy('created_at', 'desc')->paginate(10);
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('user.partials.orders-list', compact('orders', 'status'))->render(),
+                'status' => $status,
+                'search' => $search
+            ]);
+        }
+
         return view('user.purchase', compact('orders', 'search', 'status'));
     }
 
@@ -94,17 +103,17 @@ class PurchaseController extends Controller
             ], 404);
         }
 
-        if (!in_array($order->status, ['pending', 'confirmed'])) {
+        if ($order->status !== 'pending') {
             return response()->json([
                 'success' => false,
-                'message' => 'Không thể hủy đơn hàng ở trạng thái này'
+                'message' => 'Chỉ có thể hủy đơn hàng ở trạng thái "Chờ xử lý"'
             ], 400);
         }
 
         try {
             $order->logActivity(
                 'order_cancelled',
-                'Đơn hàng đã bị hủy',
+                'Đơn hàng đã bị hủy bởi khách hàng',
                 $order->status,
                 Order::STATUS_CANCELLED
             );

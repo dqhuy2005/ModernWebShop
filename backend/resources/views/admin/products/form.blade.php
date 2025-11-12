@@ -105,7 +105,7 @@
                         <i class="fas fa-folder me-1"></i>Category
                     </label>
                     <select id="modal_category_id" class="form-select">
-                        <option value="">-- All Categories --</option>
+                        <option value="">All Categories</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}"
                                 {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -120,7 +120,7 @@
                         <i class="fas fa-toggle-on me-1"></i>Status
                     </label>
                     <select id="modal_status" class="form-select">
-                        <option value="">-- All Status --</option>
+                        <option value="">All Status</option>
                         <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Active</option>
                         <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactive</option>
                     </select>
@@ -131,7 +131,7 @@
                         <i class="fas fa-fire me-1"></i>Hot Products
                     </label>
                     <select id="modal_is_hot" class="form-select">
-                        <option value="">-- All --</option>
+                        <option value="">All</option>
                         <option value="1" {{ request('is_hot') === '1' ? 'selected' : '' }}>Hot Only</option>
                         <option value="0" {{ request('is_hot') === '0' ? 'selected' : '' }}>Normal Only</option>
                     </select>
