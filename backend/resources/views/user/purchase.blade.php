@@ -84,7 +84,8 @@
                             </ul>
 
                             @if (!request('status'))
-                                <form method="GET" action="{{ route('purchase.index') }}" id="searchForm" class="mb-4">
+                                <form method="GET" action="{{ route('purchase.index') }}" id="purchaseSearchForm"
+                                    class="mb-4">
                                     <div class="row g-3">
                                         <div class="col-md-12">
                                             <div class="input-group">
@@ -93,6 +94,7 @@
                                                 </span>
                                                 <input type="text" class="form-control border-start-0"
                                                     style="background-color: #eaeaea" name="search"
+                                                    id="purchaseSearchInput"
                                                     placeholder="Tìm kiếm theo mã đơn hàng hoặc tên sản phẩm"
                                                     value="{{ $search ?? '' }}">
                                             </div>
@@ -231,11 +233,26 @@
                                 $('.order-tab[data-status=""]').addClass('active');
                             }
 
-                            const newUrl = status ?
-                                `{{ route('purchase.index') }}?status=${status}` :
-                                '{{ route('purchase.index') }}';
+                            if (status) {
+                                $('#purchaseSearchForm').hide();
+                            } else {
+                                $('#purchaseSearchForm').show();
+                            }
+
+                            let newUrl = '{{ route('purchase.index') }}';
+                            const urlParams = new URLSearchParams();
+                            if (status) urlParams.append('status', status);
+                            if (search) urlParams.append('search', search);
+                            if (page > 1) urlParams.append('page', page);
+
+                            if (urlParams.toString()) {
+                                newUrl += '?' + urlParams.toString();
+                            }
+
                             window.history.pushState({
-                                status: status
+                                status: status,
+                                search: search,
+                                page: page
                             }, '', newUrl);
 
                             currentStatus = status;
@@ -255,7 +272,7 @@
                 e.preventDefault();
 
                 const status = $(this).data('status');
-                const search = status === '' ? $('input[name="search"]').val() : '';
+                const search = status === '' ? $('#purchaseSearchInput').val() : '';
 
                 loadOrders(status, search);
             });
@@ -266,27 +283,30 @@
                 const url = $(this).attr('href');
                 const urlParams = new URLSearchParams(url.split('?')[1]);
                 const page = urlParams.get('page') || 1;
-                const search = $('input[name="search"]').val();
+                const search = $('#purchaseSearchInput').val();
 
                 loadOrders(currentStatus, search, page);
             });
 
-            $('#searchForm').on('submit', function(e) {
+            $('#purchaseSearchForm').on('submit', function(e) {
                 e.preventDefault();
-                const search = $('input[name="search"]').val();
+                const search = $('#purchaseSearchInput').val();
                 loadOrders('', search);
             });
 
-            $('input[name="search"]').on('keypress', function(e) {
+            $('#purchaseSearchInput').on('keypress', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    $('#searchForm').submit();
+                    $('#purchaseSearchForm').submit();
                 }
             });
 
             window.addEventListener('popstate', function(e) {
-                if (e.state && e.state.status !== undefined) {
-                    loadOrders(e.state.status);
+                if (e.state) {
+                    const status = e.state.status || '';
+                    const search = e.state.search || '';
+                    const page = e.state.page || 1;
+                    loadOrders(status, search, page);
                 }
             });
 

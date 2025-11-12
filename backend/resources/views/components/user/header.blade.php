@@ -8,10 +8,10 @@
 
             <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4 position-relative">
                 <form action="{{ route('products.search') }}" method="GET" class="w-100 position-relative"
-                    id="searchForm">
-                    <input type="text" class="form-control form-control-sm pe-5" name="q" id="searchInput"
-                        placeholder="Nhập từ khóa tìm kiếm..." style="border-radius: 25px; padding-right: 45px;"
-                        autocomplete="off">
+                    id="headerSearchForm">
+                    <input type="text" class="form-control form-control-sm pe-5" name="q"
+                        id="headerSearchInput" placeholder="Nhập từ khóa tìm kiếm..."
+                        style="border-radius: 25px; padding-right: 45px;" autocomplete="off">
                     <button type="submit"
                         class="btn btn-danger btn-sm position-absolute end-0 top-50 translate-middle-y me-1"
                         style="border-radius: 20px; padding: 0.25rem 1rem; z-index: 10;">

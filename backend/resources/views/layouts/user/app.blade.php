@@ -145,7 +145,7 @@
         $(document).ready(function() {
             let searchTimeout = null;
 
-            const searchInput = $('#searchInput');
+            const searchInput = $('#headerSearchInput');
             const suggestionsDropdown = $('#searchSuggestions');
             const suggestionsList = suggestionsDropdown.find('.suggestions-list');
 
