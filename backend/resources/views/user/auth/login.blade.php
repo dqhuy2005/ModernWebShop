@@ -243,38 +243,64 @@
                 oauthCheckInterval = setInterval(checkOAuthStatus, 500);
             });
 
+            let oauthCompleted = false;
+            let oauthSuccess = false;
+
+            window.addEventListener('message', function(event) {
+                if (event.origin !== window.location.origin) {
+                    return;
+                }
+
+                if (event.data && event.data.type === 'oauth-success') {
+                    oauthCompleted = true;
+                    oauthSuccess = true;
+                } else if (event.data && event.data.type === 'oauth-failure') {
+                    oauthCompleted = true;
+                    oauthSuccess = false;
+                }
+            });
+
             function checkOAuthStatus() {
                 try {
-                    // Check if popup is closed
                     if (!oauthPopup || oauthPopup.closed) {
                         clearInterval(oauthCheckInterval);
 
-                        // Show success message and redirect
-                        if (typeof toastr !== 'undefined') {
-                            toastr.success('Đăng nhập thành công!');
-                        }
+                        if (oauthCompleted) {
+                            if (oauthSuccess) {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success('Đăng nhập thành công!');
+                                }
 
-                        // Redirect to home page
-                        setTimeout(() => {
-                            window.location.href = '{{ route('home') }}';
-                        }, 500);
+                                setTimeout(() => {
+                                    window.location.href = '{{ route('home') }}';
+                                }, 500);
+                            } else {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('Đăng nhập thất bại. Vui lòng thử lại.');
+                                } else {
+                                    alert('Đăng nhập thất bại. Vui lòng thử lại.');
+                                }
+                                resetButton();
+                            }
+                        } else {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('Đăng nhập thất bại. Vui lòng thử lại.');
+                            } else {
+                                alert('Đăng nhập thất bại. Vui lòng thử lại.');
+                            }
+                            resetButton();
+                        }
                         return;
                     }
 
-                    // Try to detect if popup has completed OAuth
                     try {
-                        // This will throw error if popup is on different domain (Google)
                         const popupUrl = oauthPopup.location.href;
 
-                        // If we can access the URL and it's our callback
                         if (popupUrl.indexOf(window.location.origin) !== -1 &&
                             popupUrl.indexOf('auth/google/callback') !== -1) {
-                            // OAuth callback detected, popup will close itself
-                            // Just wait for it to close
+                            oauthCompleted = true;
                         }
                     } catch (e) {
-                        // Cross-origin error is expected when on Google's domain
-                        // Just continue checking
                     }
                 } catch (e) {
                     console.error('OAuth check error:', e);
