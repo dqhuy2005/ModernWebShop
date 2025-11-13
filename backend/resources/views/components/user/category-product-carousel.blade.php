@@ -10,9 +10,8 @@
             <div class="d-flex align-items-center gap-3">
                 <h3 class="category-title mb-0">{{ $category->name }} bán chạy</h3>
             </div>
-            <a href="{{ route('categories.show', $category->slug) }}" class="btn btn-outline-primary view-all-btn">
+            <a href="{{ route('categories.show', $category->slug) }}" class="view-all-btn">
                 Xem tất cả
-                <i class="fas fa-chevron-right ms-1"></i>
             </a>
         </div>
 
@@ -152,17 +151,15 @@
     }
 
     .view-all-btn {
-        border-radius: 20px;
-        padding: 0.5rem 1.5rem;
-        font-weight: 600;
-        border: 2px solid #0d6efd;
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 500;
+        line-height: 22px;
         transition: all 0.3s ease;
     }
 
     .view-all-btn:hover {
-        background-color: #0d6efd;
-        color: white;
-        transform: translateX(5px);
+        color: #dc3545;
     }
 
     /* Carousel Container */
@@ -231,12 +228,6 @@
         cursor: pointer;
     }
 
-    .product-card-wrapper:hover {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        transform: translateY(-5px);
-        border-color: #0d6efd;
-    }
-
     /* Product Image */
     .product-image-container {
         margin-bottom: 1rem;
@@ -254,10 +245,6 @@
         height: 100%;
         object-fit: contain;
         transition: transform 0.3s ease;
-    }
-
-    .product-card-wrapper:hover .product-image {
-        transform: scale(1.05);
     }
 
     /* Badges */
@@ -314,10 +301,6 @@
     .product-name a {
         color: #333;
         transition: color 0.2s ease;
-    }
-
-    .product-name a:hover {
-        color: #0d6efd;
     }
 
     /* Specifications */
@@ -452,7 +435,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all carousels
             const carousels = document.querySelectorAll('.carousel-products');
 
             carousels.forEach(carousel => {
@@ -477,17 +459,14 @@
                     const slidesPerView = getSlidesPerView();
                     const maxIndex = Math.max(0, items.length - slidesPerView);
 
-                    // Ensure currentIndex is within bounds
                     currentIndex = Math.min(currentIndex, maxIndex);
                     currentIndex = Math.max(0, currentIndex);
 
-                    // Calculate offset
                     const slideWidth = 100 / slidesPerView;
                     const offset = -(currentIndex * slideWidth);
 
                     carousel.style.transform = `translateX(${offset}%)`;
 
-                    // Update button states
                     if (prevBtn) {
                         prevBtn.disabled = currentIndex === 0;
                     }
@@ -518,7 +497,6 @@
                     });
                 }
 
-                // Handle window resize
                 let resizeTimer;
                 window.addEventListener('resize', () => {
                     clearTimeout(resizeTimer);
@@ -527,7 +505,6 @@
                     }, 250);
                 });
 
-                // Initial update
                 updateCarousel();
             });
         });

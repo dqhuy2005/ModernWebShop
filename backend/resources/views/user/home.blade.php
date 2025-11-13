@@ -7,7 +7,6 @@
 
     @include('components.user.category-grid')
 
-    {{-- Category Product Carousels --}}
     @if (isset($categories) && $categories->count() > 0)
         @foreach ($categories as $category)
             @if ($category->products->count() > 0)
