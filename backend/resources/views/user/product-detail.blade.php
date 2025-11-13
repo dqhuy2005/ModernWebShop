@@ -530,8 +530,7 @@
             }
 
             .pw-thumb-item.active .pw-thumb-img {
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+                border-color: #dc3545;
             }
 
             .pw-product-title {
@@ -719,9 +718,17 @@
         <script>
             (function($) {
                 $(function() {
+                    var $carousel = $('#pwCarousel');
+                    if ($carousel.length) {
+                        $carousel.on('slid.bs.carousel', function(e) {
+                            var index = $(e.relatedTarget).index();
+                            $('.pw-thumb-item').removeClass('active');
+                            $('.pw-thumb-item[data-index="' + index + '"]').addClass('active');
+                        });
+                    }
+
                     $('.pw-thumb-item').on('click', function() {
                         var idx = $(this).data('index');
-                        var $carousel = $('#pwCarousel');
                         if ($carousel.length && typeof bootstrap !== 'undefined') {
                             var bsCarousel = bootstrap.Carousel.getInstance($carousel[0]) || new bootstrap
                                 .Carousel($carousel[0], {
