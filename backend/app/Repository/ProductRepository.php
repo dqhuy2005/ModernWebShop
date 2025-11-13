@@ -104,7 +104,7 @@ class ProductRepository extends BaseRepository
     public function getNewProducts($limit = 8)
     {
         return $this->model
-            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+            ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->with('category:id,name,slug')
             ->latest('created_at')
@@ -115,7 +115,7 @@ class ProductRepository extends BaseRepository
     public function getTopSellingProducts($limit = 12)
     {
         return $this->model
-            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+            ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->with('category:id,name,slug')
             ->mostViewed($limit)
@@ -125,7 +125,7 @@ class ProductRepository extends BaseRepository
     public function getHotDeals($limit = 8)
     {
         return $this->model
-            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+            ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->hot()
             ->with('category:id,name,slug')
@@ -136,7 +136,7 @@ class ProductRepository extends BaseRepository
     public function getPaginatedHotDeals($perPage = 12)
     {
         return $this->model
-            ->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+            ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->hot()
             ->with('category:id,name,slug')
@@ -152,7 +152,7 @@ class ProductRepository extends BaseRepository
         return $this->model
             ->active()
             ->search($keyword)
-            ->select('id', 'name', 'slug', 'image', 'price')
+            ->select('id', 'name', 'slug', 'price')
             ->limit($limit)
             ->get()
             ->map->toSearchSuggestion();

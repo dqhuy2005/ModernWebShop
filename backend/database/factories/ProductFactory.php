@@ -65,7 +65,6 @@ class ProductFactory extends Factory
             'specifications' => json_encode($specifications),
             'price' => $price,
             'currency' => 'VND',
-            'image' => null, // We'll handle this separately if needed
             'status' => fake()->randomElement($statuses),
             'parent_id' => null,
             'language' => fake()->randomElement(['en', 'vi']),

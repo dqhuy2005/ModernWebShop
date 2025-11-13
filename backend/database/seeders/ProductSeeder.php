@@ -36,7 +36,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 45900000, // 45,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -62,7 +61,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 89900000, // 89,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -88,7 +86,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 64500000, // 64,500,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -117,7 +114,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 28900000, // 28,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -144,7 +140,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 42900000, // 42,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -172,7 +167,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 36900000, // 36,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -198,7 +192,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 32900000, // 32,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -226,7 +219,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 18900000, // 18,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -252,7 +244,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 19500000, // 19,500,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -278,7 +269,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 8900000, // 8,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -307,7 +297,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 52900000, // 52,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -334,7 +323,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 28900000, // 28,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -361,7 +349,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 22900000, // 22,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -389,7 +376,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 18900000, // 18,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -415,7 +401,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 7900000, // 7,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -443,7 +428,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 5900000, // 5,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -469,7 +453,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 11900000, // 11,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -499,7 +482,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 7900000, // 7,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -528,7 +510,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3900000, // 3,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -557,7 +538,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3900000, // 3,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -584,7 +564,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 5900000, // 5,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -612,7 +591,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3500000, // 3,500,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -638,7 +616,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 3900000, // 3,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -667,7 +644,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 26900000, // 26,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -694,7 +670,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 29900000, // 29,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -726,7 +701,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 5900000, // 5,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -755,7 +729,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 4900000, // 4,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,
@@ -782,7 +755,6 @@ class ProductSeeder extends Seeder
                 ]),
                 'price' => 6900000, // 6,900,000 VND
                 'currency' => 'VND',
-                'image' => null,
                 'status' => true,
                 'parent_id' => null,
                 'language' => null,

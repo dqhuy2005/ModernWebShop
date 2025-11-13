@@ -13,6 +13,9 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
+            $table->string('customer_email')->nullable();
+            $table->string('customer_name')->nullable();
+            $table->string('customer_phone')->nullable();
             $table->unsignedBigInteger('total_amount')->default(0);
             $table->unsignedInteger('total_items')->default(0);
             $table->enum('status', [
@@ -25,9 +28,6 @@ return new class extends Migration {
                 'cancelled',    // Đã hủy
                 'refunded'      // Đã hoàn tiền
             ])->default('pending')->index();
-            $table->string('customer_email')->nullable()->after('user_id');
-            $table->string('customer_name')->nullable()->after('customer_email');
-            $table->string('customer_phone')->nullable()->after('customer_name');
             $table->text('address')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();

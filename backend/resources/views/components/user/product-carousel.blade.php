@@ -15,8 +15,7 @@
         </div>
 
         @foreach ($categories ?? [] as $categoryIndex => $category)
-            <div class="carousel-container {{ $categoryIndex === 0 ? 'active' : '' }}"
-                id="carousel-{{ $categoryIndex }}">
+            <div class="carousel-container {{ $categoryIndex === 0 ? 'active' : '' }}" id="carousel-{{ $categoryIndex }}">
 
                 <button class="carousel-btn carousel-prev" data-direction="-1" data-category="{{ $categoryIndex }}">
                     <i class="fas fa-chevron-left"></i>
@@ -94,7 +93,7 @@
     }
 
     .category-tab:hover {
-        border-color: #202732;
+        cursor: pointer;
     }
 
     .category-tab.active {
@@ -163,8 +162,7 @@
     }
 
     .carousel-btn:hover {
-        background-color: #202732;
-        color: #FFFCED;
+        cursor: pointer;
     }
 
     .carousel-prev {

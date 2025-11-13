@@ -33,7 +33,7 @@ class CategoryRepository extends BaseRepository
             ->active()
             ->with([
                 'products' => function ($query) use ($productsLimit) {
-                    $query->select('id', 'name', 'slug', 'image', 'price', 'category_id', 'status', 'is_hot', 'views', 'updated_at')
+                    $query->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'updated_at')
                         ->active()
                         ->where('is_hot', true)
                         ->latest('updated_at')
