@@ -7,7 +7,14 @@
 
     @include('components.user.category-grid')
 
-    @include('components.user.product-carousel', ['categories' => $categories])
+    {{-- Category Product Carousels --}}
+    @if (isset($categories) && $categories->count() > 0)
+        @foreach ($categories as $category)
+            @if ($category->products->count() > 0)
+                <x-user.category-product-carousel :category="$category" :products="$category->products" :limit="15" />
+            @endif
+        @endforeach
+    @endif
 
     @include('components.user.top-selling', ['topSellingProducts' => $topSellingProducts])
 

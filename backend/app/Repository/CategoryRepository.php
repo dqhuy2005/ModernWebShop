@@ -29,14 +29,20 @@ class CategoryRepository extends BaseRepository
     public function getCategoriesWithHotProducts($limit = 5, $productsLimit = 15)
     {
         return $this->model
-            ->select('id', 'name', 'slug', 'created_at')
+            ->select('id', 'name', 'slug', 'image', 'created_at')
             ->active()
             ->with([
                 'products' => function ($query) use ($productsLimit) {
                     $query->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'updated_at')
                         ->active()
                         ->where('is_hot', true)
-                        ->with('images:id,product_id,path,sort_order')
+                        ->with([
+                            'images:id,product_id,path,sort_order',
+                            'category:id,name,image',
+                            'approvedReviews:id,product_id,rating'
+                        ])
+                        ->withCount('approvedReviews')
+                        ->withAvg('approvedReviews', 'rating')
                         ->latest('updated_at')
                         ->limit($productsLimit);
                 }
