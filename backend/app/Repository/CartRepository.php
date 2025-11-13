@@ -20,7 +20,10 @@ class CartRepository extends BaseRepository
     {
         return $this->scopeQuery(function ($query) use ($userId) {
             return $query->where('user_id', $userId)
-                ->with('product:id,name,slug,image,price,status,category_id');
+                ->with([
+                    'product:id,name,slug,price,status,category_id',
+                    'product.images:id,product_id,path,sort_order'
+                ]);
         })->all();
     }
 

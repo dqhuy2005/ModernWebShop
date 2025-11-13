@@ -23,7 +23,10 @@ class OrderRepository extends BaseRepository
                 'user:id,fullname,email,phone',
                 'orderDetails' => function ($q) {
                     $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
-                        ->with('product:id,name,slug,image,price');
+                        ->with([
+                            'product:id,name,slug,price',
+                            'product.images:id,product_id,path,sort_order'
+                        ]);
                 }
             ]);
     }

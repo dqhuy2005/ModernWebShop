@@ -54,7 +54,7 @@ class CategoryController extends AppBaseController
                 ->with([
                     'children:id,name,slug,image,parent_id,status',
                     'products' => function ($q) {
-                        $q->select('id', 'name', 'slug', 'price', 'image', 'category_id', 'status');
+                        $q->select('id', 'name', 'slug', 'price', 'category_id', 'status');
                     }
                 ])
                 ->find($id);

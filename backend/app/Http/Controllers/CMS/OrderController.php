@@ -27,7 +27,10 @@ class OrderController extends Controller
                     'user:id,fullname,email,phone',
                     'orderDetails' => function ($q) {
                         $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
-                            ->with('product:id,name,image');
+                            ->with([
+                                'product:id,name',
+                                'product.images:id,product_id,path,sort_order'
+                            ]);
                     },
                     'activities' => function ($q) {
                         $q->with('user:id,fullname');
@@ -97,7 +100,7 @@ class OrderController extends Controller
     public function create()
     {
         try {
-            $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')
+            $products = Product::select('id', 'name', 'price', 'category_id', 'status')
                 ->where('status', true)
                 ->with('category:id,name')
                 ->get();
@@ -200,7 +203,7 @@ class OrderController extends Controller
                 ])
                 ->findOrFail($id);
 
-            $products = Product::select('id', 'name', 'price', 'image', 'category_id', 'status')
+            $products = Product::select('id', 'name', 'price', 'category_id', 'status')
                 ->where('status', true)
                 ->with('category:id,name')
                 ->get();

@@ -99,7 +99,7 @@ class ProductController extends Controller
     {
         $hotProducts = Product::where('is_hot', true)
             ->where('status', true)
-            ->select('id', 'name', 'slug', 'image', 'price', 'views', 'is_hot', 'category_id')
+            ->select('id', 'name', 'slug', 'price', 'views', 'is_hot', 'category_id')
             ->with('category:id,name')
             ->orderBy('views', 'desc')
             ->paginate(20);

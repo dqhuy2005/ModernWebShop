@@ -158,7 +158,10 @@ class UserController extends BaseController
                     'role:id,name,slug',
                     'carts' => function ($q) {
                         $q->select('id', 'user_id', 'product_id', 'quantity', 'created_at')
-                            ->with('product:id,name,slug,image,price');
+                            ->with([
+                                'product:id,name,slug,price',
+                                'product.images:id,product_id,path,sort_order'
+                            ]);
                     },
                     'orders' => function ($q) {
                         $q->select('id', 'user_id', 'customer_name', 'total_amount', 'total_items', 'status', 'created_at');

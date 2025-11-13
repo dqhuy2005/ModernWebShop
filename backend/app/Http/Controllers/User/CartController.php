@@ -45,7 +45,7 @@ class CartController extends Controller
             'quantity' => 'integer|min:1'
         ]);
 
-        $product = Product::select('id', 'name', 'slug', 'price', 'image', 'status')->findOrFail($request->product_id);
+        $product = Product::select('id', 'name', 'slug', 'price', 'status')->findOrFail($request->product_id);
         $quantity = $request->quantity ?? 1;
 
         if (Auth::check()) {
@@ -84,7 +84,6 @@ class CartController extends Controller
                     'name' => $product->name,
                     'slug' => $product->slug,
                     'price' => $product->price,
-                    'image' => $product->main_image ?? 'default.png',
                     'quantity' => $quantity,
                 ];
             }
