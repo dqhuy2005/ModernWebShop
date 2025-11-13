@@ -292,11 +292,6 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        .pw-product-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transform: translateY(-4px);
-        }
-
         .pw-product-link {
             color: inherit;
             text-decoration: none;
@@ -324,10 +319,6 @@
             transition: transform 0.3s ease;
         }
 
-        .pw-product-card:hover .pw-product-img {
-            transform: scale(1.05);
-        }
-
         .pw-badge {
             position: absolute;
             top: 8px;
@@ -353,7 +344,6 @@
         .pw-product-name {
             font-size: 0.95rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
             color: #1f2937;
             line-height: 1.4;
             min-height: 2.8em;
@@ -367,16 +357,17 @@
             list-style: none;
             padding: 0;
             margin: 0 0 0.75rem 0;
-            color: #6b7280;
+            background: #ECECEC;
+            color: #6D6E72;
             font-size: 0.8rem;
             flex: 1;
         }
 
         .pw-product-specs li {
+            padding: 0 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 0.25rem;
         }
 
         .pw-product-footer {
