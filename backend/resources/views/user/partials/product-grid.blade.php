@@ -5,15 +5,14 @@
                 <a href="{{ route('products.show', $product->slug) }}" class="pw-product-link">
                     <div class="pw-product-image">
                         @php
-                            $mainImage = $product->main_image ?? $product->image ?? 'assets/imgs/products/default.png';
+                            $mainImage =
+                                $product->main_image ?? ($product->image ?? 'assets/imgs/products/default.png');
                             $imgUrl = str_starts_with($mainImage, 'http') ? $mainImage : asset('storage/' . $mainImage);
                         @endphp
-                        <img src="{{ $imgUrl }}"
-                             alt="{{ $product->name }}"
-                             class="img-fluid pw-product-img"
-                             loading="lazy">
+                        <img src="{{ $imgUrl }}" alt="{{ $product->name }}" class="img-fluid pw-product-img"
+                            loading="lazy">
 
-                        @if($product->is_hot)
+                        @if ($product->is_hot)
                             <span class="pw-badge pw-badge-hot">HOT</span>
                         @endif
                     </div>
@@ -21,15 +20,30 @@
                     <div class="pw-product-body">
                         <h5 class="pw-product-name">{{ Str::limit($product->name, 60) }}</h5>
 
-                        @if (!empty($product->specifications) && is_array($product->specifications))
+                        @php
+                            $specs = $product->specifications;
+                            if (is_string($specs)) {
+                                $specs = json_decode($specs, true);
+                            }
+                            $hasValidSpecs = !empty($specs) && is_array($specs) && count(array_filter($specs)) > 0;
+                        @endphp
+
+                        @if ($hasValidSpecs)
                             <ul class="pw-product-specs">
-                                @foreach (array_slice($product->specifications, 0, 3) as $key => $val)
-                                    <li>
-                                        @if(is_string($key))
-                                            <strong>{{ $key }}:</strong>
-                                        @endif
-                                        {{ is_array($val) ? implode(', ', $val) : $val }}
-                                    </li>
+                                @php
+                                    $displayedCount = 0;
+                                    $maxSpecs = 3;
+                                @endphp
+                                @foreach ($specs as $key => $val)
+                                    @if ($displayedCount < $maxSpecs && !empty($val))
+                                        <li>
+                                            @if (is_string($key) && !is_numeric($key))
+                                                <strong>{{ $key }}:</strong>
+                                            @endif
+                                            {{ is_array($val) ? implode(', ', array_filter($val)) : $val }}
+                                        </li>
+                                        @php $displayedCount++; @endphp
+                                    @endif
                                 @endforeach
                             </ul>
                         @endif

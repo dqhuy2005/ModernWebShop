@@ -23,32 +23,31 @@
                             <h6 class="pw-filter-label">Giá</h6>
                             <div class="form-check">
                                 <input class="form-check-input price-filter" type="radio" name="price_range"
-                                       value="" id="price_all"
-                                       {{ empty($filters['price_range']) ? 'checked' : '' }}>
+                                    value="" id="price_all" {{ empty($filters['price_range']) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="price_all">Tất cả</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input price-filter" type="radio" name="price_range"
-                                       value="under_10" id="price_under_10"
-                                       {{ ($filters['price_range'] ?? '') === 'under_10' ? 'checked' : '' }}>
+                                    value="under_10" id="price_under_10"
+                                    {{ ($filters['price_range'] ?? '') === 'under_10' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="price_under_10">Dưới 10 triệu</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input price-filter" type="radio" name="price_range"
-                                       value="10_20" id="price_10_20"
-                                       {{ ($filters['price_range'] ?? '') === '10_20' ? 'checked' : '' }}>
+                                    value="10_20" id="price_10_20"
+                                    {{ ($filters['price_range'] ?? '') === '10_20' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="price_10_20">10 - 20 triệu</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input price-filter" type="radio" name="price_range"
-                                       value="20_30" id="price_20_30"
-                                       {{ ($filters['price_range'] ?? '') === '20_30' ? 'checked' : '' }}>
+                                    value="20_30" id="price_20_30"
+                                    {{ ($filters['price_range'] ?? '') === '20_30' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="price_20_30">20 - 30 triệu</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input price-filter" type="radio" name="price_range"
-                                       value="over_30" id="price_over_30"
-                                       {{ ($filters['price_range'] ?? '') === 'over_30' ? 'checked' : '' }}>
+                                    value="over_30" id="price_over_30"
+                                    {{ ($filters['price_range'] ?? '') === 'over_30' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="price_over_30">Trên 30 triệu</label>
                             </div>
                         </div>
@@ -62,33 +61,72 @@
 
             <div class="col-lg-9">
                 <div class="pw-toolbar mb-3">
-                    <div class="d-flex flex-wrap gap-3 align-items-center">
-                        <div class="pw-quick-tags d-flex gap-2">
-                            <button class="tag-btn {{ ($filters['sort'] ?? 'best_selling') === 'best_selling' ? 'active' : '' }}"
+                    <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                        <div class="d-flex flex-wrap gap-3 align-items-center flex-grow-1">
+                            <div class="pw-quick-tags d-flex gap-2">
+                                <button
+                                    class="tag-btn {{ ($filters['sort'] ?? 'best_selling') === 'best_selling' ? 'active' : '' }}"
                                     data-sort="best_selling">
-                                Bán chạy
-                            </button>
-                            <button class="tag-btn {{ ($filters['sort'] ?? '') === 'newest' ? 'active' : '' }}"
+                                    Bán chạy
+                                </button>
+                                <button class="tag-btn {{ ($filters['sort'] ?? '') === 'newest' ? 'active' : '' }}"
                                     data-sort="newest">
-                                Mới nhất
-                            </button>
+                                    Mới nhất
+                                </button>
+                            </div>
+
+                            <div class="pw-sort-dropdown">
+                                <select class="form-select form-select-sm" id="sort-select">
+                                    <option value="name_asc"
+                                        {{ ($filters['sort'] ?? '') === 'name_asc' ? 'selected' : '' }}>
+                                        Tên A → Z
+                                    </option>
+                                    <option value="name_desc"
+                                        {{ ($filters['sort'] ?? '') === 'name_desc' ? 'selected' : '' }}>
+                                        Tên Z → A
+                                    </option>
+                                    <option value="price_asc"
+                                        {{ ($filters['sort'] ?? '') === 'price_asc' ? 'selected' : '' }}>
+                                        Giá thấp → cao
+                                    </option>
+                                    <option value="price_desc"
+                                        {{ ($filters['sort'] ?? '') === 'price_desc' ? 'selected' : '' }}>
+                                        Giá cao → thấp
+                                    </option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="pw-sort-dropdown ms-auto">
-                            <select class="form-select form-select-sm" id="sort-select">
-                                <option value="name_asc" {{ ($filters['sort'] ?? '') === 'name_asc' ? 'selected' : '' }}>
-                                    Tên A → Z
-                                </option>
-                                <option value="name_desc" {{ ($filters['sort'] ?? '') === 'name_desc' ? 'selected' : '' }}>
-                                    Tên Z → A
-                                </option>
-                                <option value="price_asc" {{ ($filters['sort'] ?? '') === 'price_asc' ? 'selected' : '' }}>
-                                    Giá thấp → cao
-                                </option>
-                                <option value="price_desc" {{ ($filters['sort'] ?? '') === 'price_desc' ? 'selected' : '' }}>
-                                    Giá cao → thấp
-                                </option>
-                            </select>
+                        <div class="pw-pagination-info d-none d-md-flex align-items-center gap-2">
+                            @if ($products->total() > 0)
+                                <span class="text-muted small">
+                                    <strong>{{ $products->currentPage() }}</strong>
+                                    / {{ $products->lastPage() }}
+                                </span>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    @if ($products->onFirstPage())
+                                        <button type="button" class="btn btn-outline-secondary" disabled>
+                                            ‹
+                                        </button>
+                                    @else
+                                        <button type="button" class="btn btn-outline-secondary pagination-quick-btn"
+                                            data-page="{{ $products->currentPage() - 1 }}">
+                                            ‹
+                                        </button>
+                                    @endif
+
+                                    @if ($products->hasMorePages())
+                                        <button type="button" class="btn btn-outline-secondary pagination-quick-btn"
+                                            data-page="{{ $products->currentPage() + 1 }}">
+                                            ›
+                                        </button>
+                                    @else
+                                        <button type="button" class="btn btn-outline-secondary" disabled>
+                                            ›
+                                        </button>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -132,7 +170,7 @@
             background: white;
             padding: 1.5rem;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 20px;
         }
@@ -172,7 +210,7 @@
             background: white;
             padding: 1rem 1.25rem;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         /* Quick Sort Tags */
@@ -205,7 +243,7 @@
         }
 
         #sort-select {
-            width: 150px;
+            width: 160px;
         }
 
         /* Sort Dropdown */
@@ -213,6 +251,32 @@
             padding: 0.5rem 1rem;
             border-radius: 6px;
             font-size: 0.9rem;
+        }
+
+        /* Pagination Info */
+        .pw-pagination-info {
+            padding-left: 1rem;
+        }
+
+        .pw-pagination-info .text-muted {
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .pw-pagination-info .btn-group .btn {
+            padding: 0.35rem 0.65rem;
+            border-color: #e5e7eb;
+            color: #4b5563;
+        }
+
+        .pw-pagination-info .btn-group .btn:hover:not(:disabled) {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+            color: white;
+        }
+
+        .pw-pagination-info .btn-group .btn:disabled {
+            opacity: 0.4;
         }
 
         /* Product Grid */
@@ -234,11 +298,11 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .pw-product-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(-4px);
         }
 
@@ -410,12 +474,39 @@
             }
 
             .pw-toolbar {
-                flex-direction: column;
-                gap: 1rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .pw-toolbar>div {
+                width: 100%;
+            }
+
+            .pw-quick-tags {
+                width: 100%;
+            }
+
+            .tag-btn {
+                flex: 1;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .pw-sort-dropdown {
+                width: 100%;
             }
 
             .pw-sort-dropdown select {
                 width: 100% !important;
+            }
+
+            .pw-pagination-info {
+                border-left: none;
+                border-top: 2px solid #e5e7eb;
+                padding-left: 0;
+                padding-top: 0.75rem;
+                margin-top: 0.75rem;
+                width: 100%;
+                justify-content: center !important;
             }
         }
     </style>
@@ -426,7 +517,7 @@
         (function($) {
             let debounceTimer;
             const categorySlug = '{{ $category->slug }}';
-            const baseUrl = '{{ route("categories.show", $category->slug) }}';
+            const baseUrl = '{{ route('categories.show', $category->slug) }}';
 
             function getUrlParams() {
                 const params = new URLSearchParams(window.location.search);
@@ -452,7 +543,8 @@
             function applyFilters(sortValue = null) {
                 const params = {
                     price_range: $('input[name="price_range"]:checked').val() || '',
-                    sort: sortValue || $('.tag-btn.active').data('sort') || $('#sort-select').val() || 'best_selling',
+                    sort: sortValue || $('.tag-btn.active').data('sort') || $('#sort-select').val() ||
+                        'best_selling',
                     page: 1
                 };
 
@@ -541,6 +633,7 @@
                         if (response.success) {
                             $('#product-grid-container').html(response.html);
                             $('#pagination-container').html(response.pagination);
+                            updateToolbarPagination(response.pagination);
 
                             $('html, body').animate({
                                 scrollTop: $('#product-grid-container').offset().top - 100
@@ -552,6 +645,51 @@
                     }
                 });
             });
+
+            // Handle quick pagination buttons
+            $(document).on('click', '.pagination-quick-btn', function(e) {
+                e.preventDefault();
+                const page = $(this).data('page');
+
+                const params = getUrlParams();
+                params.page = page;
+
+                $('#loading-overlay').fadeIn(200);
+
+                updateUrl(params);
+
+                $.ajax({
+                    url: baseUrl,
+                    method: 'GET',
+                    data: params,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#product-grid-container').html(response.html);
+                            $('#pagination-container').html(response.pagination);
+                            updateToolbarPagination(response.pagination);
+
+                            $('html, body').animate({
+                                scrollTop: $('#product-grid-container').offset().top - 100
+                            }, 400);
+                        }
+                    },
+                    complete: function() {
+                        $('#loading-overlay').fadeOut(200);
+                    }
+                });
+            });
+
+            // Update toolbar pagination info
+            function updateToolbarPagination(paginationHtml) {
+                const $tempDiv = $('<div>').html(paginationHtml);
+                const paginationInfo = $tempDiv.find('.pw-pagination-info').html();
+                if (paginationInfo) {
+                    $('.pw-pagination-info').html(paginationInfo);
+                }
+            }
         })(jQuery);
     </script>
 @endpush

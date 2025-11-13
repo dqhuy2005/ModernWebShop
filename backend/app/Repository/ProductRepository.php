@@ -87,7 +87,7 @@ class ProductRepository extends BaseRepository
     public function getFilteredProducts($categoryId, $filters = [])
     {
         $query = $this->model
-            ->select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at')
+            ->select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.specifications', 'products.created_at')
             ->where('products.status', true)
             ->where('products.category_id', $categoryId)
             ->with(['category:id,name,slug']);
