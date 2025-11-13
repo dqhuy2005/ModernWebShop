@@ -154,9 +154,16 @@ class Product extends Model
 
     public function getMainImageAttribute()
     {
-        $first = $this->images()->first();
-        if ($first) {
-            return $first->path;
+        if ($this->relationLoaded('images')) {
+            $first = $this->images->first();
+            if ($first) {
+                return $first->path;
+            }
+        } else {
+            $first = $this->images()->first();
+            if ($first) {
+                return $first->path;
+            }
         }
 
         return null;
