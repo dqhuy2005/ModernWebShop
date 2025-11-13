@@ -155,9 +155,7 @@
     }
 
     .btn-light:hover {
-        background-color: white !important;
-        color: #dc3545 !important;
-        border-color: white;
+        cursor: pointer;
         transform: translateX(5px);
     }
 

@@ -113,12 +113,12 @@
         }
 
         .btn-outline-light:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: #fff;
+            cursor: pointer;
         }
 
         .error-actions a:hover,
         .error-actions button:hover {
+            cursor: pointer;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
             transition: all 0.3s ease;

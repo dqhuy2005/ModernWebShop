@@ -221,8 +221,7 @@
     }
 
     .btn-banner:hover {
-        background-color: transparent;
-        color: #FFFCED;
+        cursor: pointer;
     }
 
     .banner-image img {

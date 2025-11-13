@@ -1,3 +1,7 @@
+button {
+    border-radius: 0;
+}
+
 .is-readonly {
     background-color: #e9ecef;
     pointer-events: none;
@@ -11,9 +15,7 @@
 }
 
 .add-to-cart-btn:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-    color: #fff;
+    cursor: pointer;
 }
 
 .breadcrumb-item a {

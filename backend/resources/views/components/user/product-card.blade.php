@@ -133,9 +133,7 @@
     }
 
     .product-actions .btn:hover {
-        background-color: #FFFCED;
-        border-color: #202732;
-        color: #202732;
+        cursor: pointer;
         transform: translateY(-2px);
     }
 
@@ -147,8 +145,6 @@
     }
 
     .product-actions .btn-primary:hover {
-        background-color: #bb2d3b;
-        border-color: #bb2d3b;
-        color: #FFFFFF;
+        cursor: pointer;
     }
 </style>

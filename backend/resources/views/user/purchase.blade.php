@@ -167,8 +167,7 @@
         }
 
         .nav-tabs .nav-link:hover {
-            color: #dc3545;
-            border-color: transparent;
+            cursor: pointer;
         }
 
         .nav-tabs .nav-link.active {

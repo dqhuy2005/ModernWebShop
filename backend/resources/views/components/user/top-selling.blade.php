@@ -234,8 +234,7 @@
     }
 
     .product-actions .btn:hover {
-        background-color: #bb2d3b;
-        border-color: #bb2d3b;
+        cursor: pointer;
         transform: translateY(-2px);
     }
 

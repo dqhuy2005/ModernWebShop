@@ -223,17 +223,11 @@
             padding: 0.5rem 1.25rem;
             border: 2px solid #e5e7eb;
             background: white;
-            border-radius: 6px;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             color: #374151;
-        }
-
-        .tag-btn:hover {
-            border-color: #4f46e5;
-            background: #f9fafb;
         }
 
         .tag-btn.active {
@@ -249,7 +243,6 @@
         /* Sort Dropdown */
         .pw-sort-dropdown select {
             padding: 0.5rem 1rem;
-            border-radius: 6px;
             font-size: 0.9rem;
         }
 
@@ -270,9 +263,7 @@
         }
 
         .pw-pagination-info .btn-group .btn:hover:not(:disabled) {
-            background-color: #4f46e5;
-            border-color: #4f46e5;
-            color: white;
+            cursor: pointer;
         }
 
         .pw-pagination-info .btn-group .btn:disabled {

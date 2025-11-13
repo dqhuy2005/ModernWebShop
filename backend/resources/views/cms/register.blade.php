@@ -154,7 +154,7 @@
         }
 
         .cms-login-button:hover {
-            background: #4752c4;
+            cursor: pointer;
         }
 
         .cms-register-prompt {

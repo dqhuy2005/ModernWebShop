@@ -248,6 +248,7 @@
         }
 
         .btn:hover {
+            cursor: pointer;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
@@ -450,11 +451,11 @@
                     <p style="text-align: center; color: #666; margin-bottom: 20px;">
                         Hãy chia sẻ trải nghiệm của bạn về những sản phẩm đã mua!
                     </p>
-                    
+
                     @foreach ($orderItems as $item)
                         <div style="background-color: #ffffff; border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
                             <span style="color: #333; font-weight: 500;">{{ $item['product_name'] }}</span>
-                            <a href="{{ route('reviews.create', ['order' => $orderId, 'product' => $item['product_id']]) }}" 
+                            <a href="{{ route('reviews.create', ['order' => $orderId, 'product' => $item['product_id']]) }}"
                                style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #ffffff !important; text-decoration: none; border-radius: 20px; font-weight: 600; font-size: 13px;">
                                 Đánh giá ngay
                             </a>

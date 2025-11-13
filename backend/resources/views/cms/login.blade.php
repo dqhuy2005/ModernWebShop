@@ -230,7 +230,7 @@
         }
 
         .cms-login-button:hover:not(:disabled) {
-            background: #4752c4;
+            cursor: pointer;
         }
 
         .cms-login-button:active:not(:disabled) {
