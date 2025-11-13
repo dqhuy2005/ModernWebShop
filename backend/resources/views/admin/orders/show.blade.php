@@ -79,8 +79,8 @@
                                         <td class="align-middle">{{ $index + 1 }}</td>
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
-                                                @if ($detail->product && $detail->product->image)
-                                                    <img src="{{ asset('storage/' . $detail->product->image) }}"
+                                                @if ($detail->product && $detail->product->main_image)
+                                                    <img src="{{ $detail->product->image_url }}"
                                                         alt="{{ $detail->product_name }}" class="rounded me-2"
                                                         style="width: 40px; height: 40px; object-fit: cover;">
                                                 @else

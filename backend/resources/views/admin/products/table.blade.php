@@ -36,8 +36,8 @@
                             </td>
 
                             <td>
-                                @if ($product->image)
-                                    <img src="{{ asset('/storage/' . $product->image) }}" alt="Image Product"
+                                @if ($product->main_image)
+                                    <img src="{{ $product->image_url }}" alt="Image Product"
                                         class="product-image">
                                 @else
                                     <div

@@ -170,8 +170,8 @@
                                     <div class="row align-items-center">
                                         <div class="col-md-5">
                                             <div class="d-flex align-items-center">
-                                                @if ($detail->product && $detail->product->image)
-                                                    <img src="{{ asset('storage/' . $detail->product->image) }}"
+                                                @if ($detail->product && $detail->product->main_image)
+                                                    <img src="{{ $detail->product->image_url }}"
                                                         alt="{{ $detail->product_name }}" class="rounded me-2"
                                                         style="width: 40px; height: 40px; object-fit: cover;">
                                                 @else
@@ -286,10 +286,10 @@
                                         data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-price="{{ $product->price }}"
                                         data-category="{{ $product->category->name ?? 'N/A' }}"
-                                        data-image="{{ $product->image }}">
+                                        data-image="{{ $product->image_url }}">
 
-                                    @if ($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                    @if ($product->main_image)
+                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                             class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                     @else
                                         <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"

@@ -202,7 +202,7 @@
                 products.forEach(function(product) {
                     html += `
                         <a href="${product.url}" class="suggestion-item">
-                            <img src="${product.image}" alt="${product.name}" class="suggestion-image">
+                            <img src="${product.image_url}" alt="${product.name}" class="suggestion-image">
                             <div class="suggestion-info">
                                 <div class="suggestion-name">${product.name}</div>
                                 <div class="suggestion-price">${product.formatted_price}</div>

@@ -78,7 +78,7 @@
                                         @endphp
                                         <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
                                             <div class="d-flex align-items-start">
-                                                <img src="{{ asset('storage/' . $product->image) }}"
+                                                <img src="{{ $product->image_url }}"
                                                     alt="{{ $product->name }}" class="rounded me-3"
                                                     style="width: 60px; height: 60px; object-fit: cover;">
                                                 <div>

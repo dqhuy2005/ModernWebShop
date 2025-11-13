@@ -100,8 +100,8 @@
                                         <tr>
                                             <td><strong>{{ $product->id }}</strong></td>
                                             <td>
-                                                @if ($product->image)
-                                                    <img src="{{ asset('storage/' . $product->image) }}"
+                                                @if ($product->main_image)
+                                                    <img src="{{ $product->image_url }}"
                                                         alt="{{ $product->name }}" class="img-thumbnail"
                                                         style="width: 60px; height: 60px; object-fit: cover;">
                                                 @else

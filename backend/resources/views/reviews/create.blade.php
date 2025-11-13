@@ -21,7 +21,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                 class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
                             <div>
                                 <h5 class="mb-1">{{ $product->name }}</h5>

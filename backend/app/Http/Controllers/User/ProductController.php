@@ -28,7 +28,7 @@ class ProductController extends Controller
                 "product_detail_{$slug}",
                 now()->addMinutes(10),
                 function () use ($slug) {
-                    return Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'image', 'category_id', 'status', 'is_hot', 'views', 'created_at', 'updated_at')
+                    return Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'category_id', 'status', 'is_hot', 'views', 'created_at', 'updated_at')
                         ->with([
                             'category:id,name,slug',
                             'images' => function ($query) {
@@ -60,7 +60,7 @@ class ProductController extends Controller
             // Get reviews data
             $reviews = $product->approvedReviews()
                 ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'created_at')
-                ->with('user:id,fullname,email,image')
+                ->with('user:id,fullname,email')
                 ->latest()
                 ->paginate(10);
 
@@ -87,7 +87,7 @@ class ProductController extends Controller
                 return Product::where('category_id', $product->category_id)
                     ->where('id', '!=', $product->id)
                     ->where('status', true)
-                    ->select('id', 'name', 'slug', 'image', 'price', 'views', 'is_hot')
+                    ->select('id', 'name', 'slug', 'price', 'views', 'is_hot')
                     ->orderBy('views', 'desc')
                     ->limit($limit)
                     ->get();

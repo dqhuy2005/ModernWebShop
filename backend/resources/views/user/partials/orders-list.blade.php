@@ -34,7 +34,7 @@
                     @foreach ($order->orderDetails->take(2) as $detail)
                         <div class="d-flex align-items-center mb-2">
                             @if ($detail->product)
-                                <img src="{{ asset('storage/' . $detail->product->image) }}"
+                                <img src="{{ $detail->product->image_url }}"
                                     alt="{{ $detail->product_name }}" class="rounded me-3"
                                     style="width: 60px; height: 60px; object-fit: cover;">
                             @else
@@ -100,13 +100,6 @@
     <div class="text-center py-5">
         <i class="fas fa-shopping-bag" style="font-size: 5rem; color: #E9ECEF;"></i>
         <h5 class="fw-bold mt-3" style="color: #202732;">Chưa có đơn hàng</h5>
-        <p class="text-muted mb-4">
-            @if ($status)
-                Bạn chưa có đơn hàng nào ở trạng thái này
-            @else
-                Bạn chưa có đơn hàng nào
-            @endif
-        </p>
         @if (!$status)
             <a href="{{ route('home') }}" class="btn btn-danger">
                 <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay

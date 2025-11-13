@@ -4,12 +4,7 @@
             <div class="pw-product-card h-100">
                 <a href="{{ route('products.show', $product->slug) }}" class="pw-product-link">
                     <div class="pw-product-image">
-                        @php
-                            $mainImage =
-                                $product->main_image ?? ($product->image ?? 'assets/imgs/products/default.png');
-                            $imgUrl = str_starts_with($mainImage, 'http') ? $mainImage : asset('storage/' . $mainImage);
-                        @endphp
-                        <img src="{{ $imgUrl }}" alt="{{ $product->name }}" class="img-fluid pw-product-img"
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="img-fluid pw-product-img"
                             loading="lazy">
 
                         @if ($product->is_hot)

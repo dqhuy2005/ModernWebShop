@@ -35,25 +35,7 @@
 
                             {{-- Product image --}}
                             <a href="{{ route('products.show', $product->slug) }}" class="text-decoration-none">
-                                @php
-                                    $images = [];
-                                    if (is_array($product->image)) {
-                                        $images = $product->image;
-                                    } else {
-                                        $decoded = @json_decode($product->image, true);
-                                        if (is_array($decoded)) {
-                                            $images = $decoded;
-                                        } else {
-                                            $images = [$product->image ?: 'assets/imgs/products/default.png'];
-                                        }
-                                    }
-                                    $firstImage = collect($images)->first();
-                                    $imgUrl = str_starts_with($firstImage, 'http')
-                                        ? $firstImage
-                                        : asset('storage/' . $firstImage);
-                                @endphp
-
-                                <img src="{{ $imgUrl }}" class="card-img-top product-img" alt="{{ $product->name }}">
+                                <img src="{{ $product->image_url }}" class="card-img-top product-img" alt="{{ $product->name }}">
                             </a>
 
                             {{-- Product info --}}

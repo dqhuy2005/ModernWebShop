@@ -26,7 +26,7 @@
                             @endif
 
                             <div class="product-image-wrapper">
-                                <img src="{{ asset('storage/products/' . ($product->image ?? '1760847596_tai-nghe-bluetooth-m10-pro-tai-nghe-khong-m10-pro-phien-ban-nang-cap-pin-trau-nut-cam-ung-tu-dong-ket-noi.webp')) }}"
+                                <img src="{{ $product->image_url }}"
                                     alt="{{ $product->name }}" class="product-image">
                             </div>
 

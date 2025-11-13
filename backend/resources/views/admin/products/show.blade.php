@@ -201,13 +201,6 @@
                                 </div>
                             @endforeach
                         </div>
-                    @elseif ($product->image)
-                        <div class="text-center">
-                            <label class="form-label fw-bold text-start d-block mb-2">Legacy Image</label>
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                class="img-fluid rounded shadow-sm" style="max-height: 300px;">
-                            <p class="text-muted mt-2 small">This is a legacy single image. Upload new images via Edit to use the multi-image system.</p>
-                        </div>
                     @else
                         <div class="text-center bg-light rounded p-5">
                             <i class="fas fa-image fa-4x text-muted"></i>

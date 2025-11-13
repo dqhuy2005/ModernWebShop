@@ -17,7 +17,6 @@ class Product extends Model
         'slug',
         'specifications',
         'description',
-        'image',
         'price',
         'currency',
         'status',
@@ -91,8 +90,9 @@ class Product extends Model
 
     public function getImageUrlAttribute(): string
     {
-        if ($this->image) {
-            return asset('storage/' . $this->image);
+        $mainImage = $this->main_image;
+        if ($mainImage) {
+            return asset('storage/' . $mainImage);
         }
         return asset('assets/imgs/products/default.png');
     }
@@ -108,7 +108,7 @@ class Product extends Model
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
-            'image' => $this->image_url,
+            'image_url' => $this->image_url,
             'price' => $this->price,
             'formatted_price' => $this->formatted_price,
             'url' => $this->url,
@@ -157,17 +157,6 @@ class Product extends Model
         $first = $this->images()->first();
         if ($first) {
             return $first->path;
-        }
-
-        if ($this->image) {
-            if (is_array($this->image)) {
-                return $this->image[0] ?? null;
-            }
-            $decoded = @json_decode($this->image, true);
-            if (is_array($decoded)) {
-                return $decoded[0] ?? null;
-            }
-            return $this->image;
         }
 
         return null;

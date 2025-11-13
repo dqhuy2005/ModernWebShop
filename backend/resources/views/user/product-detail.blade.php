@@ -32,30 +32,12 @@
                                     $images = [];
                                     $hasImages = false;
 
-                                    if ($product->relationLoaded('images') || $product->images()->exists()) {
+                                    if ($product->relationLoaded('images') && $product->images->isNotEmpty()) {
                                         $images = $product->images
                                             ->map(function ($img) {
                                                 return str_starts_with($img->path, 'http')
                                                     ? $img->path
                                                     : asset('storage/' . $img->path);
-                                            })
-                                            ->values()
-                                            ->all();
-                                    } else {
-                                        if (is_array($product->image)) {
-                                            $images = $product->image;
-                                        } else {
-                                            $decoded = @json_decode($product->image, true);
-                                            if (is_array($decoded)) {
-                                                $images = $decoded;
-                                            } else {
-                                                $images = $product->image ? [$product->image] : [];
-                                            }
-                                        }
-
-                                        $images = collect($images)
-                                            ->map(function ($i) {
-                                                return str_starts_with($i, 'http') ? $i : asset('storage/' . $i);
                                             })
                                             ->values()
                                             ->all();

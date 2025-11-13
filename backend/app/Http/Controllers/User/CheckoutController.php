@@ -107,7 +107,7 @@ class CheckoutController extends Controller
                     'total_price' => $cartItem->price * $cartItem->quantity,
                     'product_specifications' => [
                         'category' => $product->category ? $product->category->name : null,
-                        'image' => $product->image,
+                        'image' => $product->main_image ?? 'default.png',
                         'description' => $product->description,
                     ]
                 ]);

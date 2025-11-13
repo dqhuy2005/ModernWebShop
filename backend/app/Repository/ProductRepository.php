@@ -87,10 +87,10 @@ class ProductRepository extends BaseRepository
     public function getFilteredProducts($categoryId, $filters = [])
     {
         $query = $this->model
-            ->select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.specifications', 'products.created_at')
+            ->select('products.id', 'products.name', 'products.slug', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.specifications', 'products.created_at')
             ->where('products.status', true)
             ->where('products.category_id', $categoryId)
-            ->with(['category:id,name,slug']);
+            ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order']);
 
         if (!empty($filters['price_range'])) {
             $query = $this->filterByPrice($query, $filters['price_range']);
@@ -106,7 +106,7 @@ class ProductRepository extends BaseRepository
         return $this->model
             ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
-            ->with('category:id,name,slug')
+            ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order'])
             ->latest('created_at')
             ->limit($limit)
             ->get();
@@ -117,7 +117,7 @@ class ProductRepository extends BaseRepository
         return $this->model
             ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
-            ->with('category:id,name,slug')
+            ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order'])
             ->mostViewed($limit)
             ->get();
     }
@@ -128,7 +128,7 @@ class ProductRepository extends BaseRepository
             ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->hot()
-            ->with('category:id,name,slug')
+            ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order'])
             ->limit($limit)
             ->get();
     }
@@ -139,7 +139,7 @@ class ProductRepository extends BaseRepository
             ->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'created_at')
             ->active()
             ->hot()
-            ->with('category:id,name,slug')
+            ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order'])
             ->paginate($perPage);
     }
 

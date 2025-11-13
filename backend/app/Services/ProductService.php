@@ -23,11 +23,6 @@ class ProductService
     {
         DB::beginTransaction();
         try {
-            // Handle main image upload if provided
-            if ($mainImage && $this->imageService->validateImage($mainImage)) {
-                $data['image'] = $this->imageService->uploadProductImage($mainImage);
-            }
-
             // Create product
             $product = Product::create($data);
 
@@ -51,11 +46,6 @@ class ProductService
     {
         DB::beginTransaction();
         try {
-            // Handle main image upload if provided
-            if ($mainImage && $this->imageService->validateImage($mainImage)) {
-                $data['image'] = $this->imageService->uploadProductImage($mainImage, $product->image);
-            }
-
             // Update product
             $product->update($data);
 
@@ -153,11 +143,6 @@ class ProductService
     {
         DB::beginTransaction();
         try {
-            // Delete main image if exists
-            if ($product->image) {
-                $this->imageService->deleteImage($product->image);
-            }
-
             // Delete all product images
             foreach ($product->images as $image) {
                 $this->imageService->deleteImage($image->path);

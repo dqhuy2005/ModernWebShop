@@ -38,7 +38,7 @@
                                                 <tr class="cart-item" data-cart-id="{{ $itemId }}">
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="{{ asset('storage/' . (Auth::check() ? $product->image : $item['image'])) }}"
+                                                            <img src="{{ Auth::check() ? $product->image_url : asset('storage/' . $item['image']) }}"
                                                                 alt="{{ Auth::check() ? $product->name : $item['name'] }}"
                                                                 class="rounded me-3"
                                                                 style="width: 80px; height: 80px; object-fit: cover;">

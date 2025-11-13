@@ -26,7 +26,7 @@ class ProductController extends BaseController
     public function index(Request $request)
     {
         try {
-            $query = Product::select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at');
+            $query = Product::select('products.id', 'products.name', 'products.slug', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at');
 
             $this->applyProductFilters($query, $request);
 
@@ -40,7 +40,7 @@ class ProductController extends BaseController
 
             if ($request->get('sort_by') === 'category_id') {
                 $query->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                    ->select('products.id', 'products.name', 'products.slug', 'products.image', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at', 'categories.name as category_name')
+                    ->select('products.id', 'products.name', 'products.slug', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at', 'categories.name as category_name')
                     ->orderBy('categories.name', $request->get('sort_order', 'desc'));
             }
 
@@ -116,7 +116,6 @@ class ProductController extends BaseController
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
             'currency' => 'nullable|string|max:10',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
@@ -137,7 +136,7 @@ class ProductController extends BaseController
         }
 
         try {
-            $data = $request->except(['image', 'images', 'specifications', 'action']);
+            $data = $request->except(['images', 'specifications', 'action']);
 
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
@@ -147,7 +146,7 @@ class ProductController extends BaseController
             // Create product with images using service
             $product = $this->productService->createProduct(
                 $data,
-                $request->file('image'),
+                null,
                 $request->file('images', [])
             );
 
@@ -203,7 +202,6 @@ class ProductController extends BaseController
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
             'currency' => 'nullable|string|max:10',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
@@ -225,7 +223,7 @@ class ProductController extends BaseController
 
         try {
             $product = Product::findOrFail($id);
-            $data = $request->except(['image', 'images', 'specifications', '_method', '_token']);
+            $data = $request->except(['images', 'specifications', '_method', '_token']);
 
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
@@ -236,7 +234,7 @@ class ProductController extends BaseController
             $product = $this->productService->updateProduct(
                 $product,
                 $data,
-                $request->file('image'),
+                null,
                 $request->file('images', [])
             );
 
@@ -340,10 +338,6 @@ class ProductController extends BaseController
     {
         try {
             $product = Product::withTrashed()->findOrFail($id);
-
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
-                Storage::disk('public')->delete($product->image);
-            }
 
             $product->forceDelete();
 

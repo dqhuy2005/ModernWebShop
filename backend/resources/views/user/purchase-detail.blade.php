@@ -65,7 +65,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         @if ($detail->product)
-                                                            <img src="{{ asset('storage/' . $detail->product->image) }}"
+                                                            <img src="{{ $detail->product->image_url }}"
                                                                 alt="{{ $detail->product_name }}" class="rounded me-3"
                                                                 style="width: 60px; height: 60px; object-fit: cover;">
                                                         @else

@@ -336,7 +336,6 @@ class DashboardController extends Controller
                 'products.id',
                 'products.name',
                 'products.price',
-                'products.image',
                 DB::raw('SUM(order_details.quantity) as total_sold'),
                 DB::raw('SUM(order_details.total_price) as total_revenue')
             )
@@ -347,7 +346,7 @@ class DashboardController extends Controller
             $query->where('orders.created_at', '>=', $startDate);
         }
 
-        $products = $query->groupBy('products.id', 'products.name', 'products.price', 'products.image')
+        $products = $query->groupBy('products.id', 'products.name', 'products.price')
             ->orderByDesc('total_sold')
             ->limit($limit)
             ->get();

@@ -209,13 +209,6 @@
                                         <small class="d-block text-muted mt-1">Order: {{ $img->sort_order }}</small>
                                     </div>
                                 @endforeach
-                                @if($product->image && count($product->images) == 0)
-                                    <div class="img-thumb text-center">
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                            class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;" />
-                                        <small class="d-block text-muted mt-1">Legacy</small>s
-                                    </div>
-                                @endif
                             </div>
 
                             <div class="custom-file-upload">
