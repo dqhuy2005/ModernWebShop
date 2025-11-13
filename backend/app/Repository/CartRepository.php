@@ -29,10 +29,12 @@ class CartRepository extends BaseRepository
 
     public function findByUserAndProduct($userId, $productId)
     {
-        return $this->findWhere([
-            'user_id' => $userId,
-            'product_id' => $productId
-        ])->first();
+        // Include soft deleted records to handle restore scenario
+        return $this->model
+            ->where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->withTrashed()
+            ->first();
     }
 
     public function calculateUserCartTotal($userId)

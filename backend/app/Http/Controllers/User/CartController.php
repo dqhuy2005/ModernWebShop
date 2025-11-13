@@ -49,12 +49,16 @@ class CartController extends Controller
         $quantity = $request->quantity ?? 1;
 
         if (Auth::check()) {
-            // Find existing cart item
             try {
                 $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
 
                 if ($cartItem) {
-                    $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                    if ($cartItem->trashed()) {
+                        $cartItem->restore();
+                        $this->cartRepository->updateQuantity($cartItem->id, $quantity);
+                    } else {
+                        $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                    }
                 } else {
                     $this->cartRepository->create([
                         'user_id' => Auth::id(),
@@ -69,7 +73,12 @@ class CartController extends Controller
                 // Handle unique constraint violation by updating the existing cart item
                 $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
                 if ($cartItem) {
-                    $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                    if ($cartItem->trashed()) {
+                        $cartItem->restore();
+                        $this->cartRepository->updateQuantity($cartItem->id, $quantity);
+                    } else {
+                        $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                    }
                 }
                 $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
             }

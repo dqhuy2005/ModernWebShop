@@ -3,7 +3,7 @@
 @section('title', $product->name)
 
 @section('content')
-    <div class="container py-5 product-detail-page">
+    <div class="container py-4 product-detail-page">
         <div class="row mb-4">
             <div class="col-12">
                 <nav aria-label="breadcrumb">
@@ -20,12 +20,10 @@
             </div>
         </div>
 
-        {{-- Main Product Card with Images and Info in Same Container --}}
         <div class="row mb-4">
             <div class="col-12">
                 <div class="product-main-card bg-white rounded shadow-sm">
                     <div class="row g-0">
-                        {{-- Left: Product Images --}}
                         <div class="col-lg-6 product-images-section">
                             <div class="pw-product-gallery p-4">
                                 @php
@@ -47,7 +45,6 @@
                                 @endphp
 
                                 @if ($hasImages)
-                                    {{-- Main Image Carousel --}}
                                     <div class="pw-main-image-wrapper mb-3">
                                         <div id="pwCarousel" class="carousel slide pw-carousel" data-bs-ride="false">
                                             <div class="carousel-inner pw-carousel-inner">
@@ -75,7 +72,6 @@
                                         </div>
                                     </div>
 
-                                    {{-- Thumbnails --}}
                                     @if (count($images) > 1)
                                         <div class="pw-thumbnails-wrapper">
                                             <div class="pw-thumbs d-flex gap-2">
@@ -90,7 +86,6 @@
                                         </div>
                                     @endif
                                 @else
-                                    {{-- Loading Skeleton for No Images --}}
                                     <div class="image-skeleton">
                                         <div class="skeleton-main-image mb-3"></div>
                                         <div class="d-flex gap-2">
@@ -104,13 +99,11 @@
                             </div>
                         </div>
 
-                        {{-- Right: Product Info --}}
                         <div class="col-lg-6 product-info-section">
                             <div class="pw-product-info p-4">
                                 <div class="d-flex align-items-start justify-content-between mb-2">
                                     <div>
                                         <h1 class="pw-product-title mb-0">{{ $product->name }}</h1>
-                                        {{-- Rating inline with product name --}}
                                         <div class="pw-rate mt-2">
                                             @if ($reviewStats['total_reviews'] > 0)
                                                 <span class="text-warning fs-5">
@@ -164,9 +157,7 @@
                 </div>
             </div>
 
-            {{-- Specifications and Description Cards --}}
             <div class="row mt-4 g-3">
-                {{-- Specifications Card --}}
                 <div class="col-lg-6">
                     <div class="card pw-specs-card h-100">
                         <div class="card-header">
@@ -207,7 +198,6 @@
                     </div>
                 </div>
 
-                {{-- Description Card --}}
                 <div class="col-lg-6">
                     <div class="card pw-desc-card h-100">
                         <div class="card-header">
@@ -223,7 +213,6 @@
                 </div>
             </div>
 
-            {{-- Reviews Section --}}
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card pw-reviews-card">
@@ -234,7 +223,6 @@
                         </div>
                         <div class="card-body">
                             @if ($reviewStats['total_reviews'] > 0)
-                                {{-- Review Summary - Compact Design --}}
                                 <div class="review-summary-compact pb-3">
                                     <div class="d-flex align-items-center gap-2 mb-3">
                                         <span class="display-6 fw-bold text-dark mb-0">
@@ -258,12 +246,10 @@
                                     </div>
                                 </div>
 
-                                {{-- Reviews List --}}
                                 <div class="reviews-list">
                                     @foreach ($reviews as $review)
                                         <div class="review-item pb-3 mb-3">
                                             <div class="d-flex align-items-start gap-3">
-                                                {{-- User Avatar --}}
                                                 <div class="review-avatar flex-shrink-0">
                                                     @if ($review->user->avatar)
                                                         <img src="{{ asset('storage/' . $review->user->avatar) }}"
@@ -277,9 +263,7 @@
                                                     @endif
                                                 </div>
 
-                                                {{-- Review Content --}}
                                                 <div class="flex-grow-1">
-                                                    {{-- User Name --}}
                                                     <div class="d-flex align-items-center gap-2 mb-1">
                                                         <span
                                                             class="fw-semibold text-dark">{{ $review->user->fullname ?? substr($review->user->email, 0, 2) . '******' . substr($review->user->email, -2) }}</span>
@@ -294,7 +278,6 @@
                                                         @endif
                                                     </div>
 
-                                                    {{-- Star Rating --}}
                                                     <div class="review-stars text-warning mb-2">
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             @if ($i <= $review->rating)
@@ -305,16 +288,13 @@
                                                         @endfor
                                                     </div>
 
-                                                    {{-- Review Title --}}
                                                     @if ($review->title)
                                                         <h6 class="review-title mb-2 fw-semibold">{{ $review->title }}
                                                         </h6>
                                                     @endif
 
-                                                    {{-- Review Comment --}}
                                                     <p class="review-comment mb-2 text-dark">{{ $review->comment }}</p>
 
-                                                    {{-- Review Images --}}
                                                     @if ($review->images && count($review->images) > 0)
                                                         <div class="review-images d-flex gap-2 mb-2 flex-wrap">
                                                             @foreach ($review->images as $image)
@@ -329,7 +309,6 @@
                                                         </div>
                                                     @endif
 
-                                                    {{-- Review Videos --}}
                                                     @if ($review->videos && count($review->videos) > 0)
                                                         <div class="review-videos d-flex gap-2 mb-2 flex-wrap">
                                                             @foreach ($review->videos as $video)
@@ -343,7 +322,6 @@
                                                         </div>
                                                     @endif
 
-                                                    {{-- Admin Reply --}}
                                                     @if ($review->admin_reply)
                                                         <div class="admin-reply mt-3 p-3 bg-light rounded">
                                                             <strong class="text-primary">
@@ -362,7 +340,6 @@
                                     @endforeach
                                 </div>
 
-                                {{-- Pagination --}}
                                 @if ($reviews->hasPages())
                                     <div class="d-flex justify-content-center mt-4">
                                         {{ $reviews->links() }}
