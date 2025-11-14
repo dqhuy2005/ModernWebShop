@@ -108,10 +108,9 @@
                             <label for="status" class="form-label fw-bold">
                                 Status <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('status') is-invalid @enderror" id="status"
-                                name="status" required>
-                                <option value="pending"
-                                    {{ old('status', $order->status) == 'pending' ? 'selected' : '' }}>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status"
+                                required>
+                                <option value="pending" {{ old('status', $order->status) == 'pending' ? 'selected' : '' }}>
                                     Pending</option>
                                 <option value="confirmed"
                                     {{ old('status', $order->status) == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
@@ -134,8 +133,8 @@
                             <label for="address" class="form-label fw-bold">
                                 Delivery Address
                             </label>
-                            <input type="text" class="form-control @error('address') is-invalid @enderror"
-                                id="address" name="address" value="{{ old('address', $order->address) }}"
+                            <input type="text" class="form-control @error('address') is-invalid @enderror" id="address"
+                                name="address" value="{{ old('address', $order->address) }}"
                                 placeholder="Enter delivery address...">
                             @error('address')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -389,8 +388,10 @@
                 q: q
             }, function(resp) {
                 $('#customer_loading').hide();
+
                 editCustomers = resp.users || [];
                 editCurrentIndex = -1;
+
                 if (editCustomers.length) {
                     const dropdown = $('#customer_dropdown');
                     dropdown.empty();
@@ -399,20 +400,20 @@
                         const email = editHighlight(c.email, q);
                         const item = $(
                             `<a href="#" class="list-group-item list-group-item-action customer-item" data-index="${idx}"><div class="d-flex justify-content-between align-items-center"><div><strong>${name}</strong><br><small class="text-muted">${email}</small><br>${c.phone ? `<small class="text-muted">${c.phone}</small>` : ''}</div></div></a>`
-                            );
+                        );
                         dropdown.append(item);
                     });
                     dropdown.show();
                 } else {
                     $('#customer_dropdown').html(
                         '<div class="list-group-item text-muted text-center py-3"><i class="fas fa-info-circle me-2"></i>No customers found</div>'
-                        ).show();
+                    ).show();
                 }
             }).fail(function() {
                 $('#customer_loading').hide();
                 $('#customer_dropdown').html(
                     '<div class="list-group-item text-danger text-center py-3"><i class="fas fa-exclamation-triangle me-2"></i>Error searching customers</div>'
-                    ).show();
+                ).show();
             });
         }
 
@@ -420,16 +421,12 @@
             $('#user_id').val(c.id);
             $('#customer_search').val('');
             $('#customer_dropdown').hide();
+
+            // Fill user data
             $('#customer_email').val(c.email);
             $('#customer_name').val(c.fullname);
             $('#customer_phone').val(c.phone && c.phone !== 'N/A' ? c.phone : '');
-            $('#selected_customer_name').text(c.fullname);
-            $('#selected_customer_email').text(c.email);
-            $('#selected_customer_phone').text(c.phone && c.phone !== 'N/A' ? c.phone : '');
-            $('#selected_customer').show();
-            if (typeof c.can_receive_email !== 'undefined') {
-                $('#send_email_checkbox').prop('checked', !!c.can_receive_email);
-            }
+
             // fill address only if address field is empty (don't overwrite existing order address)
             if (!$('#address').val()) {
                 $('#address').val(c.address || '');
@@ -477,8 +474,6 @@
             $('#customer_email').val('');
             $('#customer_name').val('');
             $('#customer_phone').val('');
-            $('#selected_customer').hide();
-            $('#send_email_checkbox').prop('checked', false);
         });
 
         // Hide dropdown when clicking outside
