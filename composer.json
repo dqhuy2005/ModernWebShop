@@ -13,7 +13,6 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
-        "maatwebsite/excel": "*",
         "prettus/l5-repository": "^3.0",
         "tymon/jwt-auth": "^2.2"
     },
