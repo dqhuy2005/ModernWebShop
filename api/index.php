@@ -2,6 +2,7 @@
 
 // Load the Composer autoloader
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../public/index.php';
 
 // Bootstrap Laravel application
 $app = require_once __DIR__ . '/../bootstrap/app.php';
