@@ -1,6 +1,6 @@
 <div class="border-top mt-3 pt-3">
     @if ($orders->count() > 0)
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
             <table class="table table-hover align-middle" id="ordersTable">
                 <thead class="table-light">
                     <tr>
@@ -146,6 +146,11 @@
 
 @push('styles')
     <style>
+        /* Table Container */
+        .table-responsive {
+            position: relative;
+        }
+
         /* Table Styles */
         #ordersTable thead th {
             font-weight: 600;
@@ -153,6 +158,10 @@
             font-size: 0.75rem;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+            z-index: 10;
         }
 
         #ordersTable tbody tr {
