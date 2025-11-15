@@ -77,6 +77,17 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * Get user avatar URL
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return asset('assets/imgs/default-avatar.png');
+    }
+
+    /**
      * Get user role name
      */
     public function getRoleName(): string

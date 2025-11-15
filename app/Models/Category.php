@@ -58,4 +58,15 @@ class Category extends Model
     {
         return $query->whereNull('deleted_at');
     }
+
+    /**
+     * Get category image URL
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return asset('assets/imgs/categories/default.png');
+    }
 }

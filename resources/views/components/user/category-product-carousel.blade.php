@@ -37,7 +37,7 @@
 
                                     @if ($product->category && $product->category->image)
                                         <span class="brand-icon">
-                                            <img src="{{ asset('storage/' . $product->category->image) }}"
+                                            <img src="{{ $product->category->image_url }}"
                                                 alt="{{ $product->category->name }}"
                                                 title="{{ $product->category->name }}">
                                         </span>

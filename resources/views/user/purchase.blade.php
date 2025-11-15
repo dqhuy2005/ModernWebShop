@@ -10,7 +10,7 @@
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
                             <div class="profile-avatar mb-3">
-                                <img src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/imgs/default-avatar.png') }}"
+                                <img src="{{ Auth::user()->image_url }}"
                                     alt="Avatar" class="rounded-circle"
                                     style="width: 120px; height: 120px; object-fit: cover;">
                             </div>

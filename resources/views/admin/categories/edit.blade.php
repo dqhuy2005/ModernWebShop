@@ -53,7 +53,7 @@
                             <label for="" class="form-label fw-bold">Category Image</label>
                             <div class="custom-file-upload">
                                 <div id="image-preview" class="text-center {{ $category->image ? '' : 'd-none' }}">
-                                    <img src="{{ $category->image ? asset('storage/' . $category->image) : '' }}"
+                                    <img src="{{ $category->image_url }}"
                                          alt="Preview"
                                          class="img-fluid rounded"
                                          style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
