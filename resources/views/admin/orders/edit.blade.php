@@ -284,18 +284,8 @@
                                     <input type="checkbox" class="form-check-input me-3 product-checkbox"
                                         data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-price="{{ $product->price }}"
-                                        data-category="{{ $product->category->name ?? 'N/A' }}"
-                                        data-image="{{ $product->image_url }}">
+                                        data-category="{{ $product->category->name ?? 'N/A' }}">
 
-                                    @if ($product->main_image)
-                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                            class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                                    @else
-                                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
-                                            style="width: 50px; height: 50px;">
-                                            <i class="fas fa-image text-muted"></i>
-                                        </div>
-                                    @endif
                                     <div class="flex-grow-1">
                                         <h6 class="mb-0">{{ $product->name }}</h6>
                                         <small
@@ -525,9 +515,8 @@
                 if (!selectedProducts.has(productId)) {
                     const productName = $(this).data('name');
                     const productPrice = $(this).data('price');
-                    const productImage = $(this).data('image');
 
-                    addProductRow(productId, productName, productPrice, productImage);
+                    addProductRow(productId, productName, productPrice, null);
                     selectedProducts.add(productId);
                     addedCount++;
                 }
@@ -553,16 +542,11 @@
         function addProductRow(id, name, price, image) {
             $('#emptyState').hide();
 
-            const imageHtml = image ?
-                `<img src="/storage/${image}" alt="${name}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">` :
-                `<div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fas fa-image text-muted"></i></div>`;
-
             const row = `
                 <div class="product-row" data-index="${productIndex}" data-product-id="${id}" style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 10px; border: 1px solid #e9ecef;">
                     <div class="row align-items-center">
                         <div class="col-md-5">
                             <div class="d-flex align-items-center">
-                                ${imageHtml}
                                 <div>
                                     <strong>${name}</strong>
                                     <input type="hidden" name="products[${productIndex}][product_id]" value="${id}">
