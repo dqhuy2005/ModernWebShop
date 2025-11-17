@@ -10,9 +10,23 @@
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
                             <div class="profile-avatar mb-3 position-relative">
-                                <img src="{{ $user->image_url }}"
-                                    alt="Avatar" class="rounded-circle" id="avatarPreview"
-                                    style="width: 120px; height: 120px; object-fit: cover;">
+                                @if ($user->image)
+                                    <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle"
+                                        id="avatarPreview" style="width: 120px; height: 120px; object-fit: cover;"
+                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                @else
+                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
+                                        id="avatarPreview"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <img src="" alt="Avatar" class="rounded-circle d-none" id="avatarImage"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                @endif
                                 <label for="imageInput"
                                     class="position-absolute bottom-0 end-0 bg-danger text-white rounded-circle"
                                     style="width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
@@ -227,6 +241,16 @@
             display: inline-block;
         }
 
+        .avatar-placeholder {
+            border: 2px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-placeholder:hover {
+            background-color: #e9ecef !important;
+            border-color: #adb5bd;
+        }
+
         .form-select {
             background-color: #fff;
             border: 1px solid #dee2e6;
@@ -393,7 +417,16 @@
 
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        $('#avatarPreview').attr('src', event.target.result);
+                        // Show image and hide placeholder
+                        const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
+                        const $placeholder = $('.avatar-placeholder');
+
+                        if ($img.length) {
+                            $img.attr('src', event.target.result).removeClass('d-none').show();
+                            $placeholder.addClass('d-none').hide();
+                        } else {
+                            $('#avatarPreview').attr('src', event.target.result).removeClass('d-none').show();
+                        }
                     };
                     reader.readAsDataURL(file);
 
@@ -445,7 +478,13 @@
                             toastr.success(response.message);
 
                             if (response.image_url) {
-                                $('#avatarPreview').attr('src', response.image_url);
+                                const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
+                                const $placeholder = $('.avatar-placeholder');
+
+                                if ($img.length) {
+                                    $img.attr('src', response.image_url).removeClass('d-none').show();
+                                    $placeholder.addClass('d-none').hide();
+                                }
                             }
                         }
                     },
@@ -514,7 +553,7 @@
                             $('#current_password').after(
                                 '<div class="invalid-feedback d-block">' +
                                 (xhr.responseJSON.message ||
-                                'Mật khẩu hiện tại không đúng') +
+                                    'Mật khẩu hiện tại không đúng') +
                                 '</div>');
                             toastr.error(xhr.responseJSON.message ||
                                 'Mật khẩu hiện tại không đúng');

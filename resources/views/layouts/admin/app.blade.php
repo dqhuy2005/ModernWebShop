@@ -46,7 +46,7 @@
         .admin-content {
             margin-left: 250px;
             margin-top: 60px;
-            padding: 30px;
+            padding: 30px 30px 0px 30px;
             min-height: calc(100vh - 60px);
         }
 
