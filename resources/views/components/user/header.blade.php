@@ -30,7 +30,10 @@
                     <div class="dropdown">
                         <a class="text-white text-decoration-none d-flex align-items-center gap-2" href="#"
                             id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            @if (auth()->user()->image)
+                            @if (auth()->user()->isOAuthUser())
+                                <img src="{{ auth()->user()->image }}" alt="{{ auth()->user()->fullname }}"
+                                    style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                            @elseif (auth()->user()->image)
                                 <img src="{{ asset('storage/' . auth()->user()->image) }}"
                                     alt="{{ auth()->user()->fullname }}"
                                     style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
