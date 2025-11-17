@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Repository\CartRepository;
@@ -38,14 +40,13 @@ class CartController extends Controller
         return view('user.cart', compact('cartItems', 'total'));
     }
 
-    public function add(Request $request)
+    public function add(AddToCartRequest $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'integer|min:1'
-        ]);
+        // Get product and ensure it's active
+        $product = Product::select('id', 'name', 'slug', 'price', 'status')
+            ->where('status', true) // Only allow active products
+            ->findOrFail($request->product_id);
 
-        $product = Product::select('id', 'name', 'slug', 'price', 'status')->findOrFail($request->product_id);
         $quantity = $request->quantity ?? 1;
 
         if (Auth::check()) {
@@ -57,7 +58,9 @@ class CartController extends Controller
                         $cartItem->restore();
                         $this->cartRepository->updateQuantity($cartItem->id, $quantity);
                     } else {
-                        $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                        // Limit total quantity to prevent abuse
+                        $newQuantity = min($cartItem->quantity + $quantity, 999);
+                        $this->cartRepository->updateQuantity($cartItem->id, $newQuantity);
                     }
                 } else {
                     $this->cartRepository->create([
@@ -77,7 +80,8 @@ class CartController extends Controller
                         $cartItem->restore();
                         $this->cartRepository->updateQuantity($cartItem->id, $quantity);
                     } else {
-                        $this->cartRepository->updateQuantity($cartItem->id, $cartItem->quantity + $quantity);
+                        $newQuantity = min($cartItem->quantity + $quantity, 999);
+                        $this->cartRepository->updateQuantity($cartItem->id, $newQuantity);
                     }
                 }
                 $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
@@ -86,7 +90,8 @@ class CartController extends Controller
             $cart = Session::get('cart', []);
 
             if (isset($cart[$product->id])) {
-                $cart[$product->id]['quantity'] += $quantity;
+                // Limit total quantity to prevent abuse
+                $cart[$product->id]['quantity'] = min($cart[$product->id]['quantity'] + $quantity, 999);
             } else {
                 $cart[$product->id] = [
                     'product_id' => $product->id,
@@ -110,26 +115,37 @@ class CartController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(UpdateCartRequest $request)
     {
-        $request->validate([
-            'cart_id' => 'required',
-            'quantity' => 'required|integer|min:1'
-        ]);
-
         if (Auth::check()) {
+            // Verify cart item belongs to current user
+            $cartItem = $this->cartRepository->find($request->cart_id);
+
+            if (!$cartItem || $cartItem->user_id !== Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
+                ], 404);
+            }
+
             $this->cartRepository->updateQuantity($request->cart_id, $request->quantity);
             $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
         } else {
             $cart = Session::get('cart', []);
-            if (isset($cart[$request->cart_id])) {
-                $cart[$request->cart_id]['quantity'] = $request->quantity;
-                Session::put('cart', $cart);
 
-                $total = collect($cart)->sum(function ($item) {
-                    return $item['quantity'] * $item['price'];
-                });
+            if (!isset($cart[$request->cart_id])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
+                ], 404);
             }
+
+            $cart[$request->cart_id]['quantity'] = $request->quantity;
+            Session::put('cart', $cart);
+
+            $total = collect($cart)->sum(function ($item) {
+                return $item['quantity'] * $item['price'];
+            });
         }
 
         return response()->json([
@@ -142,15 +158,32 @@ class CartController extends Controller
     public function remove(Request $request)
     {
         $request->validate([
-            'cart_id' => 'required'
+            'cart_id' => 'required|integer|min:1'
         ]);
 
         if (Auth::check()) {
+            $cartItem = $this->cartRepository->find($request->cart_id);
+
+            if (!$cartItem || $cartItem->user_id !== Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
+                ], 404);
+            }
+
             $this->cartRepository->delete($request->cart_id);
             $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
             $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
         } else {
             $cart = Session::get('cart', []);
+
+            if (!isset($cart[$request->cart_id])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
+                ], 404);
+            }
+
             unset($cart[$request->cart_id]);
             Session::put('cart', $cart);
 

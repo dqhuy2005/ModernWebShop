@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Repository\CartRepository;
@@ -44,22 +45,8 @@ class CheckoutController extends Controller
         return view('user.checkout', compact('cartItems', 'total', 'user'));
     }
 
-    public function process(Request $request)
+    public function process(CheckoutRequest $request)
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Vui lòng đăng nhập để tiếp tục'
-            ], 401);
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'note' => 'nullable|string|max:500',
-        ]);
-
         $userId = Auth::id();
         $cartItems = $this->cartRepository->findByUser($userId);
 
@@ -77,7 +64,21 @@ class CheckoutController extends Controller
             $totalItems = 0;
 
             foreach ($cartItems as $cartItem) {
-                $totalAmount += $cartItem->price * $cartItem->quantity;
+                if (!$cartItem->product || !$cartItem->product->status) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Một số sản phẩm trong giỏ hàng không còn khả dụng'
+                    ], 400);
+                }
+
+                $currentPrice = $cartItem->product->price;
+                if (abs($cartItem->price - $currentPrice) > 0.01) {
+                    $cartItem->price = $currentPrice;
+                    $cartItem->save();
+                }
+
+                $totalAmount += $currentPrice * $cartItem->quantity;
                 $totalItems += $cartItem->quantity;
             }
 
@@ -85,8 +86,8 @@ class CheckoutController extends Controller
 
             $order = $this->orderRepository->create([
                 'user_id' => $userId,
-                'customer_name' => $user->fullname ?? $request->name,
-                'customer_phone' => $user->phone ?? $request->phone,
+                'customer_name' => $request->name,
+                'customer_phone' => $request->phone,
                 'customer_email' => $user->email,
                 'total_amount' => $totalAmount,
                 'total_items' => $totalItems,
