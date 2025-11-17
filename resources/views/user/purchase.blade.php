@@ -10,9 +10,14 @@
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
                             <div class="profile-avatar mb-3">
-                                <img src="{{ Auth::user()->image_url }}"
-                                    alt="Avatar" class="rounded-circle"
-                                    style="width: 120px; height: 120px; object-fit: cover;">
+                                @if (Auth::user()->isOAuthUser())
+                                    <img src="{{ Auth::user()->image }}" alt="Avatar" class="rounded-circle"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                @elseif (Auth::user()->image)
+                                    <img src="{{ Auth::user()->image_url }}" alt="Avatar" class="rounded-circle"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                @else
+                                @endif
                             </div>
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ Auth::user()->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ Auth::user()->email }}</p>
