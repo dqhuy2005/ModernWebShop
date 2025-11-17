@@ -10,7 +10,16 @@
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
                             <div class="profile-avatar mb-3 position-relative">
-                                @if ($user->image)
+
+                                @if ($user->isOAuthUser())
+                                    <img src="{{ $user->image }}" alt="Avatar" class="rounded-circle" id="avatarPreview"
+                                        style="width: 120px; height: 120px; object-fit: cover;"
+                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                @elseif ($user->image)
                                     <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle"
                                         id="avatarPreview" style="width: 120px; height: 120px; object-fit: cover;"
                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -425,7 +434,8 @@
                             $img.attr('src', event.target.result).removeClass('d-none').show();
                             $placeholder.addClass('d-none').hide();
                         } else {
-                            $('#avatarPreview').attr('src', event.target.result).removeClass('d-none').show();
+                            $('#avatarPreview').attr('src', event.target.result).removeClass('d-none')
+                                .show();
                         }
                     };
                     reader.readAsDataURL(file);
@@ -478,7 +488,8 @@
                             toastr.success(response.message);
 
                             if (response.image_url) {
-                                const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
+                                const $img = $('#avatarImage').length ? $('#avatarImage') : $(
+                                    '#avatarPreview');
                                 const $placeholder = $('.avatar-placeholder');
 
                                 if ($img.length) {
