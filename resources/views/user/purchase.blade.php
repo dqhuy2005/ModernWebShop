@@ -17,6 +17,13 @@
                                     <img src="{{ Auth::user()->image_url }}" alt="Avatar" class="rounded-circle"
                                         style="width: 120px; height: 120px; object-fit: cover;">
                                 @else
+                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
+                                        id="avatarPreview"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <img src="" alt="Avatar" class="rounded-circle d-none" id="avatarImage"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
                                 @endif
                             </div>
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ Auth::user()->fullname }}</h5>
