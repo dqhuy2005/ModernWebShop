@@ -28,9 +28,8 @@
                                 <div class="mb-3">
                                     <label for="password" class="form-label fw-semibold">Mật khẩu</label>
                                     <div class="position-relative password-input-wrapper">
-                                        <input type="password"
-                                            class="form-control @error('password') is-invalid @enderror" id="password"
-                                            name="password" required>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                            id="password" name="password" required>
                                         <button
                                             class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted password-toggle-btn d-none"
                                             type="button" id="togglePassword" style="text-decoration: none;">
@@ -60,7 +59,7 @@
 
                             <div class="d-grid gap-2">
                                 <button type="button"
-                                    class="btn btn-outline-primary d-flex align-items-center justify-content-center py-2">
+                                    class="login-option-item d-flex align-items-center justify-content-center py-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                         fill="currentColor" class="bi bi-facebook me-2" viewBox="0 0 16 16">
                                         <path
@@ -70,7 +69,7 @@
                                 </button>
 
                                 <button type="button" id="googleLoginBtn"
-                                    class="btn btn-outline-danger d-flex align-items-center justify-content-center py-2">
+                                    class="login-option-item d-flex align-items-center justify-content-center py-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                         viewBox="0 0 48 48" class="me-2">
                                         <path fill="#EA4335"
@@ -84,7 +83,8 @@
                                         <path fill="none" d="M0 0h48v48H0z" />
                                     </svg>
                                     <span id="googleLoginText">Google</span>
-                                    <span id="googleLoginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                                    <span id="googleLoginSpinner" class="spinner-border spinner-border-sm ms-2 d-none"
+                                        role="status" aria-hidden="true"></span>
                                 </button>
                             </div>
 
@@ -133,6 +133,22 @@
 
         .password-toggle-btn:focus {
             box-shadow: none;
+        }
+
+        .login-option-item {
+            width: 100%;
+            background: #FFFFFF;
+            color: #17497f;
+            font-weight: 600;
+            display: flex;
+            height: 54px;
+            border: 0.5px solid #202732;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
         }
 
         .divided {
@@ -300,8 +316,7 @@
                             popupUrl.indexOf('auth/google/callback') !== -1) {
                             oauthCompleted = true;
                         }
-                    } catch (e) {
-                    }
+                    } catch (e) {}
                 } catch (e) {
                     console.error('OAuth check error:', e);
                 }
