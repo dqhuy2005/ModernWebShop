@@ -10,20 +10,28 @@
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
                             <div class="profile-avatar mb-3">
-                                @if (Auth::user()->isOAuthUser())
-                                    <img src="{{ Auth::user()->image }}" alt="Avatar" class="rounded-circle"
-                                        style="width: 120px; height: 120px; object-fit: cover;">
-                                @elseif (Auth::user()->image)
+                                @if (Auth::user()->image)
                                     <img src="{{ Auth::user()->image_url }}" alt="Avatar" class="rounded-circle"
-                                        style="width: 120px; height: 120px; object-fit: cover;">
-                                @else
-                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
-                                        id="avatarPreview"
+                                        style="width: 120px; height: 120px; object-fit: cover;"
+                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
                                         style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
                                         <i class="fas fa-user"></i>
                                     </div>
-                                    <img src="" alt="Avatar" class="rounded-circle d-none" id="avatarImage"
-                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                @elseif (Auth::user()->isOAuthUser())
+                                    <img src="{{ Auth::user()->oauthAccounts->first()->avatar ?? Auth::user()->image }}" alt="Avatar" class="rounded-circle"
+                                        style="width: 120px; height: 120px; object-fit: cover;"
+                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                @else
+                                    {{-- Default avatar icon --}}
+                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
                                 @endif
                             </div>
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ Auth::user()->fullname }}</h5>

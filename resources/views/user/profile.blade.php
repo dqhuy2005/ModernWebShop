@@ -11,23 +11,26 @@
                         <div class="card-body p-4 text-center">
                             <div class="profile-avatar mb-3 position-relative">
 
-                                @if ($user->isOAuthUser())
-                                    <img src="{{ $user->image }}" alt="Avatar" class="rounded-circle" id="avatarPreview"
+                                @if ($user->image)
+                                    {{-- Prioritize uploaded image from database --}}
+                                    <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle" id="avatarPreview"
                                         style="width: 120px; height: 120px; object-fit: cover;"
                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
                                         style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
                                         <i class="fas fa-user"></i>
                                     </div>
-                                @elseif ($user->image)
-                                    <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle"
-                                        id="avatarPreview" style="width: 120px; height: 120px; object-fit: cover;"
+                                @elseif ($user->isOAuthUser())
+                                    {{-- Fallback to OAuth avatar if no uploaded image --}}
+                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image }}" alt="Avatar" class="rounded-circle" id="avatarPreview"
+                                        style="width: 120px; height: 120px; object-fit: cover;"
                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
                                         style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 @else
+                                    {{-- Default avatar icon --}}
                                     <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
                                         id="avatarPreview"
                                         style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
@@ -357,13 +360,20 @@
                             toastr.success(response.message);
 
                             if (response.image_url) {
-                                const $img = $('#avatarImage').length ? $('#avatarImage') : $(
-                                    '#avatarPreview');
+                                // Update profile page avatar
+                                const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
                                 const $placeholder = $('.avatar-placeholder');
 
                                 if ($img.length) {
                                     $img.attr('src', response.image_url).removeClass('d-none').show();
                                     $placeholder.addClass('d-none').hide();
+                                }
+
+                                // Update header avatar dynamically
+                                const $headerAvatar = $('#headerAvatar');
+                                if ($headerAvatar.length) {
+                                    $headerAvatar.attr('src', response.image_url).removeClass('d-none').show();
+                                    $headerAvatar.siblings('.rounded-circle.bg-danger').addClass('d-none').hide();
                                 }
                             }
                         }

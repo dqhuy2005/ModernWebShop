@@ -30,14 +30,29 @@
                     <div class="dropdown">
                         <a class="text-white text-decoration-none d-flex align-items-center gap-2" href="#"
                             id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            @if (auth()->user()->isOAuthUser())
-                                <img src="{{ auth()->user()->image }}" alt="{{ auth()->user()->fullname }}"
-                                    style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
-                            @elseif (auth()->user()->image)
-                                <img src="{{ asset('storage/' . auth()->user()->image) }}"
+                            @if (auth()->user()->image)
+                                {{-- Prioritize uploaded image from database --}}
+                                <img src="{{ auth()->user()->image_url }}" alt="{{ auth()->user()->fullname }}"
+                                    id="headerAvatar"
+                                    style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
+                                    onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="rounded-circle bg-danger d-none align-items-center justify-content-center"
+                                    style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                            @elseif (auth()->user()->isOAuthUser())
+                                {{-- Fallback to OAuth avatar if no uploaded image --}}
+                                <img src="{{ auth()->user()->oauthAccounts->first()->avatar ?? auth()->user()->image }}" 
                                     alt="{{ auth()->user()->fullname }}"
-                                    style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                                    id="headerAvatar"
+                                    style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
+                                    onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="rounded-circle bg-danger d-none align-items-center justify-content-center"
+                                    style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
                             @else
+                                {{-- Default avatar icon --}}
                                 <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center"
                                     style="width: 32px; height: 32px;">
                                     <i class="fas fa-user text-white"></i>

@@ -92,7 +92,20 @@ class User extends Authenticatable implements JWTSubject
         if ($this->image) {
             return asset('storage/' . $this->image);
         }
+
+        if ($this->isOAuthUser()) {
+            $oauthAccount = $this->oauthAccounts()->first();
+            if ($oauthAccount && $oauthAccount->avatar) {
+                return $oauthAccount->avatar;
+            }
+        }
+
         return asset('images/default-avatar.png');
+    }
+
+    public function getAvatarUrl(): string
+    {
+        return $this->getImageUrlAttribute();
     }
 
     public function getRoleName(): string
