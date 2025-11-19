@@ -7,8 +7,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
 use App\Services\HomePageService;
+use App\Services\Cache\RedisService;
 use App\Models\CacheKeyManager;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -17,11 +17,13 @@ class CachePerformanceTest extends TestCase
     // use RefreshDatabase; // Uncomment if you want fresh DB for each test
 
     protected HomePageService $homePageService;
+    protected RedisService $redis;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->homePageService = app(HomePageService::class);
+        $this->redis = app(RedisService::class);
     }
 
     /**
@@ -69,7 +71,7 @@ class CachePerformanceTest extends TestCase
         $this->homePageService->warmUpCache();
 
         // Verify cache exists
-        $this->assertTrue(Cache::has(CacheKeyManager::HOME_NEW_PRODUCTS));
+        $this->assertTrue($this->redis->has(CacheKeyManager::HOME_NEW_PRODUCTS));
 
         // Create new product
         $category = Category::first() ?? Category::factory()->create();
@@ -80,7 +82,7 @@ class CachePerformanceTest extends TestCase
         ]);
 
         // Cache should be cleared
-        $this->assertFalse(Cache::has(CacheKeyManager::HOME_NEW_PRODUCTS),
+        $this->assertFalse($this->redis->has(CacheKeyManager::HOME_NEW_PRODUCTS),
             'Cache was not cleared after product creation'
         );
     }
@@ -99,12 +101,12 @@ class CachePerformanceTest extends TestCase
             $this->markTestSkipped('No products in database');
         }
 
-        $this->assertTrue(Cache::has(CacheKeyManager::HOME_HOT_DEALS));
+        $this->assertTrue($this->redis->has(CacheKeyManager::HOME_HOT_DEALS));
 
         $product->update(['name' => 'Updated Product Name']);
 
         // Cache should be cleared
-        $this->assertFalse(Cache::has(CacheKeyManager::HOME_HOT_DEALS),
+        $this->assertFalse($this->redis->has(CacheKeyManager::HOME_HOT_DEALS),
             'Cache was not cleared after product update'
         );
     }
@@ -122,12 +124,12 @@ class CachePerformanceTest extends TestCase
             $this->markTestSkipped('No categories in database');
         }
 
-        $this->assertTrue(Cache::has(CacheKeyManager::HOME_FEATURED_CATEGORIES));
+        $this->assertTrue($this->redis->has(CacheKeyManager::HOME_FEATURED_CATEGORIES));
 
         $category->update(['name' => 'Updated Category Name']);
 
         // Cache should be cleared
-        $this->assertFalse(Cache::has(CacheKeyManager::HOME_FEATURED_CATEGORIES),
+        $this->assertFalse($this->redis->has(CacheKeyManager::HOME_FEATURED_CATEGORIES),
             'Cache was not cleared after category update'
         );
     }
@@ -224,7 +226,7 @@ class CachePerformanceTest extends TestCase
         DB::enableQueryLog();
 
         for ($i = 0; $i < $iterations; $i++) {
-            Cache::flush(); // Force cache miss
+            $this->redis->flush(); // Force cache miss
             $start = microtime(true);
             $this->homePageService->getHomePageData();
             $timesWithoutCache[] = (microtime(true) - $start) * 1000;

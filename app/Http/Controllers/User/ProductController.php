@@ -6,27 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\ProductViewService;
 use App\Services\ReviewService;
+use App\Services\Cache\RedisService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
     protected ProductViewService $viewService;
     protected ReviewService $reviewService;
+    protected RedisService $redis;
 
-    public function __construct(ProductViewService $viewService, ReviewService $reviewService)
-    {
+    public function __construct(
+        ProductViewService $viewService,
+        ReviewService $reviewService,
+        RedisService $redis
+    ) {
         $this->viewService = $viewService;
         $this->reviewService = $reviewService;
+        $this->redis = $redis;
     }
 
     public function show(Request $request, string $slug)
     {
         try {
-            $product = Cache::remember(
+            $product = $this->redis->remember(
                 "product_detail_{$slug}",
-                now()->addMinutes(10),
+                600,
                 function () use ($slug) {
                     return Product::select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'category_id', 'status', 'is_hot', 'views', 'created_at', 'updated_at')
                         ->with([
@@ -57,7 +62,6 @@ class ProductController extends Controller
                 'is_hot' => $product->is_hot,
             ];
 
-            // Get reviews data
             $reviews = $product->approvedReviews()
                 ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'created_at')
                 ->with('user:id,fullname,email')
@@ -80,9 +84,9 @@ class ProductController extends Controller
 
     private function getRelatedProducts(Product $product, int $limit = 4)
     {
-        return Cache::remember(
+        return $this->redis->remember(
             "related_products_{$product->id}",
-            now()->addHour(),
+            3600,
             function () use ($product, $limit) {
                 return Product::where('category_id', $product->category_id)
                     ->where('id', '!=', $product->id)

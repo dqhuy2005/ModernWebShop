@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Models\Order;
 use App\Models\CacheKeyManager;
-use Illuminate\Support\Facades\Cache;
+use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Log;
  */
 class OrderObserver
 {
+    protected RedisService $redis;
+
+    public function __construct(RedisService $redis)
+    {
+        $this->redis = $redis;
+    }
     /**
      * Handle the Order "updated" event.
      *
@@ -23,7 +29,6 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-        // Check if status was changed to completed
         if ($order->isDirty('status') && $order->status === Order::STATUS_COMPLETED) {
             $this->clearBestSellerCaches($order, 'completed');
         }
@@ -52,13 +57,11 @@ class OrderObserver
     protected function clearBestSellerCaches(Order $order, string $event): void
     {
         try {
-            // Only clear best seller caches, not all homepage caches
-            // This is more efficient than clearing everything
-            Cache::forget(CacheKeyManager::HOME_TOP_SELLING);
-
-            // Optional: also clear hot products as they might be affected by sales
-            Cache::forget(CacheKeyManager::HOME_HOT_DEALS);
-            Cache::forget(CacheKeyManager::HOME_CATEGORIES_WITH_PRODUCTS);
+            $this->redis->forget([
+                CacheKeyManager::HOME_TOP_SELLING,
+                CacheKeyManager::HOME_HOT_DEALS,
+                CacheKeyManager::HOME_CATEGORIES_WITH_PRODUCTS
+            ]);
 
             Log::info('OrderObserver: Best seller caches cleared', [
                 'event' => $event,

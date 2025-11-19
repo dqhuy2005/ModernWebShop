@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Models\Category;
 use App\Models\CacheKeyManager;
-use Illuminate\Support\Facades\Cache;
+use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Log;
  */
 class CategoryObserver
 {
+    protected RedisService $redis;
+
+    public function __construct(RedisService $redis)
+    {
+        $this->redis = $redis;
+    }
     /**
      * Handle the Category "created" event.
      */
@@ -30,9 +36,8 @@ class CategoryObserver
     {
         $this->clearCategoryCaches($category, 'updated');
 
-        // Clear specific category caches
-        Cache::forget(CacheKeyManager::category($category->id));
-        Cache::forget(CacheKeyManager::categoryBySlug($category->slug));
+        $this->redis->forget(CacheKeyManager::category($category->id));
+        $this->redis->forget(CacheKeyManager::categoryBySlug($category->slug));
     }
 
     /**
@@ -42,9 +47,8 @@ class CategoryObserver
     {
         $this->clearCategoryCaches($category, 'deleted');
 
-        // Clear specific category caches
-        Cache::forget(CacheKeyManager::category($category->id));
-        Cache::forget(CacheKeyManager::categoryBySlug($category->slug));
+        $this->redis->forget(CacheKeyManager::category($category->id));
+        $this->redis->forget(CacheKeyManager::categoryBySlug($category->slug));
     }
 
     /**
@@ -62,9 +66,8 @@ class CategoryObserver
     {
         $this->clearCategoryCaches($category, 'force_deleted');
 
-        // Clear specific category caches
-        Cache::forget(CacheKeyManager::category($category->id));
-        Cache::forget(CacheKeyManager::categoryBySlug($category->slug));
+        $this->redis->forget(CacheKeyManager::category($category->id));
+        $this->redis->forget(CacheKeyManager::categoryBySlug($category->slug));
     }
 
     /**
@@ -75,9 +78,7 @@ class CategoryObserver
         try {
             $keys = CacheKeyManager::categoryKeys();
 
-            foreach ($keys as $key) {
-                Cache::forget($key);
-            }
+            $this->redis->forget($keys);
 
             Log::info('CategoryObserver: Caches cleared', [
                 'event' => $event,

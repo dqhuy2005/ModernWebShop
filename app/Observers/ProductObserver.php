@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Models\Product;
 use App\Models\CacheKeyManager;
-use Illuminate\Support\Facades\Cache;
+use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Log;
  */
 class ProductObserver
 {
+    protected RedisService $redis;
+
+    public function __construct(RedisService $redis)
+    {
+        $this->redis = $redis;
+    }
     /**
      * Handle the Product "created" event.
      */
@@ -30,8 +36,7 @@ class ProductObserver
     {
         $this->clearProductCaches($product, 'updated');
 
-        // Clear specific product cache if exists
-        Cache::forget(CacheKeyManager::product($product->id));
+        $this->redis->forget(CacheKeyManager::product($product->id));
     }
 
     /**
@@ -41,8 +46,7 @@ class ProductObserver
     {
         $this->clearProductCaches($product, 'deleted');
 
-        // Clear specific product cache
-        Cache::forget(CacheKeyManager::product($product->id));
+        $this->redis->forget(CacheKeyManager::product($product->id));
     }
 
     /**
@@ -60,8 +64,7 @@ class ProductObserver
     {
         $this->clearProductCaches($product, 'force_deleted');
 
-        // Clear specific product cache
-        Cache::forget(CacheKeyManager::product($product->id));
+        $this->redis->forget(CacheKeyManager::product($product->id));
     }
 
     /**
@@ -72,13 +75,10 @@ class ProductObserver
         try {
             $keys = CacheKeyManager::productKeys();
 
-            foreach ($keys as $key) {
-                Cache::forget($key);
-            }
+            $this->redis->forget($keys);
 
-            // Also clear category-specific cache if product belongs to a category
             if ($product->category_id) {
-                Cache::forget(CacheKeyManager::category($product->category_id));
+                $this->redis->forget(CacheKeyManager::category($product->category_id));
             }
 
             Log::info('ProductObserver: Caches cleared', [

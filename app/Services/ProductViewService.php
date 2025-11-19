@@ -5,27 +5,30 @@ namespace App\Services;
 use App\Events\ProductViewed;
 use App\Models\Product;
 use App\Models\ProductView;
-use Illuminate\Support\Facades\Cache;
+use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Auth;
 
 class ProductViewService
 {
+    protected RedisService $redis;
+
+    public function __construct(RedisService $redis)
+    {
+        $this->redis = $redis;
+    }
     /**
      * Check if view should be counted (anti-spam)
      * Chỉ tính 1 view trong 2 phút cho mỗi IP/User
      */
     public function shouldCountView(int $productId, string $ipAddress, ?int $userId = null): bool
     {
-        // Cache key để track view
         $cacheKey = $this->getViewCacheKey($productId, $ipAddress, $userId);
 
-        // Nếu đã có trong cache (trong 2 phút) thì không tính
-        if (Cache::has($cacheKey)) {
+        if ($this->redis->has($cacheKey)) {
             return false;
         }
 
-        // Set cache 2 phút
-        Cache::put($cacheKey, true, now()->addMinutes(2));
+        $this->redis->set($cacheKey, true, 120);
 
         return true;
     }
@@ -37,12 +40,10 @@ class ProductViewService
     {
         $userId = Auth::id();
 
-        // Check anti-spam
         if (!$this->shouldCountView($product->id, $ipAddress, $userId)) {
-            return; // Không dispatch event nếu spam
+            return;
         }
 
-        // Dispatch event để xử lý async
         event(new ProductViewed($product, $ipAddress, $userAgent, $userId));
     }
 
@@ -63,9 +64,9 @@ class ProductViewService
      */
     public function getRecentViewCount(int $productId, int $days = 7): int
     {
-        return Cache::remember(
+        return $this->redis->remember(
             "product_{$productId}_views_{$days}days",
-            now()->addMinutes(5),
+            300,
             function () use ($productId, $days) {
                 return ProductView::forProduct($productId)
                     ->recent($days)
@@ -79,9 +80,9 @@ class ProductViewService
      */
     public function getUniqueVisitorsCount(int $productId, int $days = 7): int
     {
-        return Cache::remember(
+        return $this->redis->remember(
             "product_{$productId}_unique_{$days}days",
-            now()->addMinutes(10),
+            600,
             function () use ($productId, $days) {
                 return ProductView::forProduct($productId)
                     ->recent($days)
@@ -96,9 +97,9 @@ class ProductViewService
      */
     public function getHotProducts(int $limit = 10)
     {
-        return Cache::remember(
+        return $this->redis->remember(
             "hot_products_{$limit}",
-            now()->addHour(),
+            3600,
             function () use ($limit) {
                 return Product::where('is_hot', true)
                     ->orderBy('views', 'desc')

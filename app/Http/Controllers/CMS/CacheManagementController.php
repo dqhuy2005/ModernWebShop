@@ -4,16 +4,18 @@ namespace App\Http\Controllers\CMS;
 
 use App\Http\Controllers\Controller;
 use App\Services\HomePageService;
+use App\Services\Cache\RedisService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class CacheManagementController extends Controller
 {
     protected HomePageService $homePageService;
+    protected RedisService $redis;
 
-    public function __construct(HomePageService $homePageService)
+    public function __construct(HomePageService $homePageService, RedisService $redis)
     {
         $this->homePageService = $homePageService;
+        $this->redis = $redis;
     }
 
     public function index()
@@ -116,7 +118,7 @@ class CacheManagementController extends Controller
     public function clearAll(Request $request)
     {
         try {
-            Cache::flush();
+            $this->redis->flush();
 
             $warmUp = $request->input('warm_up', false);
 

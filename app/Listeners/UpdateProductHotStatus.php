@@ -4,9 +4,9 @@ namespace App\Listeners;
 
 use App\Events\ProductViewed;
 use App\Models\ProductView;
+use App\Services\Cache\RedisService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -18,9 +18,11 @@ class UpdateProductHotStatus implements ShouldQueue
 
     public $backoff = [10, 30, 60];
 
-    public function __construct()
+    protected RedisService $redis;
+
+    public function __construct(RedisService $redis)
     {
-        //
+        $this->redis = $redis;
     }
 
     public function handle(ProductViewed $event): void
@@ -43,8 +45,7 @@ class UpdateProductHotStatus implements ShouldQueue
 
             $this->updateHotStatus($product, $recentViews);
 
-            Cache::forget("product_{$productId}");
-            Cache::forget("hot_products");
+            $this->redis->forget(["product_{$productId}", "hot_products"]);
 
         } catch (\Exception $e) {
             Log::error('Failed to update product hot status', [
@@ -63,9 +64,9 @@ class UpdateProductHotStatus implements ShouldQueue
      */
     private function getRecentViewCount(int $productId): int
     {
-        return Cache::remember(
+        return $this->redis->remember(
             "product_{$productId}_recent_views",
-            now()->addMinutes(5),
+            300,
             function () use ($productId) {
                 return ProductView::forProduct($productId)
                     ->recent(7)
