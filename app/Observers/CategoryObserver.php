@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Category;
-use App\Services\Cache\CacheKeyManager;
+use App\Models\CacheKeyManager;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
-use App\Services\Cache\CacheKeyManager;
+use App\Models\CacheKeyManager;
 use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Log;
 
@@ -54,7 +54,6 @@ class HomePageService
                 'trace' => $e->getTraceAsString()
             ]);
 
-            // Fallback to non-cached data
             return $this->getHomePageDataFallback();
         }
     }
@@ -110,7 +109,6 @@ class HomePageService
             fn() => $this->productRepository->getTopSellingProducts($limit)
         );
 
-        // Chunk for display (2 chunks of 6 products each)
         return $products->chunk(6);
     }
 
@@ -185,7 +183,6 @@ class HomePageService
         try {
             Log::info('HomePageService: Starting cache warm-up');
 
-            // Load all data which will populate the cache
             $this->getHomePageData();
 
             Log::info('HomePageService: Cache warm-up completed successfully');
@@ -223,7 +220,6 @@ class HomePageService
             'redis_server' => []
         ];
 
-        // Check each homepage cache key
         foreach ($keys as $key) {
             $exists = $this->redis->has($key);
             $stats['keys'][$key] = [
@@ -232,10 +228,8 @@ class HomePageService
             ];
         }
 
-        // Get Redis server statistics
         $stats['redis_server'] = $this->redis->stats();
 
-        // Calculate homepage cache summary
         $totalKeys = count($keys);
         $cachedKeys = count(array_filter($stats['keys'], fn($k) => $k['status'] === 'HIT'));
         $stats['summary'] = [
