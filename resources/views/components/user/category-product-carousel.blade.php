@@ -35,14 +35,6 @@
                                         </span>
                                     @endif
 
-                                    @if ($product->category && $product->category->image)
-                                        <span class="brand-icon">
-                                            <img src="{{ $product->category->image_url }}"
-                                                alt="{{ $product->category->name }}"
-                                                title="{{ $product->category->name }}">
-                                        </span>
-                                    @endif
-
                                     <a href="{{ route('products.show', $product->slug) }}">
                                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                             class="product-image" loading="lazy">
@@ -259,27 +251,6 @@
         font-size: 0.75rem;
         font-weight: 600;
         z-index: 2;
-    }
-
-    .brand-icon {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 40px;
-        height: 40px;
-        background: white;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        z-index: 2;
-    }
-
-    .brand-icon img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
     }
 
     /* Product Info */
