@@ -77,6 +77,12 @@ class ProductObserver
 
             $this->redis->forget($keys);
 
+            $this->redis->forget("product_detail_{$product->slug}");
+            $this->redis->forget("product_view_stats_{$product->id}");
+            $this->redis->deleteByPattern("product_reviews_{$product->id}_page_*");
+            $this->redis->forget("product_review_stats_{$product->id}");
+            $this->redis->forget("related_products_{$product->id}");
+
             if ($product->category_id) {
                 $this->redis->forget(CacheKeyManager::category($product->category_id));
             }

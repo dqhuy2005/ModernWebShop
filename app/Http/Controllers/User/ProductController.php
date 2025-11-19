@@ -55,20 +55,39 @@ class ProductController extends Controller
 
             $relatedProducts = $this->getRelatedProducts($product);
 
-            $viewStats = [
-                'total_views' => $product->views ?? 0,
-                'recent_views_7days' => $this->viewService->getRecentViewCount($product->id, 7),
-                'unique_visitors' => $this->viewService->getUniqueVisitorsCount($product->id, 7),
-                'is_hot' => $product->is_hot,
-            ];
+            $viewStats = $this->redis->remember(
+                "product_view_stats_{$product->id}",
+                300,
+                function () use ($product) {
+                    return [
+                        'total_views' => $product->views ?? 0,
+                        'recent_views_7days' => $this->viewService->getRecentViewCount($product->id, 7),
+                        'unique_visitors' => $this->viewService->getUniqueVisitorsCount($product->id, 7),
+                        'is_hot' => $product->is_hot,
+                    ];
+                }
+            );
 
-            $reviews = $product->approvedReviews()
-                ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'created_at')
-                ->with('user:id,fullname,email')
-                ->latest()
-                ->paginate(10);
+            $page = $request->get('page', 1);
+            $reviews = $this->redis->remember(
+                "product_reviews_{$product->id}_page_{$page}",
+                600,
+                function () use ($product) {
+                    return $product->approvedReviews()
+                        ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'created_at')
+                        ->with('user:id,fullname,email')
+                        ->latest()
+                        ->paginate(10);
+                }
+            );
 
-            $reviewStats = $this->reviewService->getProductReviewStats($product);
+            $reviewStats = $this->redis->remember(
+                "product_review_stats_{$product->id}",
+                600,
+                function () use ($product) {
+                    return $this->reviewService->getProductReviewStats($product);
+                }
+            );
 
             return view('user.product-detail', compact('product', 'relatedProducts', 'viewStats', 'reviews', 'reviewStats'));
 

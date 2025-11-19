@@ -8,12 +8,6 @@ use App\Models\CacheKeyManager;
 use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Home Page Service
- *
- * Handles all homepage data with Redis caching strategy
- * Implements cache-aside pattern with automatic cache warming
- */
 class HomePageService
 {
     protected ProductRepository $productRepository;
@@ -30,14 +24,6 @@ class HomePageService
         $this->redis = $redis;
     }
 
-    /**
-     * Get all homepage data (cached)
-     *
-     * Returns all sections needed for homepage in one call
-     * Uses medium TTL (30 minutes) as default
-     *
-     * @return array
-     */
     public function getHomePageData(): array
     {
         try {
@@ -58,10 +44,6 @@ class HomePageService
         }
     }
 
-    /**
-     * Get featured categories (cached in Redis)
-     * TTL: 1 hour
-     */
     public function getFeaturedCategories(int $limit = 3)
     {
         return $this->redis->remember(
@@ -71,10 +53,6 @@ class HomePageService
         );
     }
 
-    /**
-     * Get new products (cached in Redis)
-     * TTL: 5 minutes
-     */
     public function getNewProducts(int $limit = 8)
     {
         return $this->redis->remember(
@@ -84,10 +62,6 @@ class HomePageService
         );
     }
 
-    /**
-     * Get categories with hot products (cached in Redis)
-     * TTL: 30 minutes
-     */
     public function getCategoriesWithHotProducts(int $categoryLimit = 5, int $productLimit = 15)
     {
         return $this->redis->remember(
@@ -97,10 +71,6 @@ class HomePageService
         );
     }
 
-    /**
-     * Get top selling products (cached in Redis)
-     * TTL: 30 minutes
-     */
     public function getTopSellingProducts(int $limit = 12)
     {
         $products = $this->redis->remember(
@@ -112,10 +82,6 @@ class HomePageService
         return $products->chunk(6);
     }
 
-    /**
-     * Get hot deals (cached in Redis)
-     * TTL: 30 minutes
-     */
     public function getHotDeals(int $limit = 8)
     {
         return $this->redis->remember(
@@ -125,9 +91,6 @@ class HomePageService
         );
     }
 
-    /**
-     * Clear all homepage caches from Redis
-     */
     public function clearHomePageCache(): void
     {
         try {
@@ -148,10 +111,6 @@ class HomePageService
         }
     }
 
-    /**
-     * Clear homepage cache by pattern (more efficient)
-     * Deletes all keys matching "homepage:*"
-     */
     public function clearHomePageCacheByPattern(): int
     {
         try {
@@ -172,12 +131,6 @@ class HomePageService
         }
     }
 
-    /**
-     * Warm up all homepage caches
-     *
-     * Pre-loads all homepage data into cache
-     * Useful after cache clear or on deployment
-     */
     public function warmUpCache(): void
     {
         try {
@@ -193,10 +146,6 @@ class HomePageService
         }
     }
 
-    /**
-     * Fallback method when cache fails
-     * Returns fresh data from database
-     */
     protected function getHomePageDataFallback(): array
     {
         return [
@@ -208,10 +157,6 @@ class HomePageService
         ];
     }
 
-    /**
-     * Get cache statistics from Redis
-     * Useful for monitoring and debugging
-     */
     public function getCacheStats(): array
     {
         $keys = CacheKeyManager::homePageKeys();
@@ -241,11 +186,6 @@ class HomePageService
         return $stats;
     }
 
-    /**
-     * Check Redis connection health
-     *
-     * @return bool
-     */
     public function isRedisHealthy(): bool
     {
         return $this->redis->ping();

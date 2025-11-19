@@ -10,9 +10,11 @@ use App\Repository\CartRepository;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\ProductReview;
 use App\Observers\ProductObserver;
 use App\Observers\CategoryObserver;
 use App\Observers\OrderObserver;
+use App\Observers\ProductReviewObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         Product::observe(ProductObserver::class);
         Category::observe(CategoryObserver::class);
         Order::observe(OrderObserver::class);
+        ProductReview::observe(ProductReviewObserver::class);
 
         View::composer('*', function ($view) {
             if (Auth::check()) {
