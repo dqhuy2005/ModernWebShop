@@ -5,26 +5,29 @@ namespace App\Services;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use App\Services\Cache\CacheKeyManager;
-use Illuminate\Support\Facades\Cache;
+use App\Services\Cache\RedisService;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Home Page Service
  *
- * Handles all homepage data with caching strategy
+ * Handles all homepage data with Redis caching strategy
  * Implements cache-aside pattern with automatic cache warming
  */
 class HomePageService
 {
     protected ProductRepository $productRepository;
     protected CategoryRepository $categoryRepository;
+    protected RedisService $redis;
 
     public function __construct(
         ProductRepository $productRepository,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
+        RedisService $redis
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->redis = $redis;
     }
 
     /**
@@ -57,12 +60,12 @@ class HomePageService
     }
 
     /**
-     * Get featured categories (cached)
+     * Get featured categories (cached in Redis)
      * TTL: 1 hour
      */
     public function getFeaturedCategories(int $limit = 3)
     {
-        return Cache::remember(
+        return $this->redis->remember(
             CacheKeyManager::HOME_FEATURED_CATEGORIES,
             CacheKeyManager::TTL_LONG,
             fn() => $this->categoryRepository->getFeaturedCategories($limit)
@@ -70,11 +73,12 @@ class HomePageService
     }
 
     /**
-     * Get new products (cached)
+     * Get new products (cached in Redis)
+     * TTL: 5 minutes
      */
     public function getNewProducts(int $limit = 8)
     {
-        return Cache::remember(
+        return $this->redis->remember(
             CacheKeyManager::HOME_NEW_PRODUCTS,
             CacheKeyManager::TTL_SHORT,
             fn() => $this->productRepository->getNewProducts($limit)
@@ -82,11 +86,12 @@ class HomePageService
     }
 
     /**
-     * Get categories with hot products (cached)
+     * Get categories with hot products (cached in Redis)
+     * TTL: 30 minutes
      */
     public function getCategoriesWithHotProducts(int $categoryLimit = 5, int $productLimit = 15)
     {
-        return Cache::remember(
+        return $this->redis->remember(
             CacheKeyManager::HOME_CATEGORIES_WITH_PRODUCTS,
             CacheKeyManager::TTL_MEDIUM,
             fn() => $this->categoryRepository->getCategoriesWithHotProducts($categoryLimit, $productLimit)
@@ -94,11 +99,12 @@ class HomePageService
     }
 
     /**
-     * Get top selling products (cached)
+     * Get top selling products (cached in Redis)
+     * TTL: 30 minutes
      */
     public function getTopSellingProducts(int $limit = 12)
     {
-        $products = Cache::remember(
+        $products = $this->redis->remember(
             CacheKeyManager::HOME_TOP_SELLING,
             CacheKeyManager::TTL_MEDIUM,
             fn() => $this->productRepository->getTopSellingProducts($limit)
@@ -109,11 +115,12 @@ class HomePageService
     }
 
     /**
-     * Get hot deals (cached)
+     * Get hot deals (cached in Redis)
+     * TTL: 30 minutes
      */
     public function getHotDeals(int $limit = 8)
     {
-        return Cache::remember(
+        return $this->redis->remember(
             CacheKeyManager::HOME_HOT_DEALS,
             CacheKeyManager::TTL_MEDIUM,
             fn() => $this->productRepository->getHotDeals($limit)
@@ -121,7 +128,7 @@ class HomePageService
     }
 
     /**
-     * Clear all homepage caches
+     * Clear all homepage caches from Redis
      */
     public function clearHomePageCache(): void
     {
@@ -129,16 +136,41 @@ class HomePageService
             $keys = CacheKeyManager::homePageKeys();
 
             foreach ($keys as $key) {
-                Cache::forget($key);
+                $this->redis->forget($key);
             }
 
-            Log::info('HomePageService: Cache cleared successfully', [
-                'keys' => $keys
+            Log::info('HomePageService: Redis cache cleared successfully', [
+                'keys' => $keys,
+                'count' => count($keys)
             ]);
         } catch (\Exception $e) {
-            Log::error('HomePageService: Error clearing cache', [
+            Log::error('HomePageService: Error clearing Redis cache', [
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+
+    /**
+     * Clear homepage cache by pattern (more efficient)
+     * Deletes all keys matching "homepage:*"
+     */
+    public function clearHomePageCacheByPattern(): int
+    {
+        try {
+            $deleted = $this->redis->deleteByPattern('homepage:*');
+
+            Log::info('HomePageService: Redis cache cleared by pattern', [
+                'pattern' => 'homepage:*',
+                'deleted' => $deleted
+            ]);
+
+            return $deleted;
+        } catch (\Exception $e) {
+            Log::error('HomePageService: Error clearing cache by pattern', [
+                'error' => $e->getMessage()
+            ]);
+
+            return 0;
         }
     }
 
@@ -180,18 +212,48 @@ class HomePageService
     }
 
     /**
-     * Get cache statistics
+     * Get cache statistics from Redis
      * Useful for monitoring and debugging
      */
     public function getCacheStats(): array
     {
         $keys = CacheKeyManager::homePageKeys();
-        $stats = [];
+        $stats = [
+            'keys' => [],
+            'redis_server' => []
+        ];
 
+        // Check each homepage cache key
         foreach ($keys as $key) {
-            $stats[$key] = Cache::has($key) ? 'HIT' : 'MISS';
+            $exists = $this->redis->has($key);
+            $stats['keys'][$key] = [
+                'status' => $exists ? 'HIT' : 'MISS',
+                'ttl' => $exists ? $this->redis->ttl($key) : -2
+            ];
         }
 
+        // Get Redis server statistics
+        $stats['redis_server'] = $this->redis->stats();
+
+        // Calculate homepage cache summary
+        $totalKeys = count($keys);
+        $cachedKeys = count(array_filter($stats['keys'], fn($k) => $k['status'] === 'HIT'));
+        $stats['summary'] = [
+            'total_keys' => $totalKeys,
+            'cached_keys' => $cachedKeys,
+            'cache_coverage' => $totalKeys > 0 ? round(($cachedKeys / $totalKeys) * 100, 2) : 0
+        ];
+
         return $stats;
+    }
+
+    /**
+     * Check Redis connection health
+     *
+     * @return bool
+     */
+    public function isRedisHealthy(): bool
+    {
+        return $this->redis->ping();
     }
 }
