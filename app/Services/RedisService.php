@@ -12,6 +12,14 @@ class RedisService
     private static ?float $lastCheckTime = null;
     private const CHECK_INTERVAL = 5.0; // seconds
 
+    // Cache monitoring metrics
+    private static array $metrics = [
+        'hits' => 0,
+        'misses' => 0,
+        'queries' => 0,
+        'total_time' => 0.0,
+    ];
+
     protected function isRedisAvailable(): bool
     {
         $now = microtime(true);
@@ -50,7 +58,11 @@ class RedisService
 
     public function get(string $key, $default = null)
     {
+        $startTime = microtime(true);
+        self::$metrics['queries']++;
+
         if (!$this->isRedisAvailable()) {
+            self::$metrics['misses']++;
             return $default;
         }
 
@@ -58,18 +70,25 @@ class RedisService
             $value = Redis::get($key);
 
             if ($value === null) {
+                self::$metrics['misses']++;
+                self::$metrics['total_time'] += (microtime(true) - $startTime);
                 return $default;
             }
+
+            self::$metrics['hits']++;
+            self::$metrics['total_time'] += (microtime(true) - $startTime);
 
             return $this->unserialize($value);
         } catch (ConnectionException $e) {
             self::$isConnected = false;
+            self::$metrics['misses']++;
             Log::warning('RedisService: Connection lost during get', [
                 'key' => $key,
                 'error' => $e->getMessage()
             ]);
             return $default;
         } catch (\Exception $e) {
+            self::$metrics['misses']++;
             Log::error('RedisService: Error getting key', [
                 'key' => $key,
                 'error' => $e->getMessage()
@@ -481,5 +500,119 @@ class RedisService
         }
 
         return (bool) $response;
+    }
+
+    public function getMetrics(): array
+    {
+        $hitRate = 0.0;
+        $avgQueryTime = 0.0;
+
+        if (self::$metrics['queries'] > 0) {
+            $total = self::$metrics['hits'] + self::$metrics['misses'];
+            $hitRate = $total > 0 ? round((self::$metrics['hits'] / $total) * 100, 2) : 0.0;
+            $avgQueryTime = round((self::$metrics['total_time'] / self::$metrics['queries']) * 1000, 2);
+        }
+
+        return [
+            'hits' => self::$metrics['hits'],
+            'misses' => self::$metrics['misses'],
+            'queries' => self::$metrics['queries'],
+            'hit_rate' => $hitRate,
+            'avg_query_time_ms' => $avgQueryTime,
+            'total_time_ms' => round(self::$metrics['total_time'] * 1000, 2),
+        ];
+    }
+
+    public function resetMetrics(): void
+    {
+        self::$metrics = [
+            'hits' => 0,
+            'misses' => 0,
+            'queries' => 0,
+            'total_time' => 0.0,
+        ];
+    }
+
+    public function logMetrics(): void
+    {
+        $metrics = $this->getMetrics();
+
+        Log::info('Redis Cache Metrics', $metrics);
+    }
+
+    public function rememberWithWarming(string $key, int $ttl, callable $callback, int $refreshBeforeSeconds = 300)
+    {
+        if (!$this->isRedisAvailable()) {
+            return $callback();
+        }
+
+        try {
+            $value = $this->get($key);
+            $remainingTtl = $this->ttl($key);
+
+            if ($value !== null && $remainingTtl > $refreshBeforeSeconds) {
+                return $value;
+            }
+
+            $newValue = $callback();
+            $this->set($key, $newValue, $ttl);
+
+            if ($value !== null && $remainingTtl > 0) {
+                return $value;
+            }
+
+            return $newValue;
+        } catch (\Exception $e) {
+            Log::error('RedisService: Cache warming failed', [
+                'key' => $key,
+                'error' => $e->getMessage()
+            ]);
+            return $callback();
+        }
+    }
+
+    public function getCacheStats(): array
+    {
+        if (!$this->isRedisAvailable()) {
+            return [
+                'status' => 'unavailable',
+                'message' => 'Redis is not available'
+            ];
+        }
+
+        try {
+            $info = Redis::info();
+            $metrics = $this->getMetrics();
+
+            return [
+                'status' => 'online',
+                'server' => [
+                    'version' => $info['redis_version'] ?? 'unknown',
+                    'uptime_days' => isset($info['uptime_in_seconds']) ? round($info['uptime_in_seconds'] / 86400, 2) : 0,
+                    'connected_clients' => $info['connected_clients'] ?? 0,
+                ],
+                'memory' => [
+                    'used_memory_human' => $info['used_memory_human'] ?? '0',
+                    'used_memory_peak_human' => $info['used_memory_peak_human'] ?? '0',
+                    'mem_fragmentation_ratio' => $info['mem_fragmentation_ratio'] ?? 0,
+                ],
+                'stats' => [
+                    'total_commands_processed' => $info['total_commands_processed'] ?? 0,
+                    'keyspace_hits' => $info['keyspace_hits'] ?? 0,
+                    'keyspace_misses' => $info['keyspace_misses'] ?? 0,
+                    'keyspace_hit_rate' => $this->calculateHitRate($info),
+                ],
+                'application_metrics' => $metrics,
+            ];
+        } catch (\Exception $e) {
+            Log::error('RedisService: Failed to get cache stats', [
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
     }
 }

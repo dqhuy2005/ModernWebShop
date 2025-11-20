@@ -47,10 +47,11 @@ class HomePageService
     public function getFeaturedCategories(int $limit = 3)
     {
         try {
-            return $this->redis->remember(
+            return $this->redis->rememberWithWarming(
                 CacheKeyManager::HOME_FEATURED_CATEGORIES,
                 CacheKeyManager::TTL_LONG,
-                fn() => $this->categoryRepository->getFeaturedCategories($limit)
+                fn() => $this->categoryRepository->getFeaturedCategories($limit),
+                300
             );
         } catch (\Exception $e) {
             Log::error('HomePageService: Error fetching featured categories', [
@@ -65,28 +66,31 @@ class HomePageService
 
     public function getNewProducts(int $limit = 8)
     {
-        return $this->redis->remember(
+        return $this->redis->rememberWithWarming(
             CacheKeyManager::HOME_NEW_PRODUCTS,
             CacheKeyManager::TTL_SHORT,
-            fn() => $this->productRepository->getNewProducts($limit)
+            fn() => $this->productRepository->getNewProducts($limit),
+            180
         );
     }
 
     public function getCategoriesWithHotProducts(int $categoryLimit = 5, int $productLimit = 15)
     {
-        return $this->redis->remember(
+        return $this->redis->rememberWithWarming(
             CacheKeyManager::HOME_CATEGORIES_WITH_PRODUCTS,
             CacheKeyManager::TTL_MEDIUM,
-            fn() => $this->categoryRepository->getCategoriesWithHotProducts($categoryLimit, $productLimit)
+            fn() => $this->categoryRepository->getCategoriesWithHotProducts($categoryLimit, $productLimit),
+            300
         );
     }
 
     public function getTopSellingProducts(int $limit = 12)
     {
-        $products = $this->redis->remember(
+        $products = $this->redis->rememberWithWarming(
             CacheKeyManager::HOME_TOP_SELLING,
             CacheKeyManager::TTL_MEDIUM,
-            fn() => $this->productRepository->getTopSellingProducts($limit)
+            fn() => $this->productRepository->getTopSellingProducts($limit),
+            300
         );
 
         return $products->chunk(6);
@@ -94,10 +98,11 @@ class HomePageService
 
     public function getHotDeals(int $limit = 8)
     {
-        return $this->redis->remember(
+        return $this->redis->rememberWithWarming(
             CacheKeyManager::HOME_HOT_DEALS,
             CacheKeyManager::TTL_MEDIUM,
-            fn() => $this->productRepository->getHotDeals($limit)
+            fn() => $this->productRepository->getHotDeals($limit),
+            300
         );
     }
 
