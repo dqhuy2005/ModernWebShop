@@ -29,11 +29,6 @@ class ImageService
         $this->config = config('image');
     }
 
-    public function canResize(): bool
-    {
-        return $this->useResize;
-    }
-
     public function uploadCategoryImage(UploadedFile $file, ?string $oldImage = null): string
     {
         if ($oldImage) {
@@ -153,34 +148,5 @@ class ImageService
         }
 
         return true;
-    }
-
-    public function createThumbnail(string $imagePath, string $type = 'product'): ?string
-    {
-        if (!$this->useResize) {
-            return null;
-        }
-
-        if (!Storage::disk('public')->exists($imagePath)) {
-            return null;
-        }
-
-        $image = $this->manager->read(Storage::disk('public')->path($imagePath));
-
-        $sizes = $this->config['sizes'][$type]['thumbnail'];
-
-        if ($type === 'avatar') {
-            $image->cover($sizes['width'], $sizes['height']);
-        } else {
-            $image->scale($sizes['width'], $sizes['height']);
-        }
-
-        $pathInfo = pathinfo($imagePath);
-        $thumbnailPath = $pathInfo['dirname'] . '/thumb_' . $pathInfo['basename'];
-
-        $encoded = $image->toJpeg(quality: $this->config['quality']);
-        Storage::disk('public')->put($thumbnailPath, $encoded);
-
-        return $thumbnailPath;
     }
 }

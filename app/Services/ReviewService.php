@@ -81,23 +81,6 @@ class ReviewService
     }
 
     /**
-     * Get all completed orders containing a product that user can review
-     */
-    public function getUserEligibleOrdersForProduct(User $user, Product $product)
-    {
-        return Order::where('user_id', $user->id)
-            ->where('status', Order::STATUS_COMPLETED)
-            ->whereHas('orderDetails', function ($query) use ($product) {
-                $query->where('product_id', $product->id);
-            })
-            ->whereDoesntHave('reviews', function ($query) use ($product) {
-                $query->where('product_id', $product->id);
-            })
-            ->with('orderDetails')
-            ->get();
-    }
-
-    /**
      * Create a new review
      */
     public function createReview(array $data, ?array $images = null, ?array $videos = null): ProductReview

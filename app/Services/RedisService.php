@@ -50,12 +50,6 @@ class RedisService
         }
     }
 
-    public function resetConnectionState(): void
-    {
-        self::$isConnected = null;
-        self::$lastCheckTime = null;
-    }
-
     public function get(string $key, $default = null)
     {
         $startTime = microtime(true);
@@ -224,84 +218,6 @@ class RedisService
         }
     }
 
-    public function many(array $keys): array
-    {
-        try {
-            $values = Redis::mget($keys);
-            $result = [];
-
-            foreach ($keys as $index => $key) {
-                $result[$key] = $values[$index] !== false
-                    ? $this->unserialize($values[$index])
-                    : null;
-            }
-
-            return $result;
-        } catch (\Exception $e) {
-            Log::error('RedisService: Error getting multiple keys', [
-                'keys' => $keys,
-                'error' => $e->getMessage()
-            ]);
-
-            return array_fill_keys($keys, null);
-        }
-    }
-
-    public function putMany(array $values, ?int $ttl = null): bool
-    {
-        try {
-            $serialized = [];
-
-            foreach ($values as $key => $value) {
-                $serialized[$key] = $this->serialize($value);
-            }
-
-            $result = Redis::mset($serialized);
-
-            if ($ttl !== null && $this->toBool($result)) {
-                foreach (array_keys($serialized) as $key) {
-                    Redis::expire($key, $ttl);
-                }
-            }
-
-            return $this->toBool($result);
-        } catch (\Exception $e) {
-            Log::error('RedisService: Error setting multiple keys', [
-                'error' => $e->getMessage()
-            ]);
-
-            return false;
-        }
-    }
-
-    public function increment(string $key, int $value = 1): int
-    {
-        try {
-            return Redis::incrby($key, $value);
-        } catch (\Exception $e) {
-            Log::error('RedisService: Error incrementing key', [
-                'key' => $key,
-                'error' => $e->getMessage()
-            ]);
-
-            return 0;
-        }
-    }
-
-    public function decrement(string $key, int $value = 1): int
-    {
-        try {
-            return Redis::decrby($key, $value);
-        } catch (\Exception $e) {
-            Log::error('RedisService: Error decrementing key', [
-                'key' => $key,
-                'error' => $e->getMessage()
-            ]);
-
-            return 0;
-        }
-    }
-
     public function ttl(string $key): int
     {
         try {
@@ -325,21 +241,6 @@ class RedisService
             Log::error('RedisService: Error setting expiration', [
                 'key' => $key,
                 'ttl' => $ttl,
-                'error' => $e->getMessage()
-            ]);
-
-            return false;
-        }
-    }
-
-    public function persist(string $key): bool
-    {
-        try {
-            $result = Redis::persist($key);
-            return $this->toBool($result);
-        } catch (\Exception $e) {
-            Log::error('RedisService: Error persisting key', [
-                'key' => $key,
                 'error' => $e->getMessage()
             ]);
 
@@ -381,20 +282,6 @@ class RedisService
             ]);
 
             return false;
-        }
-    }
-
-    public function keys(string $pattern = '*'): array
-    {
-        try {
-            return Redis::keys($pattern) ?: [];
-        } catch (\Exception $e) {
-            Log::error('RedisService: Error getting keys', [
-                'pattern' => $pattern,
-                'error' => $e->getMessage()
-            ]);
-
-            return [];
         }
     }
 
@@ -521,23 +408,6 @@ class RedisService
             'avg_query_time_ms' => $avgQueryTime,
             'total_time_ms' => round(self::$metrics['total_time'] * 1000, 2),
         ];
-    }
-
-    public function resetMetrics(): void
-    {
-        self::$metrics = [
-            'hits' => 0,
-            'misses' => 0,
-            'queries' => 0,
-            'total_time' => 0.0,
-        ];
-    }
-
-    public function logMetrics(): void
-    {
-        $metrics = $this->getMetrics();
-
-        Log::info('Redis Cache Metrics', $metrics);
     }
 
     public function rememberWithWarming(string $key, int $ttl, callable $callback, int $refreshBeforeSeconds = 300)

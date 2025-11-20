@@ -126,26 +126,6 @@ class HomePageService
         }
     }
 
-    public function clearHomePageCacheByPattern(): int
-    {
-        try {
-            $deleted = $this->redis->deleteByPattern('homepage:*');
-
-            Log::info('HomePageService: Redis cache cleared by pattern', [
-                'pattern' => 'homepage:*',
-                'deleted' => $deleted
-            ]);
-
-            return $deleted;
-        } catch (\Exception $e) {
-            Log::error('HomePageService: Error clearing cache by pattern', [
-                'error' => $e->getMessage()
-            ]);
-
-            return 0;
-        }
-    }
-
     public function warmUpCache(): void
     {
         try {
@@ -199,10 +179,5 @@ class HomePageService
         ];
 
         return $stats;
-    }
-
-    public function isRedisHealthy(): bool
-    {
-        return $this->redis->ping();
     }
 }
