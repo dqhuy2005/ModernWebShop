@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Events\ProductViewed;
 use App\Models\Product;
 use App\Models\ProductView;
-use App\Services\Cache\RedisService;
-use Illuminate\Support\Facades\Auth;
+use App\Services\RedisService;
+use Illuminate\Support\Facades\DB;
 
 class ProductViewService
 {

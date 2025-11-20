@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\ProductViewService;
 use App\Services\ReviewService;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 

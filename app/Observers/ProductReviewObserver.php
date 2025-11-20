@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\ProductReview;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Support\Facades\Log;
 
 /**

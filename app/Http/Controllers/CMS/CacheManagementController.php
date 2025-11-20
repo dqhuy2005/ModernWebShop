@@ -4,7 +4,7 @@ namespace App\Http\Controllers\CMS;
 
 use App\Http\Controllers\Controller;
 use App\Services\HomePageService;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Http\Request;
 
 class CacheManagementController extends Controller

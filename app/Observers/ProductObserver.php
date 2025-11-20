@@ -4,15 +4,9 @@ namespace App\Observers;
 
 use App\Models\Product;
 use App\Models\CacheKeyManager;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Product Observer
- *
- * Handles cache invalidation when products are modified
- * Ensures data consistency between database and cache
- */
 class ProductObserver
 {
     protected RedisService $redis;
@@ -21,17 +15,12 @@ class ProductObserver
     {
         $this->redis = $redis;
     }
-    /**
-     * Handle the Product "created" event.
-     */
+
     public function created(Product $product): void
     {
         $this->clearProductCaches($product, 'created');
     }
 
-    /**
-     * Handle the Product "updated" event.
-     */
     public function updated(Product $product): void
     {
         $this->clearProductCaches($product, 'updated');
@@ -39,9 +28,6 @@ class ProductObserver
         $this->redis->forget(CacheKeyManager::product($product->id));
     }
 
-    /**
-     * Handle the Product "deleted" event.
-     */
     public function deleted(Product $product): void
     {
         $this->clearProductCaches($product, 'deleted');
@@ -49,17 +35,11 @@ class ProductObserver
         $this->redis->forget(CacheKeyManager::product($product->id));
     }
 
-    /**
-     * Handle the Product "restored" event.
-     */
     public function restored(Product $product): void
     {
         $this->clearProductCaches($product, 'restored');
     }
 
-    /**
-     * Handle the Product "force deleted" event.
-     */
     public function forceDeleted(Product $product): void
     {
         $this->clearProductCaches($product, 'force_deleted');
@@ -67,9 +47,6 @@ class ProductObserver
         $this->redis->forget(CacheKeyManager::product($product->id));
     }
 
-    /**
-     * Clear all product-related caches
-     */
     protected function clearProductCaches(Product $product, string $event): void
     {
         try {

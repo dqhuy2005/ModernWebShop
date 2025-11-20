@@ -4,15 +4,9 @@ namespace App\Observers;
 
 use App\Models\Category;
 use App\Models\CacheKeyManager;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Category Observer
- *
- * Handles cache invalidation when categories are modified
- * Ensures data consistency between database and cache
- */
 class CategoryObserver
 {
     protected RedisService $redis;
@@ -21,17 +15,12 @@ class CategoryObserver
     {
         $this->redis = $redis;
     }
-    /**
-     * Handle the Category "created" event.
-     */
+
     public function created(Category $category): void
     {
         $this->clearCategoryCaches($category, 'created');
     }
 
-    /**
-     * Handle the Category "updated" event.
-     */
     public function updated(Category $category): void
     {
         $this->clearCategoryCaches($category, 'updated');
@@ -40,9 +29,6 @@ class CategoryObserver
         $this->redis->forget(CacheKeyManager::categoryBySlug($category->slug));
     }
 
-    /**
-     * Handle the Category "deleted" event.
-     */
     public function deleted(Category $category): void
     {
         $this->clearCategoryCaches($category, 'deleted');
@@ -51,17 +37,11 @@ class CategoryObserver
         $this->redis->forget(CacheKeyManager::categoryBySlug($category->slug));
     }
 
-    /**
-     * Handle the Category "restored" event.
-     */
     public function restored(Category $category): void
     {
         $this->clearCategoryCaches($category, 'restored');
     }
 
-    /**
-     * Handle the Category "force deleted" event.
-     */
     public function forceDeleted(Category $category): void
     {
         $this->clearCategoryCaches($category, 'force_deleted');
@@ -70,9 +50,6 @@ class CategoryObserver
         $this->redis->forget(CacheKeyManager::categoryBySlug($category->slug));
     }
 
-    /**
-     * Clear all category-related caches
-     */
     protected function clearCategoryCaches(Category $category, string $event): void
     {
         try {

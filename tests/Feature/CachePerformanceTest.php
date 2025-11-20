@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
 use App\Services\HomePageService;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use App\Models\CacheKeyManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;

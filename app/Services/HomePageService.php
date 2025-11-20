@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use App\Models\CacheKeyManager;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Support\Facades\Log;
 
 class HomePageService

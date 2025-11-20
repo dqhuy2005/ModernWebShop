@@ -4,15 +4,9 @@ namespace App\Observers;
 
 use App\Models\Order;
 use App\Models\CacheKeyManager;
-use App\Services\Cache\RedisService;
+use App\Services\RedisService;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Order Observer
- *
- * Handles cache invalidation when orders are completed
- * Completed orders affect best sellers and top products
- */
 class OrderObserver
 {
     protected RedisService $redis;
@@ -21,12 +15,7 @@ class OrderObserver
     {
         $this->redis = $redis;
     }
-    /**
-     * Handle the Order "updated" event.
-     *
-     * Only clear caches when order status changes to "completed"
-     * because completed orders affect best sellers statistics
-     */
+
     public function updated(Order $order): void
     {
         if ($order->isDirty('status') && $order->status === Order::STATUS_COMPLETED) {
@@ -34,12 +23,6 @@ class OrderObserver
         }
     }
 
-    /**
-     * Handle the Order "created" event.
-     *
-     * New orders might affect "recently ordered" or trending products
-     * but typically don't affect cached homepage until completed
-     */
     public function created(Order $order): void
     {
         // Optional: clear caches immediately if you want real-time updates
@@ -49,11 +32,6 @@ class OrderObserver
         // $this->clearBestSellerCaches($order, 'created');
     }
 
-    /**
-     * Clear best seller related caches
-     *
-     * When orders are completed, the best selling products might change
-     */
     protected function clearBestSellerCaches(Order $order, string $event): void
     {
         try {
