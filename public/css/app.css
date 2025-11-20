@@ -1,4 +1,4 @@
-button, .btn {
+button, .btn, .card, .card-header, .card-footer, .card-body {
     border-radius: 0;
 }
 

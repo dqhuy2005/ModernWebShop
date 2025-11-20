@@ -10,6 +10,7 @@ class RedisService
 {
     private static ?bool $isConnected = null;
     private static ?float $lastCheckTime = null;
+    private const CHECK_INTERVAL = 5.0; // seconds
 
     protected function isRedisAvailable(): bool
     {

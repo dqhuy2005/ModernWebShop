@@ -68,17 +68,28 @@
                 </div>
 
                 <div class="col-12">
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                            onclick="setDateFilter('today')">Today</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                            onclick="setDateFilter('yesterday')">Yesterday</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                            onclick="setDateFilter('week')">This Week</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                            onclick="setDateFilter('month')">This Month</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                            onclick="setDateFilter('last30')">Last 30 Days</button>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('today')">Today</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('yesterday')">Yesterday</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('week')">This Week</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('month')">This Month</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="setDateFilter('last30')">Last 30 Days</button>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearAdvancedFilters()">
+                                <i class="fas fa-undo me-1"></i>Reset
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="fas fa-filter me-1"></i>Apply Filters
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -228,6 +239,13 @@
 
         function formatDate(date) {
             return date.toISOString().split('T')[0];
+        }
+
+        function clearAdvancedFilters() {
+            $('#date_from').val('');
+            $('#date_to').val('');
+            $('#price_min').val('');
+            $('#price_max').val('');
         }
     </script>
 @endpush

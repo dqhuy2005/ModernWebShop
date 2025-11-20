@@ -65,7 +65,7 @@ class Category extends Model
     public function getImageUrlAttribute(): string
     {
         if ($this->image) {
-            return asset('assets/imgs/banner/' . $this->image);
+            return asset('storage/' . $this->image);
         }
         return asset('public/assets/imgs/categories/default.png');
     }

@@ -75,7 +75,11 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-8">
             @if ($category->products->count() > 0)
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
@@ -83,13 +87,12 @@
                             <i class="fas fa-box me-2"></i>Products ({{ $category->products->count() }})
                         </h5>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 360px; overflow-y: auto;">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light sticky-top">
                                     <tr>
                                         <th width="10%">ID</th>
-                                        <th width="15%">Image</th>
                                         <th width="35%">Name</th>
                                         <th width="20%">Price</th>
                                         <th width="20%" class="text-center">Status</th>
@@ -99,18 +102,6 @@
                                     @foreach ($category->products as $product)
                                         <tr>
                                             <td><strong>{{ $product->id }}</strong></td>
-                                            <td>
-                                                @if ($product->main_image)
-                                                    <img src="{{ $product->image_url }}"
-                                                        alt="{{ $product->name }}" class="img-thumbnail"
-                                                        style="width: 60px; height: 60px; object-fit: cover;">
-                                                @else
-                                                    <div class="bg-light d-flex align-items-center justify-content-center"
-                                                        style="width: 60px; height: 60px;">
-                                                        <i class="fas fa-image text-muted"></i>
-                                                    </div>
-                                                @endif
-                                            </td>
                                             <td>
                                                 <a href="{{ route('admin.products.show', $product) }}"
                                                     class="text-decoration-none">
@@ -142,21 +133,19 @@
                 </div>
             @endif
         </div>
-
         <div class="col-md-4">
             @if ($category->children && $category->children->count() > 0)
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
                         <h5 class="mb-0">
-                            <i class="fas fa-sitemap me-2"></i>Categories child
+                            <i class="fas fa-sitemap me-2"></i>Categories child ({{ $category->children->count() }})
                         </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
                         <ul class="list-group list-group-flush">
                             @foreach ($category->children as $child)
-                                <li class="list-group-item px-0">
-                                    <a href="{{ route('admin.categories.show', $child) }}"
-                                        class="text-decoration-none">
+                                <li class="list-group-item">
+                                    <a href="{{ route('admin.categories.show', $child) }}" class="text-decoration-none">
                                         <i class="fas fa-angle-right me-2"></i>{{ $child->name }}
                                     </a>
                                     <span class="badge bg-info float-end">
@@ -198,6 +187,38 @@
 
         .table-borderless td {
             padding: 0.75rem 0;
+        }
+
+        /* Scrollbar styling */
+        .table-responsive::-webkit-scrollbar,
+        .card-body::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track,
+        .card-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb,
+        .card-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover,
+        .card-body::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Sticky header for products table */
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f8f9fa !important;
         }
     </style>
 @endpush
