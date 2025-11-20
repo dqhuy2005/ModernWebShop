@@ -46,11 +46,21 @@ class HomePageService
 
     public function getFeaturedCategories(int $limit = 3)
     {
-        return $this->redis->remember(
-            CacheKeyManager::HOME_FEATURED_CATEGORIES,
-            CacheKeyManager::TTL_LONG,
-            fn() => $this->categoryRepository->getFeaturedCategories($limit)
-        );
+        try {
+            return $this->redis->remember(
+                CacheKeyManager::HOME_FEATURED_CATEGORIES,
+                CacheKeyManager::TTL_LONG,
+                fn() => $this->categoryRepository->getFeaturedCategories($limit)
+            );
+        } catch (\Exception $e) {
+            Log::error('HomePageService: Error fetching featured categories', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return null;
+        }
+
     }
 
     public function getNewProducts(int $limit = 8)

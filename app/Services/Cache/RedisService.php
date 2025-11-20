@@ -4,6 +4,7 @@ namespace App\Services\Cache;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Log;
+use Predis\Connection\ConnectionException;
 
 /**
  * Redis Service
@@ -15,6 +16,62 @@ use Illuminate\Support\Facades\Log;
 class RedisService
 {
     /**
+     * Redis connection state
+     * Prevents repeated connection attempts when Redis is down
+     */
+    private static ?bool $isConnected = null;
+    private static ?float $lastCheckTime = null;
+    private const CHECK_INTERVAL = 5.0; // seconds
+
+    /**
+     * Check if Redis is available
+     * Uses cached state to avoid repeated connection attempts
+     *
+     * @return bool
+     */
+    protected function isRedisAvailable(): bool
+    {
+        $now = microtime(true);
+
+        // Use cached state if checked recently
+        if (self::$lastCheckTime !== null && ($now - self::$lastCheckTime) < self::CHECK_INTERVAL) {
+            return self::$isConnected ?? false;
+        }
+
+        try {
+            // Quick ping with timeout
+            $result = Redis::ping();
+            self::$isConnected = true;
+            self::$lastCheckTime = $now;
+            return true;
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            self::$lastCheckTime = $now;
+            Log::warning('RedisService: Connection unavailable', [
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        } catch (\Exception $e) {
+            self::$isConnected = false;
+            self::$lastCheckTime = $now;
+            Log::warning('RedisService: Redis check failed', [
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Reset connection state (useful after Redis restart)
+     *
+     * @return void
+     */
+    public function resetConnectionState(): void
+    {
+        self::$isConnected = null;
+        self::$lastCheckTime = null;
+    }
+    /**
      * Get value from Redis cache
      *
      * @param string $key Cache key
@@ -23,6 +80,10 @@ class RedisService
      */
     public function get(string $key, $default = null)
     {
+        if (!$this->isRedisAvailable()) {
+            return $default;
+        }
+
         try {
             $value = Redis::get($key);
 
@@ -32,6 +93,13 @@ class RedisService
 
             // Deserialize if it's a serialized object
             return $this->unserialize($value);
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            Log::warning('RedisService: Connection lost during get', [
+                'key' => $key,
+                'error' => $e->getMessage()
+            ]);
+            return $default;
         } catch (\Exception $e) {
             Log::error('RedisService: Error getting key', [
                 'key' => $key,
@@ -52,6 +120,10 @@ class RedisService
      */
     public function set(string $key, $value, ?int $ttl = null): bool
     {
+        if (!$this->isRedisAvailable()) {
+            return false;
+        }
+
         try {
             $serialized = $this->serialize($value);
 
@@ -62,6 +134,13 @@ class RedisService
 
             $result = Redis::setex($key, $ttl, $serialized);
             return $this->toBool($result);
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            Log::warning('RedisService: Connection lost during set', [
+                'key' => $key,
+                'error' => $e->getMessage()
+            ]);
+            return false;
         } catch (\Exception $e) {
             Log::error('RedisService: Error setting key', [
                 'key' => $key,
@@ -83,6 +162,12 @@ class RedisService
      */
     public function remember(string $key, int $ttl, callable $callback)
     {
+        // If Redis is unavailable, execute callback directly
+        if (!$this->isRedisAvailable()) {
+            Log::debug('RedisService: Redis unavailable, executing callback directly', ['key' => $key]);
+            return $callback();
+        }
+
         try {
             // Try to get from cache
             $cached = $this->get($key);
@@ -100,6 +185,13 @@ class RedisService
             $this->set($key, $value, $ttl);
 
             return $value;
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            Log::warning('RedisService: Connection lost, falling back to callback', [
+                'key' => $key,
+                'error' => $e->getMessage()
+            ]);
+            return $callback();
         } catch (\Exception $e) {
             Log::error('RedisService: Remember pattern failed', [
                 'key' => $key,
@@ -119,12 +211,23 @@ class RedisService
      */
     public function forget($keys): int
     {
+        if (!$this->isRedisAvailable()) {
+            return 0;
+        }
+
         try {
             if (is_array($keys)) {
                 return Redis::del(...$keys);
             }
 
             return Redis::del($keys);
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            Log::warning('RedisService: Connection lost during forget', [
+                'keys' => $keys,
+                'error' => $e->getMessage()
+            ]);
+            return 0;
         } catch (\Exception $e) {
             Log::error('RedisService: Error deleting keys', [
                 'keys' => $keys,
@@ -143,8 +246,19 @@ class RedisService
      */
     public function has(string $key): bool
     {
+        if (!$this->isRedisAvailable()) {
+            return false;
+        }
+
         try {
             return (bool) Redis::exists($key);
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            Log::warning('RedisService: Connection lost during has', [
+                'key' => $key,
+                'error' => $e->getMessage()
+            ]);
+            return false;
         } catch (\Exception $e) {
             Log::error('RedisService: Error checking key existence', [
                 'key' => $key,
@@ -433,11 +547,26 @@ class RedisService
 
             // Handle different response types (predis returns Status object, phpredis returns string)
             if (is_object($response) && method_exists($response, 'getPayload')) {
-                return $response->getPayload() === 'PONG';
+                $isConnected = $response->getPayload() === 'PONG';
+                self::$isConnected = $isConnected;
+                self::$lastCheckTime = microtime(true);
+                return $isConnected;
             }
 
-            return $response === 'PONG' || $response === true;
+            $isConnected = $response === 'PONG' || $response === true;
+            self::$isConnected = $isConnected;
+            self::$lastCheckTime = microtime(true);
+            return $isConnected;
+        } catch (ConnectionException $e) {
+            self::$isConnected = false;
+            self::$lastCheckTime = microtime(true);
+            Log::warning('RedisService: Redis connection failed', [
+                'error' => $e->getMessage()
+            ]);
+            return false;
         } catch (\Exception $e) {
+            self::$isConnected = false;
+            self::$lastCheckTime = microtime(true);
             Log::error('RedisService: Redis ping failed', [
                 'error' => $e->getMessage()
             ]);

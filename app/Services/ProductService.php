@@ -16,17 +16,12 @@ class ProductService
         $this->imageService = $imageService;
     }
 
-    /**
-     * Create a new product with images
-     */
     public function createProduct(array $data, ?UploadedFile $mainImage = null, ?array $images = []): Product
     {
         DB::beginTransaction();
         try {
-            // Create product
             $product = Product::create($data);
 
-            // Handle multiple images if provided
             if (!empty($images)) {
                 $this->addProductImages($product, $images);
             }
@@ -39,17 +34,12 @@ class ProductService
         }
     }
 
-    /**
-     * Update an existing product
-     */
     public function updateProduct(Product $product, array $data, ?UploadedFile $mainImage = null, ?array $images = []): Product
     {
         DB::beginTransaction();
         try {
-            // Update product
             $product->update($data);
 
-            // Handle multiple images if provided
             if (!empty($images)) {
                 $this->addProductImages($product, $images);
             }
@@ -62,9 +52,6 @@ class ProductService
         }
     }
 
-    /**
-     * Add multiple images to a product
-     */
     protected function addProductImages(Product $product, array $images): void
     {
         $currentMax = $product->images()->max('sort_order') ?? -1;
@@ -85,9 +72,6 @@ class ProductService
         }
     }
 
-    /**
-     * Delete a product image and reorder remaining images
-     */
     public function deleteProductImage(Product $product, int $imageId): bool
     {
         DB::beginTransaction();
@@ -96,15 +80,12 @@ class ProductService
                 ->where('id', $imageId)
                 ->firstOrFail();
 
-            // Delete physical file
             $this->imageService->deleteImage($image->path);
 
             $deletedSortOrder = $image->sort_order;
 
-            // Delete the image record
             $image->delete();
 
-            // Update sort_order for remaining images
             ProductImage::where('product_id', $product->id)
                 ->where('sort_order', '>', $deletedSortOrder)
                 ->decrement('sort_order');
@@ -117,9 +98,6 @@ class ProductService
         }
     }
 
-    /**
-     * Parse and format product specifications
-     */
     public function formatSpecifications($specifications): ?array
     {
         if (!is_array($specifications)) {
@@ -136,20 +114,15 @@ class ProductService
         return !empty($specs) ? $specs : null;
     }
 
-    /**
-     * Delete a product and its associated images
-     */
     public function deleteProduct(Product $product): bool
     {
         DB::beginTransaction();
         try {
-            // Delete all product images
             foreach ($product->images as $image) {
                 $this->imageService->deleteImage($image->path);
                 $image->delete();
             }
 
-            // Soft delete product
             $product->delete();
 
             DB::commit();
