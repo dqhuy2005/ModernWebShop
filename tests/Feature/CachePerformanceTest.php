@@ -14,8 +14,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CachePerformanceTest extends TestCase
 {
-    // use RefreshDatabase; // Uncomment if you want fresh DB for each test
-
     protected HomePageService $homePageService;
     protected RedisService $redis;
 

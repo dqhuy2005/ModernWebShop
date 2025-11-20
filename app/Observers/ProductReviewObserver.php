@@ -21,49 +21,31 @@ class ProductReviewObserver
         $this->redis = $redis;
     }
 
-    /**
-     * Handle the ProductReview "created" event.
-     */
     public function created(ProductReview $review): void
     {
         $this->clearReviewCaches($review, 'created');
     }
 
-    /**
-     * Handle the ProductReview "updated" event.
-     */
     public function updated(ProductReview $review): void
     {
         $this->clearReviewCaches($review, 'updated');
     }
 
-    /**
-     * Handle the ProductReview "deleted" event.
-     */
     public function deleted(ProductReview $review): void
     {
         $this->clearReviewCaches($review, 'deleted');
     }
 
-    /**
-     * Handle the ProductReview "restored" event.
-     */
     public function restored(ProductReview $review): void
     {
         $this->clearReviewCaches($review, 'restored');
     }
 
-    /**
-     * Handle the ProductReview "force deleted" event.
-     */
     public function forceDeleted(ProductReview $review): void
     {
         $this->clearReviewCaches($review, 'force_deleted');
     }
 
-    /**
-     * Clear all review-related caches for a product
-     */
     protected function clearReviewCaches(ProductReview $review, string $event): void
     {
         try {
