@@ -41,9 +41,22 @@ class WarmUpHomePageCache extends Command
         $this->info('Cache Status:');
         $stats = $homePageService->getCacheStats();
 
-        foreach ($stats as $key => $status) {
-            $icon = $status === 'HIT' ? '✓' : '✗';
-            $this->line("  {$icon} {$key}: {$status}");
+        if (isset($stats['keys'])) {
+            foreach ($stats['keys'] as $key => $info) {
+                $status = $info['status'];
+                $ttl = $info['ttl'];
+                $icon = $status === 'HIT' ? '✓' : '✗';
+                $ttlText = $ttl > 0 ? " (TTL: {$ttl}s)" : '';
+                $this->line("  {$icon} {$key}: {$status}{$ttlText}");
+            }
+        }
+
+        if (isset($stats['summary'])) {
+            $this->newLine();
+            $this->info('Summary:');
+            $this->line("  Total keys: {$stats['summary']['total_keys']}");
+            $this->line("  Cached keys: {$stats['summary']['cached_keys']}");
+            $this->line("  Cache coverage: {$stats['summary']['cache_coverage']}%");
         }
 
         return Command::SUCCESS;
