@@ -17,6 +17,6 @@ RUN if [ ! -f .env.example ]; then echo "Error: .env.example not found!"; exit 1
     mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
-EXPOSE 8000
+EXPOSE $PORT
 
-CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=$PORT
