@@ -68,6 +68,6 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /htdocs/
+        server-dir: /mwshop/htdocs/
         local-dir: ./public/
         dry-run: false
