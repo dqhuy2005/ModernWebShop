@@ -19,6 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
 
+        // CORS
+        $middleware->api(prepend: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+
         $middleware->web(append: [
             \App\Http\Middleware\CheckUserStatus::class,
         ]);
