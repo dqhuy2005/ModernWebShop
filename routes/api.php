@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\CategoryController;
 
 Route::prefix('auth')->group(function () {
@@ -19,6 +20,8 @@ Route::prefix('categories')->group(function () {
     Route::get('/child', [CategoryController::class, 'getChildCategories']);
     Route::get('/{id}', [CategoryController::class, 'show']);
 });
+
+Route::get('/', [HomeController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::prefix('auth')->group(function () {
