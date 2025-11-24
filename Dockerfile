@@ -11,13 +11,12 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN if [ ! -f .env.example ]; then echo "Error: .env.example not found!"; exit 1; fi && \
-    cp -n .env.example .env && \
+    cp .env.example .env && \
     composer install --no-dev --optimize-autoloader && \
     php artisan key:generate && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+    mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=8080
