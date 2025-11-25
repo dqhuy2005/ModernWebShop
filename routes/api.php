@@ -21,7 +21,7 @@ Route::prefix('categories')->group(function () {
     Route::get('/{id}', [CategoryController::class, 'show']);
 });
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/home', [HomeController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::prefix('auth')->group(function () {
