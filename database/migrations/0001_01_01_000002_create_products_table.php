@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id')->index();
-            $table->string('name')->index();
+            $table->string('name');
             $table->string('slug')->nullable()->index();
             $table->longText('description')->nullable();
             $table->json('specifications')->nullable();
@@ -32,6 +32,7 @@ return new class extends Migration {
 
             // Indexes
             $table->index('price');
+            $table->fullText('name', 'idx_products_name_fulltext');
         });
     }
 

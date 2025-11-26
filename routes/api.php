@@ -22,6 +22,7 @@ Route::prefix('categories')->group(function () {
 });
 
 Route::get('/home', [HomeController::class, 'index']);
+Route::get('/search', [HomeController::class, 'search']);
 
 Route::middleware('auth:api')->group(function () {
     Route::prefix('auth')->group(function () {

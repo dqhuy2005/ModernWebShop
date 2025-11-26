@@ -82,7 +82,7 @@ class FakeDataSeeder extends Seeder
 
         foreach ($categories as $category) {
             // Random number of products per category (50-100)
-            $productsCount = rand(50, 100);
+            $productsCount = rand(25, 50);
             $batches = ceil($productsCount / $batchSize);
 
             echo "  Category '{$category->name}' (ID: {$category->id}): Creating {$productsCount} products...\n";
