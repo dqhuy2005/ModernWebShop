@@ -38,7 +38,7 @@ class HomeService
             'next_page' => $products->hasMorePages() ? $products->currentPage() + 1 : null,
             'products' => $products->getCollection()->map(function ($product) {
                 return $this->formatProductData($product);
-            })->toArray()
+            })->values()->toArray()
         ];
 
         if ($searchQuery !== null) {
