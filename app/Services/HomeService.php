@@ -13,13 +13,6 @@ class HomeService
         $this->productRepository = $productRepository;
     }
 
-    /**
-     * Get products for home page with pagination
-     *
-     * @param int $perPage
-     * @param int $page
-     * @return array
-     */
     public function getHomeProducts(int $perPage = 10, int $page = 1): array
     {
         $products = $this->productRepository->getHomeProducts($perPage);
@@ -27,13 +20,6 @@ class HomeService
         return $this->formatPaginatedResponse($products);
     }
 
-    /**
-     * Search products by keyword
-     *
-     * @param string $keyword
-     * @param int $perPage
-     * @return array
-     */
     public function searchProducts(string $keyword, int $perPage = 10): array
     {
         $products = $this->productRepository->searchProducts($keyword, $perPage);
@@ -41,13 +27,6 @@ class HomeService
         return $this->formatPaginatedResponse($products, $keyword);
     }
 
-    /**
-     * Format paginated product response
-     *
-     * @param $products
-     * @param string|null $searchQuery
-     * @return array
-     */
     private function formatPaginatedResponse($products, ?string $searchQuery = null): array
     {
         $data = [
@@ -69,12 +48,6 @@ class HomeService
         return $data;
     }
 
-    /**
-     * Format single product data
-     *
-     * @param $product
-     * @return array
-     */
     private function formatProductData($product): array
     {
         return [
