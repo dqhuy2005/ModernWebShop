@@ -157,4 +157,43 @@ class ProductRepository extends BaseRepository
             ->get()
             ->map->toSearchSuggestion();
     }
+
+    public function getHomeProducts(int $perPage = 10)
+    {
+        return $this->model
+            ->select('id', 'name', 'slug', 'description', 'price', 'currency', 'category_id', 'status', 'is_hot', 'views', 'created_at')
+            ->with([
+                'category:id,name,slug',
+                'images' => function ($query) {
+                    $query->select('id', 'product_id', 'path', 'sort_order')
+                        ->orderBy('sort_order')
+                        ->limit(1);
+                }
+            ])
+            ->where('status', true)
+            ->whereNull('parent_id')
+            ->orderByDesc('is_hot')
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+    }
+
+    public function searchProducts(string $keyword, int $perPage = 10)
+    {
+        return $this->model
+            ->select('id', 'name', 'slug', 'description', 'price', 'currency', 'category_id', 'is_hot', 'views', 'created_at')
+            ->with([
+                'category:id,name,slug',
+                'images' => function ($query) {
+                    $query->select('id', 'product_id', 'path', 'sort_order')
+                        ->orderBy('sort_order')
+                        ->limit(1);
+                }
+            ])
+            ->where('status', true)
+            ->whereNull('parent_id')
+            ->where('name', 'LIKE', '%' . $keyword . '%')
+            ->orderByRaw("CASE WHEN name LIKE ? THEN 1 ELSE 2 END", [$keyword . '%'])
+            ->orderByDesc('views')
+            ->paginate($perPage);
+    }
 }
