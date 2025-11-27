@@ -13,6 +13,9 @@ class OauthAccount extends Model
         'provider_id',
         'provider_token',
         'provider_refresh_token',
+        'avatar',
+        'email',
+        'name',
     ];
 
     public function user()

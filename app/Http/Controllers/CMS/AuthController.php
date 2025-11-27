@@ -98,7 +98,14 @@ class AuthController extends Controller
                 $oauthAccount->update([
                     'provider_token' => $googleUser->token,
                     'provider_refresh_token' => $googleUser->refreshToken,
+                    'avatar' => $googleUser->getAvatar(),
+                    'email' => $googleUser->getEmail(),
+                    'name' => $googleUser->getName(),
                 ]);
+
+                if (!$user->image || filter_var($user->image, FILTER_VALIDATE_URL)) {
+                    $user->update(['image' => $googleUser->getAvatar()]);
+                }
             } else {
                 $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -109,7 +116,14 @@ class AuthController extends Controller
                         'provider_id' => $googleUser->getId(),
                         'provider_token' => $googleUser->token,
                         'provider_refresh_token' => $googleUser->refreshToken,
+                        'avatar' => $googleUser->getAvatar(),
+                        'email' => $googleUser->getEmail(),
+                        'name' => $googleUser->getName(),
                     ]);
+
+                    if (!$user->image) {
+                        $user->update(['image' => $googleUser->getAvatar()]);
+                    }
                 } else {
                     $user = User::create([
                         'fullname' => $googleUser->getName(),
@@ -126,6 +140,9 @@ class AuthController extends Controller
                         'provider_id' => $googleUser->getId(),
                         'provider_token' => $googleUser->token,
                         'provider_refresh_token' => $googleUser->refreshToken,
+                        'avatar' => $googleUser->getAvatar(),
+                        'email' => $googleUser->getEmail(),
+                        'name' => $googleUser->getName(),
                     ]);
                 }
             }
@@ -152,7 +169,6 @@ class AuthController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            // If it's an OAuth error in popup, return error view instead of redirect
             if (request()->wantsJson() || request()->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -160,7 +176,6 @@ class AuthController extends Controller
                 ], 500);
             }
 
-            // Return error view for popup
             return response()->view('user.auth.oauth-close', [
                 'success' => false,
                 'message' => 'Đăng nhập thất bại. Vui lòng thử lại.'
@@ -245,7 +260,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'phone' => $request->phone ?? null,
             'birthdate' => $request->birthdate ?? null,
-            'role_id' => 2, // Role user
+            'role_id' => 2,
             'password' => Hash::make($request->password),
             'status' => 1,
         ]);

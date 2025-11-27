@@ -62,7 +62,7 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật thông tin thành công!',
-                'image_url' => $user->isOAuthUser() ? asset('storage/' . $user->image) : null
+                'image_url' => $user->image_url
             ]);
 
         } catch (\Exception $e) {

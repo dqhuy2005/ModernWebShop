@@ -89,8 +89,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function getImageUrlAttribute(): string
     {
+        if ($this->image && (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://'))) {
+            return $this->image;
+        }
+
         if ($this->image) {
-            return asset('storage/' . $this->image);
+            return url('storage/' . $this->image);
         }
 
         if ($this->isOAuthUser()) {
@@ -106,6 +110,24 @@ class User extends Authenticatable implements JWTSubject
     public function getAvatarUrl(): string
     {
         return $this->getImageUrlAttribute();
+    }
+
+    public function hasUploadedAvatar(): bool
+    {
+        return !empty($this->image);
+    }
+
+    public function getAvatarSource(): string
+    {
+        if ($this->image) {
+            return 'uploaded';
+        }
+
+        if ($this->isOAuthUser()) {
+            return 'oauth';
+        }
+
+        return 'default';
     }
 
     public function getRoleName(): string

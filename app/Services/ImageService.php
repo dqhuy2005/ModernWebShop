@@ -94,7 +94,7 @@ class ImageService
     public function uploadAvatar(UploadedFile $file, ?string $oldAvatar = null): string
     {
         if ($oldAvatar) {
-            $this->deleteImage($oldAvatar);
+            $this->deleteAvatarByUrl($oldAvatar);
         }
 
         $filename = $this->generateFilename($file);
@@ -119,7 +119,18 @@ class ImageService
             );
         }
 
-        return $path;
+        return url('storage/' . $path);
+    }
+
+    protected function deleteAvatarByUrl(string $urlOrPath): bool
+    {
+        if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
+            $urlOrPath = str_replace(url('storage/'), '', $urlOrPath);
+        } else {
+            $urlOrPath = str_replace('storage/', '', $urlOrPath);
+        }
+
+        return $this->deleteImage($urlOrPath);
     }
 
     public function deleteImage(string $path): bool

@@ -42,7 +42,7 @@
                                 </div>
                             @elseif (auth()->user()->isOAuthUser())
                                 {{-- Fallback to OAuth avatar if no uploaded image --}}
-                                <img src="{{ auth()->user()->oauthAccounts->first()->avatar ?? auth()->user()->image }}" 
+                                <img src="{{ auth()->user()->oauthAccounts->first()->avatar ?? auth()->user()->image }}"
                                     alt="{{ auth()->user()->fullname }}"
                                     id="headerAvatar"
                                     style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
