@@ -168,12 +168,10 @@
 
 @push('styles')
     <style>
-        /* Table Container */
         .table-responsive {
             position: relative;
         }
 
-        /* Table Styles */
         #usersTable thead th {
             font-weight: 600;
             text-transform: uppercase;
@@ -190,12 +188,10 @@
             transition: all 0.2s ease;
         }
 
-        /* Deleted Row Highlight */
         .table-warning {
             background-color: rgba(255, 193, 7, 0.1) !important;
         }
 
-        /* User Avatar */
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -205,7 +201,6 @@
             transition: transform 0.2s ease;
         }
 
-        /* Button Group */
         .btn-group .btn {
             border-radius: 0;
         }
@@ -220,13 +215,11 @@
             border-bottom-right-radius: 0.375rem;
         }
 
-        /* Badge Styles */
         .badge {
             font-weight: 500;
             padding: 0.35em 0.65em;
         }
 
-        /* Pagination */
         .pagination {
             margin-bottom: 0;
         }
@@ -262,7 +255,6 @@
             opacity: 0.5;
         }
 
-        /* Per Page Selector */
         .form-select-sm {
             font-size: 0.875rem;
             padding: 0.25rem 0.5rem;

@@ -149,13 +149,11 @@
                         <div class="mb-3">
                             <label for="" class="form-label fw-bold">Product Images</label>
                             <div class="custom-file-upload">
-                                <div id="images-preview" class="d-flex gap-2 flex-wrap"></div>
+                                <div id="images-preview" class="d-flex gap-2 flex-wrap mb-3"></div>
 
-                                <input type="file" class="d-none @error('images.*') is-invalid @enderror" id="images"
-                                    name="images[]" accept="image/*" multiple onchange="previewImages(event)">
-                                <button type="button" class="btn-select-image w-100 mt-3"
-                                    onclick="$('#images').trigger('click')">
-                                    Select images
+                                <input type="hidden" id="images" name="images" value="{{ old('images') }}" class="@error('images.*') is-invalid @enderror">
+                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn-multiple" data-input="images" data-preview="images-preview-holder">
+                                    <i class="fas fa-images me-2"></i>Select Images
                                 </button>
                             </div>
 
@@ -386,21 +384,6 @@
             }
         }
 
-        function previewImages(event) {
-            const files = event.target.files;
-            $('#images-preview').empty();
-            if (!files || !files.length) return;
-
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const $img = $(`<div class="img-thumb"><img src="${e.target.result}" class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;"/></div>`);
-                    $('#images-preview').append($img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
         function removeImage() {
             $('#image').val('');
             $('#image-preview').addClass('d-none');
@@ -444,6 +427,51 @@
                 toastr.error('Please fill in all required fields!');
             }
         });
+
+        $(document).ready(function() {
+            let selectedImages = [];
+
+            $('.lfm-btn-multiple').on('click', function(e) {
+                e.preventDefault();
+
+                var target_input = $('#' + $(this).data('input'));
+                window.open('/admin/filemanager?type=image', 'FileManager', 'width=900,height=600');
+
+                window.SetUrl = function(items) {
+                    $('#images-preview').empty();
+                    selectedImages = [];
+
+                    items.forEach(function(item) {
+                        var relativePath = item.url.replace(/^.*\/storage\//, '');
+                        selectedImages.push(relativePath);
+
+                        const $imgContainer = $(`
+                            <div class="position-relative" style="display: inline-block;">
+                                <img src="${item.url}" class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;"/>
+                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                        style="margin: 2px;" onclick="removeProductImage(this, '${relativePath}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `);
+
+                        $('#images-preview').append($imgContainer);
+                    });
+
+                    target_input.val(JSON.stringify(selectedImages));
+                };
+
+                return false;
+            });
+        });
+
+        function removeProductImage(btn, imagePath) {
+            $(btn).closest('.position-relative').remove();
+
+            let images = JSON.parse($('#images').val() || '[]');
+            images = images.filter(img => img !== imagePath);
+            $('#images').val(JSON.stringify(images));
+        }
     </script>
 @endpush
 

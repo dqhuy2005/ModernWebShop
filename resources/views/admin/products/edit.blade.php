@@ -47,7 +47,8 @@
                                 Slug <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug"
-                                name="slug" value="{{ old('slug', $product->slug) }}" placeholder="product-slug-here" required>
+                                name="slug" value="{{ old('slug', $product->slug) }}" placeholder="product-slug-here"
+                                required>
                             @error('slug')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -199,10 +200,11 @@
                                 @foreach ($product->images as $img)
                                     <div class="img-thumb text-center position-relative" id="image-{{ $img->id }}">
                                         <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $product->name }}"
-                                            class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;" />
-                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-image-btn"
-                                            data-image-id="{{ $img->id }}"
-                                            data-product-id="{{ $product->id }}"
+                                            class="img-fluid rounded"
+                                            style="max-height:120px; border:1px solid #ddd; padding:4px;" />
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-image-btn"
+                                            data-image-id="{{ $img->id }}" data-product-id="{{ $product->id }}"
                                             style="padding: 2px 6px; font-size: 12px;">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -212,13 +214,13 @@
                             </div>
 
                             <div class="custom-file-upload">
-                                <div id="images-preview" class="d-flex gap-2 flex-wrap"></div>
+                                <div id="images-preview" class="d-flex gap-2 flex-wrap mb-3"></div>
 
-                                <input type="file" class="d-none @error('images.*') is-invalid @enderror" id="images"
-                                    name="images[]" accept="image/*" multiple onchange="previewImages(event)">
-                                <button type="button" class="btn-select-image w-100 mt-3"
-                                    onclick="$('#images').trigger('click')">
-                                    Select images
+                                <input type="hidden" id="images" name="images" value=""
+                                    class="@error('images.*') is-invalid @enderror">
+                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn-multiple"
+                                    data-input="images" data-preview="images-preview-holder">
+                                    <i class="fas fa-images me-2"></i>Add More Images
                                 </button>
                             </div>
 
@@ -267,12 +269,35 @@
                     shouldNotGroupWhenFull: true
                 },
                 heading: {
-                    options: [
-                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                        { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+                    options: [{
+                            model: 'paragraph',
+                            title: 'Paragraph',
+                            class: 'ck-heading_paragraph'
+                        },
+                        {
+                            model: 'heading1',
+                            view: 'h1',
+                            title: 'Heading 1',
+                            class: 'ck-heading_heading1'
+                        },
+                        {
+                            model: 'heading2',
+                            view: 'h2',
+                            title: 'Heading 2',
+                            class: 'ck-heading_heading2'
+                        },
+                        {
+                            model: 'heading3',
+                            view: 'h3',
+                            title: 'Heading 3',
+                            class: 'ck-heading_heading3'
+                        },
+                        {
+                            model: 'heading4',
+                            view: 'h4',
+                            title: 'Heading 4',
+                            class: 'ck-heading_heading4'
+                        }
                     ]
                 },
                 fontSize: {
@@ -432,21 +457,6 @@
             }
         }
 
-        function previewImages(event) {
-            const files = event.target.files;
-            $('#images-preview').empty();
-            if (!files || !files.length) return;
-
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const $img = $(`<div class="img-thumb"><img src="${e.target.result}" class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;"/></div>`);
-                    $('#images-preview').append($img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
         function removeImage() {
             $('#image').val('');
             $('#image-preview').addClass('d-none');
@@ -523,11 +533,61 @@
                     }
                 },
                 error: function(xhr) {
-                    toastr.error(xhr.responseJSON?.message || 'An error occurred while deleting the image');
+                    toastr.error(xhr.responseJSON?.message ||
+                        'An error occurred while deleting the image');
                     $imageItem.css('opacity', '1');
                 }
             });
         });
+
+        $(document).ready(function() {
+            let selectedImages = [];
+
+            // Attach click handler manually to override SetUrl before opening popup
+            $('.lfm-btn-multiple').on('click', function(e) {
+                e.preventDefault();
+                
+                var target_input = $('#' + $(this).data('input'));
+                window.open('/admin/filemanager?type=image', 'FileManager', 'width=900,height=600');
+                
+                // Define custom SetUrl for multiple images
+                window.SetUrl = function(items) {
+                    $('#images-preview').empty();
+                    selectedImages = [];
+
+                    items.forEach(function(item) {
+                        // Extract relative path from full URL
+                        var relativePath = item.url.replace(/^.*\/storage\//, '');
+                        selectedImages.push(relativePath);
+
+                        const $imgContainer = $(`
+                            <div class="position-relative" style="display: inline-block;">
+                                <img src="${item.url}" class="img-fluid rounded" style="max-height:120px; border:1px solid #ddd; padding:4px;"/>
+                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                        style="margin: 2px;" onclick="removeProductImage(this, '${relativePath}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `);
+
+                        $('#images-preview').append($imgContainer);
+                    });
+
+                    // Store as JSON array
+                    target_input.val(JSON.stringify(selectedImages));
+                };
+                
+                return false;
+            });
+        });
+
+        function removeProductImage(btn, imagePath) {
+            $(btn).closest('.position-relative').remove();
+
+            let images = JSON.parse($('#images').val() || '[]');
+            images = images.filter(img => img !== imagePath);
+            $('#images').val(JSON.stringify(images));
+        }
     </script>
 @endpush
 
@@ -589,13 +649,13 @@
             overflow-y: auto;
         }
 
-        .ck.ck-editor__main > .ck-editor__editable {
+        .ck.ck-editor__main>.ck-editor__editable {
             background-color: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 0.375rem;
         }
 
-        .ck.ck-editor__main > .ck-editor__editable:focus {
+        .ck.ck-editor__main>.ck-editor__editable:focus {
             border-color: #86b7fe;
             outline: 0;
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);

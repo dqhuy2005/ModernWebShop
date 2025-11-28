@@ -57,12 +57,20 @@ class ProductService
         $currentMax = $product->images()->max('sort_order') ?? -1;
         $sort = $currentMax + 1;
 
-        foreach ($images as $file) {
-            if (!($file instanceof UploadedFile) || !$this->imageService->validateImage($file)) {
+        foreach ($images as $imagePath) {
+            if ($imagePath instanceof UploadedFile) {
+                if (!$this->imageService->validateImage($imagePath)) {
+                    continue;
+                }
+                $path = $this->imageService->uploadProductImage($imagePath);
+            }
+            elseif (is_string($imagePath) && !empty($imagePath)) {
+                $path = $imagePath;
+            }
+            else {
                 continue;
             }
 
-            $path = $this->imageService->uploadProductImage($file);
             ProductImage::create([
                 'product_id' => $product->id,
                 'path' => $path,

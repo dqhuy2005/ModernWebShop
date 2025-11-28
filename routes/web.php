@@ -92,7 +92,7 @@ Route::get('password/reset', function () {
 })->name('password.request');
 
 Route::prefix('admin')->middleware(['auth', 'admin.access'])->group(function () {
-    // Laravel File Manager Routes (separate group without name prefix)
+    // Laravel File Manager
     Route::group(['prefix' => 'filemanager'], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
     });

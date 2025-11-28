@@ -116,7 +116,7 @@ class ProductController extends BaseController
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
             'currency' => 'nullable|string|max:10',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images' => 'nullable|string',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
@@ -143,11 +143,15 @@ class ProductController extends BaseController
             $data['currency'] = $request->input('currency', 'VND');
             $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
 
-            // Create product with images using service
+            $imagePaths = [];
+            if ($request->filled('images')) {
+                $imagePaths = json_decode($request->input('images'), true) ?? [];
+            }
+
             $product = $this->productService->createProduct(
                 $data,
                 null,
-                $request->file('images', [])
+                $imagePaths
             );
 
             if ($request->input('action') === 'save_and_continue') {
@@ -202,7 +206,7 @@ class ProductController extends BaseController
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
             'currency' => 'nullable|string|max:10',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images' => 'nullable|string',
             'status' => 'nullable|boolean',
             'is_hot' => 'nullable|boolean',
             'language' => 'nullable|string|max:10',
@@ -230,12 +234,18 @@ class ProductController extends BaseController
             $data['currency'] = $request->input('currency', 'VND');
             $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
 
+            // Parse LFM image paths from JSON string
+            $imagePaths = [];
+            if ($request->filled('images')) {
+                $imagePaths = json_decode($request->input('images'), true) ?? [];
+            }
+
             // Update product with images using service
             $product = $this->productService->updateProduct(
                 $product,
                 $data,
                 null,
-                $request->file('images', [])
+                $imagePaths
             );
 
             return redirect()
