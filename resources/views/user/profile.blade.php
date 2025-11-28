@@ -12,38 +12,30 @@
                             <div class="profile-avatar mb-3 position-relative">
 
                                 @if ($user->image)
-                                    {{-- Prioritize uploaded image from database --}}
-                                    <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle" id="avatarPreview"
-                                        style="width: 120px; height: 120px; object-fit: cover;"
+                                    <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle avatar-clickable" id="avatarPreview"
+                                        style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;"
                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center avatar-clickable"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px; cursor: pointer;">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 @elseif ($user->isOAuthUser())
-                                    {{-- Fallback to OAuth avatar if no uploaded image --}}
-                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image }}" alt="Avatar" class="rounded-circle" id="avatarPreview"
-                                        style="width: 120px; height: 120px; object-fit: cover;"
+                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image }}" alt="Avatar" class="rounded-circle avatar-clickable" id="avatarPreview"
+                                        style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;"
                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center avatar-clickable"
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px; cursor: pointer;">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 @else
-                                    {{-- Default avatar icon --}}
-                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
+                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center avatar-clickable"
                                         id="avatarPreview"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
+                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px; cursor: pointer;">
                                         <i class="fas fa-user"></i>
                                     </div>
-                                    <img src="" alt="Avatar" class="rounded-circle d-none" id="avatarImage"
-                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                    <img src="" alt="Avatar" class="rounded-circle d-none avatar-clickable" id="avatarImage"
+                                        style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;">
                                 @endif
-                                <label for="imageInput"
-                                    class="position-absolute bottom-0 end-0 bg-danger text-white rounded-circle"
-                                    style="width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-camera"></i>
-                                </label>
                                 <input type="file" id="imageInput" accept="image/*" class="d-none">
                             </div>
                             <h5 class="fw-bold mb-1" style="color: #202732;">{{ $user->fullname }}</h5>
@@ -85,6 +77,7 @@
                                     <div class="col-md-6">
                                         <input type="text" class="form-control" id="fullname" name="fullname"
                                             value="{{ $user->fullname }}" required>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
 
@@ -101,23 +94,24 @@
 
                                 <div class="row mb-3">
                                     <div class="col-md-2">
-                                        <label for="phone" class="form-label fw-semibold">Số điện thoại</label>
+                                        <label for="phone" class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
                                     </div>
 
                                     <div class="col-md-6">
                                         <input type="tel" class="form-control" id="phone" name="phone"
-                                            value="{{ $user->phone ?? '' }}">
+                                            value="{{ $user->phone ?? '' }}" required>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-md-2">
-                                        <label class="form-label fw-semibold">Ngày sinh</label>
+                                        <label class="form-label fw-semibold">Ngày sinh <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="row g-2">
                                             <div class="col-4">
-                                                <select class="form-select" id="birthday_day" name="birthday_day">
+                                                <select class="form-select" id="birthday_day" name="birthday_day" required>
                                                     <option value="">Ngày</option>
                                                     @for ($i = 1; $i <= 31; $i++)
                                                         <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
@@ -127,7 +121,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-4">
-                                                <select class="form-select" id="birthday_month" name="birthday_month">
+                                                <select class="form-select" id="birthday_month" name="birthday_month" required>
                                                     <option value="">Tháng</option>
                                                     @for ($i = 1; $i <= 12; $i++)
                                                         <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
@@ -137,7 +131,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-4">
-                                                <select class="form-select" id="birthday_year" name="birthday_year">
+                                                <select class="form-select" id="birthday_year" name="birthday_year" required>
                                                     <option value="">Năm</option>
                                                     @for ($i = date('Y'); $i >= 1940; $i--)
                                                         <option value="{{ $i }}">{{ $i }}</option>
@@ -145,17 +139,19 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="invalid-feedback d-block"></div>
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-2">
-                                        <label for="address" class="form-label fw-semibold">Địa chỉ</label>
+                                        <label for="address" class="form-label fw-semibold">Địa chỉ <span class="text-danger">*</span></label>
                                     </div>
 
                                     <div class="col-6">
                                         <textarea class="form-control" id="address" name="address" rows="3"
-                                            placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố">{{ $user->address ?? '' }}</textarea>
+                                            placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố" required>{{ $user->address ?? '' }}</textarea>
+                                        <div class="invalid-feedback"></div>
                                     </div>
 
                                     <div class="col-12 my-3">
@@ -253,6 +249,10 @@
             border-color: #adb5bd;
         }
 
+        .avatar-clickable {
+            transition: all 0.3s ease;
+        }
+
         .form-select {
             background-color: #fff;
             border: 1px solid #dee2e6;
@@ -268,7 +268,6 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Initialize birthday selects with existing value
             const existingBirthday = '{{ $user->birthday ?? '' }}';
             if (existingBirthday) {
                 const parts = existingBirthday.split('-');
@@ -283,22 +282,27 @@
                 }
             }
 
+            $('.avatar-clickable').on('click', function() {
+                $('#imageInput').click();
+            });
+
             $('#imageInput').on('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     if (file.size > 2048 * 1024) {
                         toastr.error('Kích thước ảnh không được vượt quá 2MB');
+                        $(this).val('');
                         return;
                     }
 
                     if (!file.type.match('image.*')) {
                         toastr.error('Vui lòng chọn file ảnh');
+                        $(this).val('');
                         return;
                     }
 
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        // Show image and hide placeholder
                         const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
                         const $placeholder = $('.avatar-placeholder');
 
@@ -311,8 +315,6 @@
                         }
                     };
                     reader.readAsDataURL(file);
-
-                    submitProfileForm();
                 }
             });
 
@@ -322,6 +324,9 @@
             });
 
             function submitProfileForm() {
+                $('.form-control, .form-select').removeClass('is-invalid');
+                $('.invalid-feedback').text('').hide();
+
                 const $saveBtn = $('#saveBtn');
                 const originalText = $saveBtn.html();
                 $saveBtn.prop('disabled', true);
@@ -360,7 +365,6 @@
                             toastr.success(response.message);
 
                             if (response.image_url) {
-                                // Update profile page avatar
                                 const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
                                 const $placeholder = $('.avatar-placeholder');
 
@@ -369,7 +373,6 @@
                                     $placeholder.addClass('d-none').hide();
                                 }
 
-                                // Update header avatar dynamically
                                 const $headerAvatar = $('#headerAvatar');
                                 if ($headerAvatar.length) {
                                     $headerAvatar.attr('src', response.image_url).removeClass('d-none').show();
@@ -379,13 +382,34 @@
                         }
                     },
                     error: function(xhr) {
-                        if (xhr.status === 422) {
+                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                             const errors = xhr.responseJSON.errors;
+
                             Object.keys(errors).forEach(key => {
-                                toastr.error(errors[key][0]);
+                                let $field;
+
+                                if (key === 'birthday') {
+                                    // For birthday, mark all three dropdowns as invalid
+                                    $('#birthday_day, #birthday_month, #birthday_year').addClass('is-invalid');
+                                    $field = $('#birthday_day').parent().parent();
+                                } else {
+                                    $field = $('#' + key);
+                                    $field.addClass('is-invalid');
+                                }
+
+                                // Display error message below the field
+                                const $feedback = $field.siblings('.invalid-feedback');
+                                if ($feedback.length) {
+                                    $feedback.text(errors[key][0]).show();
+                                }
+
+                                // Also show toastr for first error
+                                if (Object.keys(errors)[0] === key) {
+                                    toastr.error(errors[key][0]);
+                                }
                             });
                         } else {
-                            toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
+                            toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
                         }
                     },
                     complete: function() {
@@ -502,6 +526,17 @@
                     value = value.substring(0, 11);
                 }
                 $(this).val(value);
+            });
+
+            // Clear validation errors on input
+            $('#fullname, #phone, #address').on('input', function() {
+                $(this).removeClass('is-invalid');
+                $(this).siblings('.invalid-feedback').text('').hide();
+            });
+
+            $('#birthday_day, #birthday_month, #birthday_year').on('change', function() {
+                $('#birthday_day, #birthday_month, #birthday_year').removeClass('is-invalid');
+                $(this).parent().parent().siblings('.invalid-feedback').text('').hide();
             });
         });
     </script>

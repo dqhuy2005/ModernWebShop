@@ -22,10 +22,6 @@
 
 @push('styles')
     <style>
-        body {
-            font-family: 'Figtree', sans-serif;
-        }
-
         html {
             scroll-behavior: smooth;
         }
