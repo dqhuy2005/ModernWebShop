@@ -51,24 +51,12 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+            'image' => 'nullable|string|max:500',
             'language' => 'nullable|string|max:10',
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
-        }
-
-        if ($request->hasFile('image')) {
-            $imageService = new ImageService();
-
-            if (!$imageService->validateImage($request->file('image'))) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
-            }
-
-            $validated['image'] = $this->imageService->uploadCategoryImage($request->file('image'));
         }
 
         Category::create($validated);
@@ -105,7 +93,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+            'image' => 'nullable|string|max:500',
             'language' => 'nullable|string|max:10',
             'parent_id' => 'nullable|exists:categories,id'
         ]);
@@ -114,18 +102,8 @@ class CategoryController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        if ($request->hasFile('image')) {
-            if (!$this->imageService->validateImage($request->file('image'))) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
-            }
-
-            $validated['image'] = $this->imageService->uploadCategoryImage(
-                $request->file('image'),
-                $category->image
-            );
-        }
+        // Image is now a path from LFM, no upload needed
+        // Just save the path directly
 
         $category->update($validated);
 

@@ -22,7 +22,8 @@
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('admin.categories.store') }}" method="POST" id="category-form" enctype="multipart/form-data">
+                    <form action="{{ route('admin.categories.store') }}" method="POST" id="category-form"
+                        enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
@@ -50,14 +51,18 @@
                         <div class="mb-3">
                             <label for="" class="form-label fw-bold">Category Image</label>
                             <div class="custom-file-upload">
-                                <div id="image-preview" class="text-center d-none">
+                                <div id="image-preview" class="text-center d-none mb-2">
                                     <img src="" alt="Preview" class="img-fluid rounded"
                                         style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                        onclick="removeImage()" style="margin: 5px;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <input type="file" class="d-none @error('image') is-invalid @enderror" id="image"
-                                    name="image" accept="image/*" onchange="previewImage(event)">
-                                <button type="button" class="btn-select-image w-100 mt-3"
-                                    onclick="$('#image').trigger('click')">
+                                <input type="hidden" id="image" name="image" value="{{ old('image') }}"
+                                    class="@error('image') is-invalid @enderror">
+                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn" data-input="image"
+                                    data-preview="holder">
                                     <i class="fas fa-image me-2"></i>Select Image
                                 </button>
                             </div>
@@ -83,19 +88,40 @@
 
 @push('scripts')
     <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#image-preview img').attr('src', e.target.result);
-                    $('#image-preview').removeClass('d-none');
-                };
-                reader.readAsDataURL(file);
-            }
+        $('#name').on('input', function() {
+            const name = $(this).val();
+            const slug = name.toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/Đ/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            $('#slug').val(slug);
+        });
+
+        function removeImage() {
+            $('#image').val('');
+            $('#image-preview').addClass('d-none');
+            $('#image-preview img').attr('src', '');
         }
 
         $(document).ready(function() {
+            $('.lfm-btn').filemanager('image', {
+                prefix: '/admin/filemanager'
+            });
+
+            $('#image').on('change', function() {
+                const imagePath = $(this).val();
+                if (imagePath) {
+                    const imageUrl = imagePath;
+                    $('#image-preview img').attr('src', imageUrl);
+                    $('#image-preview').removeClass('d-none');
+                }
+            });
+
             $('#name, #slug').on('input', function() {
                 $(this).removeClass('is-invalid');
             });
@@ -107,7 +133,8 @@
                     isValid = false;
                     $('#name').addClass('is-invalid');
                     if (!$('#name').next('.invalid-feedback').length) {
-                        $('#name').after('<div class="invalid-feedback d-block">Category name is required.</div>');
+                        $('#name').after(
+                            '<div class="invalid-feedback d-block">Category name is required.</div>');
                     }
                 } else {
                     $('#name').removeClass('is-invalid');
@@ -119,7 +146,9 @@
                     isValid = false;
                     $('#slug').addClass('is-invalid');
                     if (!$('#slug').next('.invalid-feedback').length) {
-                        $('#slug').after('<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>');
+                        $('#slug').after(
+                            '<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>'
+                            );
                     }
                 } else {
                     $('#slug').removeClass('is-invalid');

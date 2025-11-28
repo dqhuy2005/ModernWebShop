@@ -13,20 +13,16 @@
           return item.url;
         }).join(',');
 
-        // set the value of the desired input to image url
         target_input.val('').val(file_path).trigger('change');
 
-        // clear previous preview
         target_preview.html('');
 
-        // set or change the preview image src
         items.forEach(function (item) {
           target_preview.append(
             $('<img>').css('height', '5rem').attr('src', item.thumb_url)
           );
         });
 
-        // trigger change event
         target_preview.trigger('change');
       };
       return false;

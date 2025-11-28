@@ -129,6 +129,11 @@
     <script src="{{ asset('js/ajax-pagination.js') }}"></script>
     <script src="{{ asset('js/clean-form-submit.js') }}"></script>
 
+    <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
+    <script>
+        var route_prefix = "/admin/filemanager";
+    </script>
+
     <script>
         $(document).ready(function() {
             if ($('.datatable').length) {
