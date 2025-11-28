@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use App\Services\ImageService;
 
 class ProfileController extends Controller
@@ -21,7 +21,7 @@ class ProfileController extends Controller
         return view('user.profile', compact('user'));
     }
 
-    public function update(Request $request)
+    public function update(ProfileUpdateRequest $request)
     {
         if (!Auth::check()) {
             return response()->json([
@@ -32,25 +32,18 @@ class ProfileController extends Controller
 
         $user = Auth::user();
 
-        $request->validate([
-            'fullname' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
-            'birthday' => 'nullable|date|before:today',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
         try {
             if ($request->hasFile('image')) {
                 $imageService = new ImageService();
 
                 if (!$imageService->validateImage($request->file('image'))) {
-                    return back()
-                        ->withInput()
-                        ->with('error', 'Invalid image file. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tệp hình ảnh không hợp lệ. Vui lòng kiểm tra kích thước (tối đa 2MB) và định dạng (jpg, png, gif, webp).'
+                    ], 422);
                 }
 
-                $user->image = $imageService->uploadAvatar($request->file('image'));
+                $user->image = $imageService->uploadAvatar($request->file('image'), $user->image);
             }
 
             $user->fullname = $request->fullname;
