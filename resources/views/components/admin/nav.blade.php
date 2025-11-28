@@ -41,6 +41,14 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.filemanager.*') ? 'active' : '' }}"
+                    href="{{ route('admin.filemanager.index') }}">
+                    <i class="fas fa-folder-open"></i>
+                    <span>File Manager</span>
+                </a>
+            </li>
+
             {{-- <li class="nav-item mt-3">
                 <div class="nav-section-title px-3 py-2 text-muted small">
                     <i class="fas fa-chart-line"></i> BÁO CÁO & THỐNG KÊ

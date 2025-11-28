@@ -7,6 +7,7 @@ use App\Http\Controllers\CMS\ProductController;
 use App\Http\Controllers\CMS\CategoryController;
 use App\Http\Controllers\CMS\UserController;
 use App\Http\Controllers\CMS\OrderController;
+use App\Http\Controllers\CMS\FileManagerController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
@@ -90,11 +91,21 @@ Route::get('password/reset', function () {
     return 'Password reset form';
 })->name('password.request');
 
+Route::prefix('admin')->middleware(['auth', 'admin.access'])->group(function () {
+    // Laravel File Manager Routes (separate group without name prefix)
+    Route::group(['prefix' => 'filemanager'], function () {
+        \UniSharp\LaravelFilemanager\Lfm::routes();
+    });
+});
+
 /* ADMIN ROUTES */
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
+
+    // File Manager (wrapped in admin layout)
+    Route::get('file-manager', [FileManagerController::class, 'index'])->name('filemanager.index');
 
     // Products Management
     Route::prefix('products')->name('products.')->group(function () {

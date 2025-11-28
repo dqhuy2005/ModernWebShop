@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.10.1",
         "predis/predis": "^3.2",
         "prettus/l5-repository": "^3.0",
-        "tymon/jwt-auth": "^2.2"
+        "tymon/jwt-auth": "^2.2",
+        "unisharp/laravel-filemanager": "^2.12"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

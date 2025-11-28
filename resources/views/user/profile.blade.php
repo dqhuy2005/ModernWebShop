@@ -389,7 +389,6 @@
                                 let $field;
 
                                 if (key === 'birthday') {
-                                    // For birthday, mark all three dropdowns as invalid
                                     $('#birthday_day, #birthday_month, #birthday_year').addClass('is-invalid');
                                     $field = $('#birthday_day').parent().parent();
                                 } else {
@@ -397,13 +396,11 @@
                                     $field.addClass('is-invalid');
                                 }
 
-                                // Display error message below the field
                                 const $feedback = $field.siblings('.invalid-feedback');
                                 if ($feedback.length) {
                                     $feedback.text(errors[key][0]).show();
                                 }
 
-                                // Also show toastr for first error
                                 if (Object.keys(errors)[0] === key) {
                                     toastr.error(errors[key][0]);
                                 }
@@ -528,7 +525,6 @@
                 $(this).val(value);
             });
 
-            // Clear validation errors on input
             $('#fullname, #phone, #address').on('input', function() {
                 $(this).removeClass('is-invalid');
                 $(this).siblings('.invalid-feedback').text('').hide();
