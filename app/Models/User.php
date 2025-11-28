@@ -94,7 +94,7 @@ class User extends Authenticatable implements JWTSubject
         }
 
         if ($this->image) {
-            return url('storage/' . $this->image);
+            return $this->image;
         }
 
         if ($this->isOAuthUser()) {

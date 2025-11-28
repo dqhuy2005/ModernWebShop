@@ -31,7 +31,7 @@
 
                             <td>
                                 @if ($user->image)
-                                    <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->fullname }}"
+                                    <img src="{{ $user->image }}" alt="{{ $user->fullname }}"
                                         class="user-avatar">
                                 @else
                                     <div class="user-avatar bg-light d-flex align-items-center justify-content-center">

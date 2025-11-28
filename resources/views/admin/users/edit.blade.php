@@ -37,33 +37,29 @@
                         Avatar
                     </label>
 
-                    <input type="file" class="d-none @error('image') is-invalid @enderror" id="image" name="image"
-                        accept="image/*" onchange="previewImage(event)">
+                    <input type="hidden" id="image" name="image" value="{{ old('image', $user->image) }}" class="@error('image') is-invalid @enderror">
 
-                    <div id="upload-area" class="text-center">
-                        <button type="button" class="btn btn-outline-primary btn-lg" onclick="$('#image').click()">
-                            <i
-                                class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
-                        </button>
-                    </div>
-
-                    <div id="image-preview" class="text-center mt-3 d-none">
-                        <p class="text-success mb-2"><strong>New Avatar
-                                Preview:</strong></p>
+                    <div id="image-preview" class="text-center mt-3 {{ old('image') && old('image') !== $user->image ? '' : 'd-none' }}">
+                        <p class="text-success mb-2"><strong>New Avatar Preview:</strong></p>
                         <div class="row">
                             <div class="preview-container col-md-12">
-                                <img src="" alt="Preview" class="img-fluid rounded-circle preview-image">
+                                <img src="{{ old('image') && old('image') !== $user->image ? asset('storage/' . old('image')) : '' }}" alt="Preview" class="img-fluid rounded-circle preview-image">
                             </div>
                             <div class="col-md-12 d-flex justify-content-center">
                                 <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
                                     <i class="fas fa-trash-alt me-1"></i>Remove Avatar
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2"
-                                    onclick="$('#image').click()">
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2 lfm-btn" data-input="image" data-preview="holder">
                                     <i class="fas fa-sync-alt me-1"></i>Change Avatar
                                 </button>
                             </div>
                         </div>
+                    </div>
+
+                    <div id="upload-area" class="text-center {{ old('image') && old('image') !== $user->image ? 'd-none' : '' }}">
+                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image" data-preview="holder">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
+                        </button>
                     </div>
 
                     @error('image')
@@ -207,40 +203,30 @@
 
 @push('scripts')
     <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    toastr.error('File size must not exceed 2MB!');
-                    $('#image').val('');
-                    return;
-                }
-
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                if (!allowedTypes.includes(file.type)) {
-                    toastr.error('Only JPG, PNG, GIF, and WEBP images are allowed!');
-                    $('#image').val('');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#image-preview img').attr('src', e.target.result);
-                    $('#upload-area').addClass('d-none');
-                    $('#image-preview').removeClass('d-none');
-                    toastr.success('New avatar selected successfully!');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         function removeImage() {
-            $('#image').val('');
+            $('#image').val('{{ $user->image ?? '' }}');
             $('#image-preview').addClass('d-none');
             $('#upload-area').removeClass('d-none');
             $('#image-preview img').attr('src', '');
             toastr.info('New avatar removed');
         }
+
+        $(document).ready(function() {
+            $('.lfm-btn').filemanager('image', {prefix: '/admin/filemanager'});
+
+            $('#image').on('change', function() {
+                const imagePath = $(this).val();
+                const currentImage = '{{ $user->image ?? '' }}';
+
+                if (imagePath && imagePath !== currentImage) {
+                    const imageUrl = imagePath;
+                    $('#image-preview img').attr('src', imageUrl);
+                    $('#upload-area').addClass('d-none');
+                    $('#image-preview').removeClass('d-none');
+                    toastr.success('New avatar selected successfully!');
+                }
+            });
+        });
 
         $('#userForm').on('submit', function(e) {
             let isValid = true;

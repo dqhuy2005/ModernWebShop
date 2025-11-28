@@ -119,16 +119,9 @@ class UserController extends BaseController
                 }
             }
 
-            if ($request->hasFile('image')) {
-                $imageService = new ImageService();
-
-                if (!$imageService->validateImage($request->file('image'))) {
-                    return back()
-                        ->withInput()
-                        ->with('error', 'Invalid avatar image. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
-                }
-
-                $data['image'] = $imageService->uploadAvatar($request->file('image'));
+            // Image is now a path from LFM, save it directly
+            if ($request->filled('image')) {
+                $data['image'] = $request->input('image');
             }
 
             $user = User::create($data);
@@ -216,19 +209,9 @@ class UserController extends BaseController
                 }
             }
 
-            if ($request->hasFile('image')) {
-                $imageService = new ImageService();
-
-                if (!$imageService->validateImage($request->file('image'))) {
-                    return back()
-                        ->withInput()
-                        ->with('error', 'Invalid avatar image. Please check file size (max 2MB) and format (jpg, png, gif, webp).');
-                }
-
-                $data['image'] = $imageService->uploadAvatar(
-                    $request->file('image'),
-                    $user->image
-                );
+            // Image is now a path from LFM, save it directly
+            if ($request->filled('image')) {
+                $data['image'] = $request->input('image');
             }
 
             $user->update($data);

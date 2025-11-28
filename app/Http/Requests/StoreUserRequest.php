@@ -70,13 +70,11 @@ class StoreUserRequest extends FormRequest
                 'exists:roles,id',
             ],
 
-            // Image: optional, valid image file
+            // Image: optional, string path from LFM
             'image' => [
                 'nullable',
-                'image',
-                'mimes:jpeg,png,jpg,gif,webp',
-                'max:2048', // 2MB max
-                'dimensions:min_width=50,min_height=50,max_width=2000,max_height=2000', // Reasonable dimensions
+                'string',
+                'max:500',
             ],
 
             // Status: optional, boolean
