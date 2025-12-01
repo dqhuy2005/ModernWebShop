@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $subject }}</title>
     <style>
-        /* Reset styles */
         body,
         table,
         td,
@@ -38,7 +37,6 @@
             height: 100% !important;
         }
 
-        /* Base styles */
         body {
             background-color: #f4f4f4;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -47,7 +45,6 @@
             color: #333333;
         }
 
-        /* Container */
         .email-container {
             max-width: 600px;
             margin: 20px auto;
@@ -57,7 +54,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Header */
         .email-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 30px 20px;
@@ -80,7 +76,6 @@
             height: auto;
         }
 
-        /* Content */
         .email-content {
             padding: 30px 20px;
         }
@@ -98,7 +93,6 @@
             line-height: 1.8;
         }
 
-        /* Order info box */
         .order-info-box {
             background-color: #f8f9fa;
             border-left: 4px solid #667eea;
@@ -127,7 +121,6 @@
             color: #333333;
         }
 
-        /* Products table */
         .products-table {
             width: 100%;
             border-collapse: collapse;
@@ -166,7 +159,6 @@
             text-align: center;
         }
 
-        /* Total section */
         .total-section {
             background-color: #f8f9fa;
             padding: 20px;
@@ -205,7 +197,6 @@
             font-weight: 700;
         }
 
-        /* Shipping info */
         .shipping-info {
             background-color: #ffffff;
             border: 1px solid #e0e0e0;
@@ -232,7 +223,6 @@
             color: #333333;
         }
 
-        /* Button */
         .btn {
             display: inline-block;
             padding: 12px 30px;
@@ -258,7 +248,6 @@
             margin: 30px 0;
         }
 
-        /* Footer */
         .email-footer {
             background-color: #f8f9fa;
             padding: 30px 20px;
@@ -294,7 +283,6 @@
             margin: 20px 0;
         }
 
-        /* Responsive */
         @media only screen and (max-width: 600px) {
             .email-container {
                 width: 100% !important;
@@ -337,7 +325,6 @@
 
 <body>
     <div class="email-container">
-        <!-- Header -->
         <div class="email-header">
             <div class="logo">
                 @if (isset($companyLogo))
@@ -349,24 +336,20 @@
             <h1>{{ $emailTitle ?? 'Thông báo đơn hàng' }}</h1>
         </div>
 
-        <!-- Content -->
         <div class="email-content">
-            <!-- Greeting -->
             <div class="greeting">
                 Xin chào {{ $customerName ?? 'Quý khách' }},
             </div>
 
-            <!-- Message -->
             <div class="message">
                 {!! $emailMessage ?? 'Cảm ơn bạn đã đặt hàng tại cửa hàng chúng tôi!' !!}
             </div>
 
-            <!-- Order Info Box -->
             <div class="order-info-box">
                 <div class="order-info-row">
                     <span class="order-info-label">Mã đơn hàng:</span>
                     <span class="order-info-value"><strong>
-                            #{{ str_pad($orderId, 6, '0', STR_PAD_LEFT) }}</strong></span>
+                            #{{ $orderId }}</strong></span>
                 </div>
                 <div class="order-info-row">
                     <span class="order-info-label">Trạng thái:</span>
@@ -382,7 +365,6 @@
                 </div>
             </div>
 
-            <!-- Products Table -->
             <h3 style="color: #667eea; margin-top: 30px;">Chi tiết sản phẩm</h3>
             <table class="products-table">
                 <thead>
@@ -406,7 +388,6 @@
                 </tbody>
             </table>
 
-            <!-- Total Section -->
             <div class="total-section">
                 <div class="total-row">
                     <span class="total-label">Tạm tính:</span>
@@ -430,9 +411,8 @@
                 </div>
             </div>
 
-            <!-- Shipping Info -->
             <div class="shipping-info">
-                <h3>📦 Thông tin giao hàng</h3>
+                <h3>Thông tin giao hàng</h3>
                 <p><strong>Người nhận:</strong> {{ $recipientName ?? $customerName }}</p>
                 <p><strong>Số điện thoại:</strong> {{ $recipientPhone }}</p>
                 <p><strong>Địa chỉ:</strong> {{ $shippingAddress }}</p>
@@ -441,10 +421,9 @@
                 @endif
             </div>
 
-            <!-- Action Button -->
             @if ($orderStatus === 'completed')
-                <!-- Review Products Buttons for Completed Orders -->
-                <div style="background-color: #f0f8ff; border: 1px solid #cce7ff; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <div
+                    style="background-color: #f0f8ff; border: 1px solid #cce7ff; border-radius: 8px; padding: 20px; margin: 25px 0;">
                     <h3 style="color: #667eea; margin-top: 0; margin-bottom: 15px; text-align: center;">
                         ⭐ Đánh giá sản phẩm
                     </h3>
@@ -453,10 +432,11 @@
                     </p>
 
                     @foreach ($orderItems as $item)
-                        <div style="background-color: #ffffff; border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                        <div
+                            style="background-color: #ffffff; border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
                             <span style="color: #333; font-weight: 500;">{{ $item['product_name'] }}</span>
                             <a href="{{ route('reviews.create', ['order' => $orderId, 'product' => $item['product_id']]) }}"
-                               style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #ffffff !important; text-decoration: none; border-radius: 20px; font-weight: 600; font-size: 13px;">
+                                style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #ffffff !important; text-decoration: none; border-radius: 20px; font-weight: 600; font-size: 13px;">
                                 Đánh giá ngay
                             </a>
                         </div>
@@ -468,7 +448,6 @@
                 </div>
             @endif
 
-            <!-- Additional Message -->
             @if (isset($additionalMessage))
                 <div class="message"
                     style="margin-top: 30px; padding: 15px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
@@ -477,7 +456,6 @@
             @endif
         </div>
 
-        <!-- Footer -->
         <div class="email-footer">
             <p><strong>{{ $companyName ?? 'Modern Web Shop' }}</strong></p>
             <p>{{ $companyAddress ?? 'Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM' }}</p>
