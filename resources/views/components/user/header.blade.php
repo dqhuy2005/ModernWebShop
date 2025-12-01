@@ -43,8 +43,7 @@
                             @elseif (auth()->user()->isOAuthUser())
                                 {{-- Fallback to OAuth avatar if no uploaded image --}}
                                 <img src="{{ auth()->user()->oauthAccounts->first()->avatar ?? auth()->user()->image }}"
-                                    alt="{{ auth()->user()->fullname }}"
-                                    id="headerAvatar"
+                                    alt="{{ auth()->user()->fullname }}" id="headerAvatar"
                                     style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
                                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="rounded-circle bg-danger d-none align-items-center justify-content-center"
@@ -246,7 +245,6 @@
         width: 80%;
     }
 
-    /* Mega Menu Styles */
     .mega-dropdown {
         position: static;
     }
@@ -315,7 +313,6 @@
         font-size: 0.75rem;
     }
 
-    /* User dropdown styles */
     .dropdown-menu {
         animation: slideDown 0.2s ease;
         border: none;
@@ -336,18 +333,48 @@
         color: #dc3545;
     }
 
-    /* Ensure dropdown is above all content */
     .navbar .dropdown {
         position: relative;
         z-index: 1050;
     }
 
-    /* Responsive */
-    @media (max-width: 991px) {
+    @media (max-width: 1199px) and (min-width: 768px) {
+        .main-header .navbar-brand {
+            font-size: 1.6rem;
+        }
+
+        .search-wrapper {
+            max-width: 400px;
+        }
+
+        .mega-menu {
+            max-width: 90%;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .main-header .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .main-header .navbar-brand {
+            font-size: 1.3rem;
+        }
+
+        .search-wrapper {
+            max-width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .navbar .d-flex.align-items-center.gap-3 {
+            gap: 0.5rem !important;
+        }
+
         .mega-menu {
             position: absolute !important;
             width: auto !important;
             min-width: 300px;
+            max-width: calc(100vw - 30px);
         }
 
         .menu-wrapper .navbar-nav {
@@ -356,6 +383,12 @@
 
         .main-menu .nav-link {
             padding: 0.5rem 1rem;
+        }
+
+        .dropdown-menu {
+            min-width: 200px;
+            right: 0 !important;
+            left: auto !important;
         }
     }
 </style>

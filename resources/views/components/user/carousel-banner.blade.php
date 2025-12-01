@@ -287,31 +287,83 @@
         border-radius: 6px;
     }
 
-    @media (max-width: 768px) {
+    @media (min-width: 1200px) {
         .banner-title {
-            font-size: 2rem;
+            font-size: clamp(2.5rem, 3vw, 3rem);
         }
 
         .banner-subtitle {
-            font-size: 1rem;
+            font-size: clamp(1.1rem, 1.5vw, 1.25rem);
+        }
+    }
+
+    @media (max-width: 1199px) and (min-width: 768px) {
+        .banner-title {
+            font-size: 2.2rem;
+        }
+
+        .banner-subtitle {
+            font-size: 1.1rem;
         }
 
         .min-vh-50 {
-            min-height: 400px;
+            min-height: 450px;
         }
 
         .banner-nav {
-            width: 40px;
-            height: 40px;
-            font-size: 1rem;
+            width: 45px;
+            height: 45px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .banner-title {
+            font-size: 1.5rem;
+        }
+
+        .banner-subtitle {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .min-vh-50 {
+            min-height: 350px;
+        }
+
+        .banner-nav {
+            width: 35px;
+            height: 35px;
+            font-size: 0.9rem;
         }
 
         .banner-prev {
-            left: 10px;
+            left: 5px;
         }
 
         .banner-next {
-            right: 10px;
+            right: 5px;
+        }
+
+        .btn-banner {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+        }
+
+        .banner-text {
+            padding: 1rem 0;
+        }
+
+        .banner-indicators {
+            bottom: 15px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+        }
+
+        .indicator.active {
+            width: 20px;
         }
     }
 </style>

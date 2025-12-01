@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=1200">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'ModernWebShop - Cửa hàng trực tuyến')</title>
@@ -24,11 +24,13 @@
         body {
             height: 100%;
             margin: 0;
+            min-width: 1200px;
         }
 
         body {
             display: flex;
             flex-direction: column;
+            overflow-x: auto;
         }
 
         .main-content {
@@ -39,6 +41,65 @@
         .main-footer,
         .copyright-bar {
             flex-shrink: 0;
+        }
+
+        .container {
+            min-width: 1200px;
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .container-fluid {
+            min-width: 1200px;
+            width: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 1199px) and (min-width: 768px) {
+            body {
+                min-width: 768px;
+            }
+
+            .container {
+                min-width: 768px;
+                max-width: 100%;
+            }
+
+            .container-fluid {
+                min-width: 768px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            body {
+                min-width: 320px;
+            }
+
+            .container {
+                min-width: 320px;
+                max-width: 100%;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .container-fluid {
+                min-width: 320px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
         }
     </style>
 

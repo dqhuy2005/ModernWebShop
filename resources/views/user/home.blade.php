@@ -49,6 +49,54 @@
                 transform: rotate(360deg);
             }
         }
+
+        @media (min-width: 1200px) {
+            .container {
+                min-width: 1200px;
+                max-width: 1440px;
+                width: 100%;
+            }
+
+            section.py-5 {
+                padding: 3rem 0;
+            }
+        }
+
+        @media (max-width: 1199px) and (min-width: 768px) {
+            .container {
+                min-width: 768px;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            section.py-5 {
+                padding: 2.5rem 0;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                min-width: 320px;
+                max-width: 100%;
+                width: 100%;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            section {
+                padding: 1.5rem 0 !important;
+            }
+
+            .py-5 {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+
+            .py-4 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+        }
     </style>
 @endpush
 

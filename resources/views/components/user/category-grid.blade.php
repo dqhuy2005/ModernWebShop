@@ -18,8 +18,7 @@
                 <div class="col-6 col-md-4 col-lg">
                     <a href="{{ route('categories.show', $category->slug) }}" class="category-card">
                         <div class="category-image-wrapper">
-                            <img src="{{ $category->image_url }}" alt="{{ $category->name }}"
-                                class="category-image">
+                            <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="category-image">
                         </div>
                         <h6 class="category-name">{{ strtoupper($category->name) }}</h6>
                     </a>
@@ -102,23 +101,29 @@
         text-transform: uppercase;
     }
 
-    @media (max-width: 992px) {
+    @media (min-width: 1200px) {
         .section-title {
-            font-size: 1.5rem;
-        }
-
-        .category-image-wrapper {
-            height: 160px;
+            font-size: clamp(1.8rem, 2.5vw, 2rem);
         }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1199px) and (min-width: 768px) {
+        .section-title {
+            font-size: 1.6rem;
+        }
+
+        .category-image-wrapper {
+            height: 180px;
+        }
+    }
+
+    @media (max-width: 767px) {
         .section-title {
             font-size: 1.3rem;
         }
 
         .category-image-wrapper {
-            height: 140px;
+            height: 120px;
         }
 
         .category-card {
@@ -127,12 +132,6 @@
 
         .category-name {
             font-size: 0.875rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .category-image-wrapper {
-            height: 120px;
         }
     }
 </style>

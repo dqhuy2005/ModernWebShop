@@ -1,10 +1,42 @@
-button, .btn, .card, .card-header, .card-footer, .card-body {
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+video,
+iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+.row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.row > * {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+button,
+.btn {
     border-radius: 0;
 }
 
-.is-readonly {
-    background-color: #e9ecef;
-    pointer-events: none;
+.btn:hover {
+    cursor: pointer;
 }
 
 .add-to-cart-btn {
@@ -16,8 +48,65 @@ button, .btn, .card, .card-header, .card-footer, .card-body {
 
 .add-to-cart-btn:hover {
     cursor: pointer;
+    background-color: #bd2130;
+    border-color: #bd2130;
+}
+
+.card,
+.card-header,
+.card-footer,
+.card-body {
+    border-radius: 0;
 }
 
 .breadcrumb-item a {
-    text-decoration: none ;
+    text-decoration: none;
+}
+
+.is-readonly {
+    background-color: #e9ecef;
+    pointer-events: none;
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+    .row {
+        margin-left: -12px;
+        margin-right: -12px;
+    }
+
+    .row > * {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+@media (max-width: 767px) {
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .row > * {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem 1rem;
+    }
+
+    .btn-sm {
+        min-height: 36px;
+        min-width: 36px;
+        padding: 0.35rem 0.75rem;
+    }
 }
