@@ -15,10 +15,6 @@
                     <i class="fas fa-file-excel me-2"></i>Export Excel
                 </a>
 
-                {{-- <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="fas fa-file-import me-2"></i>Import Excel
-                </button> --}}
-
                 <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Add
                 </a>
@@ -306,7 +302,6 @@
             gap: 4px;
         }
 
-        /* Loading state for AJAX pagination */
         #users-table-container {
             transition: opacity 0.3s ease;
         }
@@ -318,7 +313,6 @@
     </style>
 @endpush
 
-<!-- Import Modal -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

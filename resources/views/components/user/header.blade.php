@@ -6,7 +6,7 @@
                 <span class="text-danger">MWShop</span><span class="text-warning">.</span>
             </a>
 
-            <div class="search-wrapper d-none d-lg-flex flex-grow-1 mx-4 position-relative">
+            <div class="search-wrapper d-flex flex-grow-1 mx-4 position-relative">
                 <form action="{{ route('products.search') }}" method="GET" class="w-100 position-relative"
                     id="headerSearchForm">
                     <input type="text" class="form-control form-control-sm pe-5" name="q"
@@ -57,7 +57,7 @@
                                     <i class="fas fa-user text-white"></i>
                                 </div>
                             @endif
-                            <span class="d-none d-lg-inline">{{ auth()->user()->fullname }}</span>
+                            <span>{{ auth()->user()->fullname }}</span>
                             <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
@@ -80,11 +80,11 @@
                 @else
                     <div class="d-flex align-items-center gap-2">
                         <a href="{{ route('login') }}" class="text-white text-decoration-none">
-                            <span class="d-none d-lg-inline">Đăng nhập</span>
+                            <span>Đăng nhập</span>
                         </a>
-                        <span class="text-white d-none d-lg-inline">|</span>
+                        <span class="text-white">|</span>
                         <a href="{{ route('register') }}" class="text-white text-decoration-none">
-                            <span class="d-none d-lg-inline">Đăng ký</span>
+                            <span>Đăng ký</span>
                         </a>
                     </div>
                 @endauth
@@ -338,13 +338,28 @@
         z-index: 1050;
     }
 
+    /* Responsive adjustments to fit all elements */
     @media (max-width: 1199px) and (min-width: 768px) {
         .main-header .navbar-brand {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
         }
 
         .search-wrapper {
-            max-width: 400px;
+            max-width: 350px;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .search-wrapper input.form-control {
+            font-size: 0.85rem;
+        }
+
+        .navbar .d-flex.align-items-center.gap-3 {
+            gap: 0.75rem !important;
+        }
+
+        .navbar .d-flex.align-items-center.gap-3 span {
+            font-size: 0.85rem;
         }
 
         .mega-menu {
@@ -354,20 +369,72 @@
 
     @media (max-width: 767px) {
         .main-header .navbar {
-            padding: 0.75rem 0;
+            padding: 0.5rem 0;
         }
 
         .main-header .navbar-brand {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
         .search-wrapper {
-            max-width: 100%;
-            margin: 0.5rem 0;
+            max-width: 200px;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .search-wrapper input.form-control {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.75rem;
+            padding-right: 35px !important;
+        }
+
+        .search-wrapper button {
+            padding: 0.2rem 0.6rem !important;
+            font-size: 0.75rem;
         }
 
         .navbar .d-flex.align-items-center.gap-3 {
-            gap: 0.5rem !important;
+            gap: 0.4rem !important;
+        }
+
+        .navbar .d-flex.align-items-center.gap-3 span {
+            font-size: 0.75rem;
+        }
+
+        .navbar .d-flex.align-items-center.gap-2 {
+            gap: 0.3rem !important;
+        }
+
+        .navbar .d-flex.align-items-center.gap-2 span {
+            font-size: 0.75rem;
+        }
+
+        .navbar .dropdown a span {
+            font-size: 0.75rem;
+        }
+
+        .navbar img,
+        .navbar .rounded-circle {
+            width: 24px !important;
+            height: 24px !important;
+        }
+
+        .navbar .fas.fa-shopping-cart {
+            font-size: 0.9rem;
+        }
+
+        #cart-count {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .navbar-toggler {
+            display: none;
         }
 
         .mega-menu {
@@ -386,9 +453,47 @@
         }
 
         .dropdown-menu {
-            min-width: 200px;
+            min-width: 180px;
             right: 0 !important;
             left: auto !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-header .navbar-brand {
+            font-size: 1rem;
+        }
+
+        .search-wrapper {
+            max-width: 150px;
+            margin-left: 0.3rem;
+            margin-right: 0.3rem;
+        }
+
+        .search-wrapper input.form-control {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.6rem;
+            padding-right: 30px !important;
+        }
+
+        .search-wrapper button {
+            padding: 0.15rem 0.5rem !important;
+            font-size: 0.7rem;
+        }
+
+        .navbar .d-flex.align-items-center.gap-3 span,
+        .navbar .d-flex.align-items-center.gap-2 span {
+            font-size: 0.7rem;
+        }
+
+        .navbar img,
+        .navbar .rounded-circle {
+            width: 20px !important;
+            height: 20px !important;
+        }
+
+        .fas.fa-chevron-down {
+            font-size: 0.65rem !important;
         }
     }
 </style>

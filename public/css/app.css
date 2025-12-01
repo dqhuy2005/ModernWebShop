@@ -99,13 +99,11 @@ button,
     }
 
     .btn {
-        min-height: 44px;
         min-width: 44px;
         padding: 0.5rem 1rem;
     }
 
     .btn-sm {
-        min-height: 36px;
         min-width: 36px;
         padding: 0.35rem 0.75rem;
     }
