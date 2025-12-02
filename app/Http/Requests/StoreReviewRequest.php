@@ -22,8 +22,6 @@ class StoreReviewRequest extends FormRequest
             'comment' => 'required|string|min:10|max:2000',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
-            'videos' => 'nullable|array|max:2',
-            'videos.*' => 'mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/webm|max:10240',
         ];
     }
 
@@ -51,9 +49,6 @@ class StoreReviewRequest extends FormRequest
             'images.*.image' => 'File phải là hình ảnh',
             'images.*.mimes' => 'Hình ảnh phải có định dạng: jpeg, jpg, png, gif, webp',
             'images.*.max' => 'Kích thước hình ảnh không được vượt quá 2MB',
-            'videos.max' => 'Bạn chỉ có thể tải lên tối đa 2 video',
-            'videos.*.mimetypes' => 'Video phải có định dạng: mp4, mov, avi, webm',
-            'videos.*.max' => 'Kích thước video không được vượt quá 10MB',
         ];
     }
 }

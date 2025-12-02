@@ -23,7 +23,7 @@ class ReviewController extends Controller
     public function index(Product $product)
     {
         $reviews = $product->approvedReviews()
-            ->select('id', 'product_id', 'user_id', 'rating', 'title', 'comment', 'images', 'videos', 'status', 'created_at', 'updated_at')
+            ->select('id', 'product_id', 'user_id', 'rating', 'title', 'comment', 'images', 'status', 'created_at', 'updated_at')
             ->with('user:id,fullname,email,image')
             ->latest()
             ->paginate(10);
@@ -92,7 +92,7 @@ class ReviewController extends Controller
             $review = $this->reviewService->createReview(
                 $reviewData,
                 $request->file('images'),
-                $request->file('videos')
+                null
             );
 
             if (isset($eligibility['order_detail'])) {

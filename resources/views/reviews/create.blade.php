@@ -19,8 +19,8 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="img-thumbnail me-3"
+                                style="width: 80px; height: 80px; object-fit: cover;">
                             <div>
                                 <h5 class="mb-1">{{ $product->name }}</h5>
                                 <p class="text-muted mb-0">Đơn hàng: #{{ $order->id }}</p>
@@ -111,23 +111,6 @@
                                     </label>
                                 </div>
                                 <div id="imagePreview" class="image-preview mt-2"></div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">
-                                    Thêm video (Tùy chọn)
-                                </label>
-                                <div class="upload-box" id="videoUploadBox">
-                                    <input type="file" name="videos[]" id="videoInput"
-                                        accept="video/mp4,video/quicktime,video/x-msvideo,video/webm" multiple
-                                        class="d-none">
-                                    <label for="videoInput" class="upload-label">
-                                        <i class="fas fa-video fa-3x text-muted mb-2"></i>
-                                        <p class="mb-0">Nhấn để chọn video</p>
-                                        <small class="text-muted">Tối đa 2 video, mỗi video không quá 10MB</small>
-                                    </label>
-                                </div>
-                                <div id="videoPreview" class="video-preview mt-2"></div>
                             </div>
 
                             <div class="d-flex gap-2">
@@ -332,52 +315,6 @@
                     const dt = new DataTransfer();
                     selectedImages.forEach(file => dt.items.add(file));
                     imageInput.files = dt.files;
-                }
-            });
-
-            // Video Preview (similar logic)
-            const videoInput = document.getElementById('videoInput');
-            const videoPreview = document.getElementById('videoPreview');
-            let selectedVideos = [];
-
-            videoInput.addEventListener('change', function(e) {
-                const files = Array.from(e.target.files);
-
-                if (selectedVideos.length + files.length > 2) {
-                    alert('Bạn chỉ có thể tải lên tối đa 2 video');
-                    return;
-                }
-
-                files.forEach((file) => {
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert(`File ${file.name} vượt quá 10MB`);
-                        return;
-                    }
-
-                    selectedVideos.push(file);
-                    const div = document.createElement('div');
-                    div.className = 'preview-item';
-                    div.innerHTML = `
-                <video src="${URL.createObjectURL(file)}" controls></video>
-                <button type="button" class="preview-remove" data-index="${selectedVideos.length - 1}">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-                    videoPreview.appendChild(div);
-                });
-            });
-
-            // Remove Video
-            videoPreview.addEventListener('click', function(e) {
-                if (e.target.closest('.preview-remove')) {
-                    const button = e.target.closest('.preview-remove');
-                    const index = button.getAttribute('data-index');
-                    button.closest('.preview-item').remove();
-                    selectedVideos.splice(index, 1);
-
-                    const dt = new DataTransfer();
-                    selectedVideos.forEach(file => dt.items.add(file));
-                    videoInput.files = dt.files;
                 }
             });
 

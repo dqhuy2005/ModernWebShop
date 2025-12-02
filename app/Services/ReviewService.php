@@ -10,29 +10,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-/**
- * ReviewService
- *
- * Handles business logic for product reviews
- * - Creating and updating reviews
- * - Media upload (images/videos)
- * - Review validation and eligibility checks
- */
 class ReviewService
 {
-    private const MAX_IMAGE_SIZE = 2048; // 2MB
-    private const MAX_VIDEO_SIZE = 10240; // 10MB
+    private const MAX_IMAGE_SIZE = 2048;
     private const MAX_IMAGES = 5;
-    private const MAX_VIDEOS = 2;
     private const ALLOWED_IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-    private const ALLOWED_VIDEO_TYPES = ['mp4', 'mov', 'avi', 'webm'];
 
-    /**
-     * Check if user can review a product from a specific order
-     */
     public function canUserReviewProduct(User $user, Product $product, Order $order): array
     {
-        // Check if order belongs to user
         if ($order->user_id !== $user->id) {
             return [
                 'can_review' => false,
@@ -40,7 +25,6 @@ class ReviewService
             ];
         }
 
-        // Check if order is completed
         if ($order->status !== Order::STATUS_COMPLETED) {
             return [
                 'can_review' => false,
@@ -48,7 +32,6 @@ class ReviewService
             ];
         }
 
-        // Check if product is in the order
         $orderDetail = $order->orderDetails()
             ->where('product_id', $product->id)
             ->first();
@@ -60,7 +43,6 @@ class ReviewService
             ];
         }
 
-        // Check if user already reviewed this product for this order
         $existingReview = ProductReview::where('user_id', $user->id)
             ->where('product_id', $product->id)
             ->where('order_id', $order->id)
@@ -85,11 +67,8 @@ class ReviewService
      */
     public function createReview(array $data, ?array $images = null, ?array $videos = null): ProductReview
     {
-        // Upload media files
         $imagePaths = $images ? $this->uploadImages($images) : [];
-        $videoPaths = $videos ? $this->uploadVideos($videos) : [];
 
-        // Create review
         $review = ProductReview::create([
             'product_id' => $data['product_id'],
             'user_id' => $data['user_id'],
@@ -99,8 +78,8 @@ class ReviewService
             'title' => $data['title'] ?? null,
             'comment' => $data['comment'],
             'images' => !empty($imagePaths) ? $imagePaths : null,
-            'videos' => !empty($videoPaths) ? $videoPaths : null,
-            'status' => ProductReview::STATUS_APPROVED, // Auto-approve for now
+            'videos' => null,
+            'status' => ProductReview::STATUS_APPROVED,
             'is_verified_purchase' => true,
         ]);
 
@@ -118,22 +97,11 @@ class ReviewService
             'comment' => $data['comment'],
         ];
 
-        // Handle images
         if ($newImages !== null) {
-            // Delete old images if replacing
             if ($review->images) {
                 $this->deleteFiles($review->images);
             }
             $updateData['images'] = !empty($newImages) ? $this->uploadImages($newImages) : null;
-        }
-
-        // Handle videos
-        if ($newVideos !== null) {
-            // Delete old videos if replacing
-            if ($review->videos) {
-                $this->deleteFiles($review->videos);
-            }
-            $updateData['videos'] = !empty($newVideos) ? $this->uploadVideos($newVideos) : null;
         }
 
         $review->update($updateData);
@@ -146,13 +114,8 @@ class ReviewService
      */
     public function deleteReview(ProductReview $review): bool
     {
-        // Delete media files
         if ($review->images) {
             $this->deleteFiles($review->images);
-        }
-
-        if ($review->videos) {
-            $this->deleteFiles($review->videos);
         }
 
         return $review->delete();
@@ -179,34 +142,6 @@ class ReviewService
 
                 $filename = 'review_' . Str::random(20) . '_' . time() . '.' . $extension;
                 $path = $image->storeAs('reviews/images', $filename, 'public');
-                $paths[] = $path;
-            }
-        }
-
-        return $paths;
-    }
-
-    /**
-     * Upload review videos
-     */
-    private function uploadVideos(array $videos): array
-    {
-        $paths = [];
-
-        foreach (array_slice($videos, 0, self::MAX_VIDEOS) as $video) {
-            if ($video instanceof UploadedFile && $video->isValid()) {
-                $extension = $video->getClientOriginalExtension();
-
-                if (!in_array(strtolower($extension), self::ALLOWED_VIDEO_TYPES)) {
-                    continue;
-                }
-
-                if ($video->getSize() > self::MAX_VIDEO_SIZE * 1024) {
-                    continue;
-                }
-
-                $filename = 'review_' . Str::random(20) . '_' . time() . '.' . $extension;
-                $path = $video->storeAs('reviews/videos', $filename, 'public');
                 $paths[] = $path;
             }
         }
