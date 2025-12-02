@@ -11,15 +11,6 @@ use App\Services\ReviewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * ReviewController
- *
- * Handles product review operations for customers
- * - Display review form
- * - Submit new reviews
- * - Update existing reviews
- * - View reviews on product pages
- */
 class ReviewController extends Controller
 {
     protected ReviewService $reviewService;
@@ -29,11 +20,6 @@ class ReviewController extends Controller
         $this->reviewService = $reviewService;
     }
 
-    /**
-     * Display reviews for a product (public)
-     *
-     * GET /products/{product}/reviews
-     */
     public function index(Product $product)
     {
         $reviews = $product->approvedReviews()
@@ -51,29 +37,24 @@ class ReviewController extends Controller
         ]);
     }
 
-    /**
-     * Show the review form for a specific order and product
-     *
-     * GET /orders/{order}/products/{product}/review
-     */
     public function create(Order $order, Product $product)
     {
         $user = Auth::user();
 
-        // Check if user can review
         $eligibility = $this->reviewService->canUserReviewProduct($user, $product, $order);
 
         if (!$eligibility['can_review']) {
             if (isset($eligibility['existing_review'])) {
-                // Redirect to edit if already reviewed
-                return redirect()->route('reviews.edit', [
-                    'order' => $order->id,
-                    'product' => $product->id,
-                ])
-                    ->with('info', 'Bạn đã đánh giá sản phẩm này. Bạn có thể chỉnh sửa đánh giá.');
+                return redirect()->route('products.show', $product->slug)
+                    ->with('info', 'Bạn đã hoàn thành đánh giá cho sản phẩm này. Cảm ơn bạn đã chia sẻ!');
             }
 
             return back()->with('error', $eligibility['reason']);
+        }
+
+        if (isset($eligibility['order_detail']) && $eligibility['order_detail']->hasBeenReviewed()) {
+            return redirect()->route('products.show', $product->slug)
+                ->with('info', 'Bạn đã hoàn thành đánh giá cho sản phẩm này. Cảm ơn bạn đã chia sẻ!');
         }
 
         return view('reviews.create', [
@@ -83,11 +64,6 @@ class ReviewController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created review
-     *
-     * POST /reviews
-     */
     public function store(StoreReviewRequest $request)
     {
         try {
@@ -95,7 +71,6 @@ class ReviewController extends Controller
             $product = Product::findOrFail($request->product_id);
             $order = Order::findOrFail($request->order_id);
 
-            // Verify eligibility
             $eligibility = $this->reviewService->canUserReviewProduct($user, $product, $order);
 
             if (!$eligibility['can_review']) {
@@ -104,7 +79,6 @@ class ReviewController extends Controller
                     ->with('error', $eligibility['reason']);
             }
 
-            // Prepare review data
             $reviewData = [
                 'product_id' => $request->product_id,
                 'user_id' => $user->id,
@@ -115,12 +89,17 @@ class ReviewController extends Controller
                 'comment' => $request->comment,
             ];
 
-            // Upload media and create review
             $review = $this->reviewService->createReview(
                 $reviewData,
                 $request->file('images'),
                 $request->file('videos')
             );
+
+            if (isset($eligibility['order_detail'])) {
+                $eligibility['order_detail']->update([
+                    'reviewed_at' => now(),
+                ]);
+            }
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -148,94 +127,28 @@ class ReviewController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the review
-     *
-     * GET /orders/{order}/products/{product}/review/edit
-     */
     public function edit(Order $order, Product $product)
     {
-        $user = Auth::user();
-
-        $review = ProductReview::select('id', 'product_id', 'user_id', 'order_id', 'order_detail_id', 'rating', 'title', 'comment', 'images', 'videos', 'status', 'created_at', 'updated_at')
-            ->where('user_id', $user->id)
-            ->where('product_id', $product->id)
-            ->where('order_id', $order->id)
-            ->firstOrFail();
-
-        return view('reviews.edit', [
-            'review' => $review,
-            'order' => $order,
-            'product' => $product,
-        ]);
+        return redirect()->route('products.show', $product->slug)
+            ->with('info', 'Đánh giá đã được ghi nhận và không thể chỉnh sửa. Cảm ơn bạn đã chia sẻ!');
     }
 
-    /**
-     * Update the specified review
-     *
-     * PUT /reviews/{review}
-     */
     public function update(UpdateReviewRequest $request, ProductReview $review)
     {
-        try {
-            // Prepare update data
-            $updateData = [
-                'rating' => $request->rating,
-                'title' => $request->title,
-                'comment' => $request->comment,
-            ];
-
-            // Handle media updates
-            $newImages = $request->hasFile('images') && !$request->keep_existing_images
-                ? $request->file('images')
-                : null;
-
-            $newVideos = $request->hasFile('videos') && !$request->keep_existing_videos
-                ? $request->file('videos')
-                : null;
-
-            $updatedReview = $this->reviewService->updateReview(
-                $review,
-                $updateData,
-                $newImages,
-                $newVideos
-            );
-
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đánh giá đã được cập nhật!',
-                    'review' => $updatedReview,
-                ]);
-            }
-
-            return redirect()
-                ->route('products.show', $review->product->slug)
-                ->with('success', 'Đánh giá của bạn đã được cập nhật thành công!');
-
-        } catch (\Exception $e) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-                ], 500);
-            }
-
-            return back()
-                ->withInput()
-                ->with('error', 'Có lỗi xảy ra khi cập nhật đánh giá.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đánh giá đã được ghi nhận và không thể chỉnh sửa.',
+            ], 403);
         }
+
+        return redirect()->route('products.show', $review->product->slug)
+            ->with('info', 'Đánh giá đã được ghi nhận và không thể chỉnh sửa.');
     }
 
-    /**
-     * Delete the specified review
-     *
-     * DELETE /reviews/{review}
-     */
     public function destroy(ProductReview $review)
     {
         try {
-            // Check authorization
             if (Auth::id() !== $review->user_id) {
                 return response()->json([
                     'success' => false,

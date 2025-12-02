@@ -251,8 +251,8 @@
                                         <div class="review-item pb-3 mb-3">
                                             <div class="d-flex align-items-start gap-3">
                                                 <div class="review-avatar flex-shrink-0">
-                                                    @if ($review->user->avatar)
-                                                        <img src="{{ asset('storage/' . $review->user->avatar) }}"
+                                                    @if ($review->user->image_url)
+                                                        <img src="{{ $review->user->image_url }}"
                                                             alt="{{ $review->user->fullname }}" class="rounded-circle"
                                                             style="width: 40px; height: 40px; object-fit: cover;">
                                                     @else
@@ -382,7 +382,6 @@
                 color: #23262b;
             }
 
-            /* Main Product Card */
             .product-main-card {
                 overflow: hidden;
             }
@@ -394,7 +393,6 @@
                 }
             }
 
-            /* Image Skeleton Loading */
             .image-skeleton {
                 padding: 1rem;
             }
@@ -521,7 +519,6 @@
                 font-weight: 700;
             }
 
-            /* Specifications Card Styling */
             .pw-specs-card,
             .pw-desc-card {
                 border: none;
@@ -592,7 +589,6 @@
                 margin-bottom: 1rem;
             }
 
-            /* Reviews Section Styling */
             .pw-reviews-card {
                 border: none;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

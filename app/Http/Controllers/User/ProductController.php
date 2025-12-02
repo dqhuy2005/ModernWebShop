@@ -74,7 +74,7 @@ class ProductController extends Controller
                 600,
                 function () use ($product) {
                     return $product->approvedReviews()
-                        ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'created_at')
+                        ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'images', 'videos', 'created_at')
                         ->with('user:id,fullname,email')
                         ->latest()
                         ->paginate(10);

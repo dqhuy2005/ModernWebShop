@@ -6,7 +6,6 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Breadcrumb -->
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
@@ -17,7 +16,6 @@
                     </ol>
                 </nav>
 
-                <!-- Product Info Card -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -32,7 +30,6 @@
                     </div>
                 </div>
 
-                <!-- Review Form Card -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0">
@@ -57,7 +54,6 @@
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                             <input type="hidden" name="order_id" value="{{ $order->id }}">
 
-                            <!-- Rating -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold required">
                                     Đánh giá của bạn <span class="text-danger">*</span>
@@ -73,7 +69,6 @@
                                 </div>
                             </div>
 
-                            <!-- Title -->
                             <div class="mb-3">
                                 <label for="title" class="form-label fw-bold">
                                     Tiêu đề đánh giá (Tùy chọn)
@@ -86,7 +81,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Comment -->
                             <div class="mb-3">
                                 <label for="comment" class="form-label fw-bold required">
                                     Nội dung đánh giá <span class="text-danger">*</span>
@@ -102,7 +96,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Images Upload -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">
                                     Thêm hình ảnh (Tùy chọn)
@@ -120,7 +113,6 @@
                                 <div id="imagePreview" class="image-preview mt-2"></div>
                             </div>
 
-                            <!-- Videos Upload -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold">
                                     Thêm video (Tùy chọn)
@@ -138,7 +130,6 @@
                                 <div id="videoPreview" class="video-preview mt-2"></div>
                             </div>
 
-                            <!-- Submit Buttons -->
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
                                     <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá

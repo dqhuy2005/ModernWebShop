@@ -19,6 +19,7 @@ class OrderDetail extends Model
         'unit_price',
         'total_price',
         'product_specifications',
+        'reviewed_at',
     ];
 
     protected function casts(): array
@@ -30,6 +31,7 @@ class OrderDetail extends Model
             'unit_price' => 'integer',
             'total_price' => 'integer',
             'product_specifications' => 'array',
+            'reviewed_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -53,5 +55,15 @@ class OrderDetail extends Model
     public function getFormattedTotalPriceAttribute()
     {
         return number_format($this->total_price, 0, ',', '.');
+    }
+
+    public function hasBeenReviewed(): bool
+    {
+        return !is_null($this->reviewed_at);
+    }
+
+    public function review()
+    {
+        return $this->hasOne(ProductReview::class, 'order_detail_id');
     }
 }
