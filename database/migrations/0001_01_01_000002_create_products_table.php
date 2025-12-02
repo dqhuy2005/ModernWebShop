@@ -5,9 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
@@ -17,28 +14,24 @@ return new class extends Migration {
             $table->string('slug')->nullable()->index();
             $table->longText('description')->nullable();
             $table->json('specifications')->nullable();
-            $table->unsignedBigInteger('price')->default(0);
+            $table->unsignedBigInteger('price')->default(0)->index();
             $table->string('currency', 10)->default('VND');
             $table->boolean('status')->default(true)->index();
             $table->unsignedInteger('parent_id')->nullable();
             $table->string('language', 10)->nullable();
-            $table->unsignedInteger('views')->default(0);
+            $table->unsignedInteger('views')->default(0)->index();
             $table->boolean('is_hot')->default(false)->index();
             $table->timestamps();
             $table->softDeletes();
 
-            // Foreign keys
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-
-            // Indexes
-            $table->index('price');
             $table->fullText('name', 'idx_products_name_fulltext');
+            $table->index('created_at');
+            $table->index(['category_id', 'status', 'price']);
+            $table->index(['status', 'is_hot', 'views']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');
