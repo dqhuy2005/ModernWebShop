@@ -9,32 +9,7 @@
                 <div class="col-lg-3 mb-4">
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
-                            <div class="profile-avatar mb-3">
-                                @if (Auth::user()->image)
-                                    <img src="{{ Auth::user()->image_url }}" alt="Avatar" class="rounded-circle"
-                                        style="width: 120px; height: 120px; object-fit: cover;"
-                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @elseif (Auth::user()->isOAuthUser())
-                                    <img src="{{ Auth::user()->oauthAccounts->first()->avatar ?? Auth::user()->image }}" alt="Avatar" class="rounded-circle"
-                                        style="width: 120px; height: 120px; object-fit: cover;"
-                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @else
-                                    {{-- Default avatar icon --}}
-                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @endif
-                            </div>
-                            <h5 class="fw-bold mb-1" style="color: #202732;">{{ Auth::user()->fullname }}</h5>
+                            <h5 class="fw-bold mb-3" style="color: #202732;">{{ Auth::user()->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ Auth::user()->email }}</p>
                             <div class="d-grid gap-2">
                                 <a href="{{ route('profile.index') }}" class="btn btn-sm btn-outline-secondary"
@@ -170,7 +145,6 @@
             border-color: #dc3545;
         }
 
-        /* Tabs Styling */
         .nav-tabs {
             border-bottom: 2px solid #dee2e6;
         }
@@ -197,7 +171,6 @@
             font-weight: 600;
         }
 
-        /* Loading state */
         #ordersContainer {
             transition: opacity 0.2s ease;
             min-height: 200px;
@@ -209,7 +182,6 @@
             pointer-events: none;
         }
 
-        /* Loading spinner overlay */
         .loading-overlay {
             position: absolute;
             top: 50%;
@@ -253,7 +225,6 @@
             font-weight: 500;
         }
 
-        /* Tab loading indicator */
         .nav-tabs .nav-link.loading::after {
             content: '';
             display: inline-block;
@@ -267,7 +238,6 @@
             vertical-align: middle;
         }
 
-        /* Skeleton loader for orders */
         .skeleton-loader {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
@@ -329,7 +299,56 @@
             margin-top: 1rem;
         }
 
+        @media (min-width: 768px) and (max-width: 991px) {
+            .col-lg-3 {
+                flex: 0 0 35%;
+                max-width: 35%;
+            }
+
+            .col-lg-9 {
+                flex: 0 0 65%;
+                max-width: 65%;
+            }
+
+            .card-body {
+                padding: 1.5rem !important;
+            }
+
+            .btn-sm {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            h5.fw-bold {
+                font-size: 1.1rem;
+            }
+
+            .card-body h5.fw-bold {
+                font-size: 1rem;
+            }
+
+            .card-body p.text-muted {
+                font-size: 0.8rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .input-group .form-control {
+                font-size: 0.85rem;
+            }
+        }
+
         @media (max-width: 768px) {
+
+            .col-lg-3,
+            .col-lg-9 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
             .nav-tabs {
                 flex-wrap: nowrap;
                 overflow-x: auto;
@@ -340,6 +359,10 @@
                 white-space: nowrap;
                 padding: 0.75rem 1rem;
                 font-size: 0.9rem;
+            }
+
+            .card-body {
+                padding: 1rem !important;
             }
         }
     </style>

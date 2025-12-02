@@ -97,10 +97,6 @@
                     </span>
                 </a>
             </div>
-
-            <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
         </div>
     </nav>
 </header>

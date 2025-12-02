@@ -9,36 +9,7 @@
                 <div class="col-lg-3 mb-4">
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4 text-center">
-                            <div class="profile-avatar mb-3 position-relative">
-
-                                @if ($user->image)
-                                    <img src="{{ $user->image_url }}" alt="Avatar" class="rounded-circle avatar-clickable" id="avatarPreview"
-                                        style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;"
-                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center avatar-clickable"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px; cursor: pointer;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @elseif ($user->isOAuthUser())
-                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image }}" alt="Avatar" class="rounded-circle avatar-clickable" id="avatarPreview"
-                                        style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;"
-                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center avatar-clickable"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px; cursor: pointer;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @else
-                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center avatar-clickable"
-                                        id="avatarPreview"
-                                        style="width: 120px; height: 120px; background-color: #f0f0f0; color: #6c757d; font-size: 48px; cursor: pointer;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <img src="" alt="Avatar" class="rounded-circle d-none avatar-clickable" id="avatarImage"
-                                        style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;">
-                                @endif
-                                <input type="file" id="imageInput" accept="image/*" class="d-none">
-                            </div>
-                            <h5 class="fw-bold mb-1" style="color: #202732;">{{ $user->fullname }}</h5>
+                            <h5 class="fw-bold mb-3" style="color: #202732;">{{ $user->fullname }}</h5>
                             <p class="text-muted small mb-3">{{ $user->email }}</p>
                             <div class="d-grid gap-2">
                                 <a href="{{ route('profile.index') }}" class="btn btn-sm btn-danger active"
@@ -67,104 +38,157 @@
 
                             <form id="profileForm">
                                 @csrf
-                                <div class="row mb-3">
-                                    <div class="col-md-2">
-                                        <label for="fullname" class="form-label fw-semibold">
-                                            Tên <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
 
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control" id="fullname" name="fullname"
-                                            value="{{ $user->fullname }}" required>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-2">
-                                        <label for="email" class="form-label fw-semibold">Email</label>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <input type="email" class="form-control" id="email"
-                                            value="{{ $user->email }}" readonly style="color: #ccc">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-2">
-                                        <label for="phone" class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <input type="tel" class="form-control" id="phone" name="phone"
-                                            value="{{ $user->phone ?? '' }}" required>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-2">
-                                        <label class="form-label fw-semibold">Ngày sinh <span class="text-danger">*</span></label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="row g-2">
-                                            <div class="col-4">
-                                                <select class="form-select" id="birthday_day" name="birthday_day" required>
-                                                    <option value="">Ngày</option>
-                                                    @for ($i = 1; $i <= 31; $i++)
-                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
-                                                            {{ $i }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
+                                <div class="row">
+                                    <!-- Form Fields - Left Side -->
+                                    <div class="col-md-8">
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <label for="fullname" class="form-label fw-semibold">
+                                                    Tên <span class="text-danger">*</span>
+                                                </label>
                                             </div>
-                                            <div class="col-4">
-                                                <select class="form-select" id="birthday_month" name="birthday_month" required>
-                                                    <option value="">Tháng</option>
-                                                    @for ($i = 1; $i <= 12; $i++)
-                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
-                                                            {{ $i }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-                                            <div class="col-4">
-                                                <select class="form-select" id="birthday_year" name="birthday_year" required>
-                                                    <option value="">Năm</option>
-                                                    @for ($i = date('Y'); $i >= 1940; $i--)
-                                                        <option value="{{ $i }}">{{ $i }}</option>
-                                                    @endfor
-                                                </select>
+
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" id="fullname" name="fullname"
+                                                    value="{{ $user->fullname }}" required>
+                                                <div class="invalid-feedback"></div>
                                             </div>
                                         </div>
-                                        <div class="invalid-feedback d-block"></div>
-                                    </div>
-                                </div>
 
-                                <div class="row mb-3">
-                                    <div class="col-2">
-                                        <label for="address" class="form-label fw-semibold">Địa chỉ <span class="text-danger">*</span></label>
-                                    </div>
-
-                                    <div class="col-6">
-                                        <textarea class="form-control" id="address" name="address" rows="3"
-                                            placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố" required>{{ $user->address ?? '' }}</textarea>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-
-                                    <div class="col-12 my-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <button type="submit" class="btn btn-danger px-4" id="saveBtn">
-                                                    Lưu
-                                                </button>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <label for="email" class="form-label fw-semibold">Email</label>
                                             </div>
 
-                                            <small class="text-muted">
-                                                Tham gia: {{ $user->created_at->format('d/m/Y') }}
-                                            </small>
+                                            <div class="col-md-9">
+                                                <input type="email" class="form-control" id="email"
+                                                    value="{{ $user->email }}" readonly style="color: #ccc">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <label for="phone" class="form-label fw-semibold">Số điện thoại <span
+                                                        class="text-danger">*</span></label>
+                                            </div>
+
+                                            <div class="col-md-9">
+                                                <input type="tel" class="form-control" id="phone" name="phone"
+                                                    value="{{ $user->phone ?? '' }}" required>
+                                                <div class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label fw-semibold">Ngày sinh <span
+                                                        class="text-danger">*</span></label>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="row g-2">
+                                                    <div class="col-4">
+                                                        <select class="form-select" id="birthday_day" name="birthday_day"
+                                                            required>
+                                                            <option value="">Ngày</option>
+                                                            @for ($i = 1; $i <= 31; $i++)
+                                                                <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
+                                                                    {{ $i }}
+                                                                </option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <select class="form-select" id="birthday_month"
+                                                            name="birthday_month" required>
+                                                            <option value="">Tháng</option>
+                                                            @for ($i = 1; $i <= 12; $i++)
+                                                                <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
+                                                                    {{ $i }}
+                                                                </option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <select class="form-select" id="birthday_year" name="birthday_year"
+                                                            required>
+                                                            <option value="">Năm</option>
+                                                            @for ($i = date('Y'); $i >= 1940; $i--)
+                                                                <option value="{{ $i }}">{{ $i }}
+                                                                </option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="invalid-feedback d-block"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                <label for="address" class="form-label fw-semibold">Địa chỉ <span
+                                                        class="text-danger">*</span></label>
+                                            </div>
+
+                                            <div class="col-9">
+                                                <textarea class="form-control" id="address" name="address" rows="3"
+                                                    placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố" required>{{ $user->address ?? '' }}</textarea>
+                                                <div class="invalid-feedback"></div>
+                                            </div>
+
+                                            <div class="col-12 my-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <button type="submit" class="btn btn-danger px-4"
+                                                            id="saveBtn">
+                                                            Lưu
+                                                        </button>
+                                                    </div>
+
+                                                    <small class="text-muted">
+                                                        Tham gia: {{ $user->created_at->format('d/m/Y') }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <div class="profile-avatar-large mb-3 position-relative d-inline-block">
+                                                @if ($user->image)
+                                                    <img src="{{ $user->image_url }}" alt="Avatar"
+                                                        class="rounded-circle avatar-clickable" id="avatarPreview"
+                                                        style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 3px solid #dee2e6;"
+                                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center avatar-clickable"
+                                                        style="width: 150px; height: 150px; background-color: #f8f9fa; color: #6c757d; font-size: 60px; cursor: pointer; border: 3px solid #dee2e6;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                @elseif ($user->isOAuthUser())
+                                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image }}"
+                                                        alt="Avatar" class="rounded-circle avatar-clickable"
+                                                        id="avatarPreview"
+                                                        style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 3px solid #dee2e6;"
+                                                        onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="avatar-placeholder rounded-circle d-none align-items-center justify-content-center avatar-clickable"
+                                                        style="width: 150px; height: 150px; background-color: #f8f9fa; color: #6c757d; font-size: 60px; cursor: pointer; border: 3px solid #dee2e6;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                @else
+                                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center avatar-clickable"
+                                                        id="avatarPreview"
+                                                        style="width: 150px; height: 150px; background-color: #f8f9fa; color: #6c757d; font-size: 60px; cursor: pointer; border: 3px solid #dee2e6;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <img src="" alt="Avatar"
+                                                        class="rounded-circle d-none avatar-clickable" id="avatarImage"
+                                                        style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 3px solid #dee2e6;">
+                                                @endif
+                                                <input type="file" id="imageInput" accept="image/*" class="d-none">
+                                            </div>
+                                            <p class="text-muted small mb-0">
+                                                Kích thước tối đa: 1MB<br>Định dạng: JPG, PNG
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -235,22 +259,46 @@
             border-color: #dc3545;
         }
 
-        .profile-avatar {
+        .profile-avatar-large {
             display: inline-block;
         }
 
         .avatar-placeholder {
-            border: 2px solid #dee2e6;
+            border: 4px solid #fff;
             transition: all 0.3s ease;
         }
 
         .avatar-placeholder:hover {
-            background-color: #e9ecef !important;
-            border-color: #adb5bd;
+            background-color: #dee2e6 !important;
+            border-color: #dc3545 !important;
+            transform: scale(1.02);
         }
 
         .avatar-clickable {
             transition: all 0.3s ease;
+        }
+
+        .avatar-clickable:hover {
+            transform: scale(1.02);
+            border-color: #dc3545 !important;
+        }
+
+        .avatar-overlay {
+            transition: all 0.3s ease;
+        }
+
+        .avatar-overlay:hover {
+            background: #bb2d3b !important;
+            transform: scale(1.1);
+        }
+
+        .avatar-upload-section {
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload-section:hover {
+            border-color: #dc3545 !important;
+            background-color: #fff !important;
         }
 
         .form-select {
@@ -261,6 +309,82 @@
 
         .form-select:hover {
             border-color: #adb5bd;
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            .col-lg-3 {
+                flex: 0 0 35%;
+                max-width: 35%;
+            }
+
+            .col-lg-9 {
+                flex: 0 0 65%;
+                max-width: 65%;
+            }
+
+            .card-body {
+                padding: 1.5rem !important;
+            }
+
+            .profile-avatar img,
+            .profile-avatar .avatar-placeholder {
+                width: 80px !important;
+                height: 80px !important;
+                font-size: 32px !important;
+            }
+
+            .btn-sm {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .col-md-2 {
+                flex: 0 0 30%;
+                max-width: 30%;
+            }
+
+            .col-md-6 {
+                flex: 0 0 70%;
+                max-width: 70%;
+            }
+
+            h5.fw-bold {
+                font-size: 1.1rem;
+            }
+
+            .card-body h5.fw-bold {
+                font-size: 1rem;
+            }
+
+            .card-body p.text-muted {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+
+            .col-lg-3,
+            .col-lg-9 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .col-md-2,
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .col-2,
+            .col-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .card-body {
+                padding: 1rem !important;
+            }
         }
     </style>
 @endpush
@@ -365,7 +489,8 @@
                             toastr.success(response.message);
 
                             if (response.image_url) {
-                                const $img = $('#avatarImage').length ? $('#avatarImage') : $('#avatarPreview');
+                                const $img = $('#avatarImage').length ? $('#avatarImage') : $(
+                                    '#avatarPreview');
                                 const $placeholder = $('.avatar-placeholder');
 
                                 if ($img.length) {
@@ -375,8 +500,10 @@
 
                                 const $headerAvatar = $('#headerAvatar');
                                 if ($headerAvatar.length) {
-                                    $headerAvatar.attr('src', response.image_url).removeClass('d-none').show();
-                                    $headerAvatar.siblings('.rounded-circle.bg-danger').addClass('d-none').hide();
+                                    $headerAvatar.attr('src', response.image_url).removeClass('d-none')
+                                        .show();
+                                    $headerAvatar.siblings('.rounded-circle.bg-danger').addClass(
+                                        'd-none').hide();
                                 }
                             }
                         }
@@ -389,7 +516,8 @@
                                 let $field;
 
                                 if (key === 'birthday') {
-                                    $('#birthday_day, #birthday_month, #birthday_year').addClass('is-invalid');
+                                    $('#birthday_day, #birthday_month, #birthday_year')
+                                        .addClass('is-invalid');
                                     $field = $('#birthday_day').parent().parent();
                                 } else {
                                     $field = $('#' + key);
@@ -406,7 +534,8 @@
                                 }
                             });
                         } else {
-                            toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
+                            toastr.error(xhr.responseJSON?.message ||
+                                'Có lỗi xảy ra. Vui lòng thử lại!');
                         }
                     },
                     complete: function() {
