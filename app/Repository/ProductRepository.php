@@ -196,4 +196,67 @@ class ProductRepository extends BaseRepository
             ->orderByDesc('views')
             ->paginate($perPage);
     }
+
+    /**
+     * Find product by slug with relations for product detail page
+     */
+    public function findBySlugWithRelations(string $slug)
+    {
+        return $this->model
+            ->select('id', 'name', 'slug', 'description', 'specifications', 'price', 'currency', 'category_id', 'status', 'is_hot', 'views', 'created_at', 'updated_at')
+            ->with([
+                'category:id,name,slug',
+                'images' => function ($query) {
+                    $query->select('id', 'product_id', 'path', 'sort_order')
+                        ->orderBy('sort_order')
+                        ->orderBy('id');
+                }
+            ])
+            ->where('slug', $slug)
+            ->firstOrFail();
+    }
+
+    /**
+     * Get related products by category
+     */
+    public function getRelatedProducts(int $productId, int $categoryId, int $limit = 8)
+    {
+        return $this->model
+            ->where('category_id', $categoryId)
+            ->where('id', '!=', $productId)
+            ->where('status', true)
+            ->select('id', 'name', 'slug', 'price', 'views', 'is_hot')
+            ->with(['images' => function($query) {
+                $query->select('id', 'product_id', 'path')->orderBy('sort_order')->limit(1);
+            }])
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get hot products with pagination
+     */
+    public function getHotProductsPaginated(int $perPage = 20)
+    {
+        return $this->model
+            ->where('is_hot', true)
+            ->where('status', true)
+            ->select('id', 'name', 'slug', 'price', 'views', 'is_hot', 'category_id')
+            ->with('category:id,name')
+            ->orderBy('views', 'desc')
+            ->paginate($perPage);
+    }
+
+    /**
+     * Get approved reviews for a product
+     */
+    public function getApprovedReviews(Product $product, int $perPage = 10)
+    {
+        return $product->approvedReviews()
+            ->select('id', 'product_id', 'user_id', 'rating', 'comment', 'status', 'images', 'videos', 'created_at')
+            ->with('user:id,fullname,email')
+            ->latest()
+            ->paginate($perPage);
+    }
 }

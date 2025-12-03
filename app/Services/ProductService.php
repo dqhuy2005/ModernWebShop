@@ -6,14 +6,28 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
+use App\Repository\ProductRepository;
 
 class ProductService
 {
     protected ImageService $imageService;
+    protected ProductRepository $productRepository;
+    protected ProductViewService $productViewService;
+    protected ReviewService $reviewService;
+    protected RedisService $redisService;
 
-    public function __construct(ImageService $imageService)
-    {
+    public function __construct(
+        ImageService $imageService,
+        ProductRepository $productRepository,
+        ProductViewService $productViewService,
+        ReviewService $reviewService,
+        RedisService $redisService
+    ) {
         $this->imageService = $imageService;
+        $this->productRepository = $productRepository;
+        $this->productViewService = $productViewService;
+        $this->reviewService = $reviewService;
+        $this->redisService = $redisService;
     }
 
     public function createProduct(array $data, ?UploadedFile $mainImage = null, ?array $images = []): Product
@@ -139,5 +153,100 @@ class ProductService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function getProductDetail(string $slug, $request): array
+    {
+        $product = $this->getProductBySlug($slug);
+
+        $this->trackProductView($product, $request);
+
+        return [
+            'product' => $product,
+            'relatedProducts' => $this->getRelatedProducts($product),
+            'viewStats' => $this->getViewStats($product),
+            'reviews' => $this->getProductReviews($product, $request),
+            'reviewStats' => $this->getReviewStats($product),
+        ];
+    }
+
+    public function getProductBySlug(string $slug)
+    {
+        $cacheKey = "product_detail_{$slug}";
+
+        return $this->redisService->remember(
+            $cacheKey,
+            600,
+            fn() => $this->productRepository->findBySlugWithRelations($slug)
+        );
+    }
+
+    public function trackProductView(Product $product, $request): void
+    {
+        $this->productViewService->trackView(
+            $product,
+            $request->ip(),
+            $request->userAgent()
+        );
+    }
+
+    public function getRelatedProducts(Product $product)
+    {
+        $cacheKey = "related_products_{$product->id}";
+
+        return $this->redisService->remember(
+            $cacheKey,
+            3600,
+            fn() => $this->productRepository->getRelatedProducts($product->id, $product->category_id, 8)
+        );
+    }
+
+    public function getViewStats(Product $product): array
+    {
+        $cacheKey = "product_view_stats_{$product->id}";
+
+        return $this->redisService->remember(
+            $cacheKey,
+            300,
+            function () use ($product) {
+                return [
+                    'total_views' => $product->views ?? 0,
+                    'recent_views_7days' => $this->productViewService->getRecentViewCount($product->id, 7),
+                    'unique_visitors' => $this->productViewService->getUniqueVisitorsCount($product->id, 7),
+                    'is_hot' => $product->is_hot,
+                ];
+            }
+        );
+    }
+
+    public function getProductReviews(Product $product, $request)
+    {
+        $page = $request->get('page', 1);
+        $cacheKey = "product_reviews_{$product->id}_page_{$page}";
+
+        return $this->redisService->remember(
+            $cacheKey,
+            600,
+            fn() => $this->productRepository->getApprovedReviews($product, 10)
+        );
+    }
+
+    public function getReviewStats(Product $product): array
+    {
+        $cacheKey = "product_review_stats_{$product->id}";
+
+        return $this->redisService->remember(
+            $cacheKey,
+            600,
+            fn() => $this->reviewService->getProductReviewStats($product)
+        );
+    }
+
+    /**
+     * Get hot products with pagination
+     */
+    public function getHotProducts(int $perPage = 20)
+    {
+        return $this->productRepository->getHotProductsPaginated($perPage);
     }
 }
