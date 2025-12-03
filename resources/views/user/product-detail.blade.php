@@ -156,209 +156,209 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="row mt-4 g-3">
-                <div class="col-lg-6">
-                    <div class="card pw-specs-card h-100">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="bi bi-list-check"></i> Thông số kỹ thuật:
-                            </h5>
-                        </div>
-                        <div class="card-body p-0">
-                            @php
-                                $specs = $product->specifications;
-                                if (is_string($specs)) {
-                                    $specs = json_decode($specs, true);
-                                }
-                            @endphp
-
-                            @if (!empty($specs) && is_array($specs))
-                                <table class="table table-hover pw-specs-table mb-0">
-                                    <tbody>
-                                        @foreach ($specs as $key => $val)
-                                            <tr>
-                                                <th class="pw-spec-label">
-                                                    {{ is_string($key) ? $key : 'Thuộc tính' }}
-                                                </th>
-                                                <td class="pw-spec-value">
-                                                    {{ is_array($val) ? implode(', ', $val) : $val }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @else
-                                <div class="p-4 text-center text-muted">
-                                    <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
-                                    <p class="mb-0">Chưa có thông số kỹ thuật cho sản phẩm này.</p>
-                                </div>
-                            @endif
-                        </div>
+        <div class="row mt-4 g-3">
+            <div class="col-lg-6">
+                <div class="card pw-specs-card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-check"></i> Thông số kỹ thuật:
+                        </h5>
                     </div>
-                </div>
+                    <div class="card-body p-0">
+                        @php
+                            $specs = $product->specifications;
+                            if (is_string($specs)) {
+                                $specs = json_decode($specs, true);
+                            }
+                        @endphp
 
-                <div class="col-lg-6">
-                    <div class="card pw-desc-card h-100">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="bi bi-file-text"></i> Mô tả sản phẩm
-                            </h5>
-                        </div>
-                        <div class="card-body pw-product-desc">
-                            {!! $product->description ??
-                                '<div class="text-center text-muted"><i class="bi bi-info-circle fs-3 d-block mb-2"></i><p class="mb-0">Chưa có mô tả.</p></div>' !!}
-                        </div>
+                        @if (!empty($specs) && is_array($specs))
+                            <table class="table table-hover pw-specs-table mb-0">
+                                <tbody>
+                                    @foreach ($specs as $key => $val)
+                                        <tr>
+                                            <th class="pw-spec-label">
+                                                {{ is_string($key) ? $key : 'Thuộc tính' }}
+                                            </th>
+                                            <td class="pw-spec-value">
+                                                {{ is_array($val) ? implode(', ', $val) : $val }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                                <p class="mb-0">Chưa có thông số kỹ thuật cho sản phẩm này.</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card pw-reviews-card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0 fw-bold">
-                                Đánh giá & Nhận xét {{ $product->name }}
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            @if ($reviewStats['total_reviews'] > 0)
-                                <div class="review-summary-compact pb-3">
-                                    <div class="d-flex align-items-center gap-2 mb-3">
-                                        <span class="display-6 fw-bold text-dark mb-0">
-                                            {{ number_format($reviewStats['average_rating'], 2) }}
-                                        </span>
-                                        <div class="d-flex flex-column">
-                                            <div class="stars-inline">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    @if ($i <= floor($reviewStats['average_rating']))
-                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                    @elseif($i - 0.5 <= $reviewStats['average_rating'])
-                                                        <i class="bi bi-star-half text-warning"></i>
-                                                    @else
-                                                        <i class="bi bi-star text-warning"></i>
-                                                    @endif
-                                                @endfor
-                                            </div>
-                                            <small class="text-muted">({{ $reviewStats['total_reviews'] }} đánh
-                                                giá)</small>
+            <div class="col-lg-6">
+                <div class="card pw-desc-card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-file-text"></i> Mô tả sản phẩm
+                        </h5>
+                    </div>
+                    <div class="card-body pw-product-desc">
+                        {!! $product->description ??
+                            '<div class="text-center text-muted"><i class="bi bi-info-circle fs-3 d-block mb-2"></i><p class="mb-0">Chưa có mô tả.</p></div>' !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card pw-reviews-card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 fw-bold">
+                            Đánh giá & Nhận xét {{ $product->name }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if ($reviewStats['total_reviews'] > 0)
+                            <div class="review-summary-compact pb-3">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <span class="display-6 fw-bold text-dark mb-0">
+                                        {{ number_format($reviewStats['average_rating'], 2) }}
+                                    </span>
+                                    <div class="d-flex flex-column">
+                                        <div class="stars-inline">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= floor($reviewStats['average_rating']))
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                @elseif($i - 0.5 <= $reviewStats['average_rating'])
+                                                    <i class="bi bi-star-half text-warning"></i>
+                                                @else
+                                                    <i class="bi bi-star text-warning"></i>
+                                                @endif
+                                            @endfor
                                         </div>
+                                        <small class="text-muted">({{ $reviewStats['total_reviews'] }} đánh
+                                            giá)</small>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="reviews-list">
-                                    @foreach ($reviews as $review)
-                                        <div class="review-item">
-                                            <div class="d-flex align-items-start gap-3">
-                                                <div class="review-avatar flex-shrink-0">
-                                                    @if ($review->user->image_url)
-                                                        <img src="{{ $review->user->image_url }}"
-                                                            alt="{{ $review->user->fullname }}" class="rounded-circle">
-                                                    @else
-                                                        <div
-                                                            class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center">
-                                                            <strong>{{ strtoupper(substr($review->user->fullname ?? $review->user->email, 0, 1)) }}</strong>
-                                                        </div>
-                                                    @endif
+                            <div class="reviews-list">
+                                @foreach ($reviews as $review)
+                                    <div class="review-item">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="review-avatar flex-shrink-0">
+                                                @if ($review->user->image_url)
+                                                    <img src="{{ $review->user->image_url }}"
+                                                        alt="{{ $review->user->fullname }}" class="rounded-circle">
+                                                @else
+                                                    <div
+                                                        class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center">
+                                                        <strong>{{ strtoupper(substr($review->user->fullname ?? $review->user->email, 0, 1)) }}</strong>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <span
+                                                        class="fw-semibold text-dark review-username">{{ $review->user->fullname ?? substr($review->user->email, 0, 2) . '******' . substr($review->user->email, -2) }}</span>
+                                                    <span class="text-muted">|</span>
+                                                    <small
+                                                        class="text-muted review-date">{{ $review->created_at->format('d-m-Y H:i:s') }}</small>
                                                 </div>
 
-                                                <div class="flex-grow-1">
-                                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                                        <span
-                                                            class="fw-semibold text-dark review-username">{{ $review->user->fullname ?? substr($review->user->email, 0, 2) . '******' . substr($review->user->email, -2) }}</span>
-                                                        <span class="text-muted">|</span>
-                                                        <small
-                                                            class="text-muted review-date">{{ $review->created_at->format('d-m-Y H:i:s') }}</small>
-                                                    </div>
-
-                                                    <div class="review-stars text-warning mb-2">
-                                                        @for ($i = 1; $i <= 5; $i++)
-                                                            @if ($i <= $review->rating)
-                                                                <i class="bi bi-star-fill"></i>
-                                                            @else
-                                                                <i class="bi bi-star"></i>
-                                                            @endif
-                                                        @endfor
-                                                    </div>
-
-                                                    @if ($review->order_id)
-                                                        <div class="mb-2">
-                                                            <small class="text-success verified-purchase">
-                                                                <i class="bi bi-check-circle-fill"></i> Đã mua hàng
-                                                            </small>
-                                                            @if ($review->orderDetail && $review->orderDetail->product_name)
-                                                                <span class="text-muted"> | </span>
-                                                                <small class="text-muted">Phân loại hàng:
-                                                                    {{ $review->orderDetail->product_name }}</small>
-                                                            @endif
-                                                        </div>
-                                                    @endif
-
-                                                    <p class="review-comment mb-2">{{ $review->comment }}</p>
-
-                                                    @if ($review->images && count($review->images) > 0)
-                                                        <div class="review-images d-flex gap-2 mb-2">
-                                                            @foreach ($review->images as $index => $image)
-                                                                <a href="javascript:void(0);" class="review-image-thumb"
-                                                                    data-bs-toggle="modal" data-bs-target="#imageModal"
-                                                                    data-image="{{ asset('storage/' . $image) }}"
-                                                                    data-review-id="{{ $review->id }}"
-                                                                    data-index="{{ $index }}">
-                                                                    <img src="{{ asset('storage/' . $image) }}"
-                                                                        alt="Review image">
-                                                                </a>
-                                                            @endforeach
-                                                        </div>
-                                                    @endif
-
-                                                    @if ($review->admin_reply)
-                                                        <div class="admin-reply mt-3">
-                                                            <strong class="text-primary">
-                                                                <i class="bi bi-person-badge"></i> Phản hồi từ người bán:
-                                                            </strong>
-                                                            <p class="mb-0 mt-2">{{ $review->admin_reply }}</p>
-                                                            @if ($review->admin_reply_at)
-                                                                <small
-                                                                    class="text-muted">{{ $review->admin_reply_at->format('d/m/Y H:i') }}</small>
-                                                            @endif
-                                                        </div>
-                                                    @endif
+                                                <div class="review-stars text-warning mb-2">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $review->rating)
+                                                            <i class="bi bi-star-fill"></i>
+                                                        @else
+                                                            <i class="bi bi-star"></i>
+                                                        @endif
+                                                    @endfor
                                                 </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
 
-                                @if ($reviews->hasPages())
-                                    <div class="d-flex justify-content-center mt-4">
-                                        {{ $reviews->links() }}
-                                    </div>
-                                @endif
-                            @else
-                                <div class="review-summary-compact pb-3">
-                                    <div class="d-flex align-items-center gap-2 mb-3">
-                                        <span class="display-6 fw-bold text-dark mb-0">
-                                            {{ number_format($reviewStats['average_rating'], 2) }}
-                                        </span>
-                                        <div class="d-flex flex-column">
-                                            <div class="stars-inline">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    @if ($i <= floor($reviewStats['average_rating']))
-                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                    @elseif($i - 0.5 <= $reviewStats['average_rating'])
-                                                        <i class="bi bi-star-half text-warning"></i>
-                                                    @else
-                                                        <i class="bi bi-star text-warning"></i>
-                                                    @endif
-                                                @endfor
+                                                @if ($review->order_id)
+                                                    <div class="mb-2">
+                                                        <small class="text-success verified-purchase">
+                                                            <i class="bi bi-check-circle-fill"></i> Đã mua hàng
+                                                        </small>
+                                                        @if ($review->orderDetail && $review->orderDetail->product_name)
+                                                            <span class="text-muted"> | </span>
+                                                            <small class="text-muted">Phân loại hàng:
+                                                                {{ $review->orderDetail->product_name }}</small>
+                                                        @endif
+                                                    </div>
+                                                @endif
+
+                                                <p class="review-comment mb-2">{{ $review->comment }}</p>
+
+                                                @if ($review->images && count($review->images) > 0)
+                                                    <div class="review-images d-flex gap-2 mb-2">
+                                                        @foreach ($review->images as $index => $image)
+                                                            <a href="javascript:void(0);" class="review-image-thumb"
+                                                                data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                                data-image="{{ asset('storage/' . $image) }}"
+                                                                data-review-id="{{ $review->id }}"
+                                                                data-index="{{ $index }}">
+                                                                <img src="{{ asset('storage/' . $image) }}"
+                                                                    alt="Review image">
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+
+                                                @if ($review->admin_reply)
+                                                    <div class="admin-reply mt-3">
+                                                        <strong class="text-primary">
+                                                            <i class="bi bi-person-badge"></i> Phản hồi từ người bán:
+                                                        </strong>
+                                                        <p class="mb-0 mt-2">{{ $review->admin_reply }}</p>
+                                                        @if ($review->admin_reply_at)
+                                                            <small
+                                                                class="text-muted">{{ $review->admin_reply_at->format('d/m/Y H:i') }}</small>
+                                                        @endif
+                                                    </div>
+                                                @endif
                                             </div>
-                                            <small class="text-muted">({{ $reviewStats['total_reviews'] }} đánh
-                                                giá)</small>
                                         </div>
                                     </div>
+                                @endforeach
+                            </div>
+
+                            @if ($reviews->hasPages())
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $reviews->links() }}
                                 </div>
                             @endif
-                        </div>
+                        @else
+                            <div class="review-summary-compact pb-3">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <span class="display-6 fw-bold text-dark mb-0">
+                                        {{ number_format($reviewStats['average_rating'], 2) }}
+                                    </span>
+                                    <div class="d-flex flex-column">
+                                        <div class="stars-inline">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= floor($reviewStats['average_rating']))
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                @elseif($i - 0.5 <= $reviewStats['average_rating'])
+                                                    <i class="bi bi-star-half text-warning"></i>
+                                                @else
+                                                    <i class="bi bi-star text-warning"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <small class="text-muted">({{ $reviewStats['total_reviews'] }} đánh
+                                            giá)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -558,7 +558,7 @@
             padding: 0.95rem 1.25rem;
             font-weight: 600;
             color: #374151;
-            background-color: #f8f9fa;
+            background-color: #6c6161;
             border-right: 2px solid #dee2e6;
             vertical-align: middle;
         }
