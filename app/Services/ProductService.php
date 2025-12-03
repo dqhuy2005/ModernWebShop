@@ -242,9 +242,6 @@ class ProductService
         );
     }
 
-    /**
-     * Get hot products with pagination
-     */
     public function getHotProducts(int $perPage = 20)
     {
         return $this->productRepository->getHotProductsPaginated($perPage);

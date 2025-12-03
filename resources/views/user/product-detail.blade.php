@@ -192,7 +192,7 @@
                         @else
                             <div class="p-4 text-center text-muted">
                                 <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
-                                <p class="mb-0">Chưa có thông số kỹ thuật cho sản phẩm này.</p>
+                                <p class="mb-0">(Đang cập nhật ...)</p>
                             </div>
                         @endif
                     </div>

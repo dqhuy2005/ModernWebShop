@@ -197,9 +197,6 @@ class ProductRepository extends BaseRepository
             ->paginate($perPage);
     }
 
-    /**
-     * Find product by slug with relations for product detail page
-     */
     public function findBySlugWithRelations(string $slug)
     {
         return $this->model
@@ -216,9 +213,6 @@ class ProductRepository extends BaseRepository
             ->firstOrFail();
     }
 
-    /**
-     * Get related products by category
-     */
     public function getRelatedProducts(int $productId, int $categoryId, int $limit = 8)
     {
         return $this->model
@@ -226,17 +220,16 @@ class ProductRepository extends BaseRepository
             ->where('id', '!=', $productId)
             ->where('status', true)
             ->select('id', 'name', 'slug', 'price', 'views', 'is_hot')
-            ->with(['images' => function($query) {
-                $query->select('id', 'product_id', 'path')->orderBy('sort_order')->limit(1);
-            }])
+            ->with([
+                'images' => function ($query) {
+                    $query->select('id', 'product_id', 'path')->orderBy('sort_order')->limit(1);
+                }
+            ])
             ->inRandomOrder()
             ->limit($limit)
             ->get();
     }
 
-    /**
-     * Get hot products with pagination
-     */
     public function getHotProductsPaginated(int $perPage = 20)
     {
         return $this->model
@@ -248,9 +241,6 @@ class ProductRepository extends BaseRepository
             ->paginate($perPage);
     }
 
-    /**
-     * Get approved reviews for a product
-     */
     public function getApprovedReviews(Product $product, int $perPage = 10)
     {
         return $product->approvedReviews()
