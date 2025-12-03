@@ -101,7 +101,7 @@ class ProductController extends Controller
         }
     }
 
-    private function getRelatedProducts(Product $product, int $limit = 4)
+    private function getRelatedProducts(Product $product, int $limit = 8)
     {
         return $this->redis->remember(
             "related_products_{$product->id}",
@@ -111,7 +111,10 @@ class ProductController extends Controller
                     ->where('id', '!=', $product->id)
                     ->where('status', true)
                     ->select('id', 'name', 'slug', 'price', 'views', 'is_hot')
-                    ->orderBy('views', 'desc')
+                    ->with(['images' => function($query) {
+                        $query->select('id', 'product_id', 'path')->orderBy('sort_order')->limit(1);
+                    }])
+                    ->inRandomOrder()
                     ->limit($limit)
                     ->get();
             }
