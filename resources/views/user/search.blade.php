@@ -86,13 +86,6 @@
                                 </select>
                             </div>
                         </div>
-
-                        <div class="pw-pagination-info d-none d-md-flex align-items-center gap-2">
-                            <span class="text-muted">
-                                <i class="bi bi-card-list"></i>
-                                Tìm thấy <strong>{{ $products->total() }}</strong> sản phẩm
-                            </span>
-                        </div>
                     </div>
                 </div>
 
