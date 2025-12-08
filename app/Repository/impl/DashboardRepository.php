@@ -13,9 +13,6 @@ use App\Models\Category;
 
 class DashboardRepository implements IDashboardRepository
 {
-    /**
-     * Get overview statistics for dashboard cards
-     */
     public function getOverviewStatistics(Carbon $today, Carbon $thisMonth, Carbon $thisYear): array
     {
         $orderStats = Order::selectRaw("

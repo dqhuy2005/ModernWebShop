@@ -13,6 +13,4 @@ interface IProductViewService
     public function getRecentViewCount(int $productId, int $days = 7): int;
 
     public function getUniqueVisitorsCount(int $productId, int $days = 7): int;
-
-    public function getHotProducts(int $limit = 10);
 }

@@ -18,29 +18,6 @@ class ProductRepository extends BaseRepository implements IProductRepository
         return $this->with(['category', 'carts', 'orderDetails']);
     }
 
-    public function findByCategory($categoryId)
-    {
-        return $this->findWhere(['category_id' => $categoryId]);
-    }
-
-    public function findActive()
-    {
-        return $this->findWhere(['status' => true]);
-    }
-
-    public function findByLanguage($language)
-    {
-        return $this->findWhere(['language' => $language]);
-    }
-
-    public function findActiveByCategoryId($categoryId)
-    {
-        return $this->findWhere([
-            'category_id' => $categoryId,
-            'status' => true
-        ]);
-    }
-
     public function filterByPrice($query, $priceRange)
     {
         return match ($priceRange) {

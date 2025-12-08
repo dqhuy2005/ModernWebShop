@@ -77,18 +77,4 @@ class ProductViewService implements IProductViewService
             }
         );
     }
-
-    public function getHotProducts(int $limit = 10)
-    {
-        return $this->redis->remember(
-            "hot_products_{$limit}",
-            3600,
-            function () use ($limit) {
-                return Product::where('is_hot', true)
-                    ->orderBy('views', 'desc')
-                    ->limit($limit)
-                    ->get();
-            }
-        );
-    }
 }

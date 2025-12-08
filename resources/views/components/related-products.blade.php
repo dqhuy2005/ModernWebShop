@@ -11,7 +11,6 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="related-products-carousel position-relative">
-                        <!-- Navigation buttons outside carousel -->
                         <div class="swiper-button-prev-custom">
                             <i class="bi bi-chevron-left"></i>
                         </div>
@@ -87,7 +86,6 @@
                                 @endforeach
                             </div>
 
-                            <!-- Pagination -->
                             <div class="swiper-pagination"></div>
                         </div>
                     </div>
@@ -101,7 +99,6 @@
             .related-products-card {
                 border: none;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                border-radius: 12px;
                 overflow: hidden;
             }
 

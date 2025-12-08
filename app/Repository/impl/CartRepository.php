@@ -30,7 +30,6 @@ class CartRepository extends BaseRepository implements ICartRepository
 
     public function findByUserAndProduct($userId, $productId)
     {
-        // Include soft deleted records to handle restore scenario
         return $this->model
             ->where('user_id', $userId)
             ->where('product_id', $productId)
@@ -54,10 +53,5 @@ class CartRepository extends BaseRepository implements ICartRepository
     public function updateQuantity($cartId, $quantity)
     {
         return $this->update(['quantity' => $quantity], $cartId);
-    }
-
-    public function findByProduct($productId)
-    {
-        return $this->findWhere(['product_id' => $productId]);
     }
 }

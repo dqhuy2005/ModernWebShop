@@ -10,14 +10,6 @@ interface IProductRepository
 
     public function findBuild();
 
-    public function findByCategory($categoryId);
-
-    public function findActive();
-
-    public function findByLanguage($language);
-
-    public function findActiveByCategoryId($categoryId);
-
     public function filterByPrice($query, $priceRange);
 
     public function sortProducts($query, $sortBy);

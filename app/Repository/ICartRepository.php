@@ -17,6 +17,4 @@ interface ICartRepository
     public function clearUserCart($userId);
 
     public function updateQuantity($cartId, $quantity);
-
-    public function findByProduct($productId);
 }
