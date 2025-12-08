@@ -278,11 +278,6 @@
             transition: all 0.3s ease;
         }
 
-        .avatar-clickable:hover {
-            transform: scale(1.02);
-            border-color: #dc3545 !important;
-        }
-
         .avatar-overlay {
             transition: all 0.3s ease;
         }
