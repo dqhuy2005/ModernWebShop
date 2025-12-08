@@ -27,7 +27,7 @@
                 @if ($user->image)
                     <div class="mb-4 pb-3 border-bottom text-center">
                         <p class="text-muted mb-2"><strong>Current Avatar:</strong></p>
-                        <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->fullname }}"
+                        <img src="{{ $user->image }}" alt="{{ $user->fullname }}"
                             class="img-fluid rounded-circle current-avatar">
                     </div>
                 @endif
@@ -37,28 +37,35 @@
                         Avatar
                     </label>
 
-                    <input type="hidden" id="image" name="image" value="{{ old('image', $user->image) }}" class="@error('image') is-invalid @enderror">
+                    <input type="hidden" id="image" name="image" value="{{ old('image', $user->image) }}"
+                        class="@error('image') is-invalid @enderror">
 
-                    <div id="image-preview" class="text-center mt-3 {{ old('image') && old('image') !== $user->image ? '' : 'd-none' }}">
+                    <div id="image-preview"
+                        class="text-center mt-3 {{ old('image') && old('image') !== $user->image ? '' : 'd-none' }}">
                         <p class="text-success mb-2"><strong>New Avatar Preview:</strong></p>
                         <div class="row">
                             <div class="preview-container col-md-12">
-                                <img src="{{ old('image') && old('image') !== $user->image ? asset('storage/' . old('image')) : '' }}" alt="Preview" class="img-fluid rounded-circle preview-image">
+                                <img src="{{ old('image') && old('image') !== $user->image ? asset('storage/' . old('image')) : '' }}"
+                                    alt="Preview" class="img-fluid rounded-circle preview-image">
                             </div>
                             <div class="col-md-12 d-flex justify-content-center">
                                 <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
                                     <i class="fas fa-trash-alt me-1"></i>Remove Avatar
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2 lfm-btn" data-input="image" data-preview="holder">
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2 lfm-btn"
+                                    data-input="image" data-preview="holder">
                                     <i class="fas fa-sync-alt me-1"></i>Change Avatar
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div id="upload-area" class="text-center {{ old('image') && old('image') !== $user->image ? 'd-none' : '' }}">
-                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image" data-preview="holder">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
+                    <div id="upload-area"
+                        class="text-center {{ old('image') && old('image') !== $user->image ? 'd-none' : '' }}">
+                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image"
+                            data-preview="holder">
+                            <i
+                                class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
                         </button>
                     </div>
 
@@ -212,7 +219,9 @@
         }
 
         $(document).ready(function() {
-            $('.lfm-btn').filemanager('image', {prefix: '/admin/filemanager'});
+            $('.lfm-btn').filemanager('image', {
+                prefix: '/admin/filemanager'
+            });
 
             $('#image').on('change', function() {
                 const imagePath = $(this).val();

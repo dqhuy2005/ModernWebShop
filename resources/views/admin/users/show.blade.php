@@ -27,7 +27,7 @@
                 <div class="col-md-3 text-center border-end">
                     <div class="avatar-container">
                         @if ($user->image)
-                            <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->fullname }}"
+                            <img src="{{ $user->image }}" alt="{{ $user->fullname }}"
                                 class="user-avatar rounded-circle mb-3">
                         @else
                             <div class="avatar-placeholder rounded-circle mb-3">
