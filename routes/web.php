@@ -25,9 +25,8 @@ Route::get('/products/{slug}.html', [UserProductController::class, 'show'])->nam
 // Search Suggestions
 Route::get('/products/search/suggestions', [HomeController::class, 'searchSuggestions'])->name('products.search.suggestions');
 
-Route::get('/products/search', function () {
-    return redirect()->route('home');
-})->name('products.search');
+// Search Products
+Route::get('/search', [HomeController::class, 'search'])->name('products.search');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

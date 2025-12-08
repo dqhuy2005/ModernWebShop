@@ -30,6 +30,8 @@ interface IProductRepository
 
     public function searchProducts(string $keyword, int $perPage = 10);
 
+    public function getSearchResults(string $keyword, array $filters = []);
+
     public function findBySlugWithRelations(string $slug);
 
     public function getRelatedProducts(int $productId, int $categoryId, int $limit = 8);

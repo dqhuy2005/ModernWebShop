@@ -72,4 +72,33 @@ class HomeController extends Controller
             'products' => $products
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('q', '');
+        $priceRange = $request->input('price_range', '');
+        $sort = $request->input('sort', 'best_selling');
+
+        if (empty($keyword) || strlen($keyword) < 2) {
+            return redirect()->route('home')->with('error', 'Vui lòng nhập từ khóa tìm kiếm (tối thiểu 2 ký tự)');
+        }
+
+        $query = $this->productRepository->getSearchResults($keyword, [
+            'price_range' => $priceRange,
+            'sort' => $sort
+        ]);
+
+        $products = $query->paginate(12)->withQueryString();
+        $categories = $this->categoryRepository->all(['id', 'name', 'slug']);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('user.partials.product-grid', compact('products'))->render(),
+                'pagination' => view('user.partials.pagination', compact('products'))->render()
+            ]);
+        }
+
+        return view('user.search', compact('products', 'categories', 'keyword', 'priceRange', 'sort'));
+    }
 }

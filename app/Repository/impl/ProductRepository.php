@@ -175,6 +175,23 @@ class ProductRepository extends BaseRepository implements IProductRepository
             ->paginate($perPage);
     }
 
+    public function getSearchResults(string $keyword, array $filters = [])
+    {
+        $query = $this->model
+            ->select('products.id', 'products.name', 'products.slug', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.specifications', 'products.created_at')
+            ->where('products.status', true)
+            ->where('products.name', 'LIKE', '%' . $keyword . '%')
+            ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order']);
+
+        if (!empty($filters['price_range'])) {
+            $query = $this->filterByPrice($query, $filters['price_range']);
+        }
+
+        $query = $this->sortProducts($query, $filters['sort'] ?? 'best_selling');
+
+        return $query;
+    }
+
     public function findBySlugWithRelations(string $slug)
     {
         return $this->model
