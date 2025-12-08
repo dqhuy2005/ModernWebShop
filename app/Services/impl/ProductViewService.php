@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\impl;
 
 use App\Events\ProductViewed;
 use App\Models\Product;
 use App\Models\ProductView;
-use App\Services\RedisService;
+use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Auth;
 
 class ProductViewService

@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Models\Category;
 use App\Models\CacheKeyManager;
-use App\Services\RedisService;
+use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Log;
 
 class CategoryObserver

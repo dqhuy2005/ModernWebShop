@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\CMS;
 
 use App\Http\Controllers\Controller;
-use App\Services\HomePageService;
-use App\Services\RedisService;
+use App\Services\impl\HomePageService;
+use App\Services\impl\RedisService;
 use Illuminate\Http\Request;
 
 class CacheManagementController extends Controller

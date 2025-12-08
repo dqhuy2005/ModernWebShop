@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderStatusChanged;
-use App\Services\NotificationService;
+use App\Services\impl\NotificationService;
 use Illuminate\Support\Facades\Log;
 
 class SendOrderNotificationEmail

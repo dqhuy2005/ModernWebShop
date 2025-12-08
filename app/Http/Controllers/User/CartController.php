@@ -7,7 +7,7 @@ use App\Http\Requests\AddToCartRequest;
 use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
 use App\Models\Product;
-use App\Repository\CartRepository;
+use App\Repository\impl\CartRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;

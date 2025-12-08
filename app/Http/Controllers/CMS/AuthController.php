@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use App\Models\OauthAccount;
-use App\Repository\CartRepository;
+use App\Repository\impl\CartRepository;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller

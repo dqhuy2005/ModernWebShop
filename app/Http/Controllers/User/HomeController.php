@@ -5,9 +5,9 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductFilterRequest;
-use App\Repository\ProductRepository;
-use App\Repository\CategoryRepository;
-use App\Services\HomePageService;
+use App\Repository\impl\ProductRepository;
+use App\Repository\impl\CategoryRepository;
+use App\Services\impl\HomePageService;
 
 class HomeController extends Controller
 {

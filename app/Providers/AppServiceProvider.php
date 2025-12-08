@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use App\Repository\CartRepository;
+use App\Repository\impl\CartRepository;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;

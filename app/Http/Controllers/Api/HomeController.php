@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AppBaseController;
-use App\Services\HomeService;
+use App\Services\impl\HomeService;
 use Illuminate\Http\Request;
 
 class HomeController extends AppBaseController

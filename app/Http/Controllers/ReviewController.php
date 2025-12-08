@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductReview;
-use App\Services\ReviewService;
+use App\Services\impl\ReviewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

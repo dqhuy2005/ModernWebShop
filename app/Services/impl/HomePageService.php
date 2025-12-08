@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\impl;
 
-use App\Repository\ProductRepository;
-use App\Repository\CategoryRepository;
+use App\Repository\impl\ProductRepository;
+use App\Repository\impl\CategoryRepository;
 use App\Models\CacheKeyManager;
-use App\Services\RedisService;
+use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Log;
 
 class HomePageService

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\impl;
 
 use App\Models\User;
 use App\Models\Role;
@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log as logger;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Services\IAuthService;
 
-class AuthService
+class AuthService implements IAuthService
 {
     const REFRESH_TOKEN_EXPIRY_DAYS = 30;
 
-    public function attemptLogin($email, $password, $ipAddress = null, $userAgent = null)
+    public function attemptLogin($email, $password, $ipAddress = null, $userAgent = null): ?array
     {
         $credentials = ['email' => $email, 'password' => $password];
 
@@ -40,7 +41,7 @@ class AuthService
         ];
     }
 
-    public function generateRefreshToken(User $user, $ipAddress = null, $userAgent = null)
+    public function generateRefreshToken(User $user, $ipAddress = null, $userAgent = null): RefreshToken
     {
         $user->refreshTokens()->valid()->update(['is_revoked' => true]);
 
@@ -55,7 +56,7 @@ class AuthService
         return $refreshToken;
     }
 
-    public function refreshAccessToken($refreshTokenString, $ipAddress = null, $userAgent = null)
+    public function refreshAccessToken($refreshTokenString, $ipAddress = null, $userAgent = null): ?array
     {
         $refreshToken = RefreshToken::where('token', $refreshTokenString)
             ->with('user')
@@ -76,7 +77,7 @@ class AuthService
         ];
     }
 
-    public function logout($refreshTokenString = null)
+    public function logout($refreshTokenString = null): bool
     {
         try {
             if (auth('api')->check()) {
@@ -104,7 +105,7 @@ class AuthService
         return false;
     }
 
-    public function revokeAllRefreshTokens($userId)
+    public function revokeAllRefreshTokens($userId): bool
     {
         RefreshToken::where('user_id', $userId)
             ->where('is_revoked', false)
@@ -113,12 +114,12 @@ class AuthService
         return true;
     }
 
-    public function cleanupExpiredTokens()
+    public function cleanupExpiredTokens(): int
     {
         return RefreshToken::expired()->delete();
     }
 
-    public function getUserFromToken()
+    public function getUserFromToken(): ?User
     {
         try {
             $user = auth('api')->user();
@@ -131,7 +132,7 @@ class AuthService
         }
     }
 
-    public function register(array $data)
+    public function register(array $data): User
     {
         $userRole = Role::where('slug', Role::USER)->first();
 

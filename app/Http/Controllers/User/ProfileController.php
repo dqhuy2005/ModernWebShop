@@ -7,7 +7,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Services\ImageService;
+use App\Services\impl\ImageService;
 
 class ProfileController extends Controller
 {

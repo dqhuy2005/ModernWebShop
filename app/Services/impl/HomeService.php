@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\impl;
 
-use App\Repository\ProductRepository;
+use App\Repository\impl\ProductRepository;
 
 class HomeService
 {

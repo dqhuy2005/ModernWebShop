@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\HomePageService;
+use App\Services\impl\HomePageService;
 
 class ClearHomePageCache extends Command
 {

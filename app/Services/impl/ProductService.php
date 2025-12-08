@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\impl;
 
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
-use App\Repository\ProductRepository;
+use App\Repository\impl\ProductRepository;
+use App\Services\IProductService;
 
-class ProductService
+class ProductService implements IProductService
 {
     protected ImageService $imageService;
     protected ProductRepository $productRepository;
@@ -170,7 +171,7 @@ class ProductService
         ];
     }
 
-    public function getProductBySlug(string $slug)
+    public function getProductBySlug(string $slug): mixed
     {
         $cacheKey = "product_detail_{$slug}";
 
@@ -190,7 +191,7 @@ class ProductService
         );
     }
 
-    public function getRelatedProducts(Product $product)
+    public function getRelatedProducts(Product $product): mixed
     {
         $cacheKey = "related_products_{$product->id}";
 
@@ -219,7 +220,7 @@ class ProductService
         );
     }
 
-    public function getProductReviews(Product $product, $request)
+    public function getProductReviews(Product $product, $request): mixed
     {
         $page = $request->get('page', 1);
         $cacheKey = "product_reviews_{$product->id}_page_{$page}";
@@ -242,7 +243,7 @@ class ProductService
         );
     }
 
-    public function getHotProducts(int $perPage = 20)
+    public function getHotProducts(int $perPage = 20): mixed
     {
         return $this->productRepository->getHotProductsPaginated($perPage);
     }

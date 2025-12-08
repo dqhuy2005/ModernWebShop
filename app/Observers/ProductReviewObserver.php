@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Mail\ReviewApprovedNotification;
 use App\Models\ProductReview;
-use App\Services\RedisService;
+use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 

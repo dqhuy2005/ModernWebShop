@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\AuthService;
+use App\Services\impl\AuthService;
 
 class CleanupExpiredTokens extends Command
 {

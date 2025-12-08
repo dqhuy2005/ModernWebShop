@@ -7,7 +7,7 @@ use App\Models\EmailTemplate;
 use App\Models\NotificationLog;
 use App\Models\NotificationType;
 use App\Models\Order;
-use App\Services\NotificationService;
+use App\Services\impl\NotificationService;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller

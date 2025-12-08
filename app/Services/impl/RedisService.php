@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\impl;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Log;
