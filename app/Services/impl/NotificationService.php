@@ -11,16 +11,13 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use App\Services\INotificationService;
 
-class NotificationService
+class NotificationService implements INotificationService
 {
-    /**
-     * Send order notification email
-     */
     public function sendOrderNotification(Order $order, $notificationTypeCode = 'order_status_changed')
     {
         try {
-            // Get notification type
             $notificationType = NotificationType::where('code', $notificationTypeCode)
                 ->where('is_active', true)
                 ->where('email_enabled', true)
@@ -30,14 +27,12 @@ class NotificationService
                 throw new Exception("Notification type '{$notificationTypeCode}' not found or disabled");
             }
 
-            // Get email template
             $template = $notificationType->activeEmailTemplate('vi')->first();
 
             if (!$template) {
                 throw new Exception("No active email template found for notification type '{$notificationTypeCode}'");
             }
 
-            // Prepare recipient - prioritize order's customer email over user email
             $recipientEmail = $order->customer_email ?? $order->user?->email;
             $recipientName = $order->customer_name ?? $order->user?->fullname ?? 'Quý khách';
             $recipientPhone = $order->customer_phone ?? $order->user?->phone ?? null;
@@ -46,13 +41,10 @@ class NotificationService
                 throw new Exception("Order #{$order->id} has no valid recipient email");
             }
 
-            // Prepare email data from template
             $emailData = is_array($template->preview_data) ? $template->preview_data : [];
 
-            // Replace variables in subject
             $subject = $this->replaceSubjectVariables($template->subject, $order);
 
-            // Create notification log
             $log = $this->createNotificationLog(
                 $notificationType,
                 $template,
@@ -63,11 +55,9 @@ class NotificationService
                 $subject
             );
 
-            // Send email
             Mail::to($recipientEmail, $recipientName)
                 ->send(new OrderNotification($order, $emailData, $subject));
 
-            // Mark as sent
             $log->markAsSent();
 
             return [
@@ -98,9 +88,6 @@ class NotificationService
         }
     }
 
-    /**
-     * Create notification log entry
-     */
     private function createNotificationLog(
         NotificationType $notificationType,
         EmailTemplate $template,
@@ -132,9 +119,6 @@ class NotificationService
         ]);
     }
 
-    /**
-     * Get notification statistics
-     */
     public function getStatistics($dateFrom = null, $dateTo = null)
     {
         $query = NotificationLog::query();
@@ -157,9 +141,6 @@ class NotificationService
         ];
     }
 
-    /**
-     * Replace variables in email subject
-     */
     private function replaceSubjectVariables($subject, Order $order)
     {
         $orderId = str_pad($order->id, 6, '0', STR_PAD_LEFT);

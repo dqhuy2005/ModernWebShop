@@ -3,8 +3,9 @@
 namespace App\Repository\impl;
 
 use App\Models\Cart;
+use App\Repository\ICartRepository;
 
-class CartRepository extends BaseRepository
+class CartRepository extends BaseRepository implements ICartRepository
 {
     public function model()
     {

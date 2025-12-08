@@ -3,8 +3,9 @@
 namespace App\Repository\impl;
 
 use App\Models\OrderDetail;
+use App\Repository\IOrderDetailRepository;
 
-class OrderDetailRepository extends BaseRepository
+class OrderDetailRepository extends BaseRepository implements IOrderDetailRepository
 {
     public function model()
     {

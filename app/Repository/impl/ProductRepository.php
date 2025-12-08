@@ -4,8 +4,9 @@ namespace App\Repository\impl;
 
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use App\Repository\IProductRepository;
 
-class ProductRepository extends BaseRepository
+class ProductRepository extends BaseRepository implements IProductRepository
 {
     public function model()
     {

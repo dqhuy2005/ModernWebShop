@@ -7,8 +7,9 @@ use App\Repository\impl\CategoryRepository;
 use App\Models\CacheKeyManager;
 use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Log;
+use App\Services\IHomePageService;
 
-class HomePageService
+class HomePageService implements IHomePageService
 {
     protected ProductRepository $productRepository;
     protected CategoryRepository $categoryRepository;

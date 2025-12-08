@@ -3,8 +3,9 @@
 namespace App\Repository\impl;
 
 use App\Models\Role;
+use App\Repository\IRoleRepository;
 
-class RoleRepository extends BaseRepository
+class RoleRepository extends BaseRepository implements IRoleRepository
 {
     public function model()
     {

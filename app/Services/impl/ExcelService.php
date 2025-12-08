@@ -6,8 +6,9 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use App\Services\IExcelService;
 
-class ExcelService
+class ExcelService implements IExcelService
 {
     /**
      * Export users to Excel (XML Spreadsheet format)

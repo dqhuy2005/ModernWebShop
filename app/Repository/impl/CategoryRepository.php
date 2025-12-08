@@ -3,8 +3,9 @@
 namespace App\Repository\impl;
 
 use App\Models\Category;
+use App\Repository\ICategoryRepository;
 
-class CategoryRepository extends BaseRepository
+class CategoryRepository extends BaseRepository implements ICategoryRepository
 {
     public function model()
     {

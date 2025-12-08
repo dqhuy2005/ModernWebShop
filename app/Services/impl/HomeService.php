@@ -3,8 +3,9 @@
 namespace App\Services\impl;
 
 use App\Repository\impl\ProductRepository;
+use App\Services\IHomeService;
 
-class HomeService
+class HomeService implements IHomeService
 {
     protected ProductRepository $productRepository;
 

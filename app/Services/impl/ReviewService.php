@@ -9,8 +9,9 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\IReviewService;
 
-class ReviewService
+class ReviewService implements IReviewService
 {
     private const MAX_IMAGE_SIZE = 2048;
     private const MAX_IMAGES = 5;

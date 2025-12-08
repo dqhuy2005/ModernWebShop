@@ -3,8 +3,9 @@
 namespace App\Repository\impl;
 
 use App\Models\Order;
+use App\Repository\IOrderRepository;
 
-class OrderRepository extends BaseRepository
+class OrderRepository extends BaseRepository implements IOrderRepository
 {
     /**
      * Specify Model class name

@@ -7,8 +7,9 @@ use App\Models\Product;
 use App\Models\ProductView;
 use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Auth;
+use App\Services\IProductViewService;
 
-class ProductViewService
+class ProductViewService implements IProductViewService
 {
     protected RedisService $redis;
 
