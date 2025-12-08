@@ -2,12 +2,6 @@
 
 namespace App\Models;
 
-/**
- * Centralized Cache Key Management
- *
- * This class manages all cache keys used in the application
- * to ensure consistency and easy maintenance
- */
 class CacheKeyManager
 {
     // Homepage cache keys

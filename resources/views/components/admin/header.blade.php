@@ -4,7 +4,7 @@
             <button class="btn btn-link d-lg-none me-2" id="sidebarToggle" type="button">
                 <i class="fas fa-bars"></i>
             </button>
-            <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard.index') }}">
+            <a class="navbar-brand fw-bold" href="{{ route('home') }}">
                 <i class="fas fa-store"></i> CMS - ModernWebShop
             </a>
         </div>
