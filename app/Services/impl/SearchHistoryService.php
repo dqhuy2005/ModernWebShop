@@ -63,8 +63,10 @@ class SearchHistoryService implements ISearchHistoryService
                 $query->forSession($sessionId);
             }
 
-            return $query->recent($limit)
-                ->get(['id', 'keyword', 'search_count', 'updated_at'])
+            return $query->select(['id', 'keyword', 'search_count', 'updated_at'])
+                ->latest('updated_at')
+                ->limit($limit)
+                ->get()
                 ->toArray();
         });
     }

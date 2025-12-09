@@ -24,10 +24,13 @@ Route::get('/products/{slug}.html', [UserProductController::class, 'show'])->nam
 
 Route::get('/search', [HomeController::class, 'search'])->name('products.search');
 
-Route::get('/api/search-history', [HomeController::class, 'getSearchHistory'])->name('api.search-history.index');
-Route::get('/api/search-history/popular', [HomeController::class, 'getPopularKeywords'])->name('api.search-history.popular');
-Route::delete('/api/search-history/clear', [HomeController::class, 'clearSearchHistory'])->name('api.search-history.clear');
-Route::delete('/api/search-history/{id}', [HomeController::class, 'deleteSearchHistory'])->name('api.search-history.delete');
+// Search History API Routes với Rate Limiting (60 requests/minute)
+Route::middleware(['throttle:60,1'])->group(function () {
+    Route::get('/api/search-history', [HomeController::class, 'getSearchHistory'])->name('api.search-history.index');
+    Route::get('/api/search-history/popular', [HomeController::class, 'getPopularKeywords'])->name('api.search-history.popular');
+    Route::delete('/api/search-history/clear', [HomeController::class, 'clearSearchHistory'])->name('api.search-history.clear');
+    Route::delete('/api/search-history/{id}', [HomeController::class, 'deleteSearchHistory'])->name('api.search-history.delete');
+});
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

@@ -201,14 +201,20 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.6rem 1rem;
+        padding: 0.75rem 1rem;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
         border-left: 3px solid transparent;
+        border-bottom: 1px solid #f1f1f1;
     }
 
     .history-item:hover {
-        background-color: #dcdfdfc7;
+        background-color: #f8f9fa;
+        border-left-color: #dc3545;
+    }
+
+    .history-item:last-child {
+        border-bottom: none;
     }
 
     .history-item-content {
@@ -220,14 +226,15 @@
     }
 
     .history-item-content i {
-        font-size: 1rem;
+        font-size: 0.95rem;
         flex-shrink: 0;
+        margin-right: 0.25rem;
     }
 
     .history-keyword {
-        font-size: 0.9rem;
-        color: #202732;
-        font-weight: 500;
+        font-size: 0.925rem;
+        color: #212529;
+        font-weight: 400;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -244,24 +251,24 @@
         border: none;
         color: #6c757d;
         cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
+        padding: 0.4rem 0.6rem;
+        border-radius: 6px;
         transition: all 0.2s ease;
-        opacity: 0;
-        flex-shrink: 0;
-    }
-
-    .history-item:hover .btn-delete-history {
         opacity: 1;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .btn-delete-history:hover {
         background: #ffe6e6;
         color: #dc3545;
+        transform: scale(1.1);
     }
 
     .btn-delete-history i {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
 

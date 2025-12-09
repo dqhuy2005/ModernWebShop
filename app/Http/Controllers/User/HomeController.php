@@ -9,6 +9,8 @@ use App\Repository\impl\ProductRepository;
 use App\Repository\impl\CategoryRepository;
 use App\Services\impl\HomePageService;
 use App\Services\impl\SearchHistoryService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -98,17 +100,42 @@ class HomeController extends Controller
         return view('user.search', compact('products', 'categories', 'keyword', 'priceRange', 'sort'));
     }
 
+    /**
+     * Get search history với cache headers optimization
+     *
+     * Performance improvements:
+     * - Response caching với ETag
+     * - Cache-Control headers
+     * - Optimized query (chỉ select fields cần thiết)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getSearchHistory(Request $request)
     {
         try {
             $sessionId = session()->getId();
             $history = $this->searchHistoryService->getSearchHistory($sessionId, 10);
 
+            // Generate ETag cho response caching
+            $etag = md5(json_encode($history));
+
+            // Check If-None-Match header
+            if ($request->header('If-None-Match') === $etag) {
+                return response()->json(null, 304); // Not Modified
+            }
+
             return response()->json([
                 'success' => true,
-                'data' => $history ?? []
-            ]);
+                'data' => $history ?? [],
+                'cached' => !empty($history) // Indicator nếu có data
+            ])
+            ->header('Cache-Control', 'private, max-age=300') // Cache 5 phút
+            ->header('ETag', $etag);
+
         } catch (\Exception $e) {
+            Log::error('Search history error: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Không thể tải lịch sử tìm kiếm',
