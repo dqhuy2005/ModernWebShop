@@ -22,13 +22,8 @@ Route::get('/hot-products', [UserProductController::class, 'hotProducts'])->name
 Route::get('/danh-muc/{slug}.html', [HomeController::class, 'showCategory'])->name('categories.show');
 Route::get('/products/{slug}.html', [UserProductController::class, 'show'])->name('products.show');
 
-// Search Suggestions
-Route::get('/products/search/suggestions', [HomeController::class, 'searchSuggestions'])->name('products.search.suggestions');
-
-// Search Products
 Route::get('/search', [HomeController::class, 'search'])->name('products.search');
 
-// Search History API
 Route::get('/api/search-history', [HomeController::class, 'getSearchHistory'])->name('api.search-history.index');
 Route::get('/api/search-history/popular', [HomeController::class, 'getPopularKeywords'])->name('api.search-history.popular');
 Route::delete('/api/search-history/clear', [HomeController::class, 'clearSearchHistory'])->name('api.search-history.clear');
@@ -40,23 +35,19 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
-// Checkout Routes
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{orderId}', [CheckoutController::class, 'success'])->name('checkout.success');
 
-    // Profile Routes
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
 
-    // Purchase History Routes
     Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.index');
     Route::get('/purchase/{orderId}', [PurchaseController::class, 'show'])->name('purchase.show');
     Route::post('/purchase/{orderId}/cancel', [PurchaseController::class, 'cancel'])->name('purchase.cancel');
 
-    // Review Routes
     Route::get('/orders/{order}/products/{product}/review', [ReviewController::class, 'create'])->name('reviews.create');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/orders/{order}/products/{product}/review/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
@@ -72,11 +63,10 @@ Route::post('/newsletter/subscribe', function () {
     return redirect()->back()->with('success', 'Successfully subscribed to newsletter!');
 })->name('newsletter.subscribe');
 
-// Public Review Routes
 Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('products.reviews');
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', function() {
+    Route::get('login', function () {
         return view('user.auth.login');
     })->name('login');
     Route::post('login', [CMSAuthController::class, 'login'])->name('login.post');
@@ -84,7 +74,7 @@ Route::middleware('guest')->group(function () {
     Route::get('auth/google', [CMSAuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('auth/google/callback', [CMSAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
-    Route::get('register', function() {
+    Route::get('register', function () {
         return view('user.auth.register');
     })->name('register');
     Route::post('register', [CMSAuthController::class, 'register'])->name('register.post');
@@ -97,7 +87,6 @@ Route::get('password/reset', function () {
 })->name('password.request');
 
 Route::prefix('admin')->middleware(['auth', 'admin.access'])->group(function () {
-    // Laravel File Manager
     Route::group(['prefix' => 'filemanager'], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
     });
@@ -109,10 +98,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
 
     Route::post('logout', [CMSAuthController::class, 'logout'])->name('logout');
 
-    // File Manager (wrapped in admin layout)
     Route::get('file-manager', [FileManagerController::class, 'index'])->name('filemanager.index');
 
-    // Products Management
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('create', [ProductController::class, 'create'])->name('create');
@@ -127,7 +114,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
         Route::delete('{product}/images/{image}', [ProductController::class, 'deleteImage'])->name('images.delete');
     });
 
-    // Categories Management
     Route::prefix('categories')->name('categories.')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('index');
         Route::get('create', [CategoryController::class, 'create'])->name('create');
@@ -141,7 +127,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
         Route::post('{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('force-delete');
     });
 
-    // Users Management
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');
@@ -161,7 +146,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access'])->gr
         Route::post('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
     });
 
-    // Orders Management
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('create', [OrderController::class, 'create'])->name('create');

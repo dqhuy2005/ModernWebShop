@@ -65,37 +65,7 @@ class HomeController extends Controller
         return view('user.hot-deals', compact('hotDeals'));
     }
 
-    public function searchSuggestions(Request $request)
-    {
-        $keyword = $request->input('keyword', '');
-        $sessionId = session()->getId();
 
-        // Get search history
-        $history = $this->searchHistoryService->getSearchHistory($sessionId, 10);
-
-        // If no keyword, return only history
-        if (empty($keyword)) {
-            return response()->json([
-                'success' => true,
-                'history' => $history,
-                'products' => []
-            ]);
-        }
-
-        // Get product suggestions
-        $products = $this->productRepository->searchSuggestions($keyword, 10);
-
-        // Filter relevant history
-        $relevantHistory = array_filter($history, function ($item) use ($keyword) {
-            return stripos($item['keyword'], $keyword) !== false;
-        });
-
-        return response()->json([
-            'success' => true,
-            'history' => array_values($relevantHistory),
-            'products' => $products
-        ]);
-    }
 
     public function search(Request $request)
     {

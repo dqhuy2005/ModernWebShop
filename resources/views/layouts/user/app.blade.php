@@ -239,15 +239,19 @@
                         if (response.success && response.data && response.data.length > 0) {
                             renderHistory(response.data);
                             historySection.show();
+                            suggestionsDropdown.show();
                         } else {
+                            // Don't show anything if no history
                             historySection.hide();
                             historyList.empty();
+                            suggestionsDropdown.hide();
                         }
                     },
                     error: function(xhr) {
                         console.error('Failed to load search history:', xhr);
                         historySection.hide();
                         historyList.empty();
+                        suggestionsDropdown.hide();
                     }
                 });
             }
@@ -279,78 +283,7 @@
                 historyList.html(html);
             }
 
-            function fetchSuggestions(keyword) {
-                if (keyword.length === 0) {
-                    loadSearchHistory();
-                    suggestionsList.empty();
-                    suggestionsHeader.hide();
-                    emptyState.hide();
-                    suggestionsDropdown.show();
-                    return;
-                }
 
-                if (keyword.length < 2) {
-                    suggestionsDropdown.hide();
-                    return;
-                }
-
-                suggestionsList.html(
-                    '<div class="suggestion-loading"><i class="fas fa-spinner fa-spin me-2"></i>Đang tìm kiếm...</div>'
-                );
-                suggestionsDropdown.show();
-
-                $.ajax({
-                    url: '{{ route('products.search.suggestions') }}',
-                    method: 'GET',
-                    data: {
-                        keyword: keyword
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            if (response.history && response.history.length > 0) {
-                                renderHistory(response.history);
-                                historySection.show();
-                            } else {
-                                historySection.hide();
-                            }
-
-                            if (response.products && response.products.length > 0) {
-                                renderSuggestions(response.products);
-                                suggestionsHeader.show();
-                                emptyState.hide();
-                            } else {
-                                suggestionsList.empty();
-                                suggestionsHeader.hide();
-                                if (!response.history || response.history.length === 0) {
-                                    emptyState.show();
-                                }
-                            }
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Search error:', error);
-                        suggestionsList.html(
-                            '<div class="suggestion-empty text-danger"><i class="fas fa-exclamation-circle me-2"></i>Có lỗi xảy ra</div>'
-                        );
-                    }
-                });
-            }
-
-            function renderSuggestions(products) {
-                let html = '';
-                products.forEach(function(product) {
-                    html += `
-                        <a href="${product.url}" class="suggestion-item">
-                            <img src="${product.image_url}" alt="${product.name}" class="suggestion-image">
-                            <div class="suggestion-info">
-                                <div class="suggestion-name">${product.name}</div>
-                                <div class="suggestion-price">${product.formatted_price}</div>
-                            </div>
-                        </a>
-                    `;
-                });
-                suggestionsList.html(html);
-            }
 
             function deleteHistoryItem(id) {
                 if (!id) {
@@ -367,10 +300,6 @@
                     success: function(response) {
                         if (response.success) {
                             loadSearchHistory();
-                            const keyword = searchInput.val().trim();
-                            if (keyword.length >= 2) {
-                                fetchSuggestions(keyword);
-                            }
                         }
                     },
                     error: function(xhr) {
@@ -397,11 +326,7 @@
                         if (response.success) {
                             historySection.hide();
                             historyList.empty();
-                            // If input has value, reload suggestions without history
-                            const keyword = searchInput.val().trim();
-                            if (keyword.length >= 2) {
-                                fetchSuggestions(keyword);
-                            }
+                            suggestionsDropdown.hide();
                         }
                     },
                     error: function(xhr) {
@@ -411,19 +336,16 @@
                 });
             }
 
-            searchInput.on('input', debounce(function() {
-                const keyword = $(this).val().trim();
-                fetchSuggestions(keyword);
-            }, 300));
 
+
+            // Event: Focus on input with delay
             searchInput.on('focus', function() {
-                const keyword = $(this).val().trim();
-                if (keyword.length === 0) {
-                    loadSearchHistory();
-                    suggestionsDropdown.show();
-                } else if (keyword.length >= 2) {
-                    fetchSuggestions(keyword);
-                }
+                // Delay 0.5 seconds before showing history
+                setTimeout(function() {
+                    if (searchInput.is(':focus')) {
+                        loadSearchHistory();
+                    }
+                }, 500);
             });
 
             $(document).on('click', '.history-item', function(e) {
