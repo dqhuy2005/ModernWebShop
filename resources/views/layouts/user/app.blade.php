@@ -209,27 +209,11 @@
         });
 
         $(document).ready(function() {
-            let searchTimeout = null;
-            let currentFocus = -1;
-
             const searchInput = $('#headerSearchInput');
             const searchForm = $('#headerSearchForm');
             const suggestionsDropdown = $('#searchSuggestions');
-            const suggestionsList = $('#suggestionsList');
             const historyList = $('#historyList');
             const historySection = $('#searchHistorySection');
-            const suggestionsSection = $('#suggestionsSection');
-            const suggestionsHeader = $('#suggestionsHeader');
-            const emptyState = $('#emptyState');
-
-            function debounce(func, delay) {
-                return function() {
-                    const context = this;
-                    const args = arguments;
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => func.apply(context, args), delay);
-                };
-            }
 
             function loadSearchHistory() {
                 $.ajax({
@@ -271,7 +255,6 @@
                                 <div class="history-item-content">
                                     <i class="bi bi-clock-history text-muted"></i>
                                     <span class="history-keyword">${item.keyword}</span>
-                                    <span class="history-count">(${item.search_count || 1})</span>
                                 </div>
                                 <button type="button" class="btn-delete-history" data-id="${item.id}">
                                     <i class="bi bi-x"></i>

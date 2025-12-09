@@ -29,18 +29,6 @@
                         </div>
                         <div id="historyList" class="history-list"></div>
                     </div>
-
-                    <div class="suggestions-section" id="suggestionsSection">
-                        <div class="suggestions-header" id="suggestionsHeader" style="display: none;">
-                            <h6 class="mb-0"><i class="bi bi-search"></i> Gợi ý tìm kiếm</h6>
-                        </div>
-                        <div class="suggestions-list" id="suggestionsList"></div>
-                    </div>
-
-                    <div class="empty-state" id="emptyState" style="display: none;">
-                        <i class="bi bi-search"></i>
-                        <p>Không có gợi ý nào</p>
-                    </div>
                 </div>
             </div>
 
@@ -285,88 +273,7 @@
         font-size: 1.1rem;
     }
 
-    /* Suggestions List */
-    .suggestions-list {
-        padding: 0.25rem 0;
-    }
 
-    .suggestion-item {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        text-decoration: none;
-        color: inherit;
-        border-left: 3px solid transparent;
-    }
-
-    .suggestion-item:hover {
-        background-color: #f8f9fa;
-        border-left-color: #dc3545;
-    }
-
-    .suggestion-image {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 6px;
-        margin-right: 1rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .suggestion-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .suggestion-name {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #202732;
-        margin-bottom: 0.25rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .suggestion-price {
-        font-size: 0.85rem;
-        color: #dc3545;
-        font-weight: 600;
-    }
-
-    /* Empty State */
-    .empty-state {
-        padding: 2rem 1rem;
-        text-align: center;
-        color: #6c757d;
-    }
-
-    .empty-state i {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        opacity: 0.5;
-    }
-
-    .empty-state p {
-        font-size: 0.9rem;
-        margin: 0;
-    }
-
-    .suggestion-empty {
-        padding: 1rem;
-        text-align: center;
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .suggestion-loading {
-        padding: 1rem;
-        text-align: center;
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
 
     /* Scrollbar Styling */
     .search-suggestions-dropdown::-webkit-scrollbar {

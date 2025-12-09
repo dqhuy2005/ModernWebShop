@@ -364,7 +364,7 @@
             </div>
         </div>
 
-        <x-related-products :relatedProducts="$relatedProducts" />
+        <x-user.related-products :relatedProducts="$relatedProducts" />
     </div>
 
     <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
