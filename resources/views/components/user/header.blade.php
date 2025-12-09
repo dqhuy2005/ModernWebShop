@@ -44,7 +44,7 @@
                                     <i class="fas fa-user text-white"></i>
                                 </div>
                             @elseif (auth()->user()->isOAuthUser())
-                                <img src="{{ auth()->user()->oauthAccounts->first()->avatar ?? auth()->user()->image }}"
+                                <img src="{{ auth()->user()->avatar ?? auth()->user()->image }}"
                                     alt="{{ auth()->user()->fullname }}" id="headerAvatar"
                                     style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
                                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">

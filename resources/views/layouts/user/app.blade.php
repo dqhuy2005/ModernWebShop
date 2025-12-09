@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=1200">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="referrer" content="no-referrer" />
 
     <title>@yield('title', 'ModernWebShop - Cửa hàng trực tuyến')</title>
 

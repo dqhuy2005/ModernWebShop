@@ -77,7 +77,6 @@ class HomeController extends Controller
             return redirect()->route('home')->with('error', 'Vui lòng nhập từ khóa tìm kiếm (tối thiểu 2 ký tự)');
         }
 
-        // Save search history
         $this->searchHistoryService->saveSearchHistory($keyword, session()->getId());
 
         $query = $this->productRepository->getSearchResults($keyword, [

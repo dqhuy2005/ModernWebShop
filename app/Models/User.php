@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
-    use  SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'fullname',
@@ -97,42 +97,7 @@ class User extends Authenticatable implements JWTSubject
             return $this->image;
         }
 
-        if ($this->isOAuthUser()) {
-            $oauthAccount = $this->oauthAccounts()->first();
-            if ($oauthAccount && $oauthAccount->avatar) {
-                return $oauthAccount->avatar;
-            }
-        }
-
         return asset('images/default-avatar.png');
-    }
-
-    public function getAvatarUrl(): string
-    {
-        return $this->getImageUrlAttribute();
-    }
-
-    public function hasUploadedAvatar(): bool
-    {
-        return !empty($this->image);
-    }
-
-    public function getAvatarSource(): string
-    {
-        if ($this->image) {
-            return 'uploaded';
-        }
-
-        if ($this->isOAuthUser()) {
-            return 'oauth';
-        }
-
-        return 'default';
-    }
-
-    public function getRoleName(): string
-    {
-        return $this->role ? $this->role->name : 'No Role';
     }
 
     public function getJWTIdentifier()
