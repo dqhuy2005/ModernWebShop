@@ -216,6 +216,9 @@
             const historySection = $('#searchHistorySection');
 
             function loadSearchHistory() {
+                historyList.html(
+                    '<div class="text-center py-2"><i class="bi bi-hourglass-split"></i> Đang tải...</div>');
+
                 $.ajax({
                     url: '{{ route('api.search-history.index') }}',
                     method: 'GET',
@@ -225,17 +228,17 @@
                             historySection.show();
                             suggestionsDropdown.show();
                         } else {
-                            // Don't show anything if no history
-                            historySection.hide();
-                            historyList.empty();
-                            suggestionsDropdown.hide();
+                            historyList.html(
+                                '<div class="text-center py-2 text-muted">Chưa có lịch sử tìm kiếm</div>'
+                            );
+                            historySection.show();
+                            suggestionsDropdown.show();
                         }
                     },
                     error: function(xhr) {
                         console.error('Failed to load search history:', xhr);
-                        historySection.hide();
-                        historyList.empty();
-                        suggestionsDropdown.hide();
+                        historyList.html(
+                            '<div class="text-center py-2 text-danger">Không thể tải lịch sử</div>');
                     }
                 });
             }
@@ -266,8 +269,6 @@
                 historyList.html(html);
             }
 
-
-
             function deleteHistoryItem(id) {
                 if (!id) {
                     console.error('Invalid history ID');
@@ -294,41 +295,28 @@
                 });
             }
 
-            function clearAllHistory() {
-                if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử tìm kiếm?')) {
-                    return;
+            searchInput.on('input', function() {
+                historySection.show();
+                suggestionsDropdown.show();
+                historyList.html(
+                    '<div class="text-center py-2"><i class="bi bi-hourglass-split"></i> Đang tải...</div>'
+                );
+
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
                 }
 
-                $.ajax({
-                    url: '{{ route('api.search-history.clear') }}',
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            historySection.hide();
-                            historyList.empty();
-                            suggestionsDropdown.hide();
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Failed to clear history:', xhr);
-                        alert('Không thể xóa lịch sử. Vui lòng thử lại!');
-                    }
-                });
-            }
+                searchTimeout = setTimeout(function() {
+                    loadSearchHistory();
+                }, 300);
+            });
 
-
-
-            // Event: Focus on input with delay
             searchInput.on('focus', function() {
-                // Delay 0.5 seconds before showing history
-                setTimeout(function() {
-                    if (searchInput.is(':focus')) {
-                        loadSearchHistory();
-                    }
-                }, 500);
+                if (searchInput.val().trim() !== '') {
+                    historySection.show();
+                    suggestionsDropdown.show();
+                    loadSearchHistory();
+                }
             });
 
             $(document).on('click', '.history-item', function(e) {
@@ -343,10 +331,6 @@
                 e.stopPropagation();
                 const id = $(this).data('id');
                 deleteHistoryItem(id);
-            });
-
-            $(document).on('click', '#clearAllHistory', function() {
-                clearAllHistory();
             });
 
             $(document).on('click', function(e) {

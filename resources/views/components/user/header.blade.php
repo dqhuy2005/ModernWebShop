@@ -23,9 +23,6 @@
                     <div class="search-history-section" id="searchHistorySection" style="display: none;">
                         <div class="suggestions-header">
                             <h6 class="mb-0"><i class="bi bi-clock-history"></i> Lịch sử tìm kiếm</h6>
-                            <button type="button" class="btn-clear-history" id="clearAllHistory">
-                                <i class="bi bi-x-circle"></i> Xóa tất cả
-                            </button>
                         </div>
                         <div id="historyList" class="history-list"></div>
                     </div>
@@ -38,7 +35,6 @@
                         <a class="text-white text-decoration-none d-flex align-items-center gap-2" href="#"
                             id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             @if (auth()->user()->image)
-                                {{-- Prioritize uploaded image from database --}}
                                 <img src="{{ auth()->user()->image_url }}" alt="{{ auth()->user()->fullname }}"
                                     id="headerAvatar"
                                     style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
@@ -48,7 +44,6 @@
                                     <i class="fas fa-user text-white"></i>
                                 </div>
                             @elseif (auth()->user()->isOAuthUser())
-                                {{-- Fallback to OAuth avatar if no uploaded image --}}
                                 <img src="{{ auth()->user()->oauthAccounts->first()->avatar ?? auth()->user()->image }}"
                                     alt="{{ auth()->user()->fullname }}" id="headerAvatar"
                                     style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;"
@@ -58,7 +53,6 @@
                                     <i class="fas fa-user text-white"></i>
                                 </div>
                             @else
-                                {{-- Default avatar icon --}}
                                 <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center"
                                     style="width: 32px; height: 32px;">
                                     <i class="fas fa-user text-white"></i>
@@ -155,7 +149,6 @@
         margin-top: 5px;
     }
 
-    /* Search History Section */
     .search-history-section {
         border-bottom: 1px solid #e9ecef;
         padding: 0.5rem 0;
@@ -200,7 +193,6 @@
         color: #c82333;
     }
 
-    /* History Items */
     .history-list {
         padding: 0.25rem 0;
     }
@@ -216,8 +208,7 @@
     }
 
     .history-item:hover {
-        background-color: #f8f9fa;
-        border-left-color: #4f46e5;
+        background-color: #dcdfdfc7;
     }
 
     .history-item-content {
@@ -275,7 +266,6 @@
 
 
 
-    /* Scrollbar Styling */
     .search-suggestions-dropdown::-webkit-scrollbar {
         width: 6px;
     }
@@ -418,7 +408,6 @@
         z-index: 1050;
     }
 
-    /* Responsive adjustments to fit all elements */
     @media (max-width: 1199px) and (min-width: 768px) {
         .main-header .navbar-brand {
             font-size: 1.4rem;

@@ -118,9 +118,6 @@ class HomeController extends Controller
         }
     }
 
-    /**
-     * Delete search history item
-     */
     public function deleteSearchHistory(Request $request, $id)
     {
         try {
@@ -153,9 +150,6 @@ class HomeController extends Controller
         }
     }
 
-    /**
-     * Clear all search history
-     */
     public function clearSearchHistory(Request $request)
     {
         try {
@@ -175,9 +169,6 @@ class HomeController extends Controller
         }
     }
 
-    /**
-     * Get popular keywords
-     */
     public function getPopularKeywords(Request $request)
     {
         try {

@@ -90,9 +90,6 @@ class SearchHistoryService implements ISearchHistoryService
         return $deleted;
     }
 
-    /**
-     * Clear all search history for user or session
-     */
     public function clearAllHistory(?string $sessionId = null): int
     {
         $userId = Auth::id();
