@@ -210,10 +210,17 @@
 
         $(document).ready(function() {
             let searchTimeout = null;
+            let currentFocus = -1;
 
             const searchInput = $('#headerSearchInput');
+            const searchForm = $('#headerSearchForm');
             const suggestionsDropdown = $('#searchSuggestions');
-            const suggestionsList = suggestionsDropdown.find('.suggestions-list');
+            const suggestionsList = $('#suggestionsList');
+            const historyList = $('#historyList');
+            const historySection = $('#searchHistorySection');
+            const suggestionsSection = $('#suggestionsSection');
+            const suggestionsHeader = $('#suggestionsHeader');
+            const emptyState = $('#emptyState');
 
             function debounce(func, delay) {
                 return function() {
@@ -224,7 +231,63 @@
                 };
             }
 
+            function loadSearchHistory() {
+                $.ajax({
+                    url: '{{ route('api.search-history.index') }}',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success && response.data && response.data.length > 0) {
+                            renderHistory(response.data);
+                            historySection.show();
+                        } else {
+                            historySection.hide();
+                            historyList.empty();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Failed to load search history:', xhr);
+                        historySection.hide();
+                        historyList.empty();
+                    }
+                });
+            }
+
+            function renderHistory(history) {
+                if (!history || history.length === 0) {
+                    historyList.empty();
+                    historySection.hide();
+                    return;
+                }
+
+                let html = '';
+                history.forEach(function(item) {
+                    if (item && item.keyword && item.id) {
+                        html += `
+                            <div class="history-item" data-keyword="${item.keyword}">
+                                <div class="history-item-content">
+                                    <i class="bi bi-clock-history text-muted"></i>
+                                    <span class="history-keyword">${item.keyword}</span>
+                                    <span class="history-count">(${item.search_count || 1})</span>
+                                </div>
+                                <button type="button" class="btn-delete-history" data-id="${item.id}">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                });
+                historyList.html(html);
+            }
+
             function fetchSuggestions(keyword) {
+                if (keyword.length === 0) {
+                    loadSearchHistory();
+                    suggestionsList.empty();
+                    suggestionsHeader.hide();
+                    emptyState.hide();
+                    suggestionsDropdown.show();
+                    return;
+                }
 
                 if (keyword.length < 2) {
                     suggestionsDropdown.hide();
@@ -243,18 +306,29 @@
                         keyword: keyword
                     },
                     success: function(response) {
+                        if (response.success) {
+                            if (response.history && response.history.length > 0) {
+                                renderHistory(response.history);
+                                historySection.show();
+                            } else {
+                                historySection.hide();
+                            }
 
-                        if (response.success && response.products.length > 0) {
-                            renderSuggestions(response.products);
-                        } else {
-                            suggestionsList.html(
-                                '<div class="suggestion-empty"><i class="fas fa-search me-2"></i>Không tìm thấy sản phẩm nào</div>'
-                            );
+                            if (response.products && response.products.length > 0) {
+                                renderSuggestions(response.products);
+                                suggestionsHeader.show();
+                                emptyState.hide();
+                            } else {
+                                suggestionsList.empty();
+                                suggestionsHeader.hide();
+                                if (!response.history || response.history.length === 0) {
+                                    emptyState.show();
+                                }
+                            }
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Search error:', error);
-                        console.error('XHR:', xhr);
                         suggestionsList.html(
                             '<div class="suggestion-empty text-danger"><i class="fas fa-exclamation-circle me-2"></i>Có lỗi xảy ra</div>'
                         );
@@ -264,7 +338,6 @@
 
             function renderSuggestions(products) {
                 let html = '';
-
                 products.forEach(function(product) {
                     html += `
                         <a href="${product.url}" class="suggestion-item">
@@ -276,8 +349,66 @@
                         </a>
                     `;
                 });
-
                 suggestionsList.html(html);
+            }
+
+            function deleteHistoryItem(id) {
+                if (!id) {
+                    console.error('Invalid history ID');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/search-history/' + id,
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            loadSearchHistory();
+                            const keyword = searchInput.val().trim();
+                            if (keyword.length >= 2) {
+                                fetchSuggestions(keyword);
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Failed to delete history:', xhr);
+                        if (xhr.status === 404) {
+                            loadSearchHistory();
+                        }
+                    }
+                });
+            }
+
+            function clearAllHistory() {
+                if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử tìm kiếm?')) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ route('api.search-history.clear') }}',
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            historySection.hide();
+                            historyList.empty();
+                            // If input has value, reload suggestions without history
+                            const keyword = searchInput.val().trim();
+                            if (keyword.length >= 2) {
+                                fetchSuggestions(keyword);
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Failed to clear history:', xhr);
+                        alert('Không thể xóa lịch sử. Vui lòng thử lại!');
+                    }
+                });
             }
 
             searchInput.on('input', debounce(function() {
@@ -287,19 +418,34 @@
 
             searchInput.on('focus', function() {
                 const keyword = $(this).val().trim();
-                if (keyword.length >= 2) {
+                if (keyword.length === 0) {
+                    loadSearchHistory();
                     suggestionsDropdown.show();
+                } else if (keyword.length >= 2) {
+                    fetchSuggestions(keyword);
                 }
+            });
+
+            $(document).on('click', '.history-item', function(e) {
+                if (!$(e.target).closest('.btn-delete-history').length) {
+                    const keyword = $(this).data('keyword');
+                    searchInput.val(keyword);
+                    searchForm.submit();
+                }
+            });
+
+            $(document).on('click', '.btn-delete-history', function(e) {
+                e.stopPropagation();
+                const id = $(this).data('id');
+                deleteHistoryItem(id);
+            });
+
+            $(document).on('click', '#clearAllHistory', function() {
+                clearAllHistory();
             });
 
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.search-wrapper').length) {
-                    suggestionsDropdown.hide();
-                }
-            });
-
-            searchInput.on('keyup', function(e) {
-                if ($(this).val().trim().length === 0) {
                     suggestionsDropdown.hide();
                 }
             });
@@ -310,6 +456,11 @@
                 }
             });
 
+            searchInput.on('keyup', function(e) {
+                if ($(this).val().trim().length === 0 && e.key === 'Backspace') {
+                    loadSearchHistory();
+                }
+            });
         });
     </script>
 

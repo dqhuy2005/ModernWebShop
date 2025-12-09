@@ -28,6 +28,12 @@ Route::get('/products/search/suggestions', [HomeController::class, 'searchSugges
 // Search Products
 Route::get('/search', [HomeController::class, 'search'])->name('products.search');
 
+// Search History API
+Route::get('/api/search-history', [HomeController::class, 'getSearchHistory'])->name('api.search-history.index');
+Route::get('/api/search-history/popular', [HomeController::class, 'getPopularKeywords'])->name('api.search-history.popular');
+Route::delete('/api/search-history/clear', [HomeController::class, 'clearSearchHistory'])->name('api.search-history.clear');
+Route::delete('/api/search-history/{id}', [HomeController::class, 'deleteSearchHistory'])->name('api.search-history.delete');
+
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');

@@ -20,7 +20,26 @@
                 </form>
 
                 <div id="searchSuggestions" class="search-suggestions-dropdown" style="display: none;">
-                    <div class="suggestions-list">
+                    <div class="search-history-section" id="searchHistorySection" style="display: none;">
+                        <div class="suggestions-header">
+                            <h6 class="mb-0"><i class="bi bi-clock-history"></i> Lịch sử tìm kiếm</h6>
+                            <button type="button" class="btn-clear-history" id="clearAllHistory">
+                                <i class="bi bi-x-circle"></i> Xóa tất cả
+                            </button>
+                        </div>
+                        <div id="historyList" class="history-list"></div>
+                    </div>
+
+                    <div class="suggestions-section" id="suggestionsSection">
+                        <div class="suggestions-header" id="suggestionsHeader" style="display: none;">
+                            <h6 class="mb-0"><i class="bi bi-search"></i> Gợi ý tìm kiếm</h6>
+                        </div>
+                        <div class="suggestions-list" id="suggestionsList"></div>
+                    </div>
+
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <i class="bi bi-search"></i>
+                        <p>Không có gợi ý nào</p>
                     </div>
                 </div>
             </div>
@@ -142,14 +161,133 @@
         border: 1px solid #e9ecef;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        max-height: 400px;
+        max-height: 450px;
         overflow-y: auto;
         z-index: 1000;
         margin-top: 5px;
     }
 
-    .suggestions-list {
+    /* Search History Section */
+    .search-history-section {
+        border-bottom: 1px solid #e9ecef;
         padding: 0.5rem 0;
+    }
+
+    .suggestions-section {
+        padding: 0.5rem 0;
+    }
+
+    .suggestions-header,
+    .search-history-section>.suggestions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .suggestions-header h6,
+    .search-history-section>.suggestions-header h6 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #495057;
+        margin: 0;
+    }
+
+    .btn-clear-history {
+        background: none;
+        border: none;
+        color: #dc3545;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-clear-history:hover {
+        background: #ffe6e6;
+        color: #c82333;
+    }
+
+    /* History Items */
+    .history-list {
+        padding: 0.25rem 0;
+    }
+
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .history-item:hover {
+        background-color: #f8f9fa;
+        border-left-color: #4f46e5;
+    }
+
+    .history-item-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .history-item-content i {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .history-keyword {
+        font-size: 0.9rem;
+        color: #202732;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .history-count {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-left: 0.25rem;
+    }
+
+    .btn-delete-history {
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        opacity: 0;
+        flex-shrink: 0;
+    }
+
+    .history-item:hover .btn-delete-history {
+        opacity: 1;
+    }
+
+    .btn-delete-history:hover {
+        background: #ffe6e6;
+        color: #dc3545;
+    }
+
+    .btn-delete-history i {
+        font-size: 1.1rem;
+    }
+
+    /* Suggestions List */
+    .suggestions-list {
+        padding: 0.25rem 0;
     }
 
     .suggestion-item {
@@ -160,10 +298,12 @@
         transition: background-color 0.2s ease;
         text-decoration: none;
         color: inherit;
+        border-left: 3px solid transparent;
     }
 
     .suggestion-item:hover {
         background-color: #f8f9fa;
+        border-left-color: #dc3545;
     }
 
     .suggestion-image {
@@ -196,6 +336,24 @@
         font-weight: 600;
     }
 
+    /* Empty State */
+    .empty-state {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
     .suggestion-empty {
         padding: 1rem;
         text-align: center;
@@ -208,6 +366,25 @@
         text-align: center;
         color: #6c757d;
         font-size: 0.9rem;
+    }
+
+    /* Scrollbar Styling */
+    .search-suggestions-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .search-suggestions-dropdown::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .search-suggestions-dropdown::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .search-suggestions-dropdown::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
     }
 
     .main-menu {
