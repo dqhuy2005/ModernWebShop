@@ -1,4 +1,4 @@
-f(function ($) {
+(function ($) {
     "use strict";
     const CacheManager = {
         data: null,
@@ -8,7 +8,6 @@ f(function ($) {
 
         get: function () {
             if (this.isValid()) {
-                console.log("✓ Cache hit (memory)");
                 return this.data;
             }
 
@@ -19,7 +18,6 @@ f(function ($) {
                     if (Date.now() - parsed.timestamp < this.duration) {
                         this.data = parsed.data;
                         this.timestamp = parsed.timestamp;
-                        console.log("✓ Cache hit (localStorage)");
                         return this.data;
                     }
                 }
@@ -27,7 +25,6 @@ f(function ($) {
                 console.warn("LocalStorage error:", e);
             }
 
-            console.log("✗ Cache miss");
             return null;
         },
 
@@ -43,7 +40,6 @@ f(function ($) {
                         timestamp: this.timestamp,
                     })
                 );
-                console.log("✓ Cache updated");
             } catch (e) {
                 console.warn("LocalStorage save failed:", e);
             }
@@ -54,7 +50,6 @@ f(function ($) {
             this.timestamp = null;
             try {
                 localStorage.removeItem(this.storageKey);
-                console.log("✓ Cache invalidated");
             } catch (e) {
                 console.warn("LocalStorage clear failed:", e);
             }
@@ -119,8 +114,6 @@ f(function ($) {
             this.bindEvents();
 
             this.state.isInitialized = true;
-
-            console.log("✓ SearchHistoryModule initialized");
         },
 
         cacheElements: function () {
@@ -138,8 +131,7 @@ f(function ($) {
             const { searchInput, searchForm, suggestionsDropdown } =
                 this.elements;
 
-            searchInput.one("focus", function () {
-                console.log("First focus - Loading history...");
+            searchInput.click("focus", function () {
                 self.loadHistory(true);
             });
 
@@ -195,7 +187,6 @@ f(function ($) {
             const self = this;
 
             if (this.state.isLoading) {
-                console.log("⚠ Request already in progress, skipping...");
                 return;
             }
 
@@ -214,7 +205,6 @@ f(function ($) {
 
             if (this.state.currentRequest) {
                 this.state.currentRequest.abort();
-                console.log("✓ Previous request cancelled");
             }
 
             this.state.isLoading = true;
@@ -232,8 +222,6 @@ f(function ($) {
 
                         self.renderHistory(response.data);
                         self.showDropdown();
-
-                        console.log("✓ History loaded successfully");
                     } else {
                         self.showEmptyState();
                     }
@@ -242,16 +230,11 @@ f(function ($) {
                     self.state.isLoading = false;
 
                     if (status === "abort") {
-                        console.log("⚠ Request aborted");
                         return;
                     }
 
                     if (self.state.retryCount < self.config.maxRetries) {
                         self.state.retryCount++;
-                        console.log(
-                            `⚠ Retry attempt ${self.state.retryCount}/${self.config.maxRetries}`
-                        );
-
                         setTimeout(function () {
                             self.loadHistory(forceRefresh);
                         }, self.config.retryDelay);
@@ -276,7 +259,6 @@ f(function ($) {
                 success: function (response) {
                     if (response.success && response.data) {
                         CacheManager.set(response.data);
-                        console.log("✓ Background refresh completed");
                     }
                 },
                 error: function () {},
@@ -312,11 +294,7 @@ f(function ($) {
                         "content"
                     ),
                 },
-                success: function (response) {
-                    if (response.success) {
-                        console.log("✓ History item deleted");
-                    }
-                },
+                success: function (response) {},
                 error: function (xhr) {
                     console.error("✗ Delete failed:", xhr);
 
