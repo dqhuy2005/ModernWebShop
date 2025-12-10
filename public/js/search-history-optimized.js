@@ -99,6 +99,7 @@
             isInitialized: false,
             currentRequest: null,
             retryCount: 0,
+            forceRefresh: false,
         },
 
         elements: {},
@@ -125,6 +126,8 @@
 
             if (storedAuthState && storedAuthState !== currentAuthState) {
                 CacheManager.invalidate();
+                sessionStorage.removeItem("search_history_etag");
+                this.state.forceRefresh = true;
             }
 
             localStorage.setItem("mwshop_auth_state", currentAuthState);
@@ -215,6 +218,11 @@
                 return;
             }
 
+            if (this.state.forceRefresh) {
+                forceRefresh = true;
+                this.state.forceRefresh = false;
+            }
+
             if (!forceRefresh && !keyword) {
                 const cachedData = CacheManager.get();
                 if (cachedData !== null) {
@@ -226,9 +234,8 @@
                 }
             }
 
-            // Only show loading state if no cached data available
             const hasCachedData = CacheManager.get() !== null;
-            if (!hasCachedData) {
+            if (!hasCachedData || forceRefresh) {
                 this.showLoadingState();
             }
 
@@ -238,7 +245,7 @@
 
             this.state.isLoading = true;
 
-            this.state.currentRequest = $.ajax({
+            const ajaxConfig = {
                 url: "/api/search-history",
                 method: "GET",
                 data: { q: keyword },
@@ -253,9 +260,14 @@
                         }
                     },
                 },
-                success: function (response) {
+                success: function (response, status, xhr) {
                     self.state.isLoading = false;
                     self.state.retryCount = 0;
+
+                    const etag = xhr.getResponseHeader("ETag");
+                    if (etag) {
+                        sessionStorage.setItem("search_history_etag", etag);
+                    }
 
                     if (response.success && response.data) {
                         if (response.type === "history") {
@@ -291,7 +303,18 @@
                 complete: function () {
                     self.state.currentRequest = null;
                 },
-            });
+            };
+
+            if (!forceRefresh) {
+                const storedETag = sessionStorage.getItem(
+                    "search_history_etag"
+                );
+                if (storedETag) {
+                    ajaxConfig.headers = { "If-None-Match": storedETag };
+                }
+            }
+
+            this.state.currentRequest = $.ajax(ajaxConfig);
         },
 
         backgroundRefresh: function () {

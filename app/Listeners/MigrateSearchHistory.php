@@ -26,7 +26,14 @@ class MigrateSearchHistory
         $user = $event->user;
         $sessionId = Session::getId();
 
+        // Clear any existing user cache first to prevent stale data
+        if (method_exists($user, 'getAuthIdentifier')) {
+            $this->searchHistoryService->clearUserCache($user->getAuthIdentifier());
+        }
+        
         // Migrate search history from session to user
-        $this->searchHistoryService->migrateSessionToUser($user->id, $sessionId);
+        if (method_exists($user, 'getAuthIdentifier')) {
+            $this->searchHistoryService->migrateSessionToUser($user->getAuthIdentifier(), $sessionId);
+        }
     }
 }
