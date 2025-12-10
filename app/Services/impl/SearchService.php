@@ -5,6 +5,7 @@ namespace App\Services\impl;
 use App\Models\SearchHistory;
 use App\Services\ISearchService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class SearchService implements ISearchService
 {
@@ -23,30 +24,41 @@ class SearchService implements ISearchService
     {
         $userId = Auth::id();
         $sanitizedKeyword = $this->sanitizeSearchKeyword($keyword);
+        $cacheKey = $this->getSearchCacheKey($userId, $sessionId, $sanitizedKeyword);
 
-        $query = SearchHistory::query();
+        return Cache::remember($cacheKey, 300, function () use ($userId, $sessionId, $sanitizedKeyword, $keyword, $limit) {
+            $query = SearchHistory::query();
 
+            if ($userId) {
+                $query->where('user_id', $userId);
+            } else {
+                $query->where('session_id', $sessionId)
+                    ->whereNull('user_id');
+            }
+
+            $history = $query->where('keyword', 'LIKE', "%{$sanitizedKeyword}%")
+                ->select(['id', 'keyword', 'search_count', 'created_at', 'updated_at'])
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get()
+                ->toArray();
+
+            return [
+                'success' => true,
+                'type' => 'history',
+                'data' => $history,
+                'keyword' => $keyword,
+                'count' => count($history)
+            ];
+        });
+    }
+
+    private function getSearchCacheKey(?int $userId, string $sessionId, string $keyword): string
+    {
         if ($userId) {
-            $query->where('user_id', $userId);
-        } else {
-            $query->where('session_id', $sessionId)
-                ->whereNull('user_id');
+            return "search_query:user:{$userId}:keyword:" . md5($keyword);
         }
-
-        $history = $query->where('keyword', 'LIKE', "%{$sanitizedKeyword}%")
-            ->select(['id', 'keyword', 'search_count', 'updated_at'])
-            ->orderBy('updated_at', 'desc')
-            ->limit($limit)
-            ->get()
-            ->toArray();
-
-        return [
-            'success' => true,
-            'type' => 'history',
-            'data' => $history,
-            'keyword' => $keyword,
-            'count' => count($history)
-        ];
+        return "search_query:session:{$sessionId}:keyword:" . md5($keyword);
     }
 
     public function generateETag($data): string

@@ -195,13 +195,15 @@
 
     .history-list {
         padding: 0.25rem 0;
+        max-height: 400px;
+        overflow-y: auto;
     }
 
     .history-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
         cursor: pointer;
         transition: all 0.2s ease;
         border-left: 3px solid transparent;
@@ -226,13 +228,13 @@
     }
 
     .history-item-content i {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         flex-shrink: 0;
         margin-right: 0.25rem;
     }
 
     .history-keyword {
-        font-size: 0.925rem;
+        font-size: 0.875rem;
         color: #212529;
         font-weight: 400;
         overflow: hidden;
@@ -241,37 +243,34 @@
     }
 
     .history-count {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #6c757d;
-        margin-left: 0.25rem;
+        margin-left: 0.5rem;
+        font-weight: 500;
+        background: #f1f3f5;
+        padding: 0.1rem 0.4rem;
+        border-radius: 10px;
     }
 
     .btn-delete-history {
         background: none;
         border: none;
-        color: #6c757d;
+        color: #000;
         cursor: pointer;
-        padding: 0.4rem 0.6rem;
-        border-radius: 6px;
+        padding: 0.3rem 0.5rem;
+        border-radius: 4px;
         transition: all 0.2s ease;
-        opacity: 1;
+        opacity: 0.7;
         flex-shrink: 0;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
-    }
-
-    .btn-delete-history:hover {
-        background: #ffe6e6;
-        color: #dc3545;
-        transform: scale(1.1);
+        margin-left: 0.5rem;
     }
 
     .btn-delete-history i {
-        font-size: 1rem;
+        font-size: 0.85rem;
     }
-
-
 
     .search-suggestions-dropdown::-webkit-scrollbar {
         width: 6px;

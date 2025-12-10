@@ -107,10 +107,10 @@ class HomeController extends Controller
             $sessionId = session()->getId();
 
             if (empty($keyword)) {
-                return $this->handleSearchHistoryRequest($sessionId, $request);
+                return $this->handleSearchHistoryRequest($sessionId, $request, 15);
             }
 
-            return $this->handleSearchInHistoryRequest($keyword, $sessionId);
+            return $this->handleSearchInHistoryRequest($keyword, $sessionId, 15);
 
         } catch (\Exception $e) {
             Log::error('Search history error: ' . $e->getMessage(), [
@@ -123,9 +123,9 @@ class HomeController extends Controller
         }
     }
 
-    private function handleSearchHistoryRequest(string $sessionId, Request $request)
+    private function handleSearchHistoryRequest(string $sessionId, Request $request, int $limit = 15)
     {
-        $history = $this->searchHistoryService->getSearchHistory($sessionId, 10);
+        $history = $this->searchHistoryService->getSearchHistory($sessionId, $limit);
         $etag = $this->searchService->generateETag($history);
 
         if ($this->searchService->eTagMatches($request->header('If-None-Match'), $etag)) {
@@ -139,9 +139,9 @@ class HomeController extends Controller
             ->header('ETag', $etag);
     }
 
-    private function handleSearchInHistoryRequest(string $keyword, string $sessionId)
+    private function handleSearchInHistoryRequest(string $keyword, string $sessionId, int $limit = 15)
     {
-        $response = $this->searchService->searchInHistory($keyword, $sessionId, 10);
+        $response = $this->searchService->searchInHistory($keyword, $sessionId, $limit);
 
         if (empty($response['data'])) {
             $response = $this->searchService->getEmptyHistoryResponse($keyword);

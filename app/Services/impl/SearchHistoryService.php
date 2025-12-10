@@ -54,7 +54,9 @@ class SearchHistoryService implements ISearchHistoryService
         $userId = Auth::id();
         $cacheKey = $this->getCacheKey($userId, $sessionId);
 
-        return Cache::remember($cacheKey, 300, function () use ($userId, $sessionId, $limit) {
+        $cacheDuration = $userId ? 300 : 600;
+
+        return Cache::remember($cacheKey, $cacheDuration, function () use ($userId, $sessionId, $limit) {
             $query = SearchHistory::query();
 
             if ($userId) {
@@ -63,8 +65,8 @@ class SearchHistoryService implements ISearchHistoryService
                 $query->forSession($sessionId);
             }
 
-            return $query->select(['id', 'keyword', 'search_count', 'updated_at'])
-                ->latest('updated_at')
+            return $query->select(['id', 'keyword', 'search_count', 'created_at', 'updated_at'])
+                ->orderBy('created_at', 'desc')
                 ->limit($limit)
                 ->get()
                 ->toArray();
@@ -149,6 +151,12 @@ class SearchHistoryService implements ISearchHistoryService
         });
     }
 
+    public function clearUserCache(int $userId): void
+    {
+        $userCacheKey = "search_history:user:{$userId}";
+        Cache::forget($userCacheKey);
+    }
+
     public function cleanOldHistories(int $days = 30): int
     {
         return SearchHistory::olderThan($days)->delete();
@@ -164,7 +172,17 @@ class SearchHistoryService implements ISearchHistoryService
 
     private function clearCache(?int $userId, ?string $sessionId): void
     {
+        // Clear the main cache key
         $cacheKey = $this->getCacheKey($userId, $sessionId);
         Cache::forget($cacheKey);
+
+        // If we have both userId and sessionId, clear both cache keys
+        // This is important during login when migrating session to user
+        if ($userId && $sessionId) {
+            $userCacheKey = "search_history:user:{$userId}";
+            $sessionCacheKey = "search_history:session:{$sessionId}";
+            Cache::forget($userCacheKey);
+            Cache::forget($sessionCacheKey);
+        }
     }
 }

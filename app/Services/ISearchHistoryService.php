@@ -14,6 +14,8 @@ interface ISearchHistoryService
 
     public function migrateSessionToUser(int $userId, string $sessionId): void;
 
+    public function clearUserCache(int $userId): void;
+
     public function getPopularKeywords(int $limit = 10): array;
 
     public function cleanOldHistories(int $days = 30): int;

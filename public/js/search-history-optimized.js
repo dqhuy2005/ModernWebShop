@@ -110,10 +110,32 @@
             }
 
             this.cacheElements();
-
+            this.checkAuthStateChange();
+            this.populateSearchFieldFromURL();
             this.bindEvents();
 
             this.state.isInitialized = true;
+        },
+
+        checkAuthStateChange: function () {
+            const currentAuthState =
+                document.querySelector('meta[name="user-authenticated"]')
+                    ?.content || "false";
+            const storedAuthState = localStorage.getItem("mwshop_auth_state");
+
+            if (storedAuthState && storedAuthState !== currentAuthState) {
+                CacheManager.invalidate();
+            }
+
+            localStorage.setItem("mwshop_auth_state", currentAuthState);
+        },
+
+        populateSearchFieldFromURL: function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyword = urlParams.get("q");
+            if (keyword && this.elements.searchInput) {
+                this.elements.searchInput.val(keyword);
+            }
         },
 
         cacheElements: function () {
@@ -173,11 +195,13 @@
             searchInput.on(
                 "keyup",
                 throttle(function (e) {
+                    const value = $(this).val().trim();
                     if (
-                        $(this).val().trim().length === 0 &&
-                        e.key === "Backspace"
+                        value.length === 0 &&
+                        (e.key === "Backspace" || e.key === "Delete")
                     ) {
-                        self.loadHistory(false);
+                        CacheManager.invalidate();
+                        self.loadHistory(true);
                     }
                 }, this.config.throttleLimit)
             );
@@ -202,7 +226,11 @@
                 }
             }
 
-            this.showLoadingState();
+            // Only show loading state if no cached data available
+            const hasCachedData = CacheManager.get() !== null;
+            if (!hasCachedData) {
+                this.showLoadingState();
+            }
 
             if (this.state.currentRequest) {
                 this.state.currentRequest.abort();
@@ -215,6 +243,16 @@
                 method: "GET",
                 data: { q: keyword },
                 timeout: 5000,
+                statusCode: {
+                    304: function () {
+                        self.state.isLoading = false;
+                        const cachedData = CacheManager.get();
+                        if (cachedData !== null) {
+                            self.renderHistory(cachedData);
+                            self.showDropdown();
+                        }
+                    },
+                },
                 success: function (response) {
                     self.state.isLoading = false;
                     self.state.retryCount = 0;
@@ -336,7 +374,7 @@
                             <button type="button" class="btn-delete-history" data-id="${
                                 item.id
                             }" title="Xóa">
-                                <i class="bi bi-trash"></i>
+                                x
                             </button>
                         </div>
                     `;
