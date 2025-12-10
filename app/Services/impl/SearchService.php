@@ -26,15 +26,13 @@ class SearchService implements ISearchService
 
         $query = SearchHistory::query();
 
-        // Filter by user or session
         if ($userId) {
             $query->where('user_id', $userId);
         } else {
             $query->where('session_id', $sessionId)
-                  ->whereNull('user_id');
+                ->whereNull('user_id');
         }
 
-        // Search by keyword in history
         $history = $query->where('keyword', 'LIKE', "%{$sanitizedKeyword}%")
             ->select(['id', 'keyword', 'search_count', 'updated_at'])
             ->orderBy('updated_at', 'desc')

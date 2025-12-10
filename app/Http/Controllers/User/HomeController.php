@@ -143,7 +143,6 @@ class HomeController extends Controller
     {
         $response = $this->searchService->searchInHistory($keyword, $sessionId, 10);
 
-        // If no results found, return empty message
         if (empty($response['data'])) {
             $response = $this->searchService->getEmptyHistoryResponse($keyword);
         }
