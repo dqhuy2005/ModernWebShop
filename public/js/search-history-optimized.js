@@ -185,12 +185,13 @@
 
         loadHistory: function (forceRefresh = false) {
             const self = this;
+            const keyword = this.elements.searchInput.val().trim();
 
             if (this.state.isLoading) {
                 return;
             }
 
-            if (!forceRefresh) {
+            if (!forceRefresh && !keyword) {
                 const cachedData = CacheManager.get();
                 if (cachedData !== null) {
                     this.renderHistory(cachedData);
@@ -212,15 +213,20 @@
             this.state.currentRequest = $.ajax({
                 url: "/api/search-history",
                 method: "GET",
+                data: { q: keyword },
                 timeout: 5000,
                 success: function (response) {
                     self.state.isLoading = false;
                     self.state.retryCount = 0;
 
                     if (response.success && response.data) {
-                        CacheManager.set(response.data);
+                        if (response.type === "history") {
+                            CacheManager.set(response.data);
+                            self.renderHistory(response.data);
+                        } else if (response.type === "products") {
+                            self.renderProducts(response.data);
+                        }
 
-                        self.renderHistory(response.data);
                         self.showDropdown();
                     } else {
                         self.showEmptyState();
@@ -333,6 +339,42 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
+                    `;
+                }
+            });
+
+            historyList.html(html);
+            historySection.show();
+        },
+
+        renderProducts: function (products) {
+            const self = this;
+            const { historyList, historySection } = this.elements;
+
+            if (!products || products.length === 0) {
+                this.showEmptyState();
+                return;
+            }
+
+            let html = "";
+            products.forEach(function (product) {
+                if (product && product.name && product.id) {
+                    html += `
+                        <a href="${
+                            product.url
+                        }" class="product-suggestion-item" style="display: flex; padding: 0.75rem 1rem; text-decoration: none; color: inherit; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.925rem; color: #212529; margin-bottom: 0.25rem;">${self.escapeHtml(
+                                    product.name
+                                )}</div>
+                                <div style="font-size: 0.8rem; color: #dc3545; font-weight: 600;">${
+                                    product.price
+                                }</div>
+                            </div>
+                            <div style="display: flex; align-items: center; color: #6c757d;">
+                                <i class="bi bi-arrow-right"></i>
+                            </div>
+                        </a>
                     `;
                 }
             });

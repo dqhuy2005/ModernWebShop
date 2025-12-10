@@ -9,6 +9,8 @@ use App\Repository\impl\ProductRepository;
 use App\Repository\impl\CategoryRepository;
 use App\Services\impl\HomePageService;
 use App\Services\impl\SearchHistoryService;
+use App\Services\impl\SearchService;
+use App\Services\impl\CategoryService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -18,17 +20,23 @@ class HomeController extends Controller
     protected $categoryRepository;
     protected $homePageService;
     protected $searchHistoryService;
+    protected $searchService;
+    protected $categoryService;
 
     public function __construct(
         ProductRepository $productRepository,
         CategoryRepository $categoryRepository,
         HomePageService $homePageService,
-        SearchHistoryService $searchHistoryService
+        SearchHistoryService $searchHistoryService,
+        SearchService $searchService,
+        CategoryService $categoryService
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
         $this->homePageService = $homePageService;
         $this->searchHistoryService = $searchHistoryService;
+        $this->searchService = $searchService;
+        $this->categoryService = $categoryService;
     }
 
     public function index()
@@ -41,20 +49,12 @@ class HomeController extends Controller
     public function showCategory($slug, ProductFilterRequest $request)
     {
         $category = $this->categoryRepository->findBySlug($slug);
-
         $filters = $request->getFilters();
 
-        $products = $this->productRepository
-            ->getFilteredProducts($category->id, $filters)
-            ->paginate(12)
-            ->withQueryString();
+        $products = $this->categoryService->getFilteredProducts($category->id, $filters, 12);
 
         if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'html' => view('user.partials.product-grid', compact('products'))->render(),
-                'pagination' => view('user.partials.pagination', compact('products'))->render()
-            ]);
+            return response()->json($this->categoryService->formatAjaxResponse($products));
         }
 
         return view('user.category', compact('category', 'products', 'filters'));
@@ -100,48 +100,56 @@ class HomeController extends Controller
         return view('user.search', compact('products', 'categories', 'keyword', 'priceRange', 'sort'));
     }
 
-    /**
-     * Get search history với cache headers optimization
-     *
-     * Performance improvements:
-     * - Response caching với ETag
-     * - Cache-Control headers
-     * - Optimized query (chỉ select fields cần thiết)
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getSearchHistory(Request $request)
     {
         try {
+            $keyword = trim($request->input('q', ''));
             $sessionId = session()->getId();
-            $history = $this->searchHistoryService->getSearchHistory($sessionId, 10);
 
-            // Generate ETag cho response caching
-            $etag = md5(json_encode($history));
-
-            // Check If-None-Match header
-            if ($request->header('If-None-Match') === $etag) {
-                return response()->json(null, 304); // Not Modified
+            if (empty($keyword)) {
+                return $this->handleSearchHistoryRequest($sessionId, $request);
             }
 
-            return response()->json([
-                'success' => true,
-                'data' => $history ?? [],
-                'cached' => !empty($history) // Indicator nếu có data
-            ])
-            ->header('Cache-Control', 'private, max-age=300') // Cache 5 phút
-            ->header('ETag', $etag);
+            return $this->handleSearchInHistoryRequest($keyword, $sessionId);
 
         } catch (\Exception $e) {
-            Log::error('Search history error: ' . $e->getMessage());
+            Log::error('Search history error: ' . $e->getMessage(), [
+                'keyword' => $request->input('q', ''),
+                'session_id' => session()->getId()
+            ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Không thể tải lịch sử tìm kiếm',
-                'data' => []
-            ], 500);
+            $errorResponse = $this->searchService->getErrorResponse();
+            return response()->json($errorResponse, 500);
         }
+    }
+
+    private function handleSearchHistoryRequest(string $sessionId, Request $request)
+    {
+        $history = $this->searchHistoryService->getSearchHistory($sessionId, 10);
+        $etag = $this->searchService->generateETag($history);
+
+        if ($this->searchService->eTagMatches($request->header('If-None-Match'), $etag)) {
+            return response()->json(null, 304);
+        }
+
+        $response = $this->searchService->formatSearchHistoryResponse($history, $etag);
+
+        return response()->json($response)
+            ->header('Cache-Control', 'private, max-age=300')
+            ->header('ETag', $etag);
+    }
+
+    private function handleSearchInHistoryRequest(string $keyword, string $sessionId)
+    {
+        $response = $this->searchService->searchInHistory($keyword, $sessionId, 10);
+
+        // If no results found, return empty message
+        if (empty($response['data'])) {
+            $response = $this->searchService->getEmptyHistoryResponse($keyword);
+        }
+
+        return response()->json($response)
+            ->header('Cache-Control', 'private, max-age=60');
     }
 
     public function deleteSearchHistory(Request $request, $id)
