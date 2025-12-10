@@ -1,11 +1,7 @@
 (function ($) {
     "use strict";
 
-    /**
-     * Initialize clean form submission
-     */
     function initCleanFormSubmit() {
-        // Handle all forms with class "clean-form"
         $(document).on(
             "submit",
             ".clean-form, form[data-clean-submit]",
@@ -16,20 +12,15 @@
                 const baseUrl = form.attr("action");
                 const params = new URLSearchParams();
 
-                // Get all form data
                 const formData = new FormData(this);
 
-                // Add only non-empty values
                 for (let [key, value] of formData.entries()) {
-                    // Convert to string and trim
                     value = String(value).trim();
 
-                    // Skip empty values
                     if (value === "" || value === null || value === undefined) {
                         continue;
                     }
 
-                    // Skip default values if specified
                     const input = form.find(`[name="${key}"]`);
                     const defaultValue = input.data("default");
                     if (
@@ -42,13 +33,11 @@
                     params.append(key, value);
                 }
 
-                // Build clean URL
                 const queryString = params.toString();
                 const cleanUrl = queryString
                     ? `${baseUrl}?${queryString}`
                     : baseUrl;
 
-                // Navigate to clean URL
                 window.location.href = cleanUrl;
 
                 return false;
@@ -56,9 +45,6 @@
         );
     }
 
-    /**
-     * Remove empty parameters from current URL
-     */
     function cleanCurrentUrl() {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
@@ -79,9 +65,6 @@
         }
     }
 
-    /**
-     * Build query string from object, skipping empty values
-     */
     function buildCleanQueryString(params) {
         const cleanParams = new URLSearchParams();
 
@@ -94,25 +77,18 @@
         return cleanParams.toString();
     }
 
-    /**
-     * Navigate with clean parameters
-     */
     function navigateWithCleanParams(baseUrl, params) {
         const queryString = buildCleanQueryString(params);
         const url = queryString ? `${baseUrl}?${queryString}` : baseUrl;
         window.location.href = url;
     }
 
-    // Auto-initialize when document is ready
     $(document).ready(function () {
         initCleanFormSubmit();
 
-        // Clean current URL on page load (optional)
-        // Uncomment the line below if you want to clean URL on page load
         cleanCurrentUrl();
     });
 
-    // Expose utility functions globally
     window.CleanFormUtils = {
         buildCleanQueryString: buildCleanQueryString,
         navigateWithCleanParams: navigateWithCleanParams,
