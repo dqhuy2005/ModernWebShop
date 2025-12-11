@@ -54,7 +54,7 @@
         <div class="col-12 text-center py-5">
             <div class="pw-empty-state">
                 <i class="bi bi-inbox display-1 text-muted"></i>
-                <p class="mt-3 text-muted">Không tìm thấy sản phẩm nào phù hợp với tiêu chí lọc.</p>
+                <p class="mt-3 text-muted">Không tìm thấy sản phẩm nào phù hợp.</p>
             </div>
         </div>
     @endforelse

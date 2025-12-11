@@ -26,7 +26,7 @@
                             </td>
 
                             <td>
-                                <span class="badge bg-info">
+                                <span class="text-center">
                                     {{ $category->products_count ?? 0 }}
                                 </span>
                             </td>
