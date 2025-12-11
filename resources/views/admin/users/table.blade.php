@@ -17,7 +17,6 @@
                         </th>
                         <th width="15%">Email</th>
                         <th width="12%">Phone</th>
-                        <th width="10%">Role</th>
                         <th width="8%" class="text-center">Status</th>
                         <th width="12%" class="text-center">Actions</th>
                     </tr>
@@ -59,18 +58,6 @@
                                     </a>
                                 @else
                                     <span class="text-muted">-</span>
-                                @endif
-                            </td>
-
-                            <td>
-                                @if ($user->role)
-                                    <span class="badge bg-{{ $user->role->slug === 'admin' ? 'danger' : 'info' }}">
-                                        <i
-                                            class="fas fa-user-{{ $user->role->slug === 'admin' ? 'shield' : 'circle' }} me-1"></i>
-                                        {{ $user->role->name }}
-                                    </span>
-                                @else
-                                    <span class="badge bg-secondary">No Role</span>
                                 @endif
                             </td>
 

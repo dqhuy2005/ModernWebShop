@@ -20,7 +20,7 @@ class UserController extends BaseController
     public function index(Request $request)
     {
         try {
-            $query = User::select('id', 'fullname', 'email', 'phone', 'image', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+            $query = User::select('id', 'fullname', 'email', 'phone', 'image', 'status', 'created_at', 'updated_at', 'deleted_at')
                 ->withTrashed()
                 ->with('role:id,name,slug')
                 ->whereDoesntHave('role', function ($q) {
@@ -119,7 +119,6 @@ class UserController extends BaseController
                 }
             }
 
-            // Image is now a path from LFM, save it directly
             if ($request->filled('image')) {
                 $data['image'] = $request->input('image');
             }
@@ -209,7 +208,6 @@ class UserController extends BaseController
                 }
             }
 
-            // Image is now a path from LFM, save it directly
             if ($request->filled('image')) {
                 $data['image'] = $request->input('image');
             }
