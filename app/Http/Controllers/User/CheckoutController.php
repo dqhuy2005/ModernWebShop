@@ -27,33 +27,75 @@ class CheckoutController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để tiếp tục thanh toán');
         }
 
-        $cartItems = $this->cartRepository->findByUser(Auth::id());
+        $allCartItems = $this->cartRepository->findByUser(Auth::id());
 
-        if ($cartItems->isEmpty()) {
+        if ($allCartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Giỏ hàng của bạn đang trống');
         }
 
-        $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
+        $selectedIdsJson = $request->input('selected_items');
+        $selectedIds = null;
+
+        if ($selectedIdsJson) {
+            if (is_string($selectedIdsJson)) {
+                $selectedIds = json_decode($selectedIdsJson, true);
+            } else {
+                $selectedIds = $selectedIdsJson;
+            }
+        }
+
+        if ($selectedIds && is_array($selectedIds) && count($selectedIds) > 0) {
+            $cartItems = $allCartItems->whereIn('id', $selectedIds);
+
+            if ($cartItems->isEmpty()) {
+                return redirect()->route('cart.index')->with('error', 'Vui lòng chọn sản phẩm để thanh toán');
+            }
+        } else {
+            $cartItems = $allCartItems;
+        }
+
+        $total = $cartItems->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+
+        $shippingFee = 0; // Free shipping
+        $grandTotal = $total; // Grand total equals items total
+
         $user = Auth::user();
 
-        return view('user.checkout', compact('cartItems', 'total', 'user'));
+        return view('user.checkout', compact('cartItems', 'total', 'shippingFee', 'grandTotal', 'user'));
     }
 
     public function process(CheckoutRequest $request)
     {
         $userId = Auth::id();
-        $cartItems = $this->cartRepository->findByUser($userId);
+        $allCartItems = $this->cartRepository->findByUser($userId);
+
+        if ($allCartItems->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Giỏ hàng của bạn đang trống'
+            ], 400);
+        }
+
+        $selectedIds = $request->input('selected_items');
+
+        if ($selectedIds && is_array($selectedIds) && count($selectedIds) > 0) {
+            $cartItems = $allCartItems->whereIn('id', $selectedIds);
+        } else {
+            $cartItems = $allCartItems;
+        }
 
         if ($cartItems->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Giỏ hàng của bạn đang trống'
+                'message' => 'Vui lòng chọn sản phẩm để thanh toán'
             ], 400);
         }
 
@@ -114,8 +156,12 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            $this->cartRepository->clearUserCart($userId);
-            Session::put('cart_count', 0);
+            foreach ($cartItems as $cartItem) {
+                $cartItem->delete();
+            }
+
+            $remainingCount = $this->cartRepository->findByUser($userId)->count();
+            Session::put('cart_count', $remainingCount);
 
             if (method_exists($order, 'logActivity')) {
                 $order->logActivity(
@@ -132,6 +178,7 @@ class CheckoutController extends Controller
                 'success' => true,
                 'message' => 'Đặt hàng thành công!',
                 'order_id' => $order->id,
+                'cart_count' => $remainingCount,
                 'redirect_url' => route('checkout.success', $order->id)
             ]);
 

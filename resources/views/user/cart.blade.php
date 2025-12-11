@@ -3,28 +3,27 @@
 @section('title', 'Giỏ hàng - ModernWebShop')
 
 @section('content')
-    <div class="cart-section py-5" style="background-color: #F8F9FA;">
+    <div class="cart-section py-4" style="background-color: #f5f5f5;">
         <div class="container">
-            <div class="mb-4">
-                <h2 class="fw-bold" style="color: #202732;">
-                    <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
-                </h2>
-            </div>
-
             @if (isset($cartItems) && $cartItems->count() > 0)
-                <div class="row g-4">
-                    <div class="col-lg-8">
-                        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0 mb-3" style="border-radius: 4px;">
+                            <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table align-middle">
-                                        <thead class="border-bottom">
+                                    <table class="table cart-table mb-0">
+                                        <thead style="background-color: #fff; border-bottom: 1px solid #e0e0e0;">
                                             <tr>
-                                                <th scope="col" class="fw-semibold">Sản phẩm</th>
-                                                <th scope="col" class="fw-semibold text-center">Đơn giá</th>
-                                                <th scope="col" class="fw-semibold text-center">Số lượng</th>
-                                                <th scope="col" class="fw-semibold text-end">Tổng</th>
-                                                <th scope="col" class="text-center"></th>
+                                                <th scope="col" class="py-3 px-4" style="width: 5%;">
+                                                    <input type="checkbox" id="select-all" class="form-check-input">
+                                                </th>
+                                                <th scope="col" class="py-3" style="width: 40%;">Sản Phẩm</th>
+                                                <th scope="col" class="py-3 text-center" style="width: 15%;">Đơn Giá</th>
+                                                <th scope="col" class="py-3 text-center" style="width: 15%;">Số Lượng
+                                                </th>
+                                                <th scope="col" class="py-3 text-center" style="width: 15%;">Số Tiền</th>
+                                                <th scope="col" class="py-3 text-center" style="width: 10%;">Thao Tác
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -35,20 +34,26 @@
                                                     $itemQuantity = Auth::check() ? $item->quantity : $item['quantity'];
                                                     $itemId = Auth::check() ? $item->id : $item['product_id'];
                                                 @endphp
-                                                <tr class="cart-item" data-cart-id="{{ $itemId }}">
-                                                    <td>
+                                                <tr class="cart-item" data-cart-id="{{ $itemId }}"
+                                                    style="background-color: #fff;">
+                                                    <td class="px-4 align-middle">
+                                                        <input type="checkbox" class="form-check-input item-checkbox"
+                                                            data-cart-id="{{ $itemId }}"
+                                                            data-price="{{ $itemPrice }}"
+                                                            data-quantity="{{ $itemQuantity }}">
+                                                    </td>
+                                                    <td class="py-3 align-middle">
                                                         <div class="d-flex align-items-center">
                                                             <img src="{{ Auth::check() ? $product->image_url : asset('storage/' . $item['image']) }}"
                                                                 alt="{{ Auth::check() ? $product->name : $item['name'] }}"
                                                                 class="rounded me-3"
-                                                                style="width: 80px; height: 80px; object-fit: cover;">
+                                                                style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #e0e0e0;">
                                                             <div>
-                                                                <h6 class="mb-1 fw-semibold">
-                                                                    <a href="{{ route('products.show', Auth::check() ? $product->slug : $item['slug']) }}"
-                                                                        class="text-dark text-decoration-none">
-                                                                        {{ Auth::check() ? $product->name : $item['name'] }}
-                                                                    </a>
-                                                                </h6>
+                                                                <a href="{{ route('products.show', Auth::check() ? $product->slug : $item['slug']) }}"
+                                                                    class="text-dark text-decoration-none d-block mb-1"
+                                                                    style="font-size: 14px; line-height: 1.4;">
+                                                                    {{ Auth::check() ? $product->name : $item['name'] }}
+                                                                </a>
                                                                 @if (Auth::check() && $product->category)
                                                                     <small
                                                                         class="text-muted">{{ $product->category->name }}</small>
@@ -56,38 +61,47 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center">
-                                                        <span
-                                                            class="text-danger fw-semibold">{{ number_format($itemPrice) }}₫</span>
+                                                    <td class="text-center align-middle">
+                                                        <span class="item-price" style="color: #333; font-size: 14px;">
+                                                            {{ number_format($itemPrice) }}₫
+                                                        </span>
                                                     </td>
-                                                    <td>
-                                                        <div class="input-group input-group-sm mx-auto"
-                                                            style="max-width: 120px;">
-                                                            <button class="btn btn-outline-secondary qty-btn" type="button"
-                                                                onclick="updateQuantity({{ $itemId }}, -1)">
-                                                                <i class="fas fa-minus"></i>
-                                                            </button>
-                                                            <input type="number"
-                                                                class="form-control text-center quantity-input"
-                                                                value="{{ $itemQuantity }}" min="1" max="999"
-                                                                data-cart-id="{{ $itemId }}"
-                                                                data-original-value="{{ $itemQuantity }}"
-                                                                onchange="updateQuantityInput({{ $itemId }}, this.value)">
-                                                            <button class="btn btn-outline-secondary qty-btn" type="button"
-                                                                onclick="updateQuantity({{ $itemId }}, 1)">
-                                                                <i class="fas fa-plus"></i>
-                                                            </button>
+                                                    <td class="align-middle">
+                                                        <div class="d-flex justify-content-center align-items-center">
+                                                            <div class="input-group" style="max-width: 100px;">
+                                                                <button class="btn btn-outline-secondary qty-btn px-2 py-1"
+                                                                    type="button"
+                                                                    onclick="updateQuantity({{ $itemId }}, -1)"
+                                                                    style="border: 1px solid #d9d9d9; font-size: 12px;">
+                                                                    <i class="fas fa-minus" style="font-size: 10px;"></i>
+                                                                </button>
+                                                                <input type="number"
+                                                                    class="form-control text-center quantity-input px-1 py-1"
+                                                                    value="{{ $itemQuantity }}" min="1"
+                                                                    max="999" data-cart-id="{{ $itemId }}"
+                                                                    data-original-value="{{ $itemQuantity }}"
+                                                                    onchange="updateQuantityInput({{ $itemId }}, this.value)"
+                                                                    style="border: 1px solid #d9d9d9; border-left: none; border-right: none; font-size: 14px;">
+                                                                <button class="btn btn-outline-secondary qty-btn px-2 py-1"
+                                                                    type="button"
+                                                                    onclick="updateQuantity({{ $itemId }}, 1)"
+                                                                    style="border: 1px solid #d9d9d9; font-size: 12px;">
+                                                                    <i class="fas fa-plus" style="font-size: 10px;"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-end">
-                                                        <span class="fw-bold item-total" style="color: #202732;">
+                                                    <td class="text-center align-middle">
+                                                        <span class="item-total"
+                                                            style="color: #ee4d2d; font-size: 16px; font-weight: 500;">
                                                             {{ number_format($itemPrice * $itemQuantity) }}₫
                                                         </span>
                                                     </td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-sm btn-outline-danger"
-                                                            onclick="removeFromCart({{ $itemId }})" title="Xóa">
-                                                            <i class="fas fa-trash-alt"></i>
+                                                    <td class="text-center align-middle">
+                                                        <button class="btn btn-link text-danger p-0"
+                                                            onclick="removeFromCart({{ $itemId }})" title="Xóa"
+                                                            style="font-size: 14px; text-decoration: none;">
+                                                            Xóa
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -95,60 +109,54 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-                                <div class="d-flex justify-content-end align-items-center pt-3">
-                                    <form action="{{ route('cart.clear') }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger"
-                                            onclick="return confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')">
-                                            <i class="fas fa-trash me-2"></i>Xóa tất cả
-                                        </button>
-                                    </form>
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-lg-4">
-                        <div class="card shadow-sm border-0 sticky-top" style="border-radius: 12px; top: 20px;">
-                            <div class="card-body p-4">
-                                <h5 class="fw-bold mb-4" style="color: #202732;">Tổng đơn hàng</h5>
-
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="text-muted">Tạm tính:</span>
-                                    <span class="fw-semibold" id="subtotal">{{ number_format($total) }}₫</span>
+                <!-- Checkout Bar -->
+                <div class="checkout-bar bg-white shadow-lg mt-3"
+                    style="position: sticky; bottom: 0; z-index: 50; border-top: 1px solid #e0e0e0; border-radius: 4px;">
+                    <div class="container">
+                        <div class="row align-items-center py-3">
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input type="checkbox" id="select-all-bottom" class="form-check-input">
+                                    <label class="form-check-label" for="select-all-bottom">
+                                        Chọn Tất Cả (<span id="total-items">{{ $cartItems->count() }}</span>)
+                                    </label>
                                 </div>
-
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="text-muted">Phí vận chuyển:</span>
-                                    <span class="text-success fw-semibold">Miễn phí</span>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-link text-danger p-0" onclick="deleteSelected()"
+                                    style="font-size: 14px;">
+                                    Xóa
+                                </button>
+                            </div>
+                            <div class="col-auto ms-auto d-flex align-items-center">
+                                <div class="me-4">
+                                    <span class="text-muted" style="font-size: 14px;">Tổng thanh toán (<span
+                                            id="selected-count">0</span> Sản phẩm):</span>
+                                    <span class="ms-2" style="color: #ee4d2d; font-size: 24px; font-weight: 500;"
+                                        id="selected-total">0₫</span>
                                 </div>
-
-                                <hr>
-
-                                <div class="d-flex justify-content-between mb-4">
-                                    <span class="fw-bold fs-5" style="color: #202732;">Tổng cộng:</span>
-                                    <span class="fw-bold fs-5 text-danger"
-                                        id="total">{{ number_format($total) }}₫</span>
-                                </div>
-
-                                <a href="{{ route('checkout.index') }}" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
-                                    Thanh toán
-                                </a>
+                                <a href="#" class="btn btn-danger px-5 py-2 disabled" id="checkout-btn"
+                                    style="background: #ee4d2d; border-color: #ee4d2d; font-size: 14px; font-weight: 500; opacity: 0.6;"
+                                    onclick="proceedToCheckout(event)">Mua Hàng</a>
                             </div>
                         </div>
                     </div>
                 </div>
             @else
                 <div class="text-center py-5">
-                    <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px; border-radius: 12px;">
+                    <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px; border-radius: 4px;">
                         <div class="card-body p-5">
                             <div class="mb-4">
                                 <i class="fas fa-shopping-cart" style="font-size: 5rem; color: #E9ECEF;"></i>
                             </div>
-                            <h4 class="fw-bold mb-3" style="color: #202732;">Giỏ hàng trống</h4>
-                            <p class="text-muted mb-4">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                            <h5 class="mb-3" style="color: #333;">Giỏ hàng của bạn còn trống</h5>
+                            <p class="text-muted mb-4" style="font-size: 14px;">Hãy chọn thêm sản phẩm để mua sắm nhé</p>
+                            <a href="{{ route('home') }}" class="btn btn-danger px-4">Mua Ngay</a>
                         </div>
                     </div>
                 </div>
@@ -159,51 +167,84 @@
 
 @push('styles')
     <style>
+        .cart-table {
+            font-size: 14px;
+        }
+
+        .cart-table thead th {
+            font-weight: 500;
+            color: #888;
+            font-size: 13px;
+            text-transform: capitalize;
+        }
+
         .cart-item {
-            transition: background-color 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .cart-item:hover {
+            background-color: #fafafa !important;
         }
 
         .quantity-input {
-            border-left: none;
-            border-right: none;
-            font-weight: 600;
+            border: 1px solid #d9d9d9;
+            font-weight: 500;
+            max-width: 50px;
         }
 
         .quantity-input:focus {
             box-shadow: none;
-            border-color: #dee2e6;
+            border-color: #d9d9d9;
         }
 
         .qty-btn {
-            border-color: #dee2e6;
-            transition: all 0.3s ease;
+            background-color: #fff;
+            border: 1px solid #d9d9d9;
+            color: #666;
+            transition: all 0.2s ease;
+            height: 30px;
+            width: 30px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .qty-btn:hover:not(:disabled) {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: white;
+            background-color: #f5f5f5;
+            border-color: #bbb;
+            color: #333;
         }
 
         .qty-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
         .quantity-input:disabled {
-            background-color: #f8f9fa;
-            opacity: 0.7;
+            background-color: #f5f5f5;
+            opacity: 0.6;
         }
 
         .item-total {
-            transition: all 0.3s ease;
+            transition: color 0.3s ease;
         }
 
-        .cart-item:hover {
-            background-color: rgba(0, 0, 0, 0.02);
+        /* Checkout bar styles */
+        .checkout-bar {
+            position: sticky;
+            bottom: 0;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.3s ease;
         }
 
-        /* Loading animation for buttons */
+        .checkout-bar:hover {
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Loading animation */
         .qty-btn.loading {
             position: relative;
             color: transparent;
@@ -219,9 +260,9 @@
             margin-left: -6px;
             margin-top: -6px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #dc3545;
+            border-top: 2px solid #ee4d2d;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 0.6s linear infinite;
         }
 
         @keyframes spin {
@@ -248,8 +289,93 @@
         }
 
         .total-updated {
-            animation: pulse 0.5s ease;
-            color: #28a745 !important;
+            animation: pulse 0.4s ease;
+        }
+
+        /* Checkbox styles */
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d9d9d9;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #ee4d2d;
+            border-color: #ee4d2d;
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(238, 77, 45, 0.25);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .cart-table {
+                font-size: 13px;
+            }
+
+            .checkout-bar .col-auto {
+                font-size: 13px;
+            }
+
+            #selected-total {
+                font-size: 20px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cart-table thead th {
+                font-size: 12px;
+                padding: 12px 8px !important;
+            }
+
+            .cart-item td {
+                padding: 12px 8px !important;
+            }
+
+            .cart-item img {
+                width: 60px !important;
+                height: 60px !important;
+            }
+
+            .checkout-bar {
+                padding: 10px 0 !important;
+            }
+
+            .checkout-bar .row {
+                flex-wrap: wrap;
+            }
+
+            .checkout-bar .col-auto {
+                font-size: 12px;
+            }
+
+            #selected-total {
+                font-size: 18px !important;
+            }
+
+            #checkout-btn {
+                padding: 8px 20px !important;
+                font-size: 13px !important;
+            }
+        }
+
+        /* Empty cart animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.5s ease-out;
         }
     </style>
 @endpush
@@ -257,6 +383,56 @@
 @push('scripts')
     <script>
         let quantityUpdateTimer;
+
+        $(document).ready(function() {
+            // Select all functionality
+            $('#select-all, #select-all-bottom').on('change', function() {
+                const isChecked = $(this).prop('checked');
+                $('.item-checkbox').prop('checked', isChecked);
+                $('#select-all, #select-all-bottom').prop('checked', isChecked);
+                updateSelectedTotal();
+            });
+
+            // Individual checkbox change
+            $('.item-checkbox').on('change', function() {
+                updateSelectAllState();
+                updateSelectedTotal();
+            });
+
+            // Initial state
+            updateSelectAllState();
+            updateSelectedTotal();
+        });
+
+        function updateSelectAllState() {
+            const totalCheckboxes = $('.item-checkbox').length;
+            const checkedCheckboxes = $('.item-checkbox:checked').length;
+            const selectAllChecked = totalCheckboxes === checkedCheckboxes;
+
+            $('#select-all, #select-all-bottom').prop('checked', selectAllChecked);
+        }
+
+        function updateSelectedTotal() {
+            let selectedCount = 0;
+            let selectedTotal = 0;
+
+            $('.item-checkbox:checked').each(function() {
+                const price = parseInt($(this).data('price'));
+                const quantity = parseInt($(this).data('quantity'));
+                selectedCount++;
+                selectedTotal += price * quantity;
+            });
+
+            $('#selected-count').text(selectedCount);
+            $('#selected-total').text(selectedTotal.toLocaleString('vi-VN') + '₫');
+
+            // Enable/disable checkout button
+            if (selectedCount > 0) {
+                $('#checkout-btn').removeClass('disabled').css('opacity', '1');
+            } else {
+                $('#checkout-btn').addClass('disabled').css('opacity', '0.6');
+            }
+        }
 
         function updateQuantity(cartId, change) {
             const $input = $(`input[data-cart-id="${cartId}"]`);
@@ -297,15 +473,16 @@
 
         function updateCartQuantity(cartId, quantity) {
             const $row = $(`.cart-item[data-cart-id="${cartId}"]`);
-            const $input = $(`input[data-cart-id="${cartId}"]`);
+            const $input = $(`input.quantity-input[data-cart-id="${cartId}"]`);
             const $buttons = $row.find('.qty-btn');
+            const $checkbox = $(`.item-checkbox[data-cart-id="${cartId}"]`);
 
-            $buttons.prop('disabled', true);
+            $buttons.prop('disabled', true).addClass('loading');
             $input.prop('disabled', true);
 
             const $itemTotal = $row.find('.item-total');
             const originalTotalHtml = $itemTotal.html();
-            $itemTotal.html('<i class="fas fa-spinner fa-spin text-muted"></i>');
+            $itemTotal.html('<i class="fas fa-spinner fa-spin"></i>');
 
             $.ajax({
                 url: '{{ route('cart.update') }}',
@@ -320,15 +497,22 @@
                         $input.val(quantity);
                         $input.attr('data-original-value', quantity);
 
-                        const priceText = $row.find('.text-danger.fw-semibold').first().text();
-                        const price = parseInt(priceText.replace(/[₫,]/g, ''));
+                        // Update checkbox data
+                        $checkbox.data('quantity', quantity);
+                        $checkbox.attr('data-quantity', quantity);
 
+                        const price = parseInt($checkbox.data('price'));
                         const itemTotal = price * quantity;
-                        $row.find('.item-total').text(itemTotal.toLocaleString('vi-VN') + '₫');
 
-                        updateCartTotals();
+                        $itemTotal.text(itemTotal.toLocaleString('vi-VN') + '₫');
+                        $itemTotal.addClass('total-updated');
 
-                        toastr.success(response.message);
+                        setTimeout(function() {
+                            $itemTotal.removeClass('total-updated');
+                        }, 500);
+
+                        updateSelectedTotal();
+                        toastr.success(response.message || 'Đã cập nhật số lượng');
                     }
                 },
                 error: function(xhr) {
@@ -336,37 +520,24 @@
                     $input.val(originalValue);
                     $itemTotal.html(originalTotalHtml);
 
-                    toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
+                    const errorMsg = xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+                    toastr.error(errorMsg);
                 },
                 complete: function() {
-                    $buttons.prop('disabled', false);
+                    $buttons.prop('disabled', false).removeClass('loading');
                     $input.prop('disabled', false);
                 }
             });
-        }
-
-        function updateCartTotals() {
-            let subtotal = 0;
-
-            $('.cart-item').each(function() {
-                const $row = $(this);
-                const priceText = $row.find('.text-danger.fw-semibold').first().text();
-                const price = parseInt(priceText.replace(/[₫,]/g, ''));
-                const quantity = parseInt($row.find('.quantity-input').val());
-                subtotal += price * quantity;
-            });
-
-            const $subtotal = $('#subtotal');
-            const $total = $('#total');
-
-            $subtotal.text(subtotal.toLocaleString('vi-VN') + '₫');
-            $total.text(subtotal.toLocaleString('vi-VN') + '₫');
         }
 
         function removeFromCart(cartId) {
             if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
                 return;
             }
+
+            const $row = $(`.cart-item[data-cart-id="${cartId}"]`);
+
+            $row.css('opacity', '0.5');
 
             $.ajax({
                 url: '{{ route('cart.remove') }}',
@@ -377,26 +548,98 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        $(`.cart-item[data-cart-id="${cartId}"]`).fadeOut(300, function() {
+                        $row.fadeOut(300, function() {
                             $(this).remove();
 
+                            // Update cart count in header
                             $('#cart-count').text(response.cart_count);
+                            $('#total-items').text($('.cart-item').length);
 
-                            if (response.cart_count === 0) {
+                            if (response.cart_count === 0 || $('.cart-item').length === 0) {
                                 location.reload();
                             } else {
-                                $('#subtotal').text(response.total + '₫');
-                                $('#total').text(response.total + '₫');
+                                updateSelectAllState();
+                                updateSelectedTotal();
                             }
                         });
 
-                        toastr.success(response.message);
+                        toastr.success(response.message || 'Đã xóa sản phẩm khỏi giỏ hàng');
                     }
                 },
-                error: function() {
-                    toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
+                error: function(xhr) {
+                    $row.css('opacity', '1');
+                    const errorMsg = xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+                    toastr.error(errorMsg);
                 }
             });
+        }
+
+        function deleteSelected() {
+            const selectedItems = [];
+            $('.item-checkbox:checked').each(function() {
+                selectedItems.push($(this).data('cart-id'));
+            });
+
+            if (selectedItems.length === 0) {
+                toastr.warning('Vui lòng chọn sản phẩm cần xóa');
+                return;
+            }
+
+            if (!confirm(`Bạn có chắc muốn xóa ${selectedItems.length} sản phẩm đã chọn?`)) {
+                return;
+            }
+
+            let completed = 0;
+            selectedItems.forEach(function(cartId) {
+                $.ajax({
+                    url: '{{ route('cart.remove') }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        cart_id: cartId
+                    },
+                    success: function(response) {
+                        completed++;
+                        $(`.cart-item[data-cart-id="${cartId}"]`).fadeOut(300, function() {
+                            $(this).remove();
+
+                            if (completed === selectedItems.length) {
+                                $('#cart-count').text(response.cart_count);
+                                $('#total-items').text($('.cart-item').length);
+
+                                if (response.cart_count === 0 || $('.cart-item').length === 0) {
+                                    location.reload();
+                                } else {
+                                    updateSelectAllState();
+                                    updateSelectedTotal();
+                                    toastr.success(`Đã xóa ${selectedItems.length} sản phẩm`);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        function proceedToCheckout(event) {
+            event.preventDefault();
+
+            const selectedItems = [];
+            $('.item-checkbox:checked').each(function() {
+                selectedItems.push($(this).data('cart-id'));
+            });
+
+            if (selectedItems.length === 0) {
+                toastr.warning('Vui lòng chọn sản phẩm để thanh toán');
+                return;
+            }
+
+            sessionStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
+
+            const url = '{{ route('checkout.index') }}' + '?selected_items=' + encodeURIComponent(JSON.stringify(
+                selectedItems));
+
+            window.location.href = url;
         }
     </script>
 @endpush

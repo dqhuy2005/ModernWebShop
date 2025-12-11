@@ -58,7 +58,6 @@ class CartController extends Controller
                         $cartItem->restore();
                         $this->cartRepository->updateQuantity($cartItem->id, $quantity);
                     } else {
-                        // Limit total quantity to prevent abuse
                         $newQuantity = min($cartItem->quantity + $quantity, 999);
                         $this->cartRepository->updateQuantity($cartItem->id, $newQuantity);
                     }
@@ -73,7 +72,6 @@ class CartController extends Controller
 
                 $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
             } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
-                // Handle unique constraint violation by updating the existing cart item
                 $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
                 if ($cartItem) {
                     if ($cartItem->trashed()) {
@@ -90,7 +88,6 @@ class CartController extends Controller
             $cart = Session::get('cart', []);
 
             if (isset($cart[$product->id])) {
-                // Limit total quantity to prevent abuse
                 $cart[$product->id]['quantity'] = min($cart[$product->id]['quantity'] + $quantity, 999);
             } else {
                 $cart[$product->id] = [
@@ -118,7 +115,6 @@ class CartController extends Controller
     public function update(UpdateCartRequest $request)
     {
         if (Auth::check()) {
-            // Verify cart item belongs to current user
             $cartItem = $this->cartRepository->find($request->cart_id);
 
             if (!$cartItem || $cartItem->user_id !== Auth::id()) {
