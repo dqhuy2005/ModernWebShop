@@ -4,11 +4,17 @@ namespace App\Services\impl;
 
 use App\Models\SearchHistory;
 use App\Services\ISearchService;
+use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class SearchService implements ISearchService
 {
+    protected $redisService;
+
+    public function __construct(RedisService $redisService)
+    {
+        $this->redisService = $redisService;
+    }
     public function formatSearchHistoryResponse(array $history, ?string $etag = null): array
     {
         return [
@@ -26,7 +32,7 @@ class SearchService implements ISearchService
         $sanitizedKeyword = $this->sanitizeSearchKeyword($keyword);
         $cacheKey = $this->getSearchCacheKey($userId, $sessionId, $sanitizedKeyword);
 
-        return Cache::remember($cacheKey, 300, function () use ($userId, $sessionId, $sanitizedKeyword, $keyword, $limit) {
+        return $this->redisService->remember($cacheKey, 300, function () use ($userId, $sessionId, $sanitizedKeyword, $keyword, $limit) {
             $query = SearchHistory::query();
 
             if ($userId) {

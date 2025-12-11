@@ -4,12 +4,18 @@ namespace App\Services\impl;
 
 use App\Models\SearchHistory;
 use App\Services\ISearchHistoryService;
+use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class SearchHistoryService implements ISearchHistoryService
 {
+    protected $redisService;
+
+    public function __construct(RedisService $redisService)
+    {
+        $this->redisService = $redisService;
+    }
     public function saveSearchHistory(string $keyword, ?string $sessionId = null): void
     {
         $keyword = trim($keyword);
@@ -56,7 +62,7 @@ class SearchHistoryService implements ISearchHistoryService
 
         $cacheDuration = $userId ? 300 : 600;
 
-        return Cache::remember($cacheKey, $cacheDuration, function () use ($userId, $sessionId, $limit) {
+        return $this->redisService->remember($cacheKey, $cacheDuration, function () use ($userId, $sessionId, $limit) {
             $query = SearchHistory::query();
 
             if ($userId) {
@@ -141,7 +147,7 @@ class SearchHistoryService implements ISearchHistoryService
     {
         $cacheKey = 'search_history:popular:' . $limit;
 
-        return Cache::remember($cacheKey, 3600, function () use ($limit) {
+        return $this->redisService->remember($cacheKey, 3600, function () use ($limit) {
             return SearchHistory::select('keyword', DB::raw('SUM(search_count) as total_searches'))
                 ->groupBy('keyword')
                 ->orderBy('total_searches', 'desc')
@@ -154,7 +160,7 @@ class SearchHistoryService implements ISearchHistoryService
     public function clearUserCache(int $userId): void
     {
         $userCacheKey = "search_history:user:{$userId}";
-        Cache::forget($userCacheKey);
+        $this->redisService->forget($userCacheKey);
     }
 
     public function cleanOldHistories(int $days = 30): int
@@ -172,17 +178,13 @@ class SearchHistoryService implements ISearchHistoryService
 
     private function clearCache(?int $userId, ?string $sessionId): void
     {
-        // Clear the main cache key
         $cacheKey = $this->getCacheKey($userId, $sessionId);
-        Cache::forget($cacheKey);
+        $this->redisService->forget($cacheKey);
 
-        // If we have both userId and sessionId, clear both cache keys
-        // This is important during login when migrating session to user
         if ($userId && $sessionId) {
             $userCacheKey = "search_history:user:{$userId}";
             $sessionCacheKey = "search_history:session:{$sessionId}";
-            Cache::forget($userCacheKey);
-            Cache::forget($sessionCacheKey);
+            $this->redisService->forget([$userCacheKey, $sessionCacheKey]);
         }
     }
 }

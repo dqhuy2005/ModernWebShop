@@ -11,7 +11,6 @@ use App\Services\impl\HomePageService;
 use App\Services\impl\SearchHistoryService;
 use App\Services\impl\SearchService;
 use App\Services\impl\CategoryService;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
