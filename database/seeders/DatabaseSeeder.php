@@ -12,9 +12,9 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             CategorySeeder::class,
             UserSeeder::class,
-            ProductSeeder::class,
-            ComprehensiveOrderSeeder::class,
-            FakeDataSeeder::class, // Uncomment to seed fake data (5000 users + 2000-5000 products per category)
+            //ProductSeeder::class,
+            //ComprehensiveOrderSeeder::class,
+            //FakeDataSeeder::class, // Uncomment to seed fake data (5000 users + 2000-5000 products per category)
             NotificationSystemSeeder::class,
         ]);
     }
