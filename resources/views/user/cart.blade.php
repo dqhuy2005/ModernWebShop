@@ -99,7 +99,7 @@
                                                     </td>
                                                     <td class="text-center align-middle">
                                                         <button class="btn btn-link text-danger p-0"
-                                                            onclick="showDeleteModal('Bạn có chắc muốn xóa sản phẩm này?', function() { removeFromCart({{ $itemId }}); })"
+                                                            onclick="ConfirmModal.delete('Bạn có chắc muốn xóa sản phẩm này?', function() { removeFromCart({{ $itemId }}); })"
                                                             title="Xóa" style="font-size: 14px; text-decoration: none;">
                                                             Xóa
                                                         </button>
@@ -163,20 +163,6 @@
             @endif
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmModal" class="delete-confirm-modal">
-        <div class="modal-content-wrapper">
-            <div class="modal-icon">
-                <i class="fas fa-trash-alt"></i>
-            </div>
-            <p class="modal-message" id="deleteModalMessage">Bạn có chắc muốn xóa sản phẩm này?</p>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeDeleteModal()">Hủy</button>
-                <button class="btn-confirm" onclick="confirmDelete()">Xác nhận</button>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('styles')
@@ -192,135 +178,7 @@
             text-transform: capitalize;
         }
 
-        /* Delete Confirmation Modal Styles */
-        .delete-confirm-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .delete-confirm-modal.show {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content-wrapper {
-            background: #fff;
-            border-radius: 8px;
-            padding: 30px 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            min-width: 380px;
-            max-width: 450px;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            0% {
-                transform: scale(0.9) translateY(-20px);
-                opacity: 0;
-            }
-
-            100% {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-icon {
-            width: 60px;
-            height: 60px;
-            background: #ff4d4f;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: iconPulse 0.4s ease;
-        }
-
-        @keyframes iconPulse {
-            0% {
-                transform: scale(0);
-            }
-
-            50% {
-                transform: scale(1.15);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .modal-icon i {
-            font-size: 26px;
-            color: #fff;
-        }
-
-        .modal-message {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-            font-weight: 500;
-            text-align: center;
-            line-height: 1.6;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .modal-actions button {
-            flex: 1;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-cancel {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        .btn-cancel:hover {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-confirm {
-            background: #ee4d2d;
-            color: #fff;
-        }
-
-        .btn-confirm:hover {
-            background: #d73211;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(238, 77, 45, 0.3);
-        }
-
-        .btn-confirm:active {
-            transform: translateY(0);
-        }
-
+        /* Cart Styles */
         .cart-item {
             border-bottom: 1px solid #f0f0f0;
             transition: background-color 0.2s ease;
@@ -526,9 +384,6 @@
 @push('scripts')
     <script>
         let quantityUpdateTimer;
-        let deleteCallback = null;
-        let deleteType = 'single'; // 'single' or 'multiple'
-        let deleteTarget = null;
 
         $(document).ready(function() {
             $('#select-all, #select-all-bottom').on('change', function() {
@@ -546,25 +401,6 @@
             updateSelectAllState();
             updateSelectedTotal();
         });
-
-        function showDeleteModal(message, callback) {
-            deleteCallback = callback;
-            $('#deleteModalMessage').text(message);
-            $('#deleteConfirmModal').addClass('show');
-        }
-
-        function closeDeleteModal() {
-            $('#deleteConfirmModal').removeClass('show');
-            deleteCallback = null;
-            deleteTarget = null;
-        }
-
-        function confirmDelete() {
-            if (deleteCallback) {
-                deleteCallback();
-            }
-            closeDeleteModal();
-        }
 
         function updateSelectAllState() {
             const totalCheckboxes = $('.item-checkbox').length;
@@ -600,7 +436,7 @@
             let newQuantity = parseInt($input.val()) + change;
 
             if (newQuantity < 1) {
-                showDeleteModal('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?', function() {
+                ConfirmModal.delete('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?', function() {
                     removeFromCart(cartId);
                 });
                 return;
@@ -615,14 +451,14 @@
             quantity = parseInt(quantity);
 
             if (isNaN(quantity) || quantity < 1) {
-                toastr.error('Số lượng phải là số nguyên dương');
+                NotificationBase.show('error', 'Số lượng phải là số nguyên dương', 2000);
                 const $input = $(`input.quantity-input[data-cart-id="${cartId}"]`);
                 $input.val($input.attr('data-original-value') || 1);
                 return;
             }
 
             if (quantity > 999) {
-                toastr.warning('Số lượng tối đa là 999');
+                NotificationBase.show('warning', 'Số lượng tối đa là 999', 2000);
                 $(`input.quantity-input[data-cart-id="${cartId}"]`).val(999);
                 quantity = 999;
             }
@@ -672,10 +508,6 @@
                         }, 500);
 
                         updateSelectedTotal();
-
-                        if (response.message) {
-                            toastr.success(response.message);
-                        }
                     }
                 },
                 error: function(xhr) {
@@ -686,11 +518,11 @@
                     if (xhr.status === 422 && xhr.responseJSON?.errors) {
                         const errors = xhr.responseJSON.errors;
                         const errorMessages = Object.values(errors).flat();
-                        errorMessages.forEach(msg => toastr.error(msg));
+                        errorMessages.forEach(msg => NotificationBase.show('error', msg, 3000));
                     } else if (xhr.responseJSON?.message) {
-                        toastr.error(xhr.responseJSON.message);
+                        NotificationBase.show('error', xhr.responseJSON.message, 3000);
                     } else {
-                        toastr.error('Có lỗi xảy ra. Vui lòng thử lại!');
+                        NotificationBase.show('error', 'Có lỗi xảy ra. Vui lòng thử lại!', 3000);
                     }
                 },
                 complete: function() {
@@ -732,7 +564,7 @@
                 error: function(xhr) {
                     $row.css('opacity', '1');
                     const errorMsg = xhr.responseJSON?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
-                    toastr.error(errorMsg);
+                    NotificationBase.show('error', errorMsg, 3000);
                 }
             });
         }
@@ -762,16 +594,17 @@
                                     updateSelectAllState();
                                     updateSelectedTotal();
 
-                                    toastr.success(`Đã xóa ${selectedItems.length} sản phẩm`);
+                                    SuccessNotification.show(
+                                        `Đã xóa ${selectedItems.length} sản phẩm`, 1500);
                                 }
                             }
                         });
                     },
                     error: function(xhr) {
                         if (xhr.responseJSON?.message) {
-                            toastr.error(xhr.responseJSON.message);
+                            NotificationBase.show('error', xhr.responseJSON.message, 3000);
                         } else {
-                            toastr.error('Có lỗi xảy ra khi xóa sản phẩm');
+                            NotificationBase.show('error', 'Có lỗi xảy ra khi xóa sản phẩm', 3000);
                         }
                     }
                 });
@@ -785,11 +618,11 @@
             });
 
             if (selectedItems.length === 0) {
-                toastr.warning('Vui lòng chọn sản phẩm cần xóa');
+                NotificationBase.show('warning', 'Vui lòng chọn sản phẩm cần xóa', 2000);
                 return;
             }
 
-            showDeleteModal(`Bạn có chắc muốn xóa ${selectedItems.length} sản phẩm đã chọn?`, function() {
+            ConfirmModal.delete(`Bạn có chắc muốn xóa ${selectedItems.length} sản phẩm đã chọn?`, function() {
                 deleteSelectedItems(selectedItems);
             });
         }
@@ -803,7 +636,7 @@
             });
 
             if (selectedItems.length === 0) {
-                toastr.warning('Vui lòng chọn sản phẩm để thanh toán');
+                NotificationBase.show('warning', 'Vui lòng chọn sản phẩm để thanh toán', 2000);
                 return;
             }
 

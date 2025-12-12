@@ -105,74 +105,9 @@
                 padding-right: 10px;
             }
         }
-
-        .add-to-cart-notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            z-index: 9999;
-            opacity: 0;
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .add-to-cart-notification.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-
-        .notification-content {
-            background: #fff;
-            border-radius: 8px;
-            padding: 30px 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            min-width: 320px;
-        }
-
-        .notification-icon {
-            width: 60px;
-            height: 60px;
-            background: #26aa99;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: scaleIn 0.3s ease;
-        }
-
-        .notification-icon i {
-            font-size: 30px;
-            color: #fff;
-        }
-
-        .notification-message {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-            font-weight: 500;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
     </style>
+
+    <link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
 
     @stack('styles')
 </head>
@@ -186,15 +121,6 @@
 
     @include('components.user.footer')
 
-    <div id="addToCartNotification" class="add-to-cart-notification">
-        <div class="notification-content">
-            <div class="notification-icon">
-                <i class="fas fa-check"></i>
-            </div>
-            <p class="notification-message">Sản phẩm đã được thêm vào Giỏ hàng</p>
-        </div>
-    </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -202,6 +128,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script src="{{ asset('js/notifications/notification-base.js') }}"></script>
+    <script src="{{ asset('js/notifications/notification-success.js') }}"></script>
+    <script src="{{ asset('js/notifications/notification-confirm.js') }}"></script>
 
     <script>
         toastr.options = {
@@ -245,8 +175,8 @@
                 success: function(response) {
                     if (response.success) {
                         $('#cart-count').text(response.cart_count);
-
-                        showAddToCartNotification();
+                        // Use new notification system
+                        SuccessNotification.addToCart();
                     }
                 },
                 error: function(xhr, status, error) {
@@ -264,15 +194,6 @@
                     }
                 }
             });
-        }
-
-        function showAddToCartNotification() {
-            const notification = document.getElementById('addToCartNotification');
-            notification.classList.add('show');
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 2000);
         }
 
         $(document).on('click', '.add-to-cart-btn', function(e) {
