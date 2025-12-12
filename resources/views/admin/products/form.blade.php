@@ -4,7 +4,7 @@
             <div class="flex-grow-1">
                 <div class="position-relative">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                    <input type="text" name="search" id="search" class="form-control ps-5 pe-5"
+                    <input type="text" name="search" id="search" class="form-control ps-5 pe-5" style="border-radius: 0px"
                         placeholder="Search by product name or description..." value="{{ request('search') }}">
                     @if (request('search'))
                         <button type="button"

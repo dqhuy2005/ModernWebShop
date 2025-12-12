@@ -35,6 +35,10 @@ button,
     border-radius: 0;
 }
 
+input[type="text"][name="search"] {
+    border-radius: 0;
+}
+
 .btn:hover {
     cursor: pointer;
 }
