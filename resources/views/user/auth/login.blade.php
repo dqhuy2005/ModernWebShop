@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Đăng nhập - ModernWebShop')
+@section('title', 'Đăng nhập')
 
 @section('content')
     <div class="login-section py-5" style="background-color: #F8F9FA; min-height: calc(100vh - 200px);">

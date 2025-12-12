@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Đơn hàng của tôi - ModernWebShop')
+@section('title', 'Đơn hàng của tôi')
 
 @section('content')
     <div class="purchase-section py-5" style="background-color: #F8F9FA;">

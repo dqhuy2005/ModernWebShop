@@ -5,7 +5,7 @@
                 <i class="fas fa-bars"></i>
             </button>
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <i class="fas fa-store"></i> CMS - ModernWebShop
+                <i class="fas fa-store"></i>ModernWebShop
             </a>
         </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Đăng ký - ModernWebShop')
+@section('title', 'Đăng ký')
 
 @section('content')
     <div class="register-section py-5" style="background-color: #F8F9FA; min-height: calc(100vh - 200px);">

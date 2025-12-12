@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Thông tin cá nhân - ModernWebShop')
+@section('title', 'Thông tin cá nhân')
 
 @section('content')
     <div class="profile-section py-5" style="background-color: #F8F9FA;">
