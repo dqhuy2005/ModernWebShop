@@ -59,7 +59,9 @@ input[type="text"][name="search"] {
 .card,
 .card-header,
 .card-footer,
-.card-body {
+.card-body,
+.form-select,
+.form-control {
     border-radius: 0;
 }
 
