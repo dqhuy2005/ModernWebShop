@@ -99,13 +99,6 @@
                             } else {
                                 row.find("input[type='checkbox']").prop('checked', false);
                             }
-
-                            if (response.counts) {
-                                $('#totalProductsCount').text(response.counts.total);
-                                $('#activeProductsCount').text(response.counts.active);
-                                $('#inactiveProductsCount').text(response.counts.inactive);
-                                $('#hotProductsCount').text(response.counts.hot);
-                            }
                         } else {
                             if (typeof toastr !== 'undefined') {
                                 toastr.error(response.message);
@@ -145,13 +138,6 @@
                         } else {
                             $(button).removeClass('btn-warning').addClass('btn-outline-warning');
                             $(button).html('<i class="fas fa-fire"></i>');
-                        }
-
-                        if (response.counts) {
-                            $('#totalProductsCount').text(response.counts.total);
-                            $('#activeProductsCount').text(response.counts.active);
-                            $('#inactiveProductsCount').text(response.counts.inactive);
-                            $('#hotProductsCount').text(response.counts.hot);
                         }
                     } else {
                         if (typeof toastr !== 'undefined') {

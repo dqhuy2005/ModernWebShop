@@ -92,13 +92,6 @@
                             row.find("input[type='checkbox']").prop('checked', false);
                         }
 
-                        if (response.counts) {
-                            $('#totalUsersCount').text(response.counts.total);
-                            $('#activeUsersCount').text(response.counts.active);
-                            $('#inactiveUsersCount').text(response.counts.inactive);
-                            $('#deletedUsersCount').text(response.counts.deleted);
-                        }
-
                         if (typeof toastr !== 'undefined') {
                             toastr.success(response.message || 'Status updated');
                         }
@@ -148,13 +141,6 @@
                     `);
 
                     row.find('td').eq(5).html('<span class="badge bg-secondary">Deleted</span>');
-
-                    if (response.counts) {
-                        $('#totalUsersCount').text(response.counts.total);
-                        $('#activeUsersCount').text(response.counts.active);
-                        $('#inactiveUsersCount').text(response.counts.inactive);
-                        $('#deletedUsersCount').text(response.counts.deleted);
-                    }
 
                     if (typeof toastr !== 'undefined') {
                         toastr.success(response.message || 'User deleted');
@@ -214,13 +200,6 @@
                             </div>
                         `);
 
-                        if (response.counts) {
-                            $('#totalUsersCount').text(response.counts.total);
-                            $('#activeUsersCount').text(response.counts.active);
-                            $('#inactiveUsersCount').text(response.counts.inactive);
-                            $('#deletedUsersCount').text(response.counts.deleted);
-                        }
-
                         if (typeof toastr !== 'undefined') {
                             toastr.success(response.message || 'User restored');
                         }
@@ -264,13 +243,6 @@
                 success: function(response) {
                     if (response.success) {
                         $('#user-' + userId).remove();
-
-                        if (response.counts) {
-                            $('#totalUsersCount').text(response.counts.total);
-                            $('#activeUsersCount').text(response.counts.active);
-                            $('#inactiveUsersCount').text(response.counts.inactive);
-                            $('#deletedUsersCount').text(response.counts.deleted);
-                        }
 
                         if (typeof toastr !== 'undefined') {
                             toastr.success(response.message || 'User permanently deleted');

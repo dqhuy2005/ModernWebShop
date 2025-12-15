@@ -310,16 +310,6 @@
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    if (response.counts) {
-                        $('#totalOrdersCount').text(response.counts.total);
-                        $('#pendingOrdersCount').text(response.counts.pending);
-                        $('#confirmedOrdersCount').text(response.counts.confirmed);
-                        $('#processingOrdersCount').text(response.counts.processing);
-                        $('#shippingOrdersCount').text(response.counts.shipping);
-                        $('#completedOrdersCount').text(response.counts.completed);
-                        $('#cancelledOrdersCount').text(response.counts.cancelled);
-                    }
-
                     const $row = $(`#order-${orderId}`);
 
                     $row.find('.badge')
