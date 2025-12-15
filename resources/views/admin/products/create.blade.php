@@ -126,8 +126,8 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Status</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="status" name="status"
-                                    value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" role="switch" id="status"
+                                    name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="status">
                                     Active
                                 </label>
@@ -151,9 +151,11 @@
                             <div class="custom-file-upload">
                                 <div id="images-preview" class="d-flex gap-2 flex-wrap mb-3"></div>
 
-                                <input type="hidden" id="images" name="images" value="{{ old('images') }}" class="@error('images.*') is-invalid @enderror">
-                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn-multiple" data-input="images" data-preview="images-preview-holder">
-                                    <i class="fas fa-images me-2"></i>Select Images
+                                <input type="hidden" id="images" name="images" value="{{ old('images') }}"
+                                    class="@error('images.*') is-invalid @enderror">
+                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn-multiple"
+                                    data-input="images" data-preview="images-preview-holder">
+                                    Select Images
                                 </button>
                             </div>
 
@@ -205,12 +207,35 @@
                     shouldNotGroupWhenFull: true
                 },
                 heading: {
-                    options: [
-                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                        { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+                    options: [{
+                            model: 'paragraph',
+                            title: 'Paragraph',
+                            class: 'ck-heading_paragraph'
+                        },
+                        {
+                            model: 'heading1',
+                            view: 'h1',
+                            title: 'Heading 1',
+                            class: 'ck-heading_heading1'
+                        },
+                        {
+                            model: 'heading2',
+                            view: 'h2',
+                            title: 'Heading 2',
+                            class: 'ck-heading_heading2'
+                        },
+                        {
+                            model: 'heading3',
+                            view: 'h3',
+                            title: 'Heading 3',
+                            class: 'ck-heading_heading3'
+                        },
+                        {
+                            model: 'heading4',
+                            view: 'h4',
+                            title: 'Heading 4',
+                            class: 'ck-heading_heading4'
+                        }
                     ]
                 },
                 fontSize: {
@@ -527,13 +552,13 @@
             overflow-y: auto;
         }
 
-        .ck.ck-editor__main > .ck-editor__editable {
+        .ck.ck-editor__main>.ck-editor__editable {
             background-color: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 0.375rem;
         }
 
-        .ck.ck-editor__main > .ck-editor__editable:focus {
+        .ck.ck-editor__main>.ck-editor__editable:focus {
             border-color: #86b7fe;
             outline: 0;
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);

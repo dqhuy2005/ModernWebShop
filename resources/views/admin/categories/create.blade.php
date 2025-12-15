@@ -63,7 +63,7 @@
                                     class="@error('image') is-invalid @enderror">
                                 <button type="button" class="btn-select-image w-100 mt-3 lfm-btn" data-input="image"
                                     data-preview="holder">
-                                    <i class="fas fa-image me-2"></i>Select Image
+                                    Select Image
                                 </button>
                             </div>
                             @error('image')
@@ -148,7 +148,7 @@
                     if (!$('#slug').next('.invalid-feedback').length) {
                         $('#slug').after(
                             '<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>'
-                            );
+                        );
                     }
                 } else {
                     $('#slug').removeClass('is-invalid');

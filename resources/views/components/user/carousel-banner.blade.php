@@ -67,14 +67,6 @@
                                 </div>
                             @endforelse
                         </div>
-
-                        <div class="row mt-4 pt-3 border-top">
-                            <div class="col-12 text-center">
-                                <a href="{{ route('categories.show', 'all') }}" class="btn btn-outline-danger btn-sm">
-                                    Xem tất cả danh mục <i class="fas fa-arrow-right ms-2"></i>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </li>
             </ul>
