@@ -112,7 +112,6 @@
     .sidebar-footer {
         margin-top: auto;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 1rem;
     }
 
     .sidebar-overlay {

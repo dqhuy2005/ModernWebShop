@@ -8,6 +8,8 @@
     <meta name="user-authenticated" content="{{ auth()->check() ? 'true' : 'false' }}">
     <meta name="referrer" content="no-referrer" />
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+
     <title>@yield('title', 'ModernWebShop - Cửa hàng trực tuyến')</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
