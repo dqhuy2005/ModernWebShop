@@ -128,7 +128,7 @@ class UserController extends BaseController
             if ($request->input('action') === 'save_and_continue') {
                 return redirect()
                     ->route('admin.users.create')
-                    ->with('success', 'User created successfully! You can add another one.');
+                    ->with('success', 'User created successfully!');
             }
 
             return redirect()
@@ -238,13 +238,13 @@ class UserController extends BaseController
             if (request()->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'User deleted successfully! You can restore it later.'
+                    'message' => 'User deleted successfully!'
                 ]);
             }
 
             return redirect()
                 ->route('admin.users.index')
-                ->with('success', 'User deleted successfully! You can restore it later.');
+                ->with('success', 'User deleted successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete user: ' . $e->getMessage());
         }

@@ -147,7 +147,7 @@
                         </div>
                     `);
 
-                    row.find('td').eq(6).html('<span class="badge bg-secondary">Deleted</span>');
+                    row.find('td').eq(5).html('<span class="badge bg-secondary">Deleted</span>');
 
                     if (response.counts) {
                         $('#totalUsersCount').text(response.counts.total);
@@ -207,10 +207,10 @@
                         `);
 
                         const isChecked = (response.status === 1 || response.status === true) ? 'checked' : '';
-                        row.find('td').eq(6).html(`
+                        row.find('td').eq(5).html(`
                             <div class="form-check form-switch d-flex justify-content-center">
                                 <input class="form-check-input" type="checkbox" role="switch"
-                                    id="status-${userId}" ${isChecked} onchange="toggleStatus(${userId})" style="cursor: pointer;">
+                                    id="status-${userId}" ${isChecked} onclick="event.preventDefault(); toggleStatus(${userId});" style="cursor: pointer;">
                             </div>
                         `);
 
