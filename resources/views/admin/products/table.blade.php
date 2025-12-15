@@ -37,8 +37,7 @@
 
                             <td>
                                 @if ($product->main_image)
-                                    <img src="{{ $product->image_url }}" alt="Image Product"
-                                        class="product-image">
+                                    <img src="{{ $product->image_url }}" alt="Image Product" class="product-image">
                                 @else
                                     <div
                                         class="product-image bg-light d-flex align-items-center justify-content-center">
@@ -73,7 +72,8 @@
                                 <div class="form-check form-switch d-flex justify-content-center">
                                     <input class="form-check-input" type="checkbox" role="switch"
                                         id="status-{{ $product->id }}" {{ $product->status ? 'checked' : '' }}
-                                        onchange="toggleStatus({{ $product->id }})" style="cursor: pointer;">
+                                        onclick="event.preventDefault(); toggleStatus({{ $product->id }});"
+                                        style="cursor: pointer;">
                                 </div>
                             </td>
 
@@ -149,12 +149,10 @@
 
 @push('styles')
     <style>
-        /* Table Container */
         .table-responsive {
             position: relative;
         }
 
-        /* Table Styles */
         #productsTable thead th {
             font-weight: 600;
             text-transform: uppercase;
@@ -171,7 +169,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Sortable Headers */
         .sortable {
             cursor: pointer;
             user-select: none;
@@ -200,7 +197,6 @@
             color: #0d6efd;
         }
 
-        /* Product Image */
         .product-image {
             width: 50px;
             height: 50px;
@@ -210,7 +206,6 @@
             transition: transform 0.2s ease;
         }
 
-        /* Button Group */
         .btn-group .btn {
             border-radius: 0;
         }
@@ -225,13 +220,11 @@
             border-bottom-right-radius: 0.375rem;
         }
 
-        /* Badge Styles */
         .badge {
             font-weight: 500;
             padding: 0.35em 0.65em;
         }
 
-        /* Pagination */
         .pagination {
             margin-bottom: 0;
         }
@@ -277,13 +270,11 @@
             border-bottom-right-radius: 0.375rem;
         }
 
-        /* Per Page Selector */
         .form-select-sm {
             font-size: 0.875rem;
             padding: 0.25rem 0.5rem;
         }
 
-        /* Empty State */
         .fa-box-open {
             opacity: 0.3;
         }

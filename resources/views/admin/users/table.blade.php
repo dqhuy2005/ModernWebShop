@@ -30,8 +30,7 @@
 
                             <td>
                                 @if ($user->image)
-                                    <img src="{{ $user->image }}" alt="{{ $user->fullname }}"
-                                        class="user-avatar">
+                                    <img src="{{ $user->image }}" alt="{{ $user->fullname }}" class="user-avatar">
                                 @else
                                     <div class="user-avatar bg-light d-flex align-items-center justify-content-center">
                                         <i class="fas fa-user text-muted"></i>
@@ -68,7 +67,8 @@
                                     <div class="form-check form-switch d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" role="switch"
                                             id="status-{{ $user->id }}" {{ $user->status ? 'checked' : '' }}
-                                            onchange="toggleStatus({{ $user->id }})" style="cursor: pointer;">
+                                            onclick="event.preventDefault(); toggleStatus({{ $user->id }});"
+                                            style="cursor: pointer;">
                                     </div>
                                 @endif
                             </td>
