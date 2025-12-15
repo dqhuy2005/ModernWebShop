@@ -93,8 +93,12 @@
         }
 
         function deleteCategory(categoryId) {
-            if (!confirm('Are you sure you want to delete this category?')) return;
+            ConfirmModal.delete('Are you sure you want to delete this category?', function() {
+                deleteCategoryAjax(categoryId);
+            });
+        }
 
+        function deleteCategoryAjax(categoryId) {
             $.ajax({
                 url: '/admin/categories/' + categoryId,
                 method: 'DELETE',
@@ -120,6 +124,17 @@
         }
 
         function restoreCategory(categoryId) {
+            ConfirmModal.show('Are you sure you want to restore this category?', function() {
+                restoreCategoryAjax(categoryId);
+            }, {
+                confirmText: 'Yes, Restore',
+                cancelText: 'Cancel',
+                icon: 'fas fa-undo',
+                iconColor: '#28a745'
+            });
+        }
+
+        function restoreCategoryAjax(categoryId) {
             $.ajax({
                 url: '/admin/categories/' + categoryId + '/restore',
                 method: 'POST',
@@ -145,9 +160,21 @@
         }
 
         function forceDeleteCategory(categoryId) {
-            if (!confirm('Are you sure you want to PERMANENTLY delete this category? This action cannot be undone!'))
-                return;
+            ConfirmModal.show(
+                'Are you sure you want to PERMANENTLY delete this category?<br><small class="text-danger">This action cannot be undone!</small>',
+                function() {
+                    forceDeleteCategoryAjax(categoryId);
+                },
+                {
+                    confirmText: 'Yes, Delete Permanently',
+                    cancelText: 'Cancel',
+                    icon: 'fas fa-exclamation-triangle',
+                    iconColor: '#dc3545'
+                }
+            );
+        }
 
+        function forceDeleteCategoryAjax(categoryId) {
             $.ajax({
                 url: '/admin/categories/' + categoryId + '/force-delete',
                 method: 'POST',

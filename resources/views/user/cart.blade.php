@@ -99,7 +99,7 @@
                                                     </td>
                                                     <td class="text-center align-middle">
                                                         <button class="btn btn-link text-danger p-0"
-                                                            onclick="ConfirmModal.delete('Bạn có chắc muốn xóa sản phẩm này?', function() { removeFromCart({{ $itemId }}); })"
+                                                            onclick="removeFromCart({{ $itemId }})"
                                                             title="Xóa" style="font-size: 14px; text-decoration: none;">
                                                             Xóa
                                                         </button>
@@ -436,9 +436,7 @@
             let newQuantity = parseInt($input.val()) + change;
 
             if (newQuantity < 1) {
-                ConfirmModal.delete('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?', function() {
-                    removeFromCart(cartId);
-                });
+                removeFromCart(cartId);
                 return;
             }
 
@@ -622,9 +620,7 @@
                 return;
             }
 
-            ConfirmModal.delete(`Bạn có chắc muốn xóa ${selectedItems.length} sản phẩm đã chọn?`, function() {
-                deleteSelectedItems(selectedItems);
-            });
+            deleteSelectedItems(selectedItems);
         }
 
         function proceedToCheckout(event) {

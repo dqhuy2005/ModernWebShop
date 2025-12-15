@@ -66,8 +66,17 @@
         }
 
         function toggleStatus(userId) {
-            if (!confirm('Are you sure you want to change the status of this user?')) return;
+            ConfirmModal.show('Are you sure you want to change the status of this user?', function() {
+                toggleStatusAjax(userId);
+            }, {
+                confirmText: 'Yes, Change Status',
+                cancelText: 'Cancel',
+                icon: 'fas fa-toggle-on',
+                iconColor: '#17a2b8'
+            });
+        }
 
+        function toggleStatusAjax(userId) {
             $.ajax({
                 url: '/admin/users/' + userId + '/toggle-status',
                 method: 'POST',
@@ -108,8 +117,12 @@
         }
 
         function deleteUser(userId) {
-            if (!confirm('Are you sure you want to delete this user? You can restore it later.')) return;
+            ConfirmModal.warning('Are you sure you want to delete this user? You can restore it later.', function() {
+                deleteUserAjax(userId);
+            });
+        }
 
+        function deleteUserAjax(userId) {
             $.ajax({
                 url: '/admin/users/' + userId,
                 method: 'POST',
@@ -158,8 +171,17 @@
         }
 
         function restoreUser(userId) {
-            if (!confirm('Are you sure you want to restore this user?')) return;
+            ConfirmModal.show('Are you sure you want to restore this user?', function() {
+                restoreUserAjax(userId);
+            }, {
+                confirmText: 'Yes, Restore',
+                cancelText: 'Cancel',
+                icon: 'fas fa-undo',
+                iconColor: '#28a745'
+            });
+        }
 
+        function restoreUserAjax(userId) {
             $.ajax({
                 url: '/admin/users/' + userId + '/restore',
                 method: 'POST',
@@ -218,9 +240,21 @@
         }
 
         function forceDeleteUser(userId) {
-            if (!confirm('Are you sure you want to PERMANENTLY delete this user? This action CANNOT be undone!')) return;
-            if (!confirm('This will delete ALL user data permanently. Are you absolutely sure?')) return;
+            ConfirmModal.show(
+                'Are you sure you want to PERMANENTLY delete this user?<br><small class="text-danger">This action CANNOT be undone and will delete ALL user data permanently.</small>',
+                function() {
+                    forceDeleteUserAjax(userId);
+                },
+                {
+                    confirmText: 'Yes, Delete Permanently',
+                    cancelText: 'Cancel',
+                    icon: 'fas fa-exclamation-triangle',
+                    iconColor: '#dc3545'
+                }
+            );
+        }
 
+        function forceDeleteUserAjax(userId) {
             $.ajax({
                 url: '/admin/users/' + userId + '/force-delete',
                 method: 'POST',

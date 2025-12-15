@@ -68,10 +68,19 @@
         }
 
         function toggleStatus(productId) {
-            if (confirm('Are you sure you want to change the status of this product?')) {
+            ConfirmModal.show('Are you sure you want to change the status of this product?', function() {
                 const row = $('#product-' + productId);
+                toggleStatusAjax(productId, row);
+            }, {
+                confirmText: 'Yes, Change Status',
+                cancelText: 'Cancel',
+                icon: 'fas fa-toggle-on',
+                iconColor: '#17a2b8'
+            });
+        }
 
-                $.ajax({
+        function toggleStatusAjax(productId, row) {
+            $.ajax({
                     url: '/admin/products/' + productId + '/toggle-status',
                     method: 'POST',
                     data: {
@@ -113,7 +122,6 @@
                         }
                     }
                 });
-            }
         }
 
         function toggleHot(productId, button) {
@@ -164,7 +172,7 @@
         }
 
         function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product? This action cannot be undone!')) {
+            ConfirmModal.delete('Are you sure you want to delete this product? This action cannot be undone!', function() {
                 var form = $('<form>', {
                     method: 'POST',
                     action: '/admin/products/' + productId
@@ -186,7 +194,7 @@
 
                 $('body').append(form);
                 form.submit();
-            }
+            });
         }
 
         @if (!request()->has('per_page') || request('per_page') == 'all')

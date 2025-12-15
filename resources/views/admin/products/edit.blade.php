@@ -508,10 +508,12 @@
             const productId = $(this).data('product-id');
             const $imageItem = $(`#image-${imageId}`);
 
-            if (!confirm('Are you sure you want to delete this image? This action cannot be undone.')) {
-                return;
-            }
+            ConfirmModal.delete('Are you sure you want to delete this image? This action cannot be undone.', function() {
+                deleteImageAjax(imageId, productId, $imageItem);
+            });
+        });
 
+        function deleteImageAjax(imageId, productId, $imageItem) {
             $.ajax({
                 url: `/admin/products/${productId}/images/${imageId}`,
                 method: 'DELETE',
@@ -538,7 +540,7 @@
                     $imageItem.css('opacity', '1');
                 }
             });
-        });
+        }
 
         $(document).ready(function() {
             let selectedImages = [];
@@ -546,10 +548,10 @@
             // Attach click handler manually to override SetUrl before opening popup
             $('.lfm-btn-multiple').on('click', function(e) {
                 e.preventDefault();
-                
+
                 var target_input = $('#' + $(this).data('input'));
                 window.open('/admin/filemanager?type=image', 'FileManager', 'width=900,height=600');
-                
+
                 // Define custom SetUrl for multiple images
                 window.SetUrl = function(items) {
                     $('#images-preview').empty();
@@ -576,7 +578,7 @@
                     // Store as JSON array
                     target_input.val(JSON.stringify(selectedImages));
                 };
-                
+
                 return false;
             });
         });

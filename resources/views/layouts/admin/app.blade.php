@@ -20,6 +20,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom-pagination.css') }}">
 
@@ -125,6 +126,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="{{ asset('js/notifications/notification-base.js') }}"></script>
+    <script src="{{ asset('js/notifications/notification-success.js') }}"></script>
+    <script src="{{ asset('js/notifications/notification-confirm.js') }}"></script>
 
     <script src="{{ asset('js/ajax-pagination.js') }}"></script>
     <script src="{{ asset('js/clean-form-submit.js') }}"></script>

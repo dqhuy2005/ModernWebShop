@@ -297,8 +297,12 @@
         }
 
         function deleteOrder(orderId) {
-            if (!confirm('Are you sure you want to cancel this order?')) return;
+            ConfirmModal.warning('Are you sure you want to cancel this order?', function() {
+                deleteOrderAjax(orderId);
+            });
+        }
 
+        function deleteOrderAjax(orderId) {
             $.ajax({
                 url: `/admin/orders/${orderId}`,
                 type: 'DELETE',
@@ -332,6 +336,17 @@
         }
 
         function restoreOrder(orderId) {
+            ConfirmModal.show('Are you sure you want to restore this order?', function() {
+                restoreOrderAjax(orderId);
+            }, {
+                confirmText: 'Yes, Restore',
+                cancelText: 'Cancel',
+                icon: 'fas fa-undo',
+                iconColor: '#28a745'
+            });
+        }
+
+        function restoreOrderAjax(orderId) {
             $.ajax({
                 url: `/admin/orders/${orderId}/restore`,
                 type: 'POST',
