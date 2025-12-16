@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: modern-web-shop
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: PORT
+        generateValue: true
+    healthCheckPath: /
