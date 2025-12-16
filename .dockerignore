@@ -20,9 +20,10 @@ phpunit.xml
 dist
 build
 *.md
-README.md
+!README.md
 .editorconfig
 .styleci.yml
 docker-compose.yml
-Dockerfile
 .dockerignore
+.env
+!.env.example
