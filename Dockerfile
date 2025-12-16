@@ -10,12 +10,13 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
+    libpq-dev \
     zip \
     curl \
     nginx \
     supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql zip gd mbstring xml curl exif \
+    && docker-php-ext-install pdo_mysql pdo_pgsql pgsql zip gd mbstring xml curl exif \
     && pecl install redis && docker-php-ext-enable redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -30,6 +31,16 @@ RUN echo '#!/bin/bash' > /docker-entrypoint.sh && \
     echo 'set -e' >> /docker-entrypoint.sh && \
     echo 'echo "🚀 Starting Laravel application on PORT=${PORT:-8080}..."' >> /docker-entrypoint.sh && \
     echo 'echo "Environment: APP_ENV=${APP_ENV}, APP_DEBUG=${APP_DEBUG}"' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Check APP_KEY' >> /docker-entrypoint.sh && \
+    echo 'if [ -z "$APP_KEY" ] || [ "${#APP_KEY}" -lt 20 ]; then' >> /docker-entrypoint.sh && \
+    echo '  echo "❌ ERROR: APP_KEY is not set or invalid!"' >> /docker-entrypoint.sh && \
+    echo '  echo "Please set APP_KEY in Render Environment Variables"' >> /docker-entrypoint.sh && \
+    echo '  echo "Generate one with: bash generate-app-key.sh"' >> /docker-entrypoint.sh && \
+    echo '  echo "Example: APP_KEY=base64:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"' >> /docker-entrypoint.sh && \
+    echo 'else' >> /docker-entrypoint.sh && \
+    echo '  echo "✅ APP_KEY is set (length: ${#APP_KEY})"' >> /docker-entrypoint.sh && \
+    echo 'fi' >> /docker-entrypoint.sh && \
     echo '' >> /docker-entrypoint.sh && \
     echo '# Set permissions' >> /docker-entrypoint.sh && \
     echo 'echo "🔒 Setting permissions..."' >> /docker-entrypoint.sh && \
@@ -75,6 +86,16 @@ RUN echo '#!/bin/bash' > /docker-entrypoint.sh && \
     echo '# Test nginx config' >> /docker-entrypoint.sh && \
     echo 'echo "🔍 Testing Nginx configuration..."' >> /docker-entrypoint.sh && \
     echo 'nginx -t 2>&1' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Test Laravel is responding' >> /docker-entrypoint.sh && \
+    echo 'echo "🧪 Testing Laravel health..."' >> /docker-entrypoint.sh && \
+    echo 'sleep 1' >> /docker-entrypoint.sh && \
+    echo 'if curl -s http://127.0.0.1:$PORT/health > /dev/null 2>&1; then' >> /docker-entrypoint.sh && \
+    echo '  echo "✅ Laravel is responding!"' >> /docker-entrypoint.sh && \
+    echo 'else' >> /docker-entrypoint.sh && \
+    echo '  echo "⚠️ Warning: Laravel health check failed"' >> /docker-entrypoint.sh && \
+    echo '  echo "Check storage permissions and APP_KEY"' >> /docker-entrypoint.sh && \
+    echo 'fi' >> /docker-entrypoint.sh && \
     echo '' >> /docker-entrypoint.sh && \
     echo 'echo "✅ Starting Nginx on 0.0.0.0:$PORT"' >> /docker-entrypoint.sh && \
     echo 'echo "Ready to accept connections!"' >> /docker-entrypoint.sh && \

@@ -29,7 +29,7 @@ services:
       - DB_PORT=3306
       - DB_DATABASE=modernshop
       - DB_USERNAME=root
-      - DB_PASSWORD=secret
+      - DB_PASSWORD=123
 
       - CACHE_STORE=redis
       - CACHE_PREFIX=ecommerce-cache-
@@ -66,8 +66,8 @@ services:
       - "3308:3306"
     environment:
       - MYSQL_DATABASE=modernshop
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_PASSWORD=123
       - MYSQL_USER=modernshop
     volumes:
       - mysql-data:/var/lib/mysql

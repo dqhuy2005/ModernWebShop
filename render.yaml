@@ -18,41 +18,39 @@ services:
       - key: LOG_LEVEL
         value: debug
       - key: SESSION_DRIVER
-        value: file
+        value: database
       - key: CACHE_DRIVER
-        value: file
+        value: database
       - key: QUEUE_CONNECTION
-        value: sync
+        value: database
       - key: FILESYSTEM_DISK
         value: local
-      # Uncomment and configure these when you add a database:
-      # - key: DB_CONNECTION
-      #   value: mysql
-      # - key: DB_HOST
-      #   fromDatabase:
-      #     name: modernshop-db
-      #     property: host
-      # - key: DB_PORT
-      #   fromDatabase:
-      #     name: modernshop-db
-      #     property: port
-      # - key: DB_DATABASE
-      #   fromDatabase:
-      #     name: modernshop-db
-      #     property: database
-      # - key: DB_USERNAME
-      #   fromDatabase:
-      #     name: modernshop-db
-      #     property: user
-      # - key: DB_PASSWORD
-      #   fromDatabase:
-      #     name: modernshop-db
-      #     property: password
+      # Database configuration (PostgreSQL - Render free tier)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: modernshop-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: modernshop-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: modernshop-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: modernshop-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: modernshop-db
+          property: password
     healthCheckPath: /health
 
-# To add a database, uncomment and configure:
-# databases:
-#   - name: modernshop-db
-#     plan: free
-#     databaseName: modernshop
-#     user: modernshop
+databases:
+  - name: modernshop-db
+    databaseName: modernshop
+    user: modernshop
