@@ -43,8 +43,8 @@ RUN echo '#!/bin/bash' > /docker-entrypoint.sh && \
     echo 'php artisan view:clear || true' >> /docker-entrypoint.sh && \
     echo '' >> /docker-entrypoint.sh && \
     echo '# Check if database is configured' >> /docker-entrypoint.sh && \
-    echo 'if [ ! -z "$DB_HOST" ]; then' >> /docker-entrypoint.sh && \
-    echo '  echo "⏳ Database configured, waiting for connection..."' >> /docker-entrypoint.sh && \
+    echo 'if [ ! -z "$DB_HOST" ] && [ "$DB_HOST" != "mysql" ] && [ "$DB_HOST" != "127.0.0.1" ] && [ "$DB_HOST" != "localhost" ]; then' >> /docker-entrypoint.sh && \
+    echo '  echo "⏳ Database configured ($DB_HOST), waiting for connection..."' >> /docker-entrypoint.sh && \
     echo '  RETRY=0' >> /docker-entrypoint.sh && \
     echo '  MAX_RETRY=30' >> /docker-entrypoint.sh && \
     echo '  until php artisan db:show 2>/dev/null || [ $RETRY -eq $MAX_RETRY ]; do' >> /docker-entrypoint.sh && \
@@ -91,6 +91,8 @@ RUN if [ -f .env.example ]; then \
         echo "APP_DEBUG=false" >> .env && \
         echo "APP_URL=http://localhost" >> .env; \
     fi && \
+    # Remove DB settings from .env - will be set via environment variables only \
+    sed -i '/^DB_/d' .env && \
     composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist && \
     php artisan key:generate --force && \
     mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache && \
