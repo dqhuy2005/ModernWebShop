@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql zip gd mbstring xml curl \
+    && docker-php-ext-install pdo_mysql zip gd mbstring xml curl exif \
     && pecl install redis && docker-php-ext-enable redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
