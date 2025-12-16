@@ -2,14 +2,21 @@ services:
   - type: web
     name: modern-web-shop
     env: docker
+    runtime: image
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     envVars:
+      - key: APP_NAME
+        value: Modern Web Shop
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: false
-      - key: PORT
+      - key: APP_KEY
         generateValue: true
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: mysql
     healthCheckPath: /
