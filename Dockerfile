@@ -18,17 +18,11 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
-COPY composer.json composer.lock* ./
-
-RUN composer install --no-dev --no-scripts --optimize-autoloader --prefer-dist
-
 COPY . .
 
 RUN cp .env.example .env || echo "APP_NAME=\"Modern Web Shop\"\nAPP_ENV=production\nAPP_KEY=\nAPP_DEBUG=false\nAPP_URL=http://localhost" > .env && \
+    composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist && \
     php artisan key:generate --force && \
-    php artisan config:clear && \
-    php artisan cache:clear && \
-    composer dump-autoload --optimize && \
     mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
