@@ -33,23 +33,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Register Observers for Cache Invalidation
-        Product::observe(ProductObserver::class);
-        Category::observe(CategoryObserver::class);
-        Order::observe(OrderObserver::class);
-        ProductReview::observe(ProductReviewObserver::class);
+        // Register Observers for Cache Invalidation (with error handling)
+        try {
+            Product::observe(ProductObserver::class);
+            Category::observe(CategoryObserver::class);
+            Order::observe(OrderObserver::class);
+            ProductReview::observe(ProductReviewObserver::class);
+        } catch (\Exception $e) {
+            // Log error but don't crash - observers are optional
+            \Log::warning('Failed to register observers: ' . $e->getMessage());
+        }
 
         View::composer('*', function ($view) {
-            if (Auth::check()) {
-                $cartRepository = app(CartRepository::class);
-                $cartCount = $cartRepository->findByUser(Auth::id())->count();
-            } else {
-                $cart = Session::get('cart', []);
-                $cartCount = count($cart);
-            }
+            try {
+                if (Auth::check()) {
+                    $cartRepository = app(CartRepository::class);
+                    $cartCount = $cartRepository->findByUser(Auth::id())->count();
+                } else {
+                    $cart = Session::get('cart', []);
+                    $cartCount = count($cart);
+                }
 
-            Session::put('cart_count', $cartCount);
-            $view->with('cartCount', $cartCount);
+                Session::put('cart_count', $cartCount);
+                $view->with('cartCount', $cartCount);
+            } catch (\Exception $e) {
+                // Fallback if database is unavailable
+                $view->with('cartCount', 0);
+            }
         });
     }
 }

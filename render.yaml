@@ -25,32 +25,12 @@ services:
         value: database
       - key: FILESYSTEM_DISK
         value: local
-      # Database configuration (PostgreSQL - Render free tier)
-      - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_HOST
-        fromDatabase:
-          name: modernshop-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: modernshop-db
-          property: port
-      - key: DB_DATABASE
-        fromDatabase:
-          name: modernshop-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: modernshop-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: modernshop-db
-          property: password
+      # Database configuration - Railway MySQL
+      # Set these in Render Dashboard Environment Variables:
+      # DB_CONNECTION=mysql
+      # DB_HOST=mainline.proxy.rlwy.net
+      # DB_PORT=26399
+      # DB_DATABASE=railway
+      # DB_USERNAME=root
+      # DB_PASSWORD=tpXybPDCPdLhtyPSxzdXaKCcSbLcFOxv
     healthCheckPath: /health
-
-databases:
-  - name: modernshop-db
-    databaseName: modernshop
-    user: modernshop

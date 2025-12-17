@@ -11,12 +11,13 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpq-dev \
+    libicu-dev \
     zip \
     curl \
     nginx \
     supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql pdo_pgsql pgsql zip gd mbstring xml curl exif \
+    && docker-php-ext-install pdo_mysql pdo_pgsql pgsql zip gd mbstring xml curl exif intl \
     && pecl install redis && docker-php-ext-enable redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -55,19 +56,19 @@ RUN echo '#!/bin/bash' > /docker-entrypoint.sh && \
     echo '' >> /docker-entrypoint.sh && \
     echo '# Check if database is configured' >> /docker-entrypoint.sh && \
     echo 'if [ ! -z "$DB_HOST" ] && [ "$DB_HOST" != "mysql" ] && [ "$DB_HOST" != "127.0.0.1" ] && [ "$DB_HOST" != "localhost" ]; then' >> /docker-entrypoint.sh && \
-    echo '  echo "⏳ Database configured ($DB_HOST), waiting for connection..."' >> /docker-entrypoint.sh && \
+    echo '  echo "⏳ Database configured ($DB_CONNECTION://$DB_HOST:$DB_PORT), waiting for connection..."' >> /docker-entrypoint.sh && \
     echo '  RETRY=0' >> /docker-entrypoint.sh && \
-    echo '  MAX_RETRY=30' >> /docker-entrypoint.sh && \
-    echo '  until php artisan db:show 2>/dev/null || [ $RETRY -eq $MAX_RETRY ]; do' >> /docker-entrypoint.sh && \
+    echo '  MAX_RETRY=10' >> /docker-entrypoint.sh && \
+    echo '  until php artisan db:show 2>&1 | grep -q "Tables" || [ $RETRY -eq $MAX_RETRY ]; do' >> /docker-entrypoint.sh && \
     echo '    echo "  Waiting for database... ($RETRY/$MAX_RETRY)"' >> /docker-entrypoint.sh && \
     echo '    RETRY=$((RETRY+1))' >> /docker-entrypoint.sh && \
-    echo '    sleep 2' >> /docker-entrypoint.sh && \
+    echo '    sleep 3' >> /docker-entrypoint.sh && \
     echo '  done' >> /docker-entrypoint.sh && \
     echo '  if [ $RETRY -eq $MAX_RETRY ]; then' >> /docker-entrypoint.sh && \
     echo '    echo "⚠️ Database connection timeout, starting without migration"' >> /docker-entrypoint.sh && \
     echo '  else' >> /docker-entrypoint.sh && \
     echo '    echo "✅ Database connected! Running migrations..."' >> /docker-entrypoint.sh && \
-    echo '    php artisan migrate --force || echo "Migration failed, continuing..."' >> /docker-entrypoint.sh && \
+    echo '    php artisan migrate --force 2>&1 || echo "⚠️ Migration failed, continuing..."' >> /docker-entrypoint.sh && \
     echo '  fi' >> /docker-entrypoint.sh && \
     echo 'else' >> /docker-entrypoint.sh && \
     echo '  echo "⚠️ No database configured (DB_HOST not set)"' >> /docker-entrypoint.sh && \
