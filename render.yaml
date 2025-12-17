@@ -13,12 +13,16 @@ services:
         value: production
       - key: APP_DEBUG
         value: true
+      - key: APP_URL
+        value: https://modernwebshop-1.onrender.com
       - key: LOG_CHANNEL
         value: stderr
       - key: LOG_LEVEL
         value: debug
       - key: SESSION_DRIVER
         value: database
+      - key: SESSION_SECURE_COOKIE
+        value: true
       - key: CACHE_DRIVER
         value: database
       - key: QUEUE_CONNECTION

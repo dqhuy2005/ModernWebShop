@@ -124,11 +124,6 @@
         transition: all 0.3s ease;
     }
 
-    .search-wrapper input.form-control:focus {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
-    }
-
     .search-wrapper button {
         height: calc(100% - 4px);
         z-index: 10;
