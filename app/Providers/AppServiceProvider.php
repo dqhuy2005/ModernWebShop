@@ -15,6 +15,8 @@ use App\Observers\ProductObserver;
 use App\Observers\CategoryObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ProductReviewObserver;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,23 +35,35 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Register Observers for Cache Invalidation
-        Product::observe(ProductObserver::class);
-        Category::observe(CategoryObserver::class);
-        Order::observe(OrderObserver::class);
-        ProductReview::observe(ProductReviewObserver::class);
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
+        try {
+            Product::observe(ProductObserver::class);
+            Category::observe(CategoryObserver::class);
+            Order::observe(OrderObserver::class);
+            ProductReview::observe(ProductReviewObserver::class);
+        } catch (\Exception $e) {
+            Log::warning('Failed to register observers: ' . $e->getMessage());
+        }
 
         View::composer('*', function ($view) {
-            if (Auth::check()) {
-                $cartRepository = app(CartRepository::class);
-                $cartCount = $cartRepository->findByUser(Auth::id())->count();
-            } else {
-                $cart = Session::get('cart', []);
-                $cartCount = count($cart);
-            }
+            try {
+                if (Auth::check()) {
+                    $cartRepository = app(CartRepository::class);
+                    $cartCount = $cartRepository->findByUser(Auth::id())->count();
+                } else {
+                    $cart = Session::get('cart', []);
+                    $cartCount = count($cart);
+                }
 
-            Session::put('cart_count', $cartCount);
-            $view->with('cartCount', $cartCount);
+                Session::put('cart_count', $cartCount);
+                $view->with('cartCount', $cartCount);
+            } catch (\Exception $e) {
+                // Fallback if database is unavailable
+                $view->with('cartCount', 0);
+            }
         });
     }
 }

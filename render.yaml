@@ -2,14 +2,39 @@ services:
   - type: web
     name: modern-web-shop
     env: docker
+    runtime: image
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     envVars:
+      - key: APP_NAME
+        value: Modern Web Shop
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: false
-      - key: PORT
-        generateValue: true
-    healthCheckPath: /
+        value: true
+      - key: APP_URL
+        value: https://modernwebshop-1.onrender.com
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: debug
+      - key: SESSION_DRIVER
+        value: database
+      - key: SESSION_SECURE_COOKIE
+        value: true
+      - key: CACHE_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+      # Database configuration - Railway MySQL
+      # Set these in Render Dashboard Environment Variables:
+      # DB_CONNECTION=mysql
+      # DB_HOST=mainline.proxy.rlwy.net
+      # DB_PORT=26399
+      # DB_DATABASE=railway
+      # DB_USERNAME=root
+      # DB_PASSWORD=tpXybPDCPdLhtyPSxzdXaKCcSbLcFOxv
+    healthCheckPath: /health

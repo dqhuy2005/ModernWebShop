@@ -16,6 +16,16 @@ use App\Http\Controllers\User\PurchaseController;
 use App\Http\Controllers\User\ProductController as UserProductController;
 use App\Http\Controllers\ReviewController;
 
+// Health check endpoint for Render (no database required)
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'app' => config('app.name'),
+        'env' => config('app.env'),
+        'time' => now()->toIso8601String(),
+    ]);
+})->name('health');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hot-deals', [HomeController::class, 'hotDeals'])->name('hot-deals');
 Route::get('/hot-products', [UserProductController::class, 'hotProducts'])->name('products.hot');

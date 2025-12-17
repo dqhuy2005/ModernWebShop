@@ -1,0 +1,133 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: modernshop-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+    environment:
+      - APP_NAME=Modern Web Shop
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8080
+      - APP_LOCALE=vi
+      - APP_FALLBACK_LOCALE=vi
+      - APP_FAKER_LOCALE=vi_VN
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=debug
+
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=modernshop
+      - DB_USERNAME=root
+      - DB_PASSWORD=123
+
+      - CACHE_STORE=redis
+      - CACHE_PREFIX=ecommerce-cache-
+      - SESSION_DRIVER=redis
+      - SESSION_LIFETIME=120
+      - QUEUE_CONNECTION=redis
+
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+
+      - MAIL_MAILER=log
+      - MAIL_HOST=smtp.mailtrap.io
+      - MAIL_PORT=2525
+      - MAIL_USERNAME=null
+      - MAIL_PASSWORD=null
+      - MAIL_ENCRYPTION=null
+      - MAIL_FROM_ADDRESS=noreply@modernshop.com
+      - MAIL_FROM_NAME="${APP_NAME}"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - modernshop-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: modernshop-mysql
+    restart: unless-stopped
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_DATABASE=modernshop
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_PASSWORD=123
+      - MYSQL_USER=modernshop
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-psecret",
+        ]
+      timeout: 20s
+      retries: 10
+      interval: 5s
+    networks:
+      - modernshop-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: modernshop-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 3s
+      retries: 5
+      interval: 5s
+    networks:
+      - modernshop-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: modernshop-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=secret
+    depends_on:
+      - mysql
+    networks:
+      - modernshop-network
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  modernshop-network:
+    driver: bridge

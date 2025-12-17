@@ -21,9 +21,12 @@ dist
 build
 *.md
 !README.md
+!DOCKER_COMMANDS.md
 .editorconfig
 .styleci.yml
-docker-compose.yml
 .dockerignore
 .env
+.env.docker
 !.env.example
+!docker-entrypoint.sh
+!supervisord.conf
