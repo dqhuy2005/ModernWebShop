@@ -101,8 +101,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="birthday" class="form-label fw-bold">Birthday</label>
                         <input type="text" class="form-control @error('birthday') is-invalid @enderror" id="birthday_display"
-                            value="{{ old('birthday', $user->birthday ? \Carbon\Carbon::parse($user->birthday)->format('d/M/Y') : '') }}" placeholder="dd/MM/yyyy" readonly>
-                        <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday', $user->birthday) }}">
+                            value="{{ old('birthday_display', $user->birthday_display) }}" placeholder="dd/MM/yyyy" readonly>
+                        <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday', $user->birthday ? $user->birthday->format('Y-m-d') : '') }}">
                         @error('birthday')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

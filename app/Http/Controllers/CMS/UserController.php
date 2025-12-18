@@ -144,7 +144,7 @@ class UserController extends BaseController
     public function show($id)
     {
         try {
-            $user = User::select('id', 'fullname', 'email', 'phone', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+            $user = User::select('id', 'fullname', 'email', 'phone', 'birthday', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
                 ->withTrashed()
                 ->with([
                     'role:id,name,slug',
@@ -170,7 +170,7 @@ class UserController extends BaseController
     public function edit($id)
     {
         try {
-            $user = User::select('id', 'fullname', 'email', 'phone', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+            $user = User::select('id', 'fullname', 'email', 'phone', 'birthday', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
                 ->withTrashed()
                 ->findOrFail($id);
             $roles = Role::select('id', 'name', 'slug')->get();
@@ -184,7 +184,7 @@ class UserController extends BaseController
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-            $user = User::select('id', 'fullname', 'email', 'phone', 'image', 'address', 'password', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
+            $user = User::select('id', 'fullname', 'email', 'phone', 'birthday', 'image', 'address', 'password', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
                 ->withTrashed()
                 ->findOrFail($id);
             $data = $request->except(['image', 'password', 'password_confirmation', '_method', '_token']);
