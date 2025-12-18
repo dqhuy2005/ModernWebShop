@@ -30,7 +30,7 @@
 
                             <td>
                                 @if ($user->image)
-                                    <img src="{{ $user->image }}" alt="{{ $user->fullname }}" class="user-avatar">
+                                    <img src="{{ $user->image_url }}" alt="{{ $user->fullname }}" class="user-avatar">
                                 @else
                                     <div class="user-avatar bg-light d-flex align-items-center justify-content-center">
                                         <i class="fas fa-user text-muted"></i>

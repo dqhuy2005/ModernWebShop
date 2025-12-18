@@ -165,7 +165,7 @@
                                                         <i class="fas fa-user"></i>
                                                     </div>
                                                 @elseif ($user->isOAuthUser())
-                                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image }}"
+                                                    <img src="{{ $user->oauthAccounts->first()->avatar ?? $user->image_url }}"
                                                         alt="Avatar" class="rounded-circle avatar-clickable"
                                                         id="avatarPreview"
                                                         style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 3px solid #dee2e6;"

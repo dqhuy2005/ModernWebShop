@@ -27,7 +27,7 @@
                 @if ($user->image)
                     <div class="mb-4 pb-3 border-bottom text-center">
                         <p class="text-muted mb-2"><strong>Current Avatar:</strong></p>
-                        <img src="{{ $user->image }}" alt="{{ $user->fullname }}"
+                        <img src="{{ $user->image_url }}" alt="{{ $user->fullname }}"
                             class="img-fluid rounded-circle current-avatar">
                     </div>
                 @endif
