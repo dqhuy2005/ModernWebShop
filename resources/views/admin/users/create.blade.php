@@ -57,8 +57,7 @@
                                 Full Name <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control @error('fullname') is-invalid @enderror"
-                                id="fullname" name="fullname" value="{{ old('fullname') }}"
-                                placeholder="Enter full name..." required>
+                                id="fullname" name="fullname" value="{{ old('fullname') }}" required>
                             @error('fullname')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -69,7 +68,7 @@
                                 Email <span class="text-danger">*</span>
                             </label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                                name="email" value="{{ old('email') }}" placeholder="Enter email address..." required>
+                                name="email" value="{{ old('email') }}" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -80,8 +79,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="phone" class="form-label fw-bold">Phone</label>
                             <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
-                                name="phone" value="{{ old('phone') }}" placeholder="Enter phone number..."
-                                pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
+                                name="phone" value="{{ old('phone') }}" pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -90,7 +88,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="birthday" class="form-label fw-bold">Birthday</label>
                             <input type="text" class="form-control @error('birthday') is-invalid @enderror"
-                                id="birthday_display" placeholder="dd/MM/yyyy" readonly>
+                                id="birthday_display" readonly>
                             <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday') }}">
                             @error('birthday')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -104,7 +102,7 @@
                                 Password <span class="text-danger">*</span>
                             </label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                id="password" name="password" placeholder="Enter password..." required>
+                                id="password" name="password" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -115,7 +113,7 @@
                                 Confirm Password <span class="text-danger">*</span>
                             </label>
                             <input type="password" class="form-control" id="password_confirmation"
-                                name="password_confirmation" placeholder="Confirm password..." required>
+                                name="password_confirmation" required>
                         </div>
                     </div>
 

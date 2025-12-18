@@ -67,8 +67,7 @@
                             Full Name <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control @error('fullname') is-invalid @enderror" id="fullname"
-                            name="fullname" value="{{ old('fullname', $user->fullname) }}" placeholder="Enter full name..."
-                            required>
+                            name="fullname" value="{{ old('fullname', $user->fullname) }}" required>
                         @error('fullname')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -79,8 +78,7 @@
                             Email <span class="text-danger">*</span>
                         </label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                            name="email" value="{{ old('email', $user->email) }}" placeholder="Enter email address..."
-                            required>
+                            name="email" value="{{ old('email', $user->email) }}" required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -91,8 +89,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="phone" class="form-label fw-bold">Phone</label>
                         <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
-                            name="phone" value="{{ old('phone', $user->phone) }}" placeholder="Enter phone number..."
-                            pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
+                            name="phone" value="{{ old('phone', $user->phone) }}" pattern="[0-9]{8,15}"
+                            title="Only numbers (0-9), 8-15 digits">
                         @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -101,8 +99,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="birthday" class="form-label fw-bold">Birthday</label>
                         <input type="text" class="form-control @error('birthday') is-invalid @enderror"
-                            id="birthday_display" value="{{ old('birthday_display', $user->birthday_display) }}"
-                            placeholder="dd/MM/yyyy" readonly>
+                            id="birthday_display" value="{{ old('birthday_display', $user->birthday_display) }}" readonly>
                         <input type="hidden" id="birthday" name="birthday"
                             value="{{ old('birthday', $user->birthday ? $user->birthday->format('Y-m-d') : '') }}">
                         @error('birthday')
@@ -117,7 +114,7 @@
                             Password <span class="text-muted">(Leave blank to keep current)</span>
                         </label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                            name="password" placeholder="Enter new password...">
+                            name="password">
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -128,7 +125,7 @@
                             Confirm Password
                         </label>
                         <input type="password" class="form-control" id="password_confirmation"
-                            name="password_confirmation" placeholder="Confirm new password...">
+                            name="password_confirmation">
                     </div>
                 </div>
 
