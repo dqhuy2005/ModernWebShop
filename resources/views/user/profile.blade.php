@@ -40,7 +40,6 @@
                                 @csrf
 
                                 <div class="row">
-                                    <!-- Form Fields - Left Side -->
                                     <div class="col-md-8">
                                         <div class="row mb-3">
                                             <div class="col-md-3">
