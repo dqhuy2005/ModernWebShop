@@ -41,29 +41,17 @@
                         class="@error('image') is-invalid @enderror">
 
                     <div id="image-preview"
-                        class="text-center mt-3 {{ old('image') && old('image') !== $user->image ? '' : 'd-none' }}">
+                        class="mt-3 {{ old('image') && old('image') !== $user->image ? '' : 'd-none' }}">
                         <p class="text-success mb-2"><strong>New Avatar Preview:</strong></p>
-                        <div class="row">
-                            <div class="preview-container col-md-12">
-                                <img src="{{ old('image') && old('image') !== $user->image ? asset('storage/' . old('image')) : '' }}"
-                                    alt="Preview" class="img-fluid rounded-circle preview-image">
-                            </div>
-                            <div class="col-md-12 d-flex justify-content-center">
-                                <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
-                                    <i class="fas fa-trash-alt me-1"></i>Remove Avatar
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2 lfm-btn"
-                                    data-input="image" data-preview="holder">
-                                    <i class="fas fa-sync-alt me-1"></i>Change Avatar
-                                </button>
-                            </div>
+                        <div class="preview-container">
+                            <img src="{{ old('image') && old('image') !== $user->image ? asset('storage/' . old('image')) : '' }}"
+                                alt="Preview" class="img-fluid preview-image">
                         </div>
                     </div>
 
-                    <div id="upload-area"
-                        class="text-center {{ old('image') && old('image') !== $user->image ? 'd-none' : '' }}">
-                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn selected-avatar" data-input="image"
-                            data-preview="holder">
+                    <div id="upload-area" class="{{ old('image') && old('image') !== $user->image ? 'd-none' : '' }}">
+                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn selected-avatar"
+                            data-input="image" data-preview="holder">
                             {{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
                         </button>
                     </div>
@@ -125,8 +113,8 @@
                         <label for="password" class="form-label fw-bold">
                             Password <span class="text-muted">(Leave blank to keep current)</span>
                         </label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror"
-                            id="password" name="password" placeholder="Enter new password...">
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                            name="password" placeholder="Enter new password...">
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -209,14 +197,6 @@
 
 @push('scripts')
     <script>
-        function removeImage() {
-            $('#image').val('{{ $user->image ?? '' }}');
-            $('#image-preview').addClass('d-none');
-            $('#upload-area').removeClass('d-none');
-            $('#image-preview img').attr('src', '');
-            toastr.info('New avatar removed');
-        }
-
         $(document).ready(function() {
             $('.lfm-btn').filemanager('image', {
                 prefix: '/admin/filemanager'
@@ -231,7 +211,6 @@
                     $('#image-preview img').attr('src', imageUrl);
                     $('#upload-area').addClass('d-none');
                     $('#image-preview').removeClass('d-none');
-                    toastr.success('New avatar selected successfully!');
                 }
             });
         });
@@ -287,16 +266,13 @@
         }
 
         .preview-container {
-            display: inline-block;
+            display: block;
             position: relative;
         }
 
         .preview-image {
             max-height: 200px;
             max-width: 200px;
-            border: 2px solid #28a745;
-            box-shadow: 0 4px 15px rgba(0, 0, -0, 0.2);
-            transition: all 0.3s ease;
         }
 
         #image-preview {

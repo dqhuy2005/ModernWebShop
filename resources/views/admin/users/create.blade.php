@@ -31,35 +31,23 @@
                     <input type="hidden" id="image" name="image" value="{{ old('image') }}"
                         class="@error('image') is-invalid @enderror">
 
-                    <div id="image-preview" class="text-center my-3 {{ old('image') ? '' : 'd-none' }}">
-                        <div class="row">
-                            <div class="preview-container col-md-12">
-                                <img src="{{ old('image') ? asset('storage/' . old('image')) : '' }}" alt="Preview"
-                                    class="img-fluid rounded-circle preview-image">
-                            </div>
-
-                            <div class="col-md-12 d-flex justify-content-center">
-                                <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
-                                    <i class="fas fa-trash-alt me-1"></i>Remove Avatar
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2 lfm-btn"
-                                    data-input="image" data-preview="holder">
-                                    <i class="fas fa-sync-alt me-1"></i>Change Avatar
-                                </button>
-                            </div>
+                    <div id="image-preview" class="my-3 {{ old('image') ? '' : 'd-none' }}">
+                        <div class="preview-container">
+                            <img src="{{ old('image') ? asset('storage/' . old('image')) : '' }}" alt="Preview"
+                                class="img-fluid preview-image">
                         </div>
-
-                        @error('image')
-                            <div class="text-danger mt-2 small">{{ $message }}</div>
-                        @enderror
                     </div>
 
-                    <div id="upload-area" class="text-center {{ old('image') ? 'd-none' : '' }}">
-                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn selected-avatar" data-input="image"
-                            data-preview="holder">
+                    <div id="upload-area" class="{{ old('image') ? 'd-none' : '' }}">
+                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn selected-avatar"
+                            data-input="image" data-preview="holder">
                             Select Avatar
                         </button>
                     </div>
+
+                    @error('image')
+                        <div class="text-danger mt-2 small">{{ $message }}</div>
+                    @enderror
 
                     <div class="mb-4 pb-3 border-bottom"></div>
 
@@ -183,14 +171,6 @@
 
 @push('scripts')
     <script>
-        function removeImage() {
-            $('#image').val('');
-            $('#image-preview').addClass('d-none');
-            $('#upload-area').removeClass('d-none');
-            $('#image-preview img').attr('src', '');
-            toastr.info('Avatar removed');
-        }
-
         $(document).ready(function() {
             $('.lfm-btn').filemanager('image', {
                 prefix: '/admin/filemanager'
@@ -203,7 +183,6 @@
                     $('#image-preview img').attr('src', imageUrl);
                     $('#upload-area').addClass('d-none');
                     $('#image-preview').removeClass('d-none');
-                    toastr.success('Avatar selected successfully!');
                 }
             });
         });
@@ -257,15 +236,13 @@
         }
 
         .preview-container {
-            display: inline-block;
+            display: block;
             position: relative;
         }
 
         .preview-image {
             max-height: 200px;
             max-width: 200px;
-            border: 2px solid #28a745;
-            transition: all 0.3s ease;
         }
 
         #image-preview {
