@@ -89,8 +89,9 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="birthday" class="form-label fw-bold">Birthday</label>
-                            <input type="date" class="form-control @error('birthday') is-invalid @enderror"
-                                id="birthday" name="birthday" value="{{ old('birthday') }}">
+                            <input type="text" class="form-control @error('birthday') is-invalid @enderror"
+                                id="birthday_display" placeholder="dd/MM/yyyy" readonly>
+                            <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday') }}">
                             @error('birthday')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -186,26 +187,28 @@
                 }
             });
 
-            $('#birthday').daterangepicker({
+            $('#birthday_display').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
                 autoUpdateInput: false,
                 locale: {
-                    format: 'YYYY-MM-DD',
+                    format: 'DD/MM/YYYY',
                     cancelLabel: 'Clear'
                 },
-                minYear: 1950,
+                minYear: 1900,
                 maxYear: parseInt(moment().format('YYYY'), 10),
                 maxDate: moment(),
                 drops: 'auto'
             });
 
-            $('#birthday').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('YYYY-MM-DD'));
+            $('#birthday_display').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY'));
+                $('#birthday').val(picker.startDate.format('YYYY-MM-DD'));
             });
 
-            $('#birthday').on('cancel.daterangepicker', function(ev, picker) {
+            $('#birthday_display').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
+                $('#birthday').val('');
             });
         });
 

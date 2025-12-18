@@ -100,9 +100,11 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="birthday" class="form-label fw-bold">Birthday</label>
-                        <input type="text" class="form-control @error('birthday') is-invalid @enderror" id="birthday_display"
-                            value="{{ old('birthday_display', $user->birthday_display) }}" placeholder="dd/MM/yyyy" readonly>
-                        <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday', $user->birthday ? $user->birthday->format('Y-m-d') : '') }}">
+                        <input type="text" class="form-control @error('birthday') is-invalid @enderror"
+                            id="birthday_display" value="{{ old('birthday_display', $user->birthday_display) }}"
+                            placeholder="dd/MM/yyyy" readonly>
+                        <input type="hidden" id="birthday" name="birthday"
+                            value="{{ old('birthday', $user->birthday ? $user->birthday->format('Y-m-d') : '') }}">
                         @error('birthday')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -231,22 +233,18 @@
                 drops: 'auto'
             };
 
-            // Set start date if birthday exists
             if (existingBirthday) {
                 dateConfig.startDate = moment(existingBirthday, 'YYYY-MM-DD');
             }
 
             $('#birthday_display').daterangepicker(dateConfig);
 
-            // If there's an existing birthday, display it
             if (existingBirthday) {
                 $('#birthday_display').val(moment(existingBirthday, 'YYYY-MM-DD').format('DD/MM/YYYY'));
             }
 
             $('#birthday_display').on('apply.daterangepicker', function(ev, picker) {
-                // Display format: dd/MM/yyyy
                 $(this).val(picker.startDate.format('DD/MM/YYYY'));
-                // Database format: YYYY-mm-dd
                 $('#birthday').val(picker.startDate.format('YYYY-MM-DD'));
             });
 
@@ -299,7 +297,6 @@
             border-bottom: 2px solid #e9ecef;
         }
 
-        /* Current Avatar Styles */
         .current-avatar {
             max-height: 150px;
             border: 3px solid #e9ecef;
