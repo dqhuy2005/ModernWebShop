@@ -5,8 +5,7 @@
                 <thead class="table-light">
                     <tr>
                         <th width="5%">ID</th>
-                        <th width="30%">Name</th>
-                        <th width="15%">Products</th>
+                        <th width="15%">Name</th>
                         <th width="15%" class="text-center">Status</th>
                         <th width="20%" class="text-center">Actions</th>
                     </tr>
@@ -23,12 +22,6 @@
                                 <div>
                                     <strong>{{ $category->name }}</strong>
                                 </div>
-                            </td>
-
-                            <td>
-                                <span class="text-center">
-                                    {{ $category->products_count ?? 0 }}
-                                </span>
                             </td>
 
                             <td class="text-center">
