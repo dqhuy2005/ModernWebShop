@@ -185,6 +185,28 @@
                     $('#image-preview').removeClass('d-none');
                 }
             });
+
+            $('#birthday').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                autoUpdateInput: false,
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    cancelLabel: 'Clear'
+                },
+                minYear: 1950,
+                maxYear: parseInt(moment().format('YYYY'), 10),
+                maxDate: moment(),
+                drops: 'auto'
+            });
+
+            $('#birthday').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('YYYY-MM-DD'));
+            });
+
+            $('#birthday').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
         });
 
         $('#userForm').on('submit', function(e) {
