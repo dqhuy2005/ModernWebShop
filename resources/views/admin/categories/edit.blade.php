@@ -22,7 +22,8 @@
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('admin.categories.update', $category) }}" method="POST" id="category-form" enctype="multipart/form-data">
+                    <form action="{{ route('admin.categories.update', $category) }}" method="POST" id="category-form"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -52,19 +53,21 @@
                         <div class="mb-3">
                             <label for="" class="form-label fw-bold">Category Image</label>
                             <div class="custom-file-upload">
-                                <div id="image-preview" class="text-center {{ $category->image ? '' : 'd-none' }} mb-2" style="position: relative;">
-                                    <img src="{{ $category->image_url }}"
-                                         alt="Preview"
-                                         class="img-fluid rounded"
-                                         style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
+                                <div id="image-preview" class="text-center {{ $category->image ? '' : 'd-none' }} mb-2"
+                                    style="position: relative;">
+                                    <img src="{{ $category->image_url }}" alt="Preview" class="img-fluid rounded"
+                                        style="max-height: 300px; padding: 4px; border: 1px solid #ddd;">
                                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0"
                                         onclick="removeImage()" style="margin: 5px;">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
-                                <input type="hidden" id="image" name="image" value="{{ old('image', $category->image) }}" class="@error('image') is-invalid @enderror">
-                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn" data-input="image" data-preview="holder">
-                                    <i class="fas fa-image me-2"></i>Select Image
+                                <input type="hidden" id="image" name="image"
+                                    value="{{ old('image', $category->image) }}"
+                                    class="@error('image') is-invalid @enderror">
+                                <button type="button" class="btn-select-image w-100 mt-3 lfm-btn" data-input="image"
+                                    data-preview="holder">
+                                    Select Image
                                 </button>
                             </div>
                             @error('image')
@@ -110,7 +113,9 @@
         }
 
         $(document).ready(function() {
-            $('.lfm-btn').filemanager('image', {prefix: '/admin/filemanager'});
+            $('.lfm-btn').filemanager('image', {
+                prefix: '/admin/filemanager'
+            });
 
             $('#image').on('change', function() {
                 const imagePath = $(this).val();
@@ -132,7 +137,8 @@
                     isValid = false;
                     $('#name').addClass('is-invalid');
                     if (!$('#name').next('.invalid-feedback').length) {
-                        $('#name').after('<div class="invalid-feedback d-block">Category name is required.</div>');
+                        $('#name').after(
+                            '<div class="invalid-feedback d-block">Category name is required.</div>');
                     }
                 } else {
                     $('#name').removeClass('is-invalid');
@@ -144,7 +150,9 @@
                     isValid = false;
                     $('#slug').addClass('is-invalid');
                     if (!$('#slug').next('.invalid-feedback').length) {
-                        $('#slug').after('<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>');
+                        $('#slug').after(
+                            '<div class="invalid-feedback d-block">Slug must contain only lowercase letters, numbers, and hyphens.</div>'
+                            );
                     }
                 } else {
                     $('#slug').removeClass('is-invalid');
