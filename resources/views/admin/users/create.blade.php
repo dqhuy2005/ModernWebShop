@@ -55,7 +55,7 @@
                     </div>
 
                     <div id="upload-area" class="text-center {{ old('image') ? 'd-none' : '' }}">
-                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image"
+                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn selected-avatar" data-input="image"
                             data-preview="holder">
                             Select Avatar
                         </button>
