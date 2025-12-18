@@ -57,7 +57,7 @@
                     <div id="upload-area" class="text-center {{ old('image') ? 'd-none' : '' }}">
                         <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image"
                             data-preview="holder">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>Select Avatar
+                            Select Avatar
                         </button>
                     </div>
 

@@ -64,8 +64,7 @@
                         class="text-center {{ old('image') && old('image') !== $user->image ? 'd-none' : '' }}">
                         <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image"
                             data-preview="holder">
-                            <i
-                                class="fas fa-cloud-upload-alt me-2"></i>{{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
+                            {{ $user->image ? 'Change Avatar' : 'Select Avatar' }}
                         </button>
                     </div>
 
