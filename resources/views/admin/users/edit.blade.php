@@ -100,8 +100,9 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="birthday" class="form-label fw-bold">Birthday</label>
-                        <input type="date" class="form-control @error('birthday') is-invalid @enderror" id="birthday"
-                            name="birthday" value="{{ old('birthday', $user->birthday) }}">
+                        <input type="text" class="form-control @error('birthday') is-invalid @enderror" id="birthday_display"
+                            value="{{ old('birthday', $user->birthday ? \Carbon\Carbon::parse($user->birthday)->format('d/M/Y') : '') }}" placeholder="dd/MM/yyyy" readonly>
+                        <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday', $user->birthday) }}">
                         @error('birthday')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -214,26 +215,44 @@
                 }
             });
 
-            $('#birthday').daterangepicker({
+            // Configure daterangepicker for birthday field
+            var existingBirthday = $('#birthday').val();
+            var dateConfig = {
                 singleDatePicker: true,
                 showDropdowns: true,
                 autoUpdateInput: false,
                 locale: {
-                    format: 'YYYY-MM-DD',
+                    format: 'DD/MM/YYYY',
                     cancelLabel: 'Clear'
                 },
                 minYear: 1900,
                 maxYear: parseInt(moment().format('YYYY'), 10),
                 maxDate: moment(),
                 drops: 'auto'
+            };
+
+            // Set start date if birthday exists
+            if (existingBirthday) {
+                dateConfig.startDate = moment(existingBirthday, 'YYYY-MM-DD');
+            }
+
+            $('#birthday_display').daterangepicker(dateConfig);
+
+            // If there's an existing birthday, display it
+            if (existingBirthday) {
+                $('#birthday_display').val(moment(existingBirthday, 'YYYY-MM-DD').format('DD/MM/YYYY'));
+            }
+
+            $('#birthday_display').on('apply.daterangepicker', function(ev, picker) {
+                // Display format: dd/MM/yyyy
+                $(this).val(picker.startDate.format('DD/MM/YYYY'));
+                // Database format: YYYY-mm-dd
+                $('#birthday').val(picker.startDate.format('YYYY-MM-DD'));
             });
 
-            $('#birthday').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('YYYY-MM-DD'));
-            });
-
-            $('#birthday').on('cancel.daterangepicker', function(ev, picker) {
+            $('#birthday_display').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
+                $('#birthday').val('');
             });
         });
 
