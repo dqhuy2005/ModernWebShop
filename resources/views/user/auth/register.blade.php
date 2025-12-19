@@ -16,30 +16,27 @@
                             <form action="{{ route('register.post') }}" method="POST">
                                 @csrf
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="fullname" class="form-label fw-semibold">Họ và tên</label>
-                                        <div class="input-group">
-                                            <input type="text"
-                                                class="form-control @error('fullname') is-invalid @enderror" id="fullname"
-                                                name="fullname" value="{{ old('fullname') }}" required autofocus>
-                                        </div>
-                                        @error('fullname')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                <div class="mb-3">
+                                    <label for="fullname" class="form-label fw-semibold">Họ và tên</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control @error('fullname') is-invalid @enderror"
+                                            id="fullname" name="fullname" value="{{ old('fullname') }}" required autofocus>
                                     </div>
+                                    @error('fullname')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label fw-semibold">Email</label>
-                                        <div class="input-group">
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                                id="email" name="email" value="{{ old('email') }}" placeholder=""
-                                                required>
-                                        </div>
-                                        @error('email')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fw-semibold">Email</label>
+                                    <div class="input-group">
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                            id="email" name="email" value="{{ old('email') }}" placeholder=""
+                                            required>
                                     </div>
+                                    @error('email')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
@@ -53,34 +50,33 @@
                                     @enderror
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password" class="form-label fw-semibold">Mật khẩu</label>
-                                        <div class="input-group password-input-wrapper">
-                                            <input type="password"
-                                                class="form-control @error('password') is-invalid @enderror" id="password"
-                                                name="password" placeholder="" required>
-                                            <button class="btn btn-outline-secondary password-toggle-btn" type="button" id="togglePassword">
-                                                <i class="far fa-eye"></i>
-                                            </button>
-                                        </div>
-                                        @error('password')
-                                            <div class="invalid-feedback d-block password-error-msg">{{ $message }}</div>
-                                        @enderror
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+                                    <div class="input-group password-input-wrapper">
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                            id="password" name="password" placeholder="" required>
+                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button"
+                                            id="togglePassword">
+                                            <i class="far fa-eye"></i>
+                                        </button>
                                     </div>
+                                    @error('password')
+                                        <div class="invalid-feedback d-block password-error-msg">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password_confirmation" class="form-label fw-semibold">Xác nhận mật
-                                            khẩu</label>
-                                        <div class="input-group password-input-wrapper">
-                                            <input type="password" class="form-control" id="password_confirmation"
-                                                name="password_confirmation" placeholder="" required>
-                                            <button class="btn btn-outline-secondary password-toggle-btn" type="button"
-                                                id="togglePasswordConfirm">
-                                                <i class="far fa-eye"></i>
-                                            </button>
-                                        </div>
+                                <div class="mb-3">
+                                    <label for="password_confirmation" class="form-label fw-semibold">Xác nhận mật
+                                        khẩu</label>
+                                    <div class="input-group password-input-wrapper">
+                                        <input type="password" class="form-control" id="password_confirmation"
+                                            name="password_confirmation" placeholder="" required>
+                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button"
+                                            id="togglePasswordConfirm">
+                                            <i class="far fa-eye"></i>
+                                        </button>
                                     </div>
+                                    <div class="invalid-feedback" id="password-confirm-feedback"></div>
                                 </div>
 
                                 <button type="submit" class="btn btn-danger w-100 py-2 mb-3">
@@ -125,13 +121,27 @@
         .invalid-feedback {
             display: block !important;
         }
+
+        #password_confirmation.is-invalid {
+            border-color: #dc3545;
+        }
+
+        #password_confirmation.is-valid {
+            border-color: #198754;
+        }
+
+        .valid-feedback {
+            display: block;
+            color: #198754;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Toggle password visibility
             $('#togglePassword').on('click', function() {
                 const $password = $('#password');
                 const $icon = $(this).find('i');
@@ -158,12 +168,37 @@
                 }
             });
 
-            // Password strength indicator
+            function validatePasswordConfirmation() {
+                const password = $('#password').val();
+                const passwordConfirm = $('#password_confirmation').val();
+                const $confirmField = $('#password_confirmation');
+                const $feedback = $('#password-confirm-feedback');
+
+                if (passwordConfirm.length === 0) {
+                    $confirmField.removeClass('is-invalid is-valid');
+                    $feedback.removeClass('invalid-feedback valid-feedback').text('');
+                    return;
+                }
+
+                if (password === passwordConfirm) {
+                    $confirmField.removeClass('is-invalid').addClass('is-valid');
+                    $feedback.removeClass('invalid-feedback').addClass('valid-feedback');
+                    $feedback.text('Mật khẩu khớp');
+                } else {
+                    $confirmField.removeClass('is-valid').addClass('is-invalid');
+                    $feedback.removeClass('valid-feedback').addClass('invalid-feedback');
+                    $feedback.text('Mật khẩu không khớp');
+                }
+            }
+
+            $('#password, #password_confirmation').on('input', function() {
+                validatePasswordConfirmation();
+            });
+
             $('#password').on('input', function() {
                 const password = $(this).val();
                 const strength = getPasswordStrength(password);
 
-                // You can add visual feedback here
             });
 
             function getPasswordStrength(password) {
