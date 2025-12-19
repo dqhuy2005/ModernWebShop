@@ -25,19 +25,18 @@ class CheckoutRequest extends FormRequest
                 'string',
                 'min:2',
                 'max:255',
-                'regex:/^[\p{L}\p{M}\s\-\'\.]+$/u', // Unicode letters, spaces, hyphens, apostrophes, dots
+                'regex:/^[\p{L}\p{M}\s\-\'\.]+$/u',
             ],
             'phone' => [
                 'required',
                 'string',
-                'regex:/^[0-9]{8,15}$/', // Only numbers, 8-15 digits
+                'regex:/^[0-9]{8,15}$/',
             ],
             'address' => [
                 'required',
                 'string',
-                'min:10',
                 'max:500',
-                'regex:/^[\p{L}\p{M}\p{N}\s\-\.,\/]+$/u', // Unicode letters, numbers, spaces, common punctuation
+                'regex:/^[\p{L}\p{M}\p{N}\s\-\.,\/]+$/u',
             ],
             'note' => [
                 'nullable',
@@ -62,7 +61,6 @@ class CheckoutRequest extends FormRequest
             'phone.regex' => 'Số điện thoại chỉ được chứa số (0-9) và phải có từ 8 đến 15 chữ số.',
 
             'address.required' => 'Địa chỉ là bắt buộc.',
-            'address.min' => 'Địa chỉ phải có ít nhất :min ký tự.',
             'address.max' => 'Địa chỉ không được vượt quá :max ký tự.',
             'address.regex' => 'Địa chỉ chứa ký tự không hợp lệ.',
 
