@@ -34,8 +34,10 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/table-sort.js') }}"></script>
     <script>
         let orderPagination;
+        let orderTableSort;
 
         $(document).ready(function() {
             orderPagination = new AjaxPagination({
@@ -62,6 +64,20 @@
                     }
                 }
             });
+
+            orderTableSort = new TableSort({
+                containerId: 'orders-table-container',
+                sortBy: '{{ request('sort_by') }}',
+                sortOrder: '{{ request('sort_order', 'desc') }}',
+                paginationInstance: orderPagination,
+                onAfterSort: function(column, order) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success('Sorted by ' + column + ' (' + order + ')');
+                    }
+                }
+            });
+
+            window.tableSort = orderTableSort;
         });
 
         function changePerPage(value) {

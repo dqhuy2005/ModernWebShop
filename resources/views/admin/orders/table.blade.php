@@ -7,24 +7,28 @@
                         <th width="8%"
                             class="sortable {{ request('sort_by') === 'id' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('id')">
-                            Order ID
+                            Order ID <i
+                                class="fas fa-sort{{ request('sort_by') === 'id' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
                         <th width="18%">Customer</th>
                         <th width="12%"
                             class="text-center sortable {{ request('sort_by') === 'status' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('status')">
-                            Status
+                            Status <i
+                                class="fas fa-sort{{ request('sort_by') === 'status' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
                         <th width="15%"
                             class="text-end sortable {{ request('sort_by') === 'total_amount' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('total_amount')">
-                            Total Amount
+                            Total Amount <i
+                                class="fas fa-sort{{ request('sort_by') === 'total_amount' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
                         <th width="10%" class="text-center">Items</th>
                         <th width="12%"
                             class="sortable {{ request('sort_by') === 'created_at' ? request('sort_order', 'desc') : '' }}"
                             onclick="sortTable('created_at')">
-                            Created Date
+                            Created Date <i
+                                class="fas fa-sort{{ request('sort_by') === 'created_at' ? (request('sort_order') === 'asc' ? '-up' : '-down') : '' }}"></i>
                         </th>
                         <th width="15%" class="text-center">Actions</th>
                     </tr>
@@ -178,33 +182,26 @@
             cursor: pointer;
             user-select: none;
             position: relative;
-            padding-right: 20px !important;
+            transition: all 0.2s ease;
         }
 
         .sortable:hover {
-            background-color: #e9ecef;
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
-        .sortable::after {
-            content: '\f0dc';
-            /* fa-sort */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 8px;
-            opacity: 0.3;
+        .sortable i {
+            font-size: 0.7rem;
+            margin-left: 4px;
+            opacity: 0.5;
         }
 
-        .sortable.asc::after {
-            content: '\f0de';
-            /* fa-sort-up */
-            opacity: 1;
+        .sortable.asc,
+        .sortable.desc {
             color: #0d6efd;
         }
 
-        .sortable.desc::after {
-            content: '\f0dd';
-            /* fa-sort-down */
+        .sortable.asc i,
+        .sortable.desc i {
             opacity: 1;
             color: #0d6efd;
         }

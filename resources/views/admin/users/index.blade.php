@@ -35,8 +35,10 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/table-sort.js') }}"></script>
     <script>
         let userPagination;
+        let userTableSort;
 
         $(document).ready(function() {
             userPagination = new AjaxPagination({
@@ -56,6 +58,15 @@
                     }
                 }
             });
+
+            userTableSort = new TableSort({
+                containerId: 'users-table-container',
+                sortBy: '{{ request('sort_by') }}',
+                sortOrder: '{{ request('sort_order', 'desc') }}',
+                paginationInstance: userPagination,
+            });
+
+            window.tableSort = userTableSort;
         });
 
         function changePerPage(value) {
@@ -223,8 +234,7 @@
                 'Are you sure you want to PERMANENTLY delete this user?<br><small class="text-danger">This action CANNOT be undone and will delete ALL user data permanently.</small>',
                 function() {
                     forceDeleteUserAjax(userId);
-                },
-                {
+                }, {
                     confirmText: 'Yes, Delete Permanently',
                     cancelText: 'Cancel',
                     icon: 'fas fa-exclamation-triangle',

@@ -4,8 +4,16 @@
             <table class="table table-hover align-middle" id="categoriesTable">
                 <thead class="table-light">
                     <tr>
-                        <th width="5%">ID</th>
-                        <th width="15%">Name</th>
+                        <th width="5%"
+                            class="sortable {{ request('sort_by') === 'id' ? request('sort_order', 'desc') : '' }}"
+                            onclick="sortTable('id')">
+                            ID
+                        </th>
+                        <th width="15%"
+                            class="sortable {{ request('sort_by') === 'name' ? request('sort_order', 'desc') : '' }}"
+                            onclick="sortTable('name')">
+                            Name
+                        </th>
                         <th width="15%" class="text-center">Status</th>
                         <th width="20%" class="text-center">Actions</th>
                     </tr>
@@ -126,6 +134,34 @@
             top: 0;
             background-color: #f8f9fa;
             z-index: 10;
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .sortable:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .sortable i {
+            font-size: 0.7rem;
+            margin-left: 4px;
+            opacity: 0.5;
+        }
+
+        .sortable.asc,
+        .sortable.desc {
+            color: #0d6efd;
+        }
+
+        .sortable.asc i,
+        .sortable.desc i {
+            opacity: 1;
+            color: #0d6efd;
         }
 
         #categoriesTable tbody tr {

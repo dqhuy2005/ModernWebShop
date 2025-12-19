@@ -338,7 +338,6 @@
             })
             .then(editor => {
                 descriptionEditor = editor;
-                console.log('CKEditor initialized successfully!');
 
                 editor.model.document.on('change:data', () => {
                     document.querySelector('#description').value = editor.getData();
