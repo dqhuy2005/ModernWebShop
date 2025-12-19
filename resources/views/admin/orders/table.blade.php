@@ -326,7 +326,7 @@
             ConfirmModal.show('Are you sure you want to restore this order?', function() {
                 restoreOrderAjax(orderId);
             }, {
-                confirmText: 'Yes, Restore',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-undo',
                 iconColor: '#28a745'

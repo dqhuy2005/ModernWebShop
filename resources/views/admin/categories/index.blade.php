@@ -145,7 +145,7 @@
             ConfirmModal.show('Are you sure you want to restore this category?', function() {
                 restoreCategoryAjax(categoryId);
             }, {
-                confirmText: 'Yes, Restore',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-undo',
                 iconColor: '#28a745'
@@ -184,7 +184,7 @@
                     forceDeleteCategoryAjax(categoryId);
                 },
                 {
-                    confirmText: 'Yes, Delete Permanently',
+                    confirmText: 'Confirm',
                     cancelText: 'Cancel',
                     icon: 'fas fa-exclamation-triangle',
                     iconColor: '#dc3545'

@@ -91,7 +91,7 @@
                 const row = $('#product-' + productId);
                 toggleStatusAjax(productId, row);
             }, {
-                confirmText: 'Yes, Change Status',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-toggle-on',
                 iconColor: '#17a2b8'
