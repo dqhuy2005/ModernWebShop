@@ -22,4 +22,6 @@ interface OrderRepositoryInterface
     public function calculateTotalItems(array $products): int;
     public function searchCustomers(string $search, int $limit = 15);
     public function getCustomer(int $customerId);
+    public function getUserOrders(int $userId, ?string $search = null, ?string $status = null, int $perPage = 10);
+    public function getOrderWithDetails(int $orderId);
 }

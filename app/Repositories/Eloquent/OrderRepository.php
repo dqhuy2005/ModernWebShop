@@ -191,6 +191,53 @@ class OrderRepository implements OrderRepositoryInterface
             ->find($customerId);
     }
 
+    public function getUserOrders(int $userId, ?string $search = null, ?string $status = null, int $perPage = 10)
+    {
+        $query = $this->model->query()
+            ->select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->with([
+                'orderDetails' => function ($q) {
+                    $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                        ->with([
+                            'product:id,name,slug,price',
+                            'product.images:id,product_id,path,sort_order'
+                        ]);
+                }
+            ])
+            ->where('user_id', $userId);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                    ->orWhereHas('orderDetails', function ($subQuery) use ($search) {
+                        $subQuery->where('product_name', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function getOrderWithDetails(int $orderId)
+    {
+        return $this->model->query()
+            ->select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
+            ->with([
+                'orderDetails' => function ($q) {
+                    $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
+                        ->with([
+                            'product:id,name,slug,price',
+                            'product.images:id,product_id,path,sort_order'
+                        ]);
+                }
+            ])
+            ->find($orderId);
+    }
+
     private function applyFilters($query, array $filters)
     {
         if (!empty($filters['status'])) {

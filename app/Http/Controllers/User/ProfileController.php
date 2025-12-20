@@ -4,13 +4,17 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\User\ProfileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Services\impl\ImageService;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        private ProfileService $profileService
+    ) {
+    }
+
     public function index()
     {
         if (!Auth::check()) {
@@ -30,39 +34,20 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        $user = Auth::user();
-
         try {
-            if ($request->hasFile('image')) {
-                $imageService = new ImageService();
+            $result = $this->profileService->updateProfile(
+                Auth::id(),
+                $request->validated(),
+                $request->file('image')
+            );
 
-                if (!$imageService->validateImage($request->file('image'))) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Tệp hình ảnh không hợp lệ. Vui lòng kiểm tra kích thước (tối đa 2MB) và định dạng (jpg, png, gif, webp).'
-                    ], 422);
-                }
-
-                $user->image = $imageService->uploadAvatar($request->file('image'), $user->image);
-            }
-
-            $user->fullname = $request->fullname;
-            $user->phone = $request->phone;
-            $user->address = $request->address;
-            $user->birthday = $request->birthday;
-            $user->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật thông tin thành công!',
-                'image_url' => $user->image_url
-            ]);
+            return response()->json($result);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra. Vui lòng thử lại!'
-            ], 500);
+                'message' => $e->getMessage()
+            ], 422);
         }
     }
 
@@ -85,37 +70,30 @@ class ProfileController extends Controller
                 'new_password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự',
                 'new_password.confirmed' => 'Xác nhận mật khẩu không khớp',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        }
 
-        $user = Auth::user();
-
-        if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Mật khẩu hiện tại không đúng'
-            ], 400);
-        }
-
-        try {
-            $user->password = Hash::make($request->new_password);
-            $user->save();
+            $this->profileService->changePassword(
+                Auth::id(),
+                $request->current_password,
+                $request->new_password
+            );
 
             return response()->json([
                 'success' => true,
                 'message' => 'Đổi mật khẩu thành công!'
             ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra. Vui lòng thử lại!'
-            ], 500);
+                'message' => $e->getMessage()
+            ], 400);
         }
     }
 }

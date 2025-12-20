@@ -5,144 +5,89 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddToCartRequest;
 use App\Http\Requests\UpdateCartRequest;
-use App\Models\Cart;
-use App\Models\Product;
-use App\Repository\impl\CartRepository;
+use App\Services\User\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
-    protected $cartRepository;
-
-    public function __construct(CartRepository $cartRepository)
-    {
-        $this->cartRepository = $cartRepository;
-    }
+    public function __construct(
+        private CartService $cartService
+    ) {}
 
     public function index()
     {
         if (!Auth::check())
             return redirect()->route('login');
 
-        if (Auth::check()) {
-            $cartItems = $this->cartRepository->findByUser(Auth::id());
-        } else {
-            $cartItems = collect(Session::get('cart', []));
-        }
+        $cartItems = $this->cartService->getCartItems(Auth::id());
 
         return view('user.cart', compact('cartItems'));
     }
 
     public function add(AddToCartRequest $request)
     {
-        $product = Product::select('id', 'name', 'slug', 'price', 'status')
-            ->where('status', true)
-            ->findOrFail($request->product_id);
-
-        $quantity = $request->quantity ?? 1;
-
-        if (Auth::check()) {
-            try {
-                $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
-
-                if ($cartItem) {
-                    if ($cartItem->trashed()) {
-                        $cartItem->restore();
-                        $this->cartRepository->updateQuantity($cartItem->id, $quantity);
-                    } else {
-                        $newQuantity = min($cartItem->quantity + $quantity, 999);
-                        $this->cartRepository->updateQuantity($cartItem->id, $newQuantity);
-                    }
-                } else {
-                    $this->cartRepository->create([
-                        'user_id' => Auth::id(),
-                        'product_id' => $product->id,
-                        'quantity' => $quantity,
-                        'price' => $product->price,
-                    ]);
-                }
-
-                $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
-            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
-                $cartItem = $this->cartRepository->findByUserAndProduct(Auth::id(), $product->id);
-                if ($cartItem) {
-                    if ($cartItem->trashed()) {
-                        $cartItem->restore();
-                        $this->cartRepository->updateQuantity($cartItem->id, $quantity);
-                    } else {
-                        $newQuantity = min($cartItem->quantity + $quantity, 999);
-                        $this->cartRepository->updateQuantity($cartItem->id, $newQuantity);
-                    }
-                }
-                $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
-            }
-        } else {
-            $cart = Session::get('cart', []);
-
-            if (isset($cart[$product->id])) {
-                $cart[$product->id]['quantity'] = min($cart[$product->id]['quantity'] + $quantity, 999);
-            } else {
-                $cart[$product->id] = [
-                    'product_id' => $product->id,
-                    'name' => $product->name,
-                    'slug' => $product->slug,
-                    'price' => $product->price,
-                    'quantity' => $quantity,
-                ];
-            }
-
-            Session::put('cart', $cart);
-            $cartCount = count($cart);
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login to add items to cart'
+            ], 401);
         }
 
-        Session::put('cart_count', $cartCount);
+        try {
+            $result = $this->cartService->addToCart(
+                Auth::id(),
+                $request->product_id,
+                $request->quantity ?? 1
+            );
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã thêm sản phẩm vào giỏ hàng!',
-            'cart_count' => $cartCount
-        ]);
+            Session::put('cart_count', $result['cart_count']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã thêm sản phẩm vào giỏ hàng!',
+                'cart_count' => $result['cart_count']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add product to cart: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function update(UpdateCartRequest $request)
     {
-        if (Auth::check()) {
-            $cartItem = $this->cartRepository->find($request->cart_id);
-
-            if (!$cartItem || $cartItem->user_id !== Auth::id()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
-                ], 404);
-            }
-
-            $this->cartRepository->updateQuantity($request->cart_id, $request->quantity);
-            $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
-        } else {
-            $cart = Session::get('cart', []);
-
-            if (!isset($cart[$request->cart_id])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
-                ], 404);
-            }
-
-            $cart[$request->cart_id]['quantity'] = $request->quantity;
-            Session::put('cart', $cart);
-
-            $total = collect($cart)->sum(function ($item) {
-                return $item['quantity'] * $item['price'];
-            });
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login'
+            ], 401);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã cập nhật số lượng!',
-            'total' => number_format($total)
-        ]);
+        try {
+            $this->cartService->updateQuantity(
+                Auth::id(),
+                $request->cart_id,
+                $request->quantity
+            );
+
+            $total = $this->cartService->calculateTotal(Auth::id());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã cập nhật số lượng!',
+                'total' => number_format($total)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        }
     }
 
     public function remove(Request $request)
@@ -151,56 +96,43 @@ class CartController extends Controller
             'cart_id' => 'required|integer|min:1'
         ]);
 
-        if (Auth::check()) {
-            $cartItem = $this->cartRepository->find($request->cart_id);
-
-            if (!$cartItem || $cartItem->user_id !== Auth::id()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
-                ], 404);
-            }
-
-            $this->cartRepository->delete($request->cart_id);
-            $cartCount = $this->cartRepository->findByUser(Auth::id())->count();
-            $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
-        } else {
-            $cart = Session::get('cart', []);
-
-            if (!isset($cart[$request->cart_id])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm trong giỏ hàng!'
-                ], 404);
-            }
-
-            unset($cart[$request->cart_id]);
-            Session::put('cart', $cart);
-
-            $cartCount = count($cart);
-            $total = collect($cart)->sum(function ($item) {
-                return $item['quantity'] * $item['price'];
-            });
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login'
+            ], 401);
         }
 
-        Session::put('cart_count', $cartCount);
+        try {
+            $this->cartService->removeItem(Auth::id(), $request->cart_id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã xóa sản phẩm khỏi giỏ hàng!',
-            'cart_count' => $cartCount,
-            'total' => number_format($total)
-        ]);
+            $cartCount = $this->cartService->getCartCount(Auth::id());
+            $total = $this->cartService->calculateTotal(Auth::id());
+
+            Session::put('cart_count', $cartCount);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa sản phẩm khỏi giỏ hàng!',
+                'cart_count' => $cartCount,
+                'total' => number_format($total)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to remove item'
+            ], 404);
+        }
     }
 
     public function clear()
     {
-        if (Auth::check()) {
-            $this->cartRepository->clearUserCart(Auth::id());
-        } else {
-            Session::forget('cart');
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
 
+        $this->cartService->clearCart(Auth::id());
         Session::put('cart_count', 0);
 
         return redirect()->route('cart.index')->with('success', 'Đã xóa tất cả sản phẩm trong giỏ hàng!');

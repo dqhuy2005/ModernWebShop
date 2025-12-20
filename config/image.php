@@ -121,5 +121,5 @@ return [
     | Allowed image file extensions
     |
     */
-    'allowed_extensions' => ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    'allowed_extensions' => ['jpg', 'jpeg', 'png'],
 ];
