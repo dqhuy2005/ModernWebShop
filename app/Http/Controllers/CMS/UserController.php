@@ -2,87 +2,47 @@
 
 namespace App\Http\Controllers\CMS;
 
+use App\DTOs\UserData;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\Role;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Services\CMS\UserService;
 use App\Services\impl\ExcelService;
-use App\Services\impl\ImageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends BaseController
 {
+    public function __construct(
+        private UserService $userService,
+        private UserRepositoryInterface $userRepository
+    ) {
+    }
+
     public function index(Request $request)
     {
         try {
-            $query = User::select('id', 'fullname', 'email', 'phone', 'image', 'status', 'created_at', 'updated_at', 'deleted_at')
-                ->withTrashed()
-                ->with('role:id,name,slug')
-                ->whereDoesntHave('role', function ($q) {
-                    $q->where('slug', Role::ADMIN);
-                });
-
-            $this->applyUserFilters($query, $request);
-
-            if ($request->filled('status')) {
-                switch ($request->status) {
-                    case 'active':
-                        $query->where('status', true)->whereNull('deleted_at');
-                        break;
-                    case 'inactive':
-                        $query->where('status', false)->whereNull('deleted_at');
-                        break;
-                    case 'deleted':
-                        $query->onlyTrashed();
-                        break;
-                }
-            }
-
-            $this->applySorting(
-                $query,
-                $request,
-                'id',
-                'desc',
-                ['id', 'fullname', 'email', 'phone', 'created_at', 'updated_at']
-            );
+            $filters = [
+                'search' => $request->input('search'),
+                'role_id' => $request->input('role_id'),
+                'status' => $request->input('status'),
+                'sort_by' => $request->input('sort_by', 'id'),
+                'sort_order' => $request->input('sort_order', 'desc'),
+            ];
 
             $perPage = $request->get('per_page', 15);
             $perPage = in_array($perPage, [15, 25, 50, 100]) ? $perPage : 15;
 
-            $users = $query->paginate($perPage)->withQueryString();
+            $users = $this->userRepository->getNonAdminUsers($filters, $perPage);
 
             $roles = Role::select('id', 'name', 'slug')->get();
 
-            return view('admin.users.index', compact(
-                'users',
-                'roles'
-            ));
+            return view('admin.users.index', compact('users', 'roles'));
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load users: ' . $e->getMessage());
         }
-    }
-
-    protected function applyUserFilters($query, Request $request)
-    {
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('fullname', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('role_id')) {
-            $query->where('role_id', $request->role_id);
-        }
-
-        return $query;
     }
 
     public function create()
@@ -98,32 +58,9 @@ class UserController extends BaseController
     public function store(StoreUserRequest $request)
     {
         try {
-            $data = $request->except(['image', 'password', 'password_confirmation', 'action']);
-
-            $data['password'] = Hash::make($request->password);
-
-            $data['status'] = $request->has('status') ? 1 : 0;
-
-            if (!isset($data['role_id'])) {
-                $userRole = Role::where('slug', 'user')->first();
-                if ($userRole) {
-                    $data['role_id'] = $userRole->id;
-                }
-            } else {
-                $selectedRole = Role::find($data['role_id']);
-                if ($selectedRole && strtolower($selectedRole->name) === 'admin') {
-                    $userRole = Role::where('slug', 'user')->first();
-                    if ($userRole) {
-                        $data['role_id'] = $userRole->id;
-                    }
-                }
-            }
-
-            if ($request->filled('image')) {
-                $data['image'] = $request->input('image');
-            }
-
-            $user = User::create($data);
+            $user = $this->userService->createUser(
+                UserData::fromRequest($request)
+            );
 
             if ($request->input('action') === 'save_and_continue') {
                 return redirect()
@@ -134,6 +71,7 @@ class UserController extends BaseController
             return redirect()
                 ->route('admin.users.show', $user->id)
                 ->with('success', 'User created successfully!');
+
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -144,22 +82,11 @@ class UserController extends BaseController
     public function show($id)
     {
         try {
-            $user = User::select('id', 'fullname', 'email', 'phone', 'birthday', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
-                ->withTrashed()
-                ->with([
-                    'role:id,name,slug',
-                    'carts' => function ($q) {
-                        $q->select('id', 'user_id', 'product_id', 'quantity', 'created_at')
-                            ->with([
-                                'product:id,name,slug,price',
-                                'product.images:id,product_id,path,sort_order'
-                            ]);
-                    },
-                    'orders' => function ($q) {
-                        $q->select('id', 'user_id', 'customer_name', 'total_amount', 'total_items', 'status', 'created_at');
-                    }
-                ])
-                ->findOrFail($id);
+            $user = $this->userRepository->find($id);
+
+            if (!$user) {
+                return back()->with('error', 'User not found');
+            }
 
             return view('admin.users.show', compact('user'));
         } catch (\Exception $e) {
@@ -170,9 +97,12 @@ class UserController extends BaseController
     public function edit($id)
     {
         try {
-            $user = User::select('id', 'fullname', 'email', 'phone', 'birthday', 'image', 'address', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
-                ->withTrashed()
-                ->findOrFail($id);
+            $user = $this->userRepository->findWithTrashed($id);
+
+            if (!$user) {
+                return back()->with('error', 'User not found');
+            }
+
             $roles = Role::select('id', 'name', 'slug')->get();
 
             return view('admin.users.edit', compact('user', 'roles'));
@@ -184,39 +114,21 @@ class UserController extends BaseController
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-            $user = User::select('id', 'fullname', 'email', 'phone', 'birthday', 'image', 'address', 'password', 'status', 'role_id', 'created_at', 'updated_at', 'deleted_at')
-                ->withTrashed()
-                ->findOrFail($id);
-            $data = $request->except(['image', 'password', 'password_confirmation', '_method', '_token']);
+            $user = $this->userRepository->findWithTrashed($id);
 
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
+            if (!$user) {
+                return back()->with('error', 'User not found');
             }
 
-            $data['status'] = $request->has('status') ? 1 : 0;
-
-            if (isset($data['role_id'])) {
-                $currentRole = Role::find($user->role_id);
-                $newRole = Role::find($data['role_id']);
-
-                if ($currentRole && strtolower($currentRole->name) === 'admin') {
-                } elseif ($newRole && strtolower($newRole->name) === 'admin') {
-                    $userRole = Role::where('slug', 'user')->first();
-                    if ($userRole) {
-                        $data['role_id'] = $userRole->id;
-                    }
-                }
-            }
-
-            if ($request->filled('image')) {
-                $data['image'] = $request->input('image');
-            }
-
-            $user->update($data);
+            $this->userService->updateUser(
+                $user,
+                UserData::fromRequest($request)
+            );
 
             return redirect()
                 ->route('admin.users.index')
                 ->with('success', 'User updated successfully!');
+
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -227,13 +139,13 @@ class UserController extends BaseController
     public function destroy($id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = $this->userRepository->find($id);
 
-            if ($user->id === Auth::id()) {
-                return back()->with('error', 'You cannot delete yourself!');
+            if (!$user) {
+                return back()->with('error', 'User not found');
             }
 
-            $user->delete();
+            $this->userService->deleteUser($user);
 
             if (request()->ajax()) {
                 return response()->json([
@@ -245,27 +157,43 @@ class UserController extends BaseController
             return redirect()
                 ->route('admin.users.index')
                 ->with('success', 'User deleted successfully!');
+
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to delete user: ' . $e->getMessage());
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 403);
+            }
+
+            return back()->with('error', $e->getMessage());
         }
     }
 
     public function restore($id)
     {
         try {
-            $user = User::withTrashed()->findOrFail($id);
-            $user->restore();
+            $this->userService->restoreUser($id);
+
+            $user = $this->userRepository->find($id);
 
             if (request()->ajax()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'User restored successfully!',
-                    'status' => $user->status
+                    'status' => $user?->status ?? true
                 ]);
             }
 
             return back()->with('success', 'User restored successfully!');
         } catch (\Exception $e) {
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+
             return back()->with('error', 'Failed to restore user: ' . $e->getMessage());
         }
     }
@@ -273,18 +201,7 @@ class UserController extends BaseController
     public function forceDelete($id)
     {
         try {
-            $user = User::withTrashed()->findOrFail($id);
-
-            if ($user->id === Auth::id()) {
-                return back()->with('error', 'You cannot delete yourself!');
-            }
-
-            if ($user->image) {
-                $imageService = new ImageService();
-                $imageService->deleteImage($user->image);
-            }
-
-            $user->forceDelete();
+            $this->userService->forceDeleteUser($id);
 
             if (request()->ajax()) {
                 return response()->json([
@@ -296,29 +213,29 @@ class UserController extends BaseController
             return redirect()
                 ->route('admin.users.index')
                 ->with('success', 'User permanently deleted!');
+
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to permanently delete user: ' . $e->getMessage());
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 403);
+            }
+
+            return back()->with('error', $e->getMessage());
         }
     }
 
     public function toggleStatus($id)
     {
         try {
-            $user = User::withTrashed()->findOrFail($id);
+            $user = $this->userRepository->findWithTrashed($id);
 
-            if ($user->id === Auth::id()) {
-                if (request()->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'You cannot change your own status!',
-                    ], 403);
-                }
-
-                return back()->with('error', 'You cannot change your own status!');
+            if (!$user) {
+                throw new \Exception('User not found');
             }
 
-            $user->status = !$user->status;
-            $user->save();
+            $this->userService->toggleUserStatus($user);
 
             $status = $user->status ? 'active' : 'inactive';
 
@@ -335,11 +252,11 @@ class UserController extends BaseController
             if (request()->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to toggle status: ' . $e->getMessage(),
-                ], 500);
+                    'message' => $e->getMessage(),
+                ], 403);
             }
 
-            return back()->with('error', 'Failed to toggle status: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 

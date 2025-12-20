@@ -2,44 +2,38 @@
 
 namespace App\Http\Controllers\CMS;
 
+use App\DTOs\ProductData;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
-use App\Services\impl\ProductService;
+use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Services\CMS\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends BaseController
 {
-    protected ProductService $productService;
-
-    public function __construct(ProductService $productService)
-    {
-        $this->productService = $productService;
+    public function __construct(
+        private ProductService $productService,
+        private ProductRepositoryInterface $productRepository
+    ) {
     }
 
 
     public function index(Request $request)
     {
         try {
-            $query = Product::select('products.id', 'products.name', 'products.slug', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at');
-
-            $this->applyProductFilters($query, $request);
-
-            $this->applySorting(
-                $query,
-                $request,
-                'id',
-                'desc',
-                ['id', 'name', 'price', 'created_at', 'updated_at', 'category_id']
-            );
-
-            if ($request->get('sort_by') === 'category_id') {
-                $query->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                    ->select('products.id', 'products.name', 'products.slug', 'products.price', 'products.currency', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.created_at', 'products.updated_at', 'categories.name as category_name')
-                    ->orderBy('categories.name', $request->get('sort_order', 'desc'));
-            }
+            $filters = [
+                'search' => $request->input('search'),
+                'category_id' => $request->input('category_id'),
+                'status' => $request->input('status'),
+                'is_hot' => $request->input('is_hot'),
+                'price_min' => $request->input('price_min'),
+                'price_max' => $request->input('price_max'),
+                'sort_by' => $request->input('sort_by', 'id'),
+                'sort_order' => $request->input('sort_order', 'desc'),
+            ];
 
             $perPage = $request->get('per_page', 15);
             $allowedPerPage = [15, 25, 50, 100];
@@ -47,7 +41,7 @@ class ProductController extends BaseController
                 $perPage = 15;
             }
 
-            $products = $query->with('category:id,name,slug')->paginate($perPage)->withQueryString();
+            $products = $this->productRepository->paginate($filters, $perPage);
 
             $categories = Category::select('id', 'name')->orderBy('name')->get();
 
@@ -55,39 +49,6 @@ class ProductController extends BaseController
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load products: ' . $e->getMessage());
         }
-    }
-
-    protected function applyProductFilters($query, Request $request)
-    {
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('products.name', 'like', "%{$search}%")
-                    ->orWhere('products.description', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('products.category_id', $request->category_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('products.status', (bool) $request->status);
-        }
-
-        if ($request->filled('is_hot')) {
-            $query->where('products.is_hot', (bool) $request->is_hot);
-        }
-
-        if ($request->filled('price_min')) {
-            $query->where('products.price', '>=', $request->price_min);
-        }
-
-        if ($request->filled('price_max')) {
-            $query->where('products.price', '<=', $request->price_max);
-        }
-
-        return $query;
     }
 
     public function create()
@@ -106,12 +67,7 @@ class ProductController extends BaseController
     public function store(StoreProductRequest $request)
     {
         try {
-            $data = $request->except(['images', 'specifications', 'action']);
-
-            $data['status'] = $request->has('status') ? 1 : 0;
-            $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
-            $data['currency'] = $request->input('currency', 'VND');
-            $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
+            $productData = ProductData::fromRequest($request);
 
             $imagePaths = [];
             if ($request->filled('images')) {
@@ -119,8 +75,7 @@ class ProductController extends BaseController
             }
 
             $product = $this->productService->createProduct(
-                $data,
-                null,
+                $productData,
                 $imagePaths
             );
 
@@ -143,7 +98,11 @@ class ProductController extends BaseController
     public function show($id)
     {
         try {
-            $product = Product::with(['category', 'images'])->findOrFail($id);
+            $product = $this->productRepository->find($id);
+
+            if (!$product) {
+                return back()->with('error', 'Product not found');
+            }
 
             return view('admin.products.show', compact('product'));
         } catch (\Exception $e) {
@@ -154,7 +113,11 @@ class ProductController extends BaseController
     public function edit($id)
     {
         try {
-            $product = Product::with('images')->findOrFail($id);
+            $product = $this->productRepository->findWithTrashed($id);
+
+            if (!$product) {
+                return back()->with('error', 'Product not found');
+            }
 
             $categories = Category::select('id', 'name')
                 ->orderBy('name')
@@ -169,23 +132,22 @@ class ProductController extends BaseController
     public function update(UpdateProductRequest $request, $id)
     {
         try {
-            $product = Product::findOrFail($id);
-            $data = $request->except(['images', 'specifications', '_method', '_token']);
+            $product = $this->productRepository->find($id);
 
-            $data['status'] = $request->has('status') ? 1 : 0;
-            $data['is_hot'] = $request->has('is_hot') ? 1 : 0;
-            $data['currency'] = $request->input('currency', 'VND');
-            $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
+            if (!$product) {
+                return back()->with('error', 'Product not found');
+            }
+
+            $productData = ProductData::fromRequest($request);
 
             $imagePaths = [];
             if ($request->filled('images')) {
                 $imagePaths = json_decode($request->input('images'), true) ?? [];
             }
 
-            $product = $this->productService->updateProduct(
+            $this->productService->updateProduct(
                 $product,
-                $data,
-                null,
+                $productData,
                 $imagePaths
             );
 
@@ -202,7 +164,12 @@ class ProductController extends BaseController
     public function destroy($id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = $this->productRepository->find($id);
+
+            if (!$product) {
+                return back()->with('error', 'Product not found');
+            }
+
             $this->productService->deleteProduct($product);
 
             return redirect()
@@ -216,9 +183,13 @@ class ProductController extends BaseController
     public function toggleHot($id)
     {
         try {
-            $product = Product::findOrFail($id);
-            $product->is_hot = !$product->is_hot;
-            $product->save();
+            $product = $this->productRepository->find($id);
+
+            if (!$product) {
+                throw new \Exception('Product not found');
+            }
+
+            $this->productService->toggleHotStatus($product);
 
             $status = $product->is_hot ? 'hot' : 'normal';
 
@@ -246,9 +217,13 @@ class ProductController extends BaseController
     public function toggleStatus($id)
     {
         try {
-            $product = Product::findOrFail($id);
-            $product->status = !$product->status;
-            $product->save();
+            $product = $this->productRepository->find($id);
+
+            if (!$product) {
+                throw new \Exception('Product not found');
+            }
+
+            $this->productService->toggleStatus($product);
 
             $status = $product->status ? 'active' : 'inactive';
 
@@ -276,8 +251,7 @@ class ProductController extends BaseController
     public function restore($id)
     {
         try {
-            $product = Product::withTrashed()->findOrFail($id);
-            $product->restore();
+            $this->productService->restoreProduct($id);
 
             return back()->with('success', 'Product restored successfully!');
         } catch (\Exception $e) {
@@ -288,9 +262,7 @@ class ProductController extends BaseController
     public function forceDelete($id)
     {
         try {
-            $product = Product::withTrashed()->findOrFail($id);
-
-            $product->forceDelete();
+            $this->productService->forceDeleteProduct($id);
 
             return redirect()
                 ->route('admin.products.index')
@@ -303,7 +275,12 @@ class ProductController extends BaseController
     public function deleteImage($productId, $imageId)
     {
         try {
-            $product = Product::findOrFail($productId);
+            $product = $this->productRepository->find($productId);
+
+            if (!$product) {
+                throw new \Exception('Product not found');
+            }
+
             $this->productService->deleteProductImage($product, $imageId);
 
             if (request()->ajax()) {
