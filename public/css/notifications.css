@@ -8,15 +8,14 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0);
+    transform: translate(-50%, -50%);
     z-index: 9999;
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     pointer-events: none;
 }
 
 .custom-notification.show {
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%);
     opacity: 1;
 }
 
@@ -40,7 +39,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: iconBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .custom-notification .notification-icon i {
@@ -87,7 +85,6 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .confirm-modal.show {
@@ -106,7 +103,6 @@
     gap: 20px;
     min-width: 380px;
     max-width: 450px;
-    animation: modalSlideIn 0.3s ease;
 }
 
 .confirm-modal .modal-icon {
@@ -117,7 +113,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: iconPulse 0.4s ease;
 }
 
 .confirm-modal .modal-icon i {
@@ -149,7 +144,6 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .confirm-modal .btn-cancel {
@@ -169,46 +163,7 @@
 
 .confirm-modal .btn-confirm:hover {
     background: #d73211;
-    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(238, 77, 45, 0.3);
 }
 
-.confirm-modal .btn-confirm:active {
-    transform: translateY(0);
-}
-
-/* Animations */
-@keyframes iconBounce {
-    0% {
-        transform: scale(0);
-    }
-    50% {
-        transform: scale(1.2);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes iconPulse {
-    0% {
-        transform: scale(0);
-    }
-    50% {
-        transform: scale(1.15);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes modalSlideIn {
-    0% {
-        transform: scale(0.9) translateY(-20px);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-}
+/* Animations - Removed */

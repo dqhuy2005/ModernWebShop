@@ -23,28 +23,22 @@ class CartController extends Controller
 
     public function index()
     {
-        // User is not login -> redirect to login page
         if (!Auth::check())
             return redirect()->route('login');
 
         if (Auth::check()) {
             $cartItems = $this->cartRepository->findByUser(Auth::id());
-            $total = $this->cartRepository->calculateUserCartTotal(Auth::id());
         } else {
             $cartItems = collect(Session::get('cart', []));
-            $total = $cartItems->sum(function ($item) {
-                return $item['quantity'] * $item['price'];
-            });
         }
 
-        return view('user.cart', compact('cartItems', 'total'));
+        return view('user.cart', compact('cartItems'));
     }
 
     public function add(AddToCartRequest $request)
     {
-        // Get product and ensure it's active
         $product = Product::select('id', 'name', 'slug', 'price', 'status')
-            ->where('status', true) // Only allow active products
+            ->where('status', true)
             ->findOrFail($request->product_id);
 
         $quantity = $request->quantity ?? 1;

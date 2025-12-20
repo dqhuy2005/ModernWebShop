@@ -35,6 +35,7 @@ class User extends Authenticatable implements JWTSubject
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => 'boolean',
+            'birthday' => 'date',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -94,10 +95,33 @@ class User extends Authenticatable implements JWTSubject
         }
 
         if ($this->image) {
-            return $this->image;
+            return asset($this->image);
         }
 
         return asset('images/default-avatar.png');
+    }
+
+    public function getBirthdayDisplayAttribute(): ?string
+    {
+        if ($this->birthday) {
+            return \Carbon\Carbon::parse($this->birthday)->format('d/m/Y');
+        }
+        return null;
+    }
+
+    public function setBirthdayAttribute($value)
+    {
+        if ($value) {
+            // If value is in dd/MM/yyyy or d/m/Y format, convert to Y-m-d
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $value)) {
+                $this->attributes['birthday'] = \Carbon\Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+            } else {
+                // Already in Y-m-d format or other valid format
+                $this->attributes['birthday'] = $value;
+            }
+        } else {
+            $this->attributes['birthday'] = null;
+        }
     }
 
     public function getJWTIdentifier()

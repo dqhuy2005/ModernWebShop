@@ -338,7 +338,6 @@
             })
             .then(editor => {
                 descriptionEditor = editor;
-                console.log('CKEditor initialized successfully!');
 
                 editor.model.document.on('change:data', () => {
                     document.querySelector('#description').value = editor.getData();
@@ -508,9 +507,10 @@
             const productId = $(this).data('product-id');
             const $imageItem = $(`#image-${imageId}`);
 
-            ConfirmModal.delete('Are you sure you want to delete this image? This action cannot be undone.', function() {
-                deleteImageAjax(imageId, productId, $imageItem);
-            });
+            ConfirmModal.delete('Are you sure you want to delete this image? This action cannot be undone.',
+                function() {
+                    deleteImageAjax(imageId, productId, $imageItem);
+                });
         });
 
         function deleteImageAjax(imageId, productId, $imageItem) {
@@ -525,10 +525,7 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        toastr.success(response.message || 'Image deleted successfully!');
-                        $imageItem.fadeOut(300, function() {
-                            $(this).remove();
-                        });
+                        $imageItem.remove();
                     } else {
                         toastr.error(response.message || 'Failed to delete image');
                         $imageItem.css('opacity', '1');
@@ -545,20 +542,17 @@
         $(document).ready(function() {
             let selectedImages = [];
 
-            // Attach click handler manually to override SetUrl before opening popup
             $('.lfm-btn-multiple').on('click', function(e) {
                 e.preventDefault();
 
                 var target_input = $('#' + $(this).data('input'));
                 window.open('/admin/filemanager?type=image', 'FileManager', 'width=900,height=600');
 
-                // Define custom SetUrl for multiple images
                 window.SetUrl = function(items) {
                     $('#images-preview').empty();
                     selectedImages = [];
 
                     items.forEach(function(item) {
-                        // Extract relative path from full URL
                         var relativePath = item.url.replace(/^.*\/storage\//, '');
                         selectedImages.push(relativePath);
 
@@ -575,7 +569,6 @@
                         $('#images-preview').append($imgContainer);
                     });
 
-                    // Store as JSON array
                     target_input.val(JSON.stringify(selectedImages));
                 };
 

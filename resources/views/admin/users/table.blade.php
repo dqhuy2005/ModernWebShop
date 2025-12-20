@@ -15,7 +15,11 @@
                             onclick="sortTable('fullname')">
                             Full Name
                         </th>
-                        <th width="15%">Email</th>
+                        <th width="15%"
+                            class="sortable {{ request('sort_by') === 'email' ? request('sort_order', 'desc') : '' }}"
+                            onclick="sortTable('email')">
+                            Email
+                        </th>
                         <th width="12%">Phone</th>
                         <th width="8%" class="text-center">Status</th>
                         <th width="12%" class="text-center">Actions</th>
@@ -30,7 +34,7 @@
 
                             <td>
                                 @if ($user->image)
-                                    <img src="{{ $user->image }}" alt="{{ $user->fullname }}" class="user-avatar">
+                                    <img src="{{ $user->image_url }}" alt="{{ $user->fullname }}" class="user-avatar">
                                 @else
                                     <div class="user-avatar bg-light d-flex align-items-center justify-content-center">
                                         <i class="fas fa-user text-muted"></i>
@@ -169,6 +173,34 @@
             top: 0;
             background-color: #f8f9fa;
             z-index: 10;
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .sortable:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .sortable i {
+            font-size: 0.7rem;
+            margin-left: 4px;
+            opacity: 0.5;
+        }
+
+        .sortable.asc,
+        .sortable.desc {
+            color: #0d6efd;
+        }
+
+        .sortable.asc i,
+        .sortable.desc i {
+            opacity: 1;
+            color: #0d6efd;
         }
 
         #usersTable tbody tr {

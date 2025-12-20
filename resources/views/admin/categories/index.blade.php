@@ -62,8 +62,10 @@
 
 @push('scripts')
     <script src="{{ asset('js/ajax-pagination.js') }}"></script>
+    <script src="{{ asset('js/table-sort.js') }}"></script>
     <script>
         let categoryPagination;
+        let categoryTableSort;
 
         $(document).ready(function() {
             categoryPagination = new AjaxPagination({
@@ -83,6 +85,22 @@
                     }
                 }
             });
+
+            // Initialize table sort
+            categoryTableSort = new TableSort({
+                containerId: 'categories-table-container',
+                sortBy: '{{ request("sort_by") }}',
+                sortOrder: '{{ request("sort_order", "desc") }}',
+                paginationInstance: categoryPagination,
+                onAfterSort: function(column, order) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success('Sorted by ' + column + ' (' + order + ')');
+                    }
+                }
+            });
+
+            // Set global instance for sortTable function
+            window.tableSort = categoryTableSort;
         });
 
         function changePerPage(value) {
@@ -127,7 +145,7 @@
             ConfirmModal.show('Are you sure you want to restore this category?', function() {
                 restoreCategoryAjax(categoryId);
             }, {
-                confirmText: 'Yes, Restore',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-undo',
                 iconColor: '#28a745'
@@ -166,7 +184,7 @@
                     forceDeleteCategoryAjax(categoryId);
                 },
                 {
-                    confirmText: 'Yes, Delete Permanently',
+                    confirmText: 'Confirm',
                     cancelText: 'Cancel',
                     icon: 'fas fa-exclamation-triangle',
                     iconColor: '#dc3545'

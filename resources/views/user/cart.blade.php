@@ -99,8 +99,8 @@
                                                     </td>
                                                     <td class="text-center align-middle">
                                                         <button class="btn btn-link text-danger p-0"
-                                                            onclick="removeFromCart({{ $itemId }})"
-                                                            title="Xóa" style="font-size: 14px; text-decoration: none;">
+                                                            onclick="removeFromCart({{ $itemId }})" title="Xóa"
+                                                            style="font-size: 14px; text-decoration: none;">
                                                             Xóa
                                                         </button>
                                                     </td>

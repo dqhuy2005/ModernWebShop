@@ -31,8 +31,10 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/table-sort.js') }}"></script>
     <script>
         let productPagination;
+        let productTableSort;
 
         $(document).ready(function() {
             productPagination = new AjaxPagination({
@@ -58,6 +60,23 @@
                     }
                 }
             });
+
+            productTableSort = new TableSort({
+                containerId: 'products-table-container',
+                sortBy: '{{ request('sort_by') }}',
+                sortOrder: '{{ request('sort_order', 'desc') }}',
+                paginationInstance: productPagination,
+                onAfterSort: function(column, order) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success('Sorted by ' + column + ' (' + order + ')');
+                    }
+                    if (typeof initLazyLoading === 'function') {
+                        initLazyLoading();
+                    }
+                }
+            });
+
+            window.tableSort = productTableSort;
         });
 
         function changePerPage(value) {
@@ -72,7 +91,7 @@
                 const row = $('#product-' + productId);
                 toggleStatusAjax(productId, row);
             }, {
-                confirmText: 'Yes, Change Status',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-toggle-on',
                 iconColor: '#17a2b8'
@@ -81,40 +100,40 @@
 
         function toggleStatusAjax(productId, row) {
             $.ajax({
-                    url: '/admin/products/' + productId + '/toggle-status',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.success(response.message);
-                            } else {
-                                alert(response.message);
-                            }
-
-                            if (response.status === 1 || response.status === true) {
-                                row.find("input[type='checkbox']").prop('checked', true);
-                            } else {
-                                row.find("input[type='checkbox']").prop('checked', false);
-                            }
-                        } else {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.error(response.message);
-                            } else {
-                                alert(response.message);
-                            }
-                        }
-                    },
-                    error: function(xhr) {
+                url: '/admin/products/' + productId + '/toggle-status',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
                         if (typeof toastr !== 'undefined') {
-                            toastr.error('Failed to update status!');
+                            toastr.success(response.message);
                         } else {
-                            alert('Failed to update status!');
+                            alert(response.message);
+                        }
+
+                        if (response.status === 1 || response.status === true) {
+                            row.find("input[type='checkbox']").prop('checked', true);
+                        } else {
+                            row.find("input[type='checkbox']").prop('checked', false);
+                        }
+                    } else {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message);
+                        } else {
+                            alert(response.message);
                         }
                     }
-                });
+                },
+                error: function(xhr) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Failed to update status!');
+                    } else {
+                        alert('Failed to update status!');
+                    }
+                }
+            });
         }
 
         function toggleHot(productId, button) {

@@ -35,8 +35,10 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/table-sort.js') }}"></script>
     <script>
         let userPagination;
+        let userTableSort;
 
         $(document).ready(function() {
             userPagination = new AjaxPagination({
@@ -56,6 +58,15 @@
                     }
                 }
             });
+
+            userTableSort = new TableSort({
+                containerId: 'users-table-container',
+                sortBy: '{{ request('sort_by') }}',
+                sortOrder: '{{ request('sort_order', 'desc') }}',
+                paginationInstance: userPagination,
+            });
+
+            window.tableSort = userTableSort;
         });
 
         function changePerPage(value) {
@@ -69,7 +80,7 @@
             ConfirmModal.show('Are you sure you want to change the status of this user?', function() {
                 toggleStatusAjax(userId);
             }, {
-                confirmText: 'Yes, Change Status',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-toggle-on',
                 iconColor: '#17a2b8'
@@ -160,7 +171,7 @@
             ConfirmModal.show('Are you sure you want to restore this user?', function() {
                 restoreUserAjax(userId);
             }, {
-                confirmText: 'Yes, Restore',
+                confirmText: 'Confirm',
                 cancelText: 'Cancel',
                 icon: 'fas fa-undo',
                 iconColor: '#28a745'
@@ -223,9 +234,8 @@
                 'Are you sure you want to PERMANENTLY delete this user?<br><small class="text-danger">This action CANNOT be undone and will delete ALL user data permanently.</small>',
                 function() {
                     forceDeleteUserAjax(userId);
-                },
-                {
-                    confirmText: 'Yes, Delete Permanently',
+                }, {
+                    confirmText: 'Confirm',
                     cancelText: 'Cancel',
                     icon: 'fas fa-exclamation-triangle',
                     iconColor: '#dc3545'

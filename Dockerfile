@@ -54,6 +54,10 @@ RUN echo '#!/bin/bash' > /docker-entrypoint.sh && \
     echo 'php artisan route:clear || true' >> /docker-entrypoint.sh && \
     echo 'php artisan view:clear || true' >> /docker-entrypoint.sh && \
     echo '' >> /docker-entrypoint.sh && \
+    echo '# Create storage link' >> /docker-entrypoint.sh && \
+    echo 'echo "🔗 Creating storage link..."' >> /docker-entrypoint.sh && \
+    echo 'php artisan storage:link --force || true' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
     echo '# Check if database is configured' >> /docker-entrypoint.sh && \
     echo 'if [ ! -z "$DB_HOST" ] && [ "$DB_HOST" != "mysql" ] && [ "$DB_HOST" != "127.0.0.1" ] && [ "$DB_HOST" != "localhost" ]; then' >> /docker-entrypoint.sh && \
     echo '  echo "⏳ Database configured ($DB_CONNECTION://$DB_HOST:$DB_PORT), waiting for connection..."' >> /docker-entrypoint.sh && \
@@ -117,9 +121,10 @@ RUN if [ -f .env.example ]; then \
     sed -i '/^DB_/d' .env && \
     composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist && \
     php artisan key:generate --force && \
-    mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache && \
+    mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache storage/app/public && \
+    php artisan storage:link --force && \
     chmod -R 775 storage bootstrap/cache && \
-    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/storage
 
 COPY nginx.conf /etc/nginx/sites-available/default
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

@@ -35,13 +35,15 @@
 
                             {{-- Product image --}}
                             <a href="{{ route('products.show', $product->slug) }}" class="text-decoration-none">
-                                <img src="{{ $product->image_url }}" class="card-img-top product-img" alt="{{ $product->name }}">
+                                <img src="{{ $product->image_url }}" class="card-img-top product-img"
+                                    alt="{{ $product->name }}">
                             </a>
 
                             {{-- Product info --}}
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title product-name">
-                                    <a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">
+                                    <a href="{{ route('products.show', $product->slug) }}"
+                                        class="text-dark text-decoration-none">
                                         {{ $product->name }}
                                     </a>
                                 </h5>
@@ -59,7 +61,7 @@
 
                                 <div class="mt-auto">
                                     <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
-                                            data-product-id="{{ $product->id }}">
+                                        data-product-id="{{ $product->id }}">
                                         <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
                                     </button>
                                 </div>
@@ -99,7 +101,7 @@
 
 @push('styles')
     {{-- Bootstrap Icons CDN (if not already included) --}}
-    @if(!isset($bootstrapIconsLoaded))
+    @if (!isset($bootstrapIconsLoaded))
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     @endif
 
@@ -146,6 +148,7 @@
         }
 
         @keyframes pulse {
+
             0%,
             100% {
                 opacity: 1;
@@ -176,7 +179,6 @@
 
 @push('scripts')
     <script>
-        // Add to cart functionality (if you have existing cart.js, this can be removed)
         document.addEventListener('DOMContentLoaded', function() {
             const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
 
@@ -185,10 +187,6 @@
                     e.preventDefault();
                     const productId = this.dataset.productId;
 
-                    // Your add to cart logic here
-                    console.log('Adding product to cart:', productId);
-
-                    // Example: Show success message
                     const originalHtml = this.innerHTML;
                     this.innerHTML = '<i class="bi bi-check-circle"></i> Đã thêm!';
                     this.disabled = true;

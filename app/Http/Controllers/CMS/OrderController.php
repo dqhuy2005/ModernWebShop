@@ -2,188 +2,79 @@
 
 namespace App\Http\Controllers\CMS;
 
-use App\Events\OrderStatusChanged;
+use App\DTOs\OrderData;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\OrderDetail;
-use App\Models\User;
+use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Product;
+use App\Repositories\Contracts\OrderRepositoryInterface;
+use App\Services\CMS\OrderService;
 use App\Services\impl\ExcelService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-
 
 class OrderController extends Controller
 {
-
+    public function __construct(
+        private OrderService $orderService,
+        private OrderRepositoryInterface $orderRepository
+    ) {
+    }
 
     public function show($id)
     {
         try {
-            $order = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
-                ->with([
-                    'user:id,fullname,email,phone',
-                    'orderDetails' => function ($q) {
-                        $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
-                            ->with([
-                                'product:id,name',
-                                'product.images:id,product_id,path,sort_order'
-                            ]);
-                    },
-                    'activities' => function ($q) {
-                        $q->with('user:id,fullname');
-                    }
-                ])->findOrFail($id);
+            $order = $this->orderRepository->find($id);
 
-            $calculatedTotal = $order->calculateTotalAmount();
-            $calculatedItems = $order->calculateTotalItems();
-
-            $warnings = [];
-
-            if ($order->total_items !== $calculatedItems) {
-                $warnings[] = [
-                    'type' => 'warning',
-                    'message' => 'Số lượng sản phẩm không khớp! Đã lưu: ' . $order->total_items .
-                        ', Tính toán: ' . $calculatedItems
-                ];
+            if (!$order) {
+                return back()->with('error', 'Order not found');
             }
 
-            if ($order->orderDetails->isEmpty()) {
-                $warnings[] = [
-                    'type' => 'info',
-                    'message' => 'Đơn hàng này không có sản phẩm nào.'
-                ];
-            }
-
-            return view('admin.orders.show', compact('order', 'warnings'));
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()
-                ->route('admin.orders.index')
-                ->with('error', 'Không tìm thấy đơn hàng #' . $id);
+            return view('admin.orders.show', compact('order'));
 
         } catch (\Exception $e) {
-            return redirect()
-                ->route('admin.orders.index')
-                ->with('error', 'Lỗi khi tải đơn hàng: ' . $e->getMessage());
+            return back()->with('error', 'Order not found: ' . $e->getMessage());
         }
     }
 
     public function index(Request $request)
     {
-        try {
-            $query = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
-                ->with(['user:id,fullname,email,phone']);
+        $filters = [
+            'status' => $request->status,
+            'search' => $request->search,
+            'date_from' => $request->date_from,
+            'date_to' => $request->date_to,
+            'price_min' => $request->price_min,
+            'price_max' => $request->price_max,
+            'sort_by' => $request->sort_by ?? 'created_at',
+            'sort_order' => $request->sort_order ?? 'desc',
+        ];
 
-            $query = $this->applyFilters($request, $query);
+        $orders = $this->orderRepository->paginate($filters, 15);
 
-            $sortBy = $request->get('sort_by', 'created_at');
-            $sortOrder = $request->get('sort_order', 'desc');
-            $query->orderBy($sortBy, $sortOrder);
-
-            $perPage = $request->get('per_page', 15);
-            $orders = $query->paginate($perPage)->withQueryString();
-
-            if ($request->ajax()) {
-                return view('admin.orders.table', compact('orders'));
-            }
-
-            return view('admin.orders.index', compact('orders'));
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error loading orders: ' . $e->getMessage());
-        }
+        return view('admin.orders.index', compact('orders'));
     }
 
     public function create()
     {
-        try {
-            $products = Product::select('id', 'name', 'price', 'category_id', 'status')
-                ->where('status', true)
-                ->with('category:id,name')
-                ->get();
+        $products = Product::select('id', 'name', 'price', 'category_id', 'status')
+            ->where('status', true)
+            ->with('category:id,name')
+            ->get();
 
-            return view('admin.orders.create', compact('products'));
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error loading create form: ' . $e->getMessage());
-        }
+        return view('admin.orders.create', compact('products'));
     }
 
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'status' => 'required|in:pending,confirmed,processing,shipping,completed,cancelled',
-            'address' => 'nullable|string|max:500',
-            'note' => 'nullable|string|max:1000',
-            'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1|max:9999',
-        ], [
-            'user_id.required' => 'Please select a customer',
-            'products.required' => 'Please add at least one product',
-            'products.*.product_id.required' => 'Product is required',
-            'products.*.quantity.required' => 'Quantity is required',
-            'products.*.quantity.min' => 'Quantity must be at least 1',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        DB::beginTransaction();
         try {
-            $totalAmount = 0;
-            $totalItems = 0;
-            $orderDetailsData = [];
-
-            foreach ($request->products as $item) {
-                $product = Product::findOrFail($item['product_id']);
-                $quantity = (int) $item['quantity'];
-                $unitPrice = $product->price ?? 0;
-                $subtotal = $unitPrice * $quantity;
-
-                $orderDetailsData[] = [
-                    'product_id' => $product->id,
-                    'product_name' => $product->name,
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'total_price' => $subtotal,
-                    'product_specifications' => $product->specifications,
-                ];
-
-                $totalAmount += $subtotal;
-                $totalItems += $quantity;
-            }
-
-            $user = User::find($request->user_id);
-
-            $order = Order::create([
-                'user_id' => $request->user_id,
-                'customer_email' => $user->email ?? null,
-                'customer_name' => $user->fullname ?? null,
-                'customer_phone' => $user->phone ?? null,
-                'total_amount' => $totalAmount,
-                'total_items' => $totalItems,
-                'status' => $request->status ?? 'pending',
-                'address' => $request->address,
-                'note' => $request->note,
-            ]);
-
-            foreach ($orderDetailsData as $detail) {
-                OrderDetail::create(array_merge($detail, ['order_id' => $order->id]));
-            }
-
-            DB::commit();
+            $orderData = OrderData::fromRequest($request);
+            $this->orderService->create($orderData);
 
             return redirect()
                 ->route('admin.orders.index')
                 ->with('success', 'Order created successfully!');
 
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()
                 ->withInput()
                 ->with('error', 'Failed to create order: ' . $e->getMessage());
@@ -193,15 +84,11 @@ class OrderController extends Controller
     public function edit($id)
     {
         try {
-            $order = Order::select('id', 'user_id', 'customer_name', 'customer_email', 'customer_phone', 'total_amount', 'total_items', 'status', 'address', 'note', 'created_at', 'updated_at')
-                ->with([
-                    'orderDetails' => function ($q) {
-                        $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
-                            ->with('product:id,name,price');
-                    },
-                    'user:id,fullname'
-                ])
-                ->findOrFail($id);
+            $order = $this->orderRepository->find($id);
+
+            if (!$order) {
+                return back()->with('error', 'Order not found');
+            }
 
             $products = Product::select('id', 'name', 'price', 'category_id', 'status')
                 ->where('status', true)
@@ -209,111 +96,23 @@ class OrderController extends Controller
                 ->get();
 
             return view('admin.orders.edit', compact('order', 'products'));
+
         } catch (\Exception $e) {
             return back()->with('error', 'Order not found: ' . $e->getMessage());
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateOrderRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'customer_email' => 'nullable|email|max:255',
-            'customer_name' => 'nullable|string|max:255',
-            'customer_phone' => 'nullable|string|max:20',
-            'status' => 'required|in:pending,confirmed,processing,shipping,shipped,completed,cancelled,refunded',
-            'address' => 'nullable|string|max:500',
-            'note' => 'nullable|string|max:1000',
-            'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1|max:9999',
-        ], [
-            'user_id.required' => 'Please select a customer',
-            'customer_email.email' => 'Invalid email format',
-            'products.required' => 'Please add at least one product',
-            'products.*.quantity.min' => 'Quantity must be at least 1',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        DB::beginTransaction();
         try {
-            $order = Order::findOrFail($id);
-
-            $oldStatus = $order->status;
-            $oldAddress = $order->address;
-            $oldNote = $order->note;
-
-            $order->orderDetails()->delete();
-
-            $totalAmount = 0;
-            $totalItems = 0;
-
-            foreach ($request->products as $item) {
-                $product = Product::findOrFail($item['product_id']);
-                $quantity = (int) $item['quantity'];
-                $unitPrice = $product->price ?? 0;
-                $subtotal = $unitPrice * $quantity;
-
-                OrderDetail::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'product_name' => $product->name,
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'total_price' => $subtotal,
-                    'product_specifications' => $product->specifications,
-                ]);
-
-                $totalAmount += $subtotal;
-                $totalItems += $quantity;
-            }
-
-            $order->update([
-                'user_id' => $request->user_id,
-                'customer_email' => $request->customer_email,
-                'customer_name' => $request->customer_name,
-                'customer_phone' => $request->customer_phone,
-                'total_amount' => $totalAmount,
-                'total_items' => $totalItems,
-                'status' => $request->status,
-                'address' => $request->address,
-                'note' => $request->note,
-            ]);
-
-            if ($oldStatus !== $request->status) {
-                $order->logActivity(
-                    'status_changed',
-                    "Status changed from {$oldStatus} to {$request->status}",
-                    $oldStatus,
-                    $request->status
-                );
-
-                event(new OrderStatusChanged(
-                    $order,
-                    $oldStatus,
-                    $request->status
-                ));
-            }
-
-            if ($oldAddress !== $request->address) {
-                $order->logActivity('address_updated', 'Shipping address was updated');
-            }
-
-            if ($oldNote !== $request->note && $request->note) {
-                $order->logActivity('note_added', 'Order note was updated');
-            }
-
-            DB::commit();
+            $orderData = OrderData::fromRequest($request);
+            $this->orderService->update($id, $orderData);
 
             return redirect()
                 ->route('admin.orders.index')
                 ->with('success', 'Order updated successfully!');
 
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()
                 ->withInput()
                 ->with('error', 'Failed to update order: ' . $e->getMessage());
@@ -323,11 +122,7 @@ class OrderController extends Controller
     public function destroy(Request $request, $id)
     {
         try {
-            $order = Order::findOrFail($id);
-            $order->status = Order::STATUS_CANCELLED;
-            $order->update();
-
-            $order->logActivity('order_cancelled', 'Order was cancelled by admin');
+            $this->orderService->cancel($id);
 
             if ($request->ajax()) {
                 return response()->json([
@@ -355,10 +150,7 @@ class OrderController extends Controller
     public function restore(Request $request, $id)
     {
         try {
-            $order = Order::withTrashed()->findOrFail($id);
-            $order->restore();
-
-            $order->logActivity('order_restored', 'Order was restored from trash');
+            $this->orderService->restore($id);
 
             if ($request->ajax()) {
                 return response()->json([
@@ -389,53 +181,40 @@ class OrderController extends Controller
         return response($excel, 200, $excelService->getDownloadHeaders($filename));
     }
 
-    /**
-     * Search customers for autocomplete
-     */
     public function searchCustomers(Request $request)
     {
         $search = $request->get('q', '');
         $limit = $request->get('limit', 15);
 
         if ($request->filled('id') && is_numeric($request->get('id'))) {
-            $user = User::select('id', 'fullname', 'email', 'phone')
-                ->where('id', $request->get('id'))
-                ->where('status', true)
-                ->first();
+            $user = $this->orderRepository->getCustomer((int) $request->get('id'));
 
             if (!$user) {
                 return response()->json(['users' => []]);
             }
 
-            $u = [
-                'id' => $user->id,
-                'fullname' => $user->fullname,
-                'email' => $user->email,
-                'phone' => $user->phone ?? 'N/A',
-                'display' => $user->fullname . ' (' . $user->email . ')',
-                'address' => $user->address ?? '',
-                'highlighted_name' => $this->highlightTerm($user->fullname, ''),
-                'highlighted_email' => $this->highlightTerm($user->email, ''),
-                'can_receive_email' => !empty($user->email),
-            ];
-
-            return response()->json(['users' => [$u]]);
+            return response()->json([
+                'users' => [
+                    [
+                        'id' => $user->id,
+                        'fullname' => $user->fullname,
+                        'email' => $user->email,
+                        'phone' => $user->phone ?? 'N/A',
+                        'display' => $user->fullname . ' (' . $user->email . ')',
+                        'address' => $user->address ?? '',
+                        'highlighted_name' => $this->highlightTerm($user->fullname, ''),
+                        'highlighted_email' => $this->highlightTerm($user->email, ''),
+                        'can_receive_email' => !empty($user->email),
+                    ]
+                ]
+            ]);
         }
 
         if (strlen($search) < 2) {
             return response()->json(['users' => []]);
         }
 
-        $customers = User::select('id', 'fullname', 'email', 'phone', 'address')
-            ->where('status', true)
-            ->whereDoesntHave('role', fn($query) => $query->where('slug', 'admin'))
-            ->where(function ($query) use ($search) {
-                $query->where('fullname', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%");
-            })
-            ->orderBy('fullname')
-            ->limit($limit)
-            ->get()
+        $customers = $this->orderRepository->searchCustomers($search, $limit)
             ->map(function ($user) use ($search) {
                 return [
                     'id' => $user->id,
@@ -463,40 +242,5 @@ class OrderController extends Controller
             '<mark>$1</mark>',
             $text
         );
-    }
-
-    private function applyFilters(Request $request, $query)
-    {
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('fullname', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%")
-                            ->orWhere('phone', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        if ($request->filled('price_min')) {
-            $query->where('total_amount', '>=', $request->price_min);
-        }
-        if ($request->filled('price_max')) {
-            $query->where('total_amount', '<=', $request->price_max);
-        }
-
-        return $query;
     }
 }

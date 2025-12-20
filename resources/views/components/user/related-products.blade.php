@@ -27,7 +27,7 @@
                                                 class="text-decoration-none product-link">
                                                 <div class="product-card-image">
                                                     @if ($relatedProduct->images->isNotEmpty())
-                                                        <img src="{{ $relatedProduct->images->first()->path }}"
+                                                        <img src="{{ asset($relatedProduct->images->first()->path) }}"
                                                             alt="{{ $relatedProduct->name }}" class="img-fluid">
                                                     @else
                                                         <img src="{{ asset('images/no-image.png') }}" alt="No image"

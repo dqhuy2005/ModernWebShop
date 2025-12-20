@@ -31,35 +31,23 @@
                     <input type="hidden" id="image" name="image" value="{{ old('image') }}"
                         class="@error('image') is-invalid @enderror">
 
-                    <div id="image-preview" class="text-center my-3 {{ old('image') ? '' : 'd-none' }}">
-                        <div class="row">
-                            <div class="preview-container col-md-12">
-                                <img src="{{ old('image') ? asset('storage/' . old('image')) : '' }}" alt="Preview"
-                                    class="img-fluid rounded-circle preview-image">
-                            </div>
-
-                            <div class="col-md-12 d-flex justify-content-center">
-                                <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeImage()">
-                                    <i class="fas fa-trash-alt me-1"></i>Remove Avatar
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-2 lfm-btn"
-                                    data-input="image" data-preview="holder">
-                                    <i class="fas fa-sync-alt me-1"></i>Change Avatar
-                                </button>
-                            </div>
+                    <div id="image-preview" class="my-3 {{ old('image') ? '' : 'd-none' }}">
+                        <div class="preview-container">
+                            <img src="{{ old('image') ? asset('storage/' . old('image')) : '' }}" alt="Preview"
+                                class="img-fluid preview-image">
                         </div>
-
-                        @error('image')
-                            <div class="text-danger mt-2 small">{{ $message }}</div>
-                        @enderror
                     </div>
 
-                    <div id="upload-area" class="text-center {{ old('image') ? 'd-none' : '' }}">
-                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn" data-input="image"
-                            data-preview="holder">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>Select Avatar
+                    <div id="upload-area" class="{{ old('image') ? 'd-none' : '' }}">
+                        <button type="button" class="btn btn-outline-primary btn-lg lfm-btn selected-avatar"
+                            data-input="image" data-preview="holder">
+                            Select Avatar
                         </button>
                     </div>
+
+                    @error('image')
+                        <div class="text-danger mt-2 small">{{ $message }}</div>
+                    @enderror
 
                     <div class="mb-4 pb-3 border-bottom"></div>
 
@@ -69,8 +57,7 @@
                                 Full Name <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control @error('fullname') is-invalid @enderror"
-                                id="fullname" name="fullname" value="{{ old('fullname') }}"
-                                placeholder="Enter full name..." required>
+                                id="fullname" name="fullname" value="{{ old('fullname') }}" required>
                             @error('fullname')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -81,7 +68,7 @@
                                 Email <span class="text-danger">*</span>
                             </label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                                name="email" value="{{ old('email') }}" placeholder="Enter email address..." required>
+                                name="email" value="{{ old('email') }}" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -92,8 +79,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="phone" class="form-label fw-bold">Phone</label>
                             <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
-                                name="phone" value="{{ old('phone') }}" placeholder="Enter phone number..."
-                                pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
+                                name="phone" value="{{ old('phone') }}" pattern="[0-9]{8,15}" title="Only numbers (0-9), 8-15 digits">
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -101,8 +87,9 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="birthday" class="form-label fw-bold">Birthday</label>
-                            <input type="date" class="form-control @error('birthday') is-invalid @enderror"
-                                id="birthday" name="birthday" value="{{ old('birthday') }}">
+                            <input type="text" class="form-control @error('birthday') is-invalid @enderror"
+                                id="birthday_display" readonly>
+                            <input type="hidden" id="birthday" name="birthday" value="{{ old('birthday') }}">
                             @error('birthday')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -115,7 +102,7 @@
                                 Password <span class="text-danger">*</span>
                             </label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                id="password" name="password" placeholder="Enter password..." required>
+                                id="password" name="password" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -126,7 +113,7 @@
                                 Confirm Password <span class="text-danger">*</span>
                             </label>
                             <input type="password" class="form-control" id="password_confirmation"
-                                name="password_confirmation" placeholder="Confirm password..." required>
+                                name="password_confirmation" required>
                         </div>
                     </div>
 
@@ -183,14 +170,6 @@
 
 @push('scripts')
     <script>
-        function removeImage() {
-            $('#image').val('');
-            $('#image-preview').addClass('d-none');
-            $('#upload-area').removeClass('d-none');
-            $('#image-preview img').attr('src', '');
-            toastr.info('Avatar removed');
-        }
-
         $(document).ready(function() {
             $('.lfm-btn').filemanager('image', {
                 prefix: '/admin/filemanager'
@@ -203,8 +182,31 @@
                     $('#image-preview img').attr('src', imageUrl);
                     $('#upload-area').addClass('d-none');
                     $('#image-preview').removeClass('d-none');
-                    toastr.success('Avatar selected successfully!');
                 }
+            });
+
+            $('#birthday_display').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                autoUpdateInput: false,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Clear'
+                },
+                minYear: 1900,
+                maxYear: parseInt(moment().format('YYYY'), 10),
+                maxDate: moment(),
+                drops: 'auto'
+            });
+
+            $('#birthday_display').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY'));
+                $('#birthday').val(picker.startDate.format('YYYY-MM-DD'));
+            });
+
+            $('#birthday_display').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                $('#birthday').val('');
             });
         });
 
@@ -257,15 +259,13 @@
         }
 
         .preview-container {
-            display: inline-block;
+            display: block;
             position: relative;
         }
 
         .preview-image {
             max-height: 200px;
             max-width: 200px;
-            border: 2px solid #28a745;
-            transition: all 0.3s ease;
         }
 
         #image-preview {
