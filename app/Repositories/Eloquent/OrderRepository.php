@@ -34,7 +34,7 @@ class OrderRepository implements OrderRepositoryInterface
             ->with([
                 'orderDetails' => function ($q) {
                     $q->select('id', 'order_id', 'product_id', 'product_name', 'quantity', 'unit_price', 'total_price', 'product_specifications')
-                        ->with('product:id,name,price');
+                        ->with('product:id,name,slug,price');
                 },
                 'user:id,fullname'
             ])
