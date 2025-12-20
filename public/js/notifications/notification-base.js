@@ -15,9 +15,7 @@ const NotificationBase = {
 
         document.body.appendChild(notification);
 
-        requestAnimationFrame(() => {
-            notification.classList.add("show");
-        });
+        notification.classList.add("show");
 
         setTimeout(() => {
             this.dismiss(notificationId);
@@ -26,9 +24,6 @@ const NotificationBase = {
         return notificationId;
     },
 
-    /**
-     * Create notification element
-     */
     createNotification(id, type, message) {
         const notification = document.createElement("div");
         notification.id = id;
@@ -48,9 +43,6 @@ const NotificationBase = {
         return notification;
     },
 
-    /**
-     * Get notification configuration by type
-     */
     getConfig(type) {
         const configs = {
             success: {
@@ -74,16 +66,10 @@ const NotificationBase = {
         return configs[type] || configs.info;
     },
 
-    /**
-     * Dismiss notification
-     */
     dismiss(notificationId) {
         const notification = document.getElementById(notificationId);
         if (notification) {
-            notification.classList.remove("show");
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
+            notification.remove();
         }
     },
 };

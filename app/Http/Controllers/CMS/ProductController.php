@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\CMS;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
-use App\Services\impl\ImageService;
 use App\Services\impl\ProductService;
-use App\Models\ProductImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class ProductController extends BaseController
 {
@@ -106,35 +103,8 @@ class ProductController extends BaseController
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug',
-            'description' => 'nullable|string',
-            'specifications' => 'nullable|array',
-            'price' => 'required|integer|min:0|max:999999999',
-            'currency' => 'nullable|string|max:10',
-            'images' => 'nullable|string',
-            'status' => 'nullable|boolean',
-            'is_hot' => 'nullable|boolean',
-            'language' => 'nullable|string|max:10',
-        ], [
-            'slug.required' => 'Slug là bắt buộc',
-            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác',
-            'price.required' => 'Giá sản phẩm là bắt buộc',
-            'price.integer' => 'Giá phải là số nguyên',
-            'price.min' => 'Giá phải là số dương',
-            'price.max' => 'Giá vượt quá giới hạn cho phép (999.999.999 ₫)',
-        ]);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
         try {
             $data = $request->except(['images', 'specifications', 'action']);
 
@@ -196,35 +166,8 @@ class ProductController extends BaseController
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug,' . $id,
-            'description' => 'nullable|string',
-            'specifications' => 'nullable|array',
-            'price' => 'required|integer|min:0|max:999999999',
-            'currency' => 'nullable|string|max:10',
-            'images' => 'nullable|string',
-            'status' => 'nullable|boolean',
-            'is_hot' => 'nullable|boolean',
-            'language' => 'nullable|string|max:10',
-        ], [
-            'slug.required' => 'Slug là bắt buộc',
-            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác',
-            'price.required' => 'Giá sản phẩm là bắt buộc',
-            'price.integer' => 'Giá phải là số nguyên',
-            'price.min' => 'Giá phải là số dương',
-            'price.max' => 'Giá vượt quá giới hạn cho phép (999.999.999 ₫)',
-        ]);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
         try {
             $product = Product::findOrFail($id);
             $data = $request->except(['images', 'specifications', '_method', '_token']);
@@ -234,13 +177,11 @@ class ProductController extends BaseController
             $data['currency'] = $request->input('currency', 'VND');
             $data['specifications'] = $this->productService->formatSpecifications($request->specifications);
 
-            // Parse LFM image paths from JSON string
             $imagePaths = [];
             if ($request->filled('images')) {
                 $imagePaths = json_decode($request->input('images'), true) ?? [];
             }
 
-            // Update product with images using service
             $product = $this->productService->updateProduct(
                 $product,
                 $data,
