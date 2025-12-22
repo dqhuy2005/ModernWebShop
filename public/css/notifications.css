@@ -1,11 +1,7 @@
-/**
- * Notification Styles
- * Common styles for all notification types
- */
-
-/* Base Notification Styles */
 .custom-notification {
     position: fixed;
+    background-color: #00000060;
+    /* opacity: 0.9; */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -20,7 +16,6 @@
 }
 
 .custom-notification .notification-content {
-    background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
     display: flex;
@@ -47,8 +42,8 @@
 
 .custom-notification .notification-message {
     margin: 0;
+    color: #fff;
     font-size: 16px;
-    color: #333;
     font-weight: 500;
     text-align: center;
     line-height: 1.5;
@@ -92,7 +87,6 @@
 }
 
 .confirm-modal .modal-content-wrapper {
-    background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
     display: flex;
