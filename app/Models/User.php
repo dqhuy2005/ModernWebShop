@@ -112,11 +112,9 @@ class User extends Authenticatable implements JWTSubject
     public function setBirthdayAttribute($value)
     {
         if ($value) {
-            // If value is in dd/MM/yyyy or d/m/Y format, convert to Y-m-d
             if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $value)) {
                 $this->attributes['birthday'] = \Carbon\Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
             } else {
-                // Already in Y-m-d format or other valid format
                 $this->attributes['birthday'] = $value;
             }
         } else {

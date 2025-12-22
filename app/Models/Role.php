@@ -22,25 +22,16 @@ class Role extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Get all users with this role.
-     */
     public function users()
     {
         return $this->hasMany(User::class);
     }
 
-    /**
-     * Check if role is admin
-     */
     public function isAdmin(): bool
     {
         return $this->slug === self::ADMIN;
     }
 
-    /**
-     * Check if role is user
-     */
     public function isUser(): bool
     {
         return $this->slug === self::USER;

@@ -16,7 +16,6 @@ use App\Http\Controllers\User\PurchaseController;
 use App\Http\Controllers\User\ProductController as UserProductController;
 use App\Http\Controllers\ReviewController;
 
-// Health check endpoint for Render (no database required)
 Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
@@ -34,7 +33,6 @@ Route::get('/products/{slug}.html', [UserProductController::class, 'show'])->nam
 
 Route::get('/search', [HomeController::class, 'search'])->name('products.search');
 
-// Search History API Routes với Rate Limiting (60 requests/minute)
 Route::middleware(['throttle:60,1'])->group(function () {
     Route::get('/api/search-history', [HomeController::class, 'getSearchHistory'])->name('api.search-history.index');
     Route::get('/api/search-history/popular', [HomeController::class, 'getPopularKeywords'])->name('api.search-history.popular');

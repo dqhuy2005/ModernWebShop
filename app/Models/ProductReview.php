@@ -6,34 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * ProductReview Model
- *
- * Manages product reviews from verified customers
- * Supports ratings, comments, images, and videos
- */
 class ProductReview extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * Review status constants
-     */
     public const STATUS_PENDING = 'pending';
     public const STATUS_APPROVED = 'approved';
     public const STATUS_REJECTED = 'rejected';
 
-    /**
-     * Rating constraints
-     */
     public const MIN_RATING = 1;
     public const MAX_RATING = 5;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'product_id',
         'user_id',
@@ -49,11 +32,6 @@ class ProductReview extends Model
         'is_verified_purchase',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -67,105 +45,66 @@ class ProductReview extends Model
         ];
     }
 
-    /**
-     * Get the product that owns the review.
-     */
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * Get the user that wrote the review.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the order associated with the review.
-     */
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * Get the order detail associated with the review.
-     */
     public function orderDetail()
     {
         return $this->belongsTo(OrderDetail::class);
     }
 
-    /**
-     * Scope a query to only include approved reviews.
-     */
     public function scopeApproved($query)
     {
         return $query->where('status', self::STATUS_APPROVED);
     }
 
-    /**
-     * Scope a query to only include pending reviews.
-     */
     public function scopePending($query)
     {
         return $query->where('status', self::STATUS_PENDING);
     }
 
-    /**
-     * Scope a query to only include rejected reviews.
-     */
     public function scopeRejected($query)
     {
         return $query->where('status', self::STATUS_REJECTED);
     }
 
-    /**
-     * Scope a query to only include verified purchase reviews.
-     */
     public function scopeVerified($query)
     {
         return $query->where('is_verified_purchase', true);
     }
 
-    /**
-     * Check if review is approved.
-     */
     public function isApproved(): bool
     {
         return $this->status === self::STATUS_APPROVED;
     }
 
-    /**
-     * Check if review is pending.
-     */
     public function isPending(): bool
     {
         return $this->status === self::STATUS_PENDING;
     }
 
-    /**
-     * Check if review is rejected.
-     */
     public function isRejected(): bool
     {
         return $this->status === self::STATUS_REJECTED;
     }
 
-    /**
-     * Approve the review.
-     */
     public function approve(): bool
     {
         return $this->update(['status' => self::STATUS_APPROVED]);
     }
 
-    /**
-     * Reject the review.
-     */
     public function reject(?string $reason = null): bool
     {
         return $this->update([
@@ -174,17 +113,11 @@ class ProductReview extends Model
         ]);
     }
 
-    /**
-     * Get formatted rating stars.
-     */
     public function getStarsAttribute(): string
     {
         return str_repeat('⭐', $this->rating);
     }
 
-    /**
-     * Get review badge color based on status.
-     */
     public function getStatusBadgeColorAttribute(): string
     {
         return match ($this->status) {
@@ -195,9 +128,6 @@ class ProductReview extends Model
         };
     }
 
-    /**
-     * Get review status label.
-     */
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
