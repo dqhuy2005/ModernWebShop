@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,22 +66,26 @@ class ProductReview extends Model
         return $this->belongsTo(OrderDetail::class);
     }
 
-    public function scopeApproved($query)
+    #[Scope]
+    public function approved($query)
     {
         return $query->where('status', self::STATUS_APPROVED);
     }
 
-    public function scopePending($query)
+    #[Scope]
+    public function pending($query)
     {
         return $query->where('status', self::STATUS_PENDING);
     }
 
-    public function scopeRejected($query)
+    #[Scope]
+    public function rejected($query)
     {
         return $query->where('status', self::STATUS_REJECTED);
     }
 
-    public function scopeVerified($query)
+    #[Scope]
+    public function verified($query)
     {
         return $query->where('is_verified_purchase', true);
     }

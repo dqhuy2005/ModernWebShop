@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -72,33 +73,39 @@ class NotificationLog extends Model
     }
 
     // Scopes
-    public function scopePending($query)
+    #[Scope]
+    public function pending($query)
     {
         return $query->where('status', 'pending');
     }
 
-    public function scopeFailed($query)
+    #[Scope]
+    public function failed($query)
     {
         return $query->where('status', 'failed');
     }
 
-    public function scopeSent($query)
+    #[Scope]
+    public function sent($query)
     {
         return $query->where('status', 'sent');
     }
 
-    public function scopeChannel($query, $channel)
+    #[Scope]
+    public function channel($query, $channel)
     {
         return $query->where('channel', $channel);
     }
 
-    public function scopeRetryable($query)
+    #[Scope]
+    public function retryable($query)
     {
         return $query->where('status', 'failed')
             ->whereRaw('retry_count < max_retry');
     }
 
-    public function scopeScheduled($query)
+    #[Scope]
+    public function scheduled($query)
     {
         return $query->where('status', 'pending')
             ->whereNotNull('scheduled_at')

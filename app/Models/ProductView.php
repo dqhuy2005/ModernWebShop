@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 
 class ProductView extends Model
 {
@@ -28,12 +29,14 @@ class ProductView extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeRecent($query, int $days = 7)
+    #[Scope]
+    public function recent($query, int $days = 7)
     {
         return $query->where('viewed_at', '>=', now()->subDays($days));
     }
 
-    public function scopeForProduct($query, int $productId)
+    #[Scope]
+    public function forProduct($query, int $productId)
     {
         return $query->where('product_id', $productId);
     }

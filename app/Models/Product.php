@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,27 +44,26 @@ class Product extends Model
     }
 
     // Scopes
-    public function scopeActive($query)
+    #[Scope]
+    public function active($query)
     {
         return $query->where('status', true);
     }
 
-    public function scopeParentOnly($query)
-    {
-        return $query->whereNull('parent_id');
-    }
-
-    public function scopeHot($query)
+    #[Scope]
+    public function hot($query)
     {
         return $query->where('is_hot', true);
     }
 
-    public function scopeMostViewed($query, $limit = 10)
+    #[Scope]
+    public function mostViewed($query, $limit = 10)
     {
         return $query->orderBy('views', 'desc')->limit($limit);
     }
 
-    public function scopeSearch($query, $keyword)
+    #[Scope]
+    public function search($query, $keyword)
     {
         if (empty($keyword)) {
             return $query;
@@ -167,40 +167,5 @@ class Product extends Model
         }
 
         return null;
-    }
-
-    public function getRecentViewsCount(int $days = 7): int
-    {
-        return $this->productViews()
-            ->where('viewed_at', '>=', now()->subDays($days))
-            ->count();
-    }
-
-    /**
-     * Get average rating from approved reviews
-     */
-    public function getAverageRating(): float
-    {
-        return (float) $this->approvedReviews()->avg('rating') ?: 0;
-    }
-
-    /**
-     * Get total count of approved reviews
-     */
-    public function getReviewsCount(): int
-    {
-        return $this->approvedReviews()->count();
-    }
-
-    /**
-     * Get rating breakdown (count per star)
-     */
-    public function getRatingBreakdown(): array
-    {
-        $breakdown = [];
-        for ($i = 5; $i >= 1; $i--) {
-            $breakdown[$i] = $this->approvedReviews()->where('rating', $i)->count();
-        }
-        return $breakdown;
     }
 }

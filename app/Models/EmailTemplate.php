@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,17 +45,20 @@ class EmailTemplate extends Model
     }
 
     // Scopes
-    public function scopeActive($query)
+    #[Scope]
+    public function active($query)
     {
         return $query->where('is_active', true);
     }
 
-    public function scopeDefault($query)
+    #[Scope]
+    public function default($query)
     {
         return $query->where('is_default', true);
     }
 
-    public function scopeLocale($query, $locale)
+    #[Scope]
+    public function locale($query, $locale)
     {
         return $query->where('locale', $locale);
     }

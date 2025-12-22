@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
@@ -46,13 +47,15 @@ class RefreshToken extends Model
         return $this->save();
     }
 
-    public function scopeValid($query)
+    #[Scope]
+    public function valid($query)
     {
         return $query->where('is_revoked', false)
             ->where('expires_at', '>', Carbon::now());
     }
 
-    public function scopeExpired($query)
+    #[Scope]
+    public function expired($query)
     {
         return $query->where('expires_at', '<=', Carbon::now());
     }

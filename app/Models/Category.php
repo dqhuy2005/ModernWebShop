@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,17 +45,8 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    public function scopeParent($query)
-    {
-        return $query->whereNull('parent_id');
-    }
-
-    public function scopeChild($query)
-    {
-        return $query->whereNotNull('parent_id');
-    }
-
-    public function scopeActive($query)
+    #[Scope]
+    public function active($query)
     {
         return $query->whereNull('deleted_at');
     }

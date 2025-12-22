@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,17 +51,20 @@ class NotificationType extends Model
     }
 
     // Scopes
-    public function scopeActive($query)
+    #[Scope]
+    public function active($query)
     {
         return $query->where('is_active', true);
     }
 
-    public function scopeCategory($query, $category)
+    #[Scope]
+    public function category($query, $category)
     {
         return $query->where('category', $category);
     }
 
-    public function scopeEmailEnabled($query)
+    #[Scope]
+    public function emailEnabled($query)
     {
         return $query->where('email_enabled', true);
     }
