@@ -9,7 +9,8 @@ class CartRepository implements CartRepositoryInterface
 {
     public function __construct(
         private Cart $model
-    ) {}
+    ) {
+    }
 
     public function getByUser(int $userId)
     {
@@ -27,6 +28,15 @@ class CartRepository implements CartRepositoryInterface
         return $this->model->query()
             ->where('user_id', $userId)
             ->where('product_id', $productId)
+            ->withTrashed()
+            ->first();
+    }
+
+    public function findByUserAndCart(int $userId, int $cartId)
+    {
+        return $this->model->query()
+            ->where('user_id', $userId)
+            ->where('id', $cartId)
             ->withTrashed()
             ->first();
     }
@@ -79,7 +89,7 @@ class CartRepository implements CartRepositoryInterface
     public function calculateTotal(int $userId): float
     {
         $cartItems = $this->getByUser($userId);
-        
+
         return $cartItems->sum(function ($item) {
             return $item->quantity * $item->price;
         });

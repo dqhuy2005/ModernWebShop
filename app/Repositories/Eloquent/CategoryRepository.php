@@ -57,7 +57,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function restore(int $id): bool
     {
         $category = $this->model->withTrashed()->find($id);
-        
+
         if (!$category) {
             return false;
         }
@@ -68,7 +68,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function forceDelete(int $id): bool
     {
         $category = $this->model->withTrashed()->find($id);
-        
+
         if (!$category) {
             return false;
         }
@@ -88,41 +88,6 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function findWithTrashed(int $id): ?Category
     {
         return $this->model->withTrashed()->find($id);
-    }
-
-    public function getFeaturedCategories(int $limit = 3): Collection
-    {
-        return $this->model
-            ->select('id', 'name', 'slug', 'created_at')
-            ->whereNull('deleted_at')
-            ->withCount('products')
-            ->limit($limit)
-            ->get();
-    }
-
-    public function getCategoriesWithHotProducts(int $limit = 5, int $productsLimit = 15): Collection
-    {
-        return $this->model
-            ->select('id', 'name', 'slug', 'image', 'created_at')
-            ->whereNull('deleted_at')
-            ->with([
-                'products' => function ($query) use ($productsLimit) {
-                    $query->select('id', 'name', 'slug', 'price', 'category_id', 'status', 'is_hot', 'views', 'updated_at')
-                        ->where('status', true)
-                        ->where('is_hot', true)
-                        ->with([
-                            'images:id,product_id,path,sort_order',
-                            'category:id,name,image',
-                            'approvedReviews:id,product_id,rating'
-                        ])
-                        ->withCount('approvedReviews')
-                        ->withAvg('approvedReviews', 'rating')
-                        ->latest('updated_at')
-                        ->limit($productsLimit);
-                }
-            ])
-            ->limit($limit)
-            ->get();
     }
 
     public function slugExists(string $slug, ?int $excludeId = null): bool

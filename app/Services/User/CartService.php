@@ -65,7 +65,7 @@ class CartService
             throw new \Exception("Invalid quantity");
         }
 
-        $cartItem = $this->cartRepository->findByUserAndProduct($userId, $cartId);
+        $cartItem = $this->cartRepository->findByUserAndCart($userId, $cartId);
 
         if (!$cartItem || $cartItem->user_id !== $userId) {
             throw new \Exception("Cart item not found");

@@ -6,6 +6,7 @@ interface CartRepositoryInterface
 {
     public function getByUser(int $userId);
     public function findByUserAndProduct(int $userId, int $productId);
+    public function findByUserAndCart(int $userId, int $cartId);
     public function create(array $data);
     public function updateQuantity(int $id, int $quantity);
     public function update(int $id, array $data);
