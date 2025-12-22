@@ -6,7 +6,8 @@
 
         <div class="row g-4 justify-content-center">
             @php
-                $displayCategories = \App\Models\Category::active()
+                $displayCategories = \App\Models\Category::query()
+                    ->active()
                     ->withCount('products')
                     ->whereNull('parent_id')
                     ->orderBy('updated_at', 'desc')
@@ -45,7 +46,7 @@
         background-color: #FFFFFF;
     }
 
-    .section-title {
+    .category-grid .section-title {
         font-size: 2rem;
         font-weight: 700;
         color: #202732;
@@ -76,7 +77,6 @@
         overflow: hidden;
         background-color: #FFFFFF;
         border: 1px solid #ccc;
-
         padding: 1rem;
     }
 
@@ -102,13 +102,13 @@
     }
 
     @media (min-width: 1200px) {
-        .section-title {
+        .category-grid .section-title {
             font-size: clamp(1.8rem, 2.5vw, 2rem);
         }
     }
 
     @media (max-width: 1199px) and (min-width: 768px) {
-        .section-title {
+        .category-grid .section-title {
             font-size: 1.6rem;
         }
 
@@ -118,7 +118,7 @@
     }
 
     @media (max-width: 767px) {
-        .section-title {
+        .category-grid .section-title {
             font-size: 1.3rem;
         }
 
