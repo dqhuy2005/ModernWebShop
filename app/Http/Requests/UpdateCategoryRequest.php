@@ -22,7 +22,7 @@ class UpdateCategoryRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255|unique:categories,name,' . $categoryId,
-            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $categoryId,
+            'slug' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:500',
             'language' => 'nullable|string|max:10',
             'parent_id' => 'nullable|exists:categories,id',
@@ -39,7 +39,6 @@ class UpdateCategoryRequest extends FormRequest
         return [
             'name.required' => 'Tên danh mục là bắt buộc',
             'name.unique' => 'Tên danh mục đã tồn tại',
-            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác',
             'parent_id.exists' => 'Danh mục cha không tồn tại',
         ];
     }

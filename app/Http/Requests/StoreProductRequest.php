@@ -24,7 +24,7 @@ class StoreProductRequest extends FormRequest
         return [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug',
+            'slug' => 'required|string|max:255',
             'description' => 'nullable|string',
             'specifications' => 'nullable|array',
             'price' => 'required|integer|min:0|max:999999999',
@@ -45,7 +45,6 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'slug.required' => 'Slug là bắt buộc',
-            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác',
             'price.required' => 'Giá sản phẩm là bắt buộc',
             'price.integer' => 'Giá phải là số nguyên',
             'price.min' => 'Giá phải là số dương',
