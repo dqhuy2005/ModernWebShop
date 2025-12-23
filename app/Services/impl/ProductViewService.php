@@ -57,7 +57,7 @@ class ProductViewService implements IProductViewService
             "product_{$productId}_views_{$days}days",
             300,
             function () use ($productId, $days) {
-                return ProductView::forProduct($productId)
+                return ProductView::query()->forProduct($productId)
                     ->recent($days)
                     ->count();
             }
@@ -70,7 +70,7 @@ class ProductViewService implements IProductViewService
             "product_{$productId}_unique_{$days}days",
             600,
             function () use ($productId, $days) {
-                return ProductView::forProduct($productId)
+                return ProductView::query()->forProduct($productId)
                     ->recent($days)
                     ->distinct('ip_address')
                     ->count('ip_address');

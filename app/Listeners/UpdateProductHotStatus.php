@@ -69,7 +69,7 @@ class UpdateProductHotStatus implements ShouldQueue
             "product_{$productId}_recent_views",
             300,
             function () use ($productId) {
-                return ProductView::forProduct($productId)
+                return ProductView::query()->forProduct($productId)
                     ->recent(7)
                     ->count();
             }

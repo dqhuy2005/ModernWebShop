@@ -168,4 +168,23 @@ class Product extends Model
 
         return null;
     }
+
+    public function getAverageRating(): float
+    {
+        return (float) $this->approvedReviews()->avg('rating') ?: 0;
+    }
+
+    public function getReviewsCount(): int
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    public function getRatingBreakdown(): array
+    {
+        $breakdown = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $breakdown[$i] = $this->approvedReviews()->where('rating', $i)->count();
+        }
+        return $breakdown;
+    }
 }
