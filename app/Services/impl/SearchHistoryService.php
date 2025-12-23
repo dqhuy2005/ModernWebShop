@@ -121,10 +121,10 @@ class SearchHistoryService implements ISearchHistoryService
 
     public function migrateSessionToUser(int $userId, string $sessionId): void
     {
-        $sessionHistories = SearchHistory::forSession($sessionId)->get();
+        $sessionHistories = SearchHistory::query()->forSession($sessionId)->get();
 
         foreach ($sessionHistories as $sessionHistory) {
-            $userHistory = SearchHistory::forUser($userId)
+            $userHistory = SearchHistory::query()->forUser($userId)
                 ->where('keyword', $sessionHistory->keyword)
                 ->first();
 
