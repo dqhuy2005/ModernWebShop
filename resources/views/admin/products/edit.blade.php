@@ -220,7 +220,7 @@
                                     class="@error('images.*') is-invalid @enderror">
                                 <button type="button" class="btn-select-image w-100 mt-3 lfm-btn-multiple"
                                     data-input="images" data-preview="images-preview-holder">
-                                    <i class="fas fa-images me-2"></i>Add More Images
+                                    <i class="fas fa-images me-2"></i>Select Images
                                 </button>
                             </div>
 

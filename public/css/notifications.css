@@ -1,12 +1,10 @@
 .custom-notification {
     position: fixed;
     background-color: #00000060;
-    /* opacity: 0.9; */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 9999;
-    opacity: 0;
     pointer-events: none;
 }
 
@@ -49,7 +47,6 @@
     line-height: 1.5;
 }
 
-/* Type-specific styles */
 .custom-notification-success .notification-icon {
     background: #26aa99;
 }
@@ -66,14 +63,12 @@
     background: #1890ff;
 }
 
-/* Confirm Modal Styles */
 .confirm-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
     z-index: 9999;
     display: none;
     align-items: center;
@@ -87,6 +82,7 @@
 }
 
 .confirm-modal .modal-content-wrapper {
+    background-color: #00000060;
     border-radius: 8px;
     padding: 30px 40px;
     display: flex;
@@ -115,7 +111,7 @@
 .confirm-modal .modal-message {
     margin: 0;
     font-size: 16px;
-    color: #333;
+    color: #fff;
     font-weight: 500;
     text-align: center;
     line-height: 1.6;
