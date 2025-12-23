@@ -3,12 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\ProductViewed;
-use App\Models\Product;
 use App\Models\ProductView;
 use App\Services\impl\RedisService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UpdateProductHotStatus implements ShouldQueue
@@ -55,14 +53,10 @@ class UpdateProductHotStatus implements ShouldQueue
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            // Re-throw để queue có thể retry
             throw $e;
         }
     }
 
-    /**
-     * Đếm số views trong 7 ngày gần nhất
-     */
     private function getRecentViewCount(int $productId): int
     {
         return $this->redis->remember(
@@ -76,11 +70,6 @@ class UpdateProductHotStatus implements ShouldQueue
         );
     }
 
-    /**
-     * Update is_hot status dựa trên rule
-     * >= 100 views in 7 days: is_hot = true
-     * < 100 views in 7 days: is_hot = false
-     */
     private function updateHotStatus($product, int $recentViews): void
     {
         $shouldBeHot = null;
@@ -103,9 +92,6 @@ class UpdateProductHotStatus implements ShouldQueue
         }
     }
 
-    /**
-     * Handle a job failure.
-     */
     public function failed(ProductViewed $event, \Throwable $exception): void
     {
         Log::error('UpdateProductHotStatus job failed permanently', [
