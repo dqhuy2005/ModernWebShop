@@ -12,6 +12,18 @@
             }
 
             try {
+                const invalidatedAt = localStorage.getItem(
+                    this.storageKey + "_invalidated"
+                );
+                if (invalidatedAt) {
+                    const timeSinceInvalidation =
+                        Date.now() - parseInt(invalidatedAt);
+                    if (timeSinceInvalidation < 10000) {
+                        return null;
+                    }
+                    localStorage.removeItem(this.storageKey + "_invalidated");
+                }
+
                 const cached = localStorage.getItem(this.storageKey);
                 if (cached) {
                     const parsed = JSON.parse(cached);
@@ -50,6 +62,13 @@
             this.timestamp = null;
             try {
                 localStorage.removeItem(this.storageKey);
+
+                sessionStorage.removeItem("search_history_etag");
+
+                localStorage.setItem(
+                    this.storageKey + "_invalidated",
+                    Date.now().toString()
+                );
             } catch (e) {
                 console.warn("LocalStorage clear failed:", e);
             }
@@ -111,11 +130,27 @@
             }
 
             this.cacheElements();
+            this.checkDeletionInProgress();
             this.checkAuthStateChange();
             this.populateSearchFieldFromURL();
             this.bindEvents();
 
             this.state.isInitialized = true;
+        },
+
+        checkDeletionInProgress: function () {
+            try {
+                const deletionInProgress = localStorage.getItem(
+                    "mwshop_deletion_in_progress"
+                );
+                if (deletionInProgress === "true") {
+                    CacheManager.invalidate();
+                    localStorage.removeItem("mwshop_deletion_in_progress");
+                    this.state.forceRefresh = true;
+                }
+            } catch (e) {
+                console.warn("Could not check deletion status:", e);
+            }
         },
 
         checkAuthStateChange: function () {
@@ -156,7 +191,7 @@
             const { searchInput, searchForm, suggestionsDropdown } =
                 this.elements;
 
-            searchInput.click("focus", function () {
+            searchInput.on("focus", function () {
                 self.loadHistory(true);
             });
 
@@ -223,6 +258,10 @@
                 this.state.forceRefresh = false;
             }
 
+            if (forceRefresh) {
+                CacheManager.invalidate();
+            }
+
             if (!forceRefresh && !keyword) {
                 const cachedData = CacheManager.get();
                 if (cachedData !== null) {
@@ -234,9 +273,13 @@
                 }
             }
 
-            const hasCachedData = CacheManager.get() !== null;
-            if (!hasCachedData || forceRefresh) {
+            if (forceRefresh) {
                 this.showLoadingState();
+            } else {
+                const hasCachedData = CacheManager.get() !== null;
+                if (!hasCachedData) {
+                    this.showLoadingState();
+                }
             }
 
             if (this.state.currentRequest) {
@@ -353,6 +396,12 @@
 
             CacheManager.invalidate();
 
+            try {
+                localStorage.setItem("mwshop_deletion_in_progress", "true");
+            } catch (e) {
+                console.warn("Could not mark deletion:", e);
+            }
+
             $.ajax({
                 url: "/api/search-history/" + id,
                 method: "DELETE",
@@ -361,11 +410,24 @@
                         "content"
                     ),
                 },
-                success: function (response) {},
+                success: function (response) {
+                    CacheManager.invalidate();
+
+                    try {
+                        localStorage.removeItem("mwshop_deletion_in_progress");
+                    } catch (e) {}
+
+                    self.loadHistory(true);
+                },
                 error: function (xhr) {
                     console.error("✗ Delete failed:", xhr);
 
+                    try {
+                        localStorage.removeItem("mwshop_deletion_in_progress");
+                    } catch (e) {}
+
                     if (xhr.status !== 404) {
+                        CacheManager.invalidate();
                         self.loadHistory(true);
                     }
                 },

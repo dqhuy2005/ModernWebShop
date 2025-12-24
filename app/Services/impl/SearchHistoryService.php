@@ -71,7 +71,7 @@ class SearchHistoryService implements ISearchHistoryService
                 $query->forSession($sessionId);
             }
 
-            return $query->select(['id', 'keyword', 'search_count', 'created_at', 'updated_at'])
+            return $query->select(['id', 'keyword', 'search_count'])
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
                 ->get()
