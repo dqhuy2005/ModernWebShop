@@ -3,26 +3,25 @@
 namespace App\Services\impl;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Cache service for product sales data to avoid expensive subquery joins
- */
 class ProductSalesCache
 {
     private const CACHE_KEY = 'product_sales_ranking';
-    private const CACHE_TTL = 1800; // 30 minutes
-    private const WARM_UP_THRESHOLD = 300; // 5 minutes before expiry
+    private const CACHE_TTL = 1800;
+    private const WARM_UP_THRESHOLD = 300;
 
-    /**
-     * Get cached product sales data or fetch from database
-     * Returns array: [product_id => total_sold]
-     */
+    protected RedisService $redis;
+
+    public function __construct(RedisService $redis)
+    {
+        $this->redis = $redis;
+    }
+
     public function getSalesRanking(): array
     {
         try {
-            return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
+            return $this->redis->remember(self::CACHE_KEY, self::CACHE_TTL, function () {
                 return $this->fetchSalesData();
             });
         } catch (\Exception $e) {
@@ -33,9 +32,6 @@ class ProductSalesCache
         }
     }
 
-    /**
-     * Fetch sales data from database
-     */
     private function fetchSalesData(): array
     {
         $results = DB::table('order_details')
@@ -55,17 +51,11 @@ class ProductSalesCache
         return $ranking;
     }
 
-    /**
-     * Invalidate cache (call when order status changes to completed)
-     */
     public function invalidate(): void
     {
-        Cache::forget(self::CACHE_KEY);
+        $this->redis->forget(self::CACHE_KEY);
     }
 
-    /**
-     * Warm up cache in background
-     */
     public function warmUp(): void
     {
         $this->getSalesRanking();

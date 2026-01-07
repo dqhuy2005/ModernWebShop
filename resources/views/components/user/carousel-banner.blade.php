@@ -10,7 +10,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="{{ route('hot-deals') }}">
+                    <a class="nav-link text-dark" href="#">
                         <i class="fas fa-fire me-1"></i> Khuyến mãi
                     </a>
                 </li>

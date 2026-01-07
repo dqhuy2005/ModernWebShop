@@ -5,21 +5,27 @@ namespace App\Observers;
 use App\Models\Order;
 use App\Models\CacheKeyManager;
 use App\Services\impl\RedisService;
+use App\Services\impl\ProductSalesCache;
 use Illuminate\Support\Facades\Log;
 
 class OrderObserver
 {
     protected RedisService $redis;
+    protected ProductSalesCache $salesCache;
 
-    public function __construct(RedisService $redis)
+    public function __construct(RedisService $redis, ProductSalesCache $salesCache)
     {
         $this->redis = $redis;
+        $this->salesCache = $salesCache;
     }
 
     public function updated(Order $order): void
     {
         if ($order->isDirty('status') && $order->status === Order::STATUS_COMPLETED) {
             $this->clearBestSellerCaches($order, 'completed');
+
+            // Invalidate sales cache
+            $this->salesCache->invalidate();
         }
     }
 

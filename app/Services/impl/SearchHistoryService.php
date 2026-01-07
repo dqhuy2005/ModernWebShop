@@ -121,26 +121,75 @@ class SearchHistoryService implements ISearchHistoryService
 
     public function migrateSessionToUser(int $userId, string $sessionId): void
     {
-        $sessionHistories = SearchHistory::query()->forSession($sessionId)->get();
+        try {
+            DB::transaction(function () use ($userId, $sessionId) {
+                $sessionHistories = SearchHistory::query()
+                    ->forSession($sessionId)
+                    ->select('keyword', DB::raw('SUM(search_count) as total_count'))
+                    ->groupBy('keyword')
+                    ->get();
 
-        foreach ($sessionHistories as $sessionHistory) {
-            $userHistory = SearchHistory::query()->forUser($userId)
-                ->where('keyword', $sessionHistory->keyword)
-                ->first();
+                if ($sessionHistories->isEmpty()) {
+                    return;
+                }
 
-            if ($userHistory) {
-                $userHistory->search_count += $sessionHistory->search_count;
-                $userHistory->save();
-                $sessionHistory->delete();
-            } else {
-                $sessionHistory->update([
-                    'user_id' => $userId,
-                    'session_id' => null,
-                ]);
-            }
+                $keywords = $sessionHistories->pluck('keyword')->toArray();
+                $existingUserHistories = SearchHistory::query()
+                    ->forUser($userId)
+                    ->whereIn('keyword', $keywords)
+                    ->get()
+                    ->keyBy('keyword');
+
+                $toUpdate = [];
+                $toInsert = [];
+
+                foreach ($sessionHistories as $sessionHistory) {
+                    $keyword = $sessionHistory->keyword;
+
+                    if ($existingUserHistories->has($keyword)) {
+                        $existingId = $existingUserHistories[$keyword]->id;
+                        $toUpdate[] = [
+                            'id' => $existingId,
+                            'search_count' => $existingUserHistories[$keyword]->search_count + $sessionHistory->total_count
+                        ];
+                    } else {
+                        $toInsert[] = [
+                            'user_id' => $userId,
+                            'session_id' => null,
+                            'keyword' => $keyword,
+                            'search_count' => $sessionHistory->total_count,
+                            'ip_address' => request()->ip(),
+                            'user_agent' => request()->userAgent(),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
+                }
+
+                if (!empty($toUpdate)) {
+                    foreach ($toUpdate as $update) {
+                        SearchHistory::where('id', $update['id'])
+                            ->update(['search_count' => $update['search_count']]);
+                    }
+                }
+
+                if (!empty($toInsert)) {
+                    SearchHistory::insert($toInsert);
+                }
+
+                SearchHistory::query()->forSession($sessionId)->delete();
+            });
+
+            $this->clearCache($userId, $sessionId);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to migrate search history', [
+                'user_id' => $userId,
+                'session_id' => $sessionId,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
         }
-
-        $this->clearCache($userId, $sessionId);
     }
 
     public function getPopularKeywords(int $limit = 10): array

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductFilterRequest;
+use App\Http\Requests\SearchRequest;
 use App\Repository\impl\ProductRepository;
 use App\Repository\impl\CategoryRepository;
 use App\Services\impl\HomePageService;
@@ -50,47 +51,95 @@ class HomeController extends Controller
 
     public function showCategory($slug, ProductFilterRequest $request)
     {
-        $category = $this->categoryRepository->findBySlug($slug);
-        $filters = $request->getFilters();
+        try {
+            $category = $this->categoryRepository->findBySlug($slug);
+            $filters = $request->getFilters();
+            $perPage = min((int) $request->input('per_page', 12), 100);
 
-        $products = $this->categoryService->getFilteredProducts($category->id, $filters, 12);
+            // Get cached filtered products (returns Collection)
+            $allProducts = $this->categoryService->getFilteredProductsCollection($category->id, $filters);
 
-        if ($request->ajax()) {
-            return response()->json($this->categoryService->formatAjaxResponse($products));
+            // Manual pagination from collection
+            $currentPage = $request->input('page', 1);
+            $products = new \Illuminate\Pagination\LengthAwarePaginator(
+                $allProducts->forPage($currentPage, $perPage),
+                $allProducts->count(),
+                $perPage,
+                $currentPage,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+
+            if ($request->ajax()) {
+                return response()->json($this->categoryService->formatAjaxResponse($products));
+            }
+
+            return view('user.category', compact('category', 'products', 'filters'));
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404, 'Danh mục không tồn tại');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Category page error', [
+                'slug' => $slug,
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->route('home')->with('error', 'Có lỗi xảy ra, vui lòng thử lại');
         }
-
-        return view('user.category', compact('category', 'products', 'filters'));
     }
 
-    public function search(Request $request)
+    public function search(SearchRequest $request)
     {
-        $keyword = $request->input('q', '');
-        $priceRange = $request->input('price_range', '');
-        $sort = $request->input('sort', 'best_selling');
+        try {
+            $keyword = $request->getKeyword();
+            $filters = $request->getFilters();
+            $perPage = $request->getPerPage();
 
-        if (empty($keyword) || strlen($keyword) < 2) {
-            return redirect()->route('home')->with('error', 'Vui lòng nhập từ khóa tìm kiếm (tối thiểu 2 ký tự)');
-        }
+            // Save search history asynchronously
+            $this->searchHistoryService->saveSearchHistory($keyword, session()->getId());
 
-        $this->searchHistoryService->saveSearchHistory($keyword, session()->getId());
+            // Get cached search results (returns Collection, not Query)
+            $allProducts = $this->productRepository->getSearchResults($keyword, $filters);
 
-        $query = $this->productRepository->getSearchResults($keyword, [
-            'price_range' => $priceRange,
-            'sort' => $sort
-        ]);
+            // Manual pagination from collection
+            $currentPage = $request->input('page', 1);
+            $products = new \Illuminate\Pagination\LengthAwarePaginator(
+                $allProducts->forPage($currentPage, $perPage),
+                $allProducts->count(),
+                $perPage,
+                $currentPage,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
 
-        $products = $query->paginate(12)->withQueryString();
-        $categories = $this->categoryRepository->all(['id', 'name', 'slug']);
+            // Cache categories list (used in filter sidebar)
+            $categories = app(\App\Services\impl\RedisService::class)->remember(
+                'search_categories_list',
+                1800,
+                fn() => $this->categoryRepository->all(['id', 'name', 'slug'])
+            );
 
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'html' => view('user.partials.product-grid', compact('products'))->render(),
-                'pagination' => view('user.partials.pagination', compact('products'))->render()
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'html' => view('user.partials.product-grid', compact('products'))->render(),
+                    'pagination' => view('user.partials.pagination', compact('products'))->render()
+                ]);
+            }
+
+            $priceRange = $filters['price_range'];
+            $sort = $filters['sort'];
+
+            return view('user.search', compact('products', 'categories', 'keyword', 'priceRange', 'sort'));
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('home')->withErrors($e->errors());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Search error', [
+                'keyword' => $request->input('q', ''),
+                'error' => $e->getMessage()
             ]);
-        }
 
-        return view('user.search', compact('products', 'categories', 'keyword', 'priceRange', 'sort'));
+            return redirect()->route('home')->with('error', 'Có lỗi xảy ra khi tìm kiếm, vui lòng thử lại');
+        }
     }
 
     public function getSearchHistory(Request $request)
