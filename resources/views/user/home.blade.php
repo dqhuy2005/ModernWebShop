@@ -3,9 +3,9 @@
 @section('title', 'MWS - High-end computers, Laptops, PC Gaming, Genuine accessories')
 
 @section('content')
-    @include('components.user.carousel-banner')
+    <x-user.carousel-banner :navigationCategories="$navigationCategories ?? []" />
 
-    @include('components.user.category-grid')
+    <x-user.category-grid :displayCategories="$displayCategories ?? []" />
 
     @if (isset($categories) && $categories->count() > 0)
         @foreach ($categories as $category)

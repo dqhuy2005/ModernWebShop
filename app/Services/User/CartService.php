@@ -5,6 +5,8 @@ namespace App\Services\User;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CartService
 {
@@ -102,5 +104,11 @@ class CartService
     public function calculateTotal(int $userId): float
     {
         return $this->cartRepository->calculateTotal($userId);
+    }
+
+    public function invalidateCartCountCache(int $userId): void
+    {
+        Session::forget('cart_count_' . Auth::id());
+        Session::put('cart_count', 0);
     }
 }

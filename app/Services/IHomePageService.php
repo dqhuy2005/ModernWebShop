@@ -16,6 +16,10 @@ interface IHomePageService
 
     public function getHotDeals(int $limit = 8);
 
+    public function getNavigationCategories();
+
+    public function getDisplayCategories();
+
     public function clearHomePageCache(): void;
 
     public function warmUpCache(): void;

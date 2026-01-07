@@ -50,18 +50,27 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view) {
             try {
-                if (Auth::check()) {
-                    $cartRepository = app(CartRepository::class);
-                    $cartCount = $cartRepository->findByUser(Auth::id())->count();
-                } else {
-                    $cart = Session::get('cart', []);
-                    $cartCount = count($cart);
+                static $cartCount = null;
+
+                if ($cartCount === null) {
+                    if (Auth::check()) {
+                        if (Session::has('cart_count_' . Auth::id())) {
+                            $cartCount = Session::get('cart_count_' . Auth::id());
+                        } else {
+                            $cartRepository = app(CartRepository::class);
+                            $cartCount = $cartRepository->findByUser(Auth::id())->count();
+                            Session::put('cart_count_' . Auth::id(), $cartCount);
+                        }
+                    } else {
+                        $cart = Session::get('cart', []);
+                        $cartCount = count($cart);
+                    }
                 }
 
                 Session::put('cart_count', $cartCount);
                 $view->with('cartCount', $cartCount);
             } catch (\Exception $e) {
-                // Fallback if database is unavailable
+                $cartCount = 0;
                 $view->with('cartCount', 0);
             }
         });

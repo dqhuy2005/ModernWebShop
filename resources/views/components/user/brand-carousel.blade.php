@@ -29,7 +29,6 @@
                         </div>
                     @endforeach
 
-                    {{-- Duplicate for seamless loop --}}
                     @foreach ($brands as $brand)
                         <div class="brand-item">
                             <div class="brand-card">

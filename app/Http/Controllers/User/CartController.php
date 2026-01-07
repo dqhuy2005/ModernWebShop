@@ -14,7 +14,8 @@ class CartController extends Controller
 {
     public function __construct(
         private CartService $cartService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
@@ -42,7 +43,8 @@ class CartController extends Controller
                 $request->quantity ?? 1
             );
 
-            Session::put('cart_count', $result['cart_count']);
+            // Invalidate cart count for the user
+            $this->cartService->invalidateCartCountCache(Auth::id());
 
             return response()->json([
                 'success' => true,
@@ -73,6 +75,9 @@ class CartController extends Controller
                 $request->cart_id,
                 $request->quantity
             );
+
+            // Invalidate cart count for the user
+            $this->cartService->invalidateCartCountCache(Auth::id());
 
             $total = $this->cartService->calculateTotal(Auth::id());
 
@@ -109,7 +114,8 @@ class CartController extends Controller
             $cartCount = $this->cartService->getCartCount(Auth::id());
             $total = $this->cartService->calculateTotal(Auth::id());
 
-            Session::put('cart_count', $cartCount);
+            // Invalidate cart count for the user
+            $this->cartService->invalidateCartCountCache(Auth::id());
 
             return response()->json([
                 'success' => true,
@@ -133,7 +139,9 @@ class CartController extends Controller
         }
 
         $this->cartService->clearCart(Auth::id());
-        Session::put('cart_count', 0);
+
+        // Invalidate cart count for the user
+        $this->cartService->invalidateCartCountCache(Auth::id());
 
         return redirect()->route('cart.index')->with('success', 'Đã xóa tất cả sản phẩm trong giỏ hàng!');
     }

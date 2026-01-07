@@ -41,6 +41,10 @@ class HomeController extends Controller
     public function index()
     {
         $data = $this->homePageService->getHomePageData();
+        
+        // Add cached data for components to avoid inline queries
+        $data['navigationCategories'] = $this->homePageService->getNavigationCategories();
+        $data['displayCategories'] = $this->homePageService->getDisplayCategories();
 
         return view('user.home', $data);
     }

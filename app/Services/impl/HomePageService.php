@@ -181,4 +181,24 @@ class HomePageService implements IHomePageService
 
         return $stats;
     }
+
+    public function getNavigationCategories()
+    {
+        return $this->redis->rememberWithWarming(
+            'navigation:categories',
+            CacheKeyManager::TTL_LONG,
+            fn() => $this->categoryRepository->getNavigationCategories(),
+            600
+        );
+    }
+
+    public function getDisplayCategories()
+    {
+        return $this->redis->rememberWithWarming(
+            'display:categories',
+            CacheKeyManager::TTL_MEDIUM,
+            fn() => $this->categoryRepository->getDisplayCategories(),
+            300
+        );
+    }
 }

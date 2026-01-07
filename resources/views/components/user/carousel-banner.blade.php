@@ -1,3 +1,5 @@
+@props(['navigationCategories' => []])
+
 <div class="main-menu bg-white border-bottom">
     <div class="container">
         <div class="menu-wrapper d-flex align-items-center" id="navbarNav">
@@ -18,22 +20,7 @@
                     </a>
                     <div class="dropdown-menu mega-menu p-4" aria-labelledby="categoriesDropdown">
                         <div class="row g-4">
-                            @php
-                                use App\Models\Category;
-
-                                $categories = Category::with([
-                                    'children' => function ($query) {
-                                        $query->limit(5);
-                                    },
-                                ])
-                                    ->withCount('products')
-                                    ->whereNull('parent_id')
-                                    ->orderBy('name')
-                                    ->limit(6)
-                                    ->get();
-                            @endphp
-
-                            @forelse($categories as $category)
+                            @forelse($navigationCategories ?? [] as $category)
                                 <div class="col-md-4">
                                     <div class="category-group">
                                         <h6 class="category-title fw-bold text-danger mb-3">

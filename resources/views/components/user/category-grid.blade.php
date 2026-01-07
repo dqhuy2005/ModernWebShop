@@ -1,3 +1,5 @@
+@props(['displayCategories' => []])
+
 <section class="category-grid py-5">
     <div class="container">
         <div class="section-header text-center mb-4">
@@ -5,17 +7,7 @@
         </div>
 
         <div class="row g-4 justify-content-center">
-            @php
-                $displayCategories = \App\Models\Category::query()
-                    ->active()
-                    ->withCount('products')
-                    ->whereNull('parent_id')
-                    ->orderBy('updated_at', 'desc')
-                    ->limit(5)
-                    ->get();
-            @endphp
-
-            @forelse($displayCategories as $category)
+            @forelse($displayCategories ?? [] as $category)
                 <div class="col-6 col-md-4 col-lg">
                     <a href="{{ route('categories.show', $category->slug) }}" class="category-card">
                         <div class="category-image-wrapper">

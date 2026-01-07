@@ -59,4 +59,34 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
             ->select($columns)
             ->firstOrFail();
     }
+
+    /**
+     * Get categories for navigation menu with children
+     */
+    public function getNavigationCategories()
+    {
+        return $this->model
+            ->with(['children' => function ($query) {
+                $query->limit(5)
+                      ->select('id', 'name', 'slug', 'parent_id');
+            }])
+            ->withCount('products')
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->limit(6)
+            ->get(['id', 'name', 'slug', 'parent_id']);
+    }
+
+    /**
+     * Get categories for display grid
+     */
+    public function getDisplayCategories()
+    {
+        return $this->model
+            ->withCount('products')
+            ->whereNull('parent_id')
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
+            ->get(['id', 'name', 'slug', 'image']);
+    }
 }
