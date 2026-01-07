@@ -51,7 +51,7 @@
                 <h2 class="fw-bold mb-3">HOT DEAL THIS WEEK</h2>
                 <p class="mb-4 text-uppercase">NEW COLLECTION UP TO 50% OFF</p>
 
-                <a href="{{ route('hot-deals') }}" class="btn btn-danger btn-lg px-5 py-3">
+                <a href="#" class="btn btn-danger btn-lg px-5 py-3">
                     SHOP NOW
                 </a>
             </div>

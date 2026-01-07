@@ -42,7 +42,7 @@
                                     <i class="fas fa-shopping-bag me-1"></i>Sản phẩm
                                 </a>
                                 <span style="color: rgba(255, 255, 255, 0.5);">|</span>
-                                <a href="{{ route('hot-deals') }}" class="text-white text-decoration-none">
+                                <a href="#" class="text-white text-decoration-none">
                                     <i class="fas fa-fire me-1"></i>Khuyến mãi
                                 </a>
                                 <span style="color: rgba(255, 255, 255, 0.5);">|</span>
