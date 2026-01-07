@@ -41,8 +41,7 @@ class HomeController extends Controller
     public function index()
     {
         $data = $this->homePageService->getHomePageData();
-        
-        // Add cached data for components to avoid inline queries
+
         $data['navigationCategories'] = $this->homePageService->getNavigationCategories();
         $data['displayCategories'] = $this->homePageService->getDisplayCategories();
 
@@ -62,15 +61,6 @@ class HomeController extends Controller
 
         return view('user.category', compact('category', 'products', 'filters'));
     }
-
-    public function hotDeals()
-    {
-        $hotDeals = $this->productRepository->getPaginatedHotDeals(12);
-
-        return view('user.hot-deals', compact('hotDeals'));
-    }
-
-
 
     public function search(Request $request)
     {

@@ -44,17 +44,16 @@
                                                     </td>
                                                     <td class="py-3 align-middle">
                                                         <div class="d-flex align-items-center">
-                                                            <img src="{{ Auth::check() ? $product->image_url : asset('storage/' . $item['image']) }}"
-                                                                alt="{{ Auth::check() ? $product->name : $item['name'] }}"
+                                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                                                 class="rounded me-3"
                                                                 style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #e0e0e0;">
                                                             <div>
-                                                                <a href="{{ route('products.show', Auth::check() ? $product->slug : $item['slug']) }}"
+                                                                <a href="{{ route('products.show', $product->slug) }}"
                                                                     class="text-dark text-decoration-none d-block mb-1"
                                                                     style="font-size: 14px; line-height: 1.4;">
-                                                                    {{ Auth::check() ? $product->name : $item['name'] }}
+                                                                    {{ $product->name }}
                                                                 </a>
-                                                                @if (Auth::check() && $product->category)
+                                                                @if ($product->category)
                                                                     <small
                                                                         class="text-muted">{{ $product->category->name }}</small>
                                                                 @endif

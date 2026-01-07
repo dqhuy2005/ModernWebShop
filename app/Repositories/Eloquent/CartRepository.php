@@ -18,7 +18,8 @@ class CartRepository implements CartRepositoryInterface
             ->where('user_id', $userId)
             ->with([
                 'product:id,name,slug,price,status,category_id',
-                'product.images:id,product_id,path,sort_order'
+                'product.images:id,product_id,path,sort_order',
+                'product.category:id,name,slug'
             ])
             ->get();
     }
