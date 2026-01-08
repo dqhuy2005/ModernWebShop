@@ -94,7 +94,7 @@ class Product extends Model
         if ($mainImage) {
             return asset('storage/' . $mainImage);
         }
-        return asset('assets/imgs/products/default.png');
+        return asset('assets/imgs/default-image.png');
     }
 
     public function getUrlAttribute(): string

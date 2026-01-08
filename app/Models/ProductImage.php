@@ -32,6 +32,6 @@ class ProductImage extends Model
         if ($this->path) {
             return asset($this->path);
         }
-        return asset('images/no-image.png');
+        return asset('assets/imgs/default-image.png');
     }
 }
