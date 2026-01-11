@@ -7,6 +7,7 @@ use App\Services\ISearchHistoryService;
 use App\Services\impl\RedisService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SearchHistoryService implements ISearchHistoryService
 {
@@ -122,24 +123,25 @@ class SearchHistoryService implements ISearchHistoryService
     public function migrateSessionToUser(int $userId, string $sessionId): void
     {
         try {
-            DB::transaction(function () use ($userId, $sessionId) {
-                $sessionHistories = SearchHistory::query()
-                    ->forSession($sessionId)
-                    ->select('keyword', DB::raw('SUM(search_count) as total_count'))
-                    ->groupBy('keyword')
-                    ->get();
+            $sessionHistories = SearchHistory::query()
+                ->forSession($sessionId)
+                ->select('keyword', DB::raw('SUM(search_count) as total_count'), DB::raw('MAX(created_at) as last_search'))
+                ->groupBy('keyword')
+                ->get();
 
-                if ($sessionHistories->isEmpty()) {
-                    return;
-                }
+            if ($sessionHistories->isEmpty()) {
+                return;
+            }
 
-                $keywords = $sessionHistories->pluck('keyword')->toArray();
-                $existingUserHistories = SearchHistory::query()
-                    ->forUser($userId)
-                    ->whereIn('keyword', $keywords)
-                    ->get()
-                    ->keyBy('keyword');
+            $keywords = $sessionHistories->pluck('keyword')->toArray();
 
+            $existingUserHistories = SearchHistory::query()
+                ->forUser($userId)
+                ->whereIn('keyword', $keywords)
+                ->get(['id', 'keyword', 'search_count'])
+                ->keyBy('keyword');
+
+            DB::transaction(function () use ($userId, $sessionId, $sessionHistories, $existingUserHistories) {
                 $toUpdate = [];
                 $toInsert = [];
 
@@ -147,10 +149,10 @@ class SearchHistoryService implements ISearchHistoryService
                     $keyword = $sessionHistory->keyword;
 
                     if ($existingUserHistories->has($keyword)) {
-                        $existingId = $existingUserHistories[$keyword]->id;
+                        $existing = $existingUserHistories[$keyword];
                         $toUpdate[] = [
-                            'id' => $existingId,
-                            'search_count' => $existingUserHistories[$keyword]->search_count + $sessionHistory->total_count
+                            'id' => $existing->id,
+                            'search_count' => $existing->search_count + $sessionHistory->total_count
                         ];
                     } else {
                         $toInsert[] = [
@@ -160,21 +162,31 @@ class SearchHistoryService implements ISearchHistoryService
                             'search_count' => $sessionHistory->total_count,
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->userAgent(),
-                            'created_at' => now(),
+                            'created_at' => $sessionHistory->last_search ?? now(),
                             'updated_at' => now(),
                         ];
                     }
                 }
 
                 if (!empty($toUpdate)) {
+                    $cases = [];
+                    $ids = [];
                     foreach ($toUpdate as $update) {
-                        SearchHistory::where('id', $update['id'])
-                            ->update(['search_count' => $update['search_count']]);
+                        $ids[] = $update['id'];
+                        $cases[] = "WHEN {$update['id']} THEN {$update['search_count']}";
+                    }
+
+                    if (!empty($cases)) {
+                        $caseString = implode(' ', $cases);
+                        $idsString = implode(',', $ids);
+                        DB::statement("UPDATE search_histories SET search_count = CASE id {$caseString} END, updated_at = NOW() WHERE id IN ({$idsString})");
                     }
                 }
 
                 if (!empty($toInsert)) {
-                    SearchHistory::insert($toInsert);
+                    foreach (array_chunk($toInsert, 1000) as $chunk) {
+                        SearchHistory::insert($chunk);
+                    }
                 }
 
                 SearchHistory::query()->forSession($sessionId)->delete();
