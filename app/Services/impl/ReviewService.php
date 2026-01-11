@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\IReviewService;
+use Illuminate\Support\Facades\Log;
 
 class ReviewService implements IReviewService
 {
@@ -118,21 +119,36 @@ class ReviewService implements IReviewService
         $paths = [];
 
         foreach (array_slice($images, 0, self::MAX_IMAGES) as $image) {
-            if ($image instanceof UploadedFile && $image->isValid()) {
-                $extension = $image->getClientOriginalExtension();
-
-                if (!in_array(strtolower($extension), self::ALLOWED_IMAGE_TYPES)) {
-                    continue;
-                }
-
-                if ($image->getSize() > self::MAX_IMAGE_SIZE * 1024) {
-                    continue;
-                }
-
-                $filename = 'review_' . Str::random(20) . '_' . time() . '.' . $extension;
-                $path = $image->storeAs('reviews/images', $filename, 'public');
-                $paths[] = $path;
+            if (!($image instanceof UploadedFile) || !$image->isValid()) {
+                continue;
             }
+
+            $mimeType = $image->getMimeType();
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+            if (!in_array($mimeType, $allowedMimes)) {
+                Log::warning('Invalid file MIME type', ['mime' => $mimeType]);
+                continue;
+            }
+
+            try {
+                $imageInfo = getimagesize($image->getRealPath());
+                if ($imageInfo === false) {
+                    Log::warning('File is not a valid image');
+                    continue;
+                }
+            } catch (\Exception $e) {
+                Log::error('Image validation failed', ['error' => $e->getMessage()]);
+                continue;
+            }
+
+            if ($image->getSize() > self::MAX_IMAGE_SIZE * 1024) {
+                continue;
+            }
+
+            $filename = 'review_' . Str::random(20) . '_' . time() . '.jpg';
+            $path = $image->storeAs('reviews/images', $filename, 'public');
+            $paths[] = $path;
         }
 
         return $paths;
