@@ -90,11 +90,11 @@ class CartRepository implements CartRepositoryInterface
 
     public function calculateTotal(int $userId): float
     {
-        $cartItems = $this->getByUser($userId);
-
-        return $cartItems->sum(function ($item) {
-            return $item->quantity * $item->price;
-        });
+        // Use DB query instead of loading full models for better performance
+        return (float) $this->model->query()
+            ->where('user_id', $userId)
+            ->selectRaw('SUM(quantity * price) as total')
+            ->value('total') ?? 0;
     }
 
     public function getByIds(int $userId, array $cartIds)

@@ -26,23 +26,50 @@ class CartService
                 throw new \Exception("Product not available");
             }
 
-            $cartItem = $this->cartRepository->findByUserAndProduct($userId, $productId);
+            // Use DB::table for atomic upsert with proper locking
+            $existingCart = DB::table('carts')
+                ->where('user_id', $userId)
+                ->where('product_id', $productId)
+                ->whereNull('deleted_at')
+                ->lockForUpdate()
+                ->first();
 
-            if ($cartItem) {
-                if ($cartItem->trashed()) {
-                    $this->cartRepository->restore($cartItem->id);
-                    $this->cartRepository->updateQuantity($cartItem->id, $quantity);
-                } else {
-                    $newQuantity = min($cartItem->quantity + $quantity, 999);
-                    $this->cartRepository->updateQuantity($cartItem->id, $newQuantity);
-                }
+            if ($existingCart) {
+                $newQuantity = min($existingCart->quantity + $quantity, 999);
+                DB::table('carts')
+                    ->where('id', $existingCart->id)
+                    ->update([
+                        'quantity' => $newQuantity,
+                        'price' => $product->price,
+                        'updated_at' => now(),
+                    ]);
             } else {
-                $this->cartRepository->create([
-                    'user_id' => $userId,
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'price' => $product->price,
-                ]);
+                // Check for soft-deleted cart items
+                $trashedCart = DB::table('carts')
+                    ->where('user_id', $userId)
+                    ->where('product_id', $productId)
+                    ->whereNotNull('deleted_at')
+                    ->first();
+
+                if ($trashedCart) {
+                    DB::table('carts')
+                        ->where('id', $trashedCart->id)
+                        ->update([
+                            'quantity' => $quantity,
+                            'price' => $product->price,
+                            'deleted_at' => null,
+                            'updated_at' => now(),
+                        ]);
+                } else {
+                    DB::table('carts')->insert([
+                        'user_id' => $userId,
+                        'product_id' => $product->id,
+                        'quantity' => $quantity,
+                        'price' => $product->price,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
 
             $cartCount = $this->cartRepository->getCount($userId);
