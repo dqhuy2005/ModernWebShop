@@ -63,9 +63,6 @@ class ReviewService implements IReviewService
         ];
     }
 
-    /**
-     * Create a new review
-     */
     public function createReview(array $data, ?array $images = null, ?array $videos = null): ProductReview
     {
         $imagePaths = $images ? $this->uploadImages($images) : [];
@@ -87,9 +84,6 @@ class ReviewService implements IReviewService
         return $review->load(['user', 'product', 'order']);
     }
 
-    /**
-     * Update an existing review
-     */
     public function updateReview(ProductReview $review, array $data, ?array $newImages = null, ?array $newVideos = null): ProductReview
     {
         $updateData = [
@@ -110,9 +104,6 @@ class ReviewService implements IReviewService
         return $review->fresh(['user', 'product', 'order']);
     }
 
-    /**
-     * Delete a review and its media files
-     */
     public function deleteReview(ProductReview $review): bool
     {
         if ($review->images) {
@@ -122,9 +113,6 @@ class ReviewService implements IReviewService
         return $review->delete();
     }
 
-    /**
-     * Upload review images
-     */
     private function uploadImages(array $images): array
     {
         $paths = [];
@@ -150,9 +138,6 @@ class ReviewService implements IReviewService
         return $paths;
     }
 
-    /**
-     * Delete files from storage
-     */
     private function deleteFiles(array $paths): void
     {
         foreach ($paths as $path) {
@@ -162,9 +147,6 @@ class ReviewService implements IReviewService
         }
     }
 
-    /**
-     * Get review statistics for a product
-     */
     public function getProductReviewStats(Product $product): array
     {
         $reviews = $product->approvedReviews;
