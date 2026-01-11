@@ -90,7 +90,6 @@ class CartRepository implements CartRepositoryInterface
 
     public function calculateTotal(int $userId): float
     {
-        // Use DB query instead of loading full models for better performance
         return (float) $this->model->query()
             ->where('user_id', $userId)
             ->selectRaw('SUM(quantity * price) as total')

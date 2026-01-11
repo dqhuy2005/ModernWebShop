@@ -88,20 +88,45 @@ class CheckoutService
     {
         $totalAmount = 0;
         $totalItems = 0;
+        $productIds = $cartItems->pluck('product_id')->toArray();
+
+        // Lock all products at once to prevent race conditions
+        $products = DB::table('products')
+            ->whereIn('id', $productIds)
+            ->where('status', true)
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
 
         foreach ($cartItems as $cartItem) {
-            if (!$cartItem->product || !$cartItem->product->status) {
-                throw new \Exception("Some products are no longer available");
+            $product = $products->get($cartItem->product_id);
+
+            if (!$product) {
+                throw new \Exception("Product '{$cartItem->product->name}' is no longer available");
             }
 
-            $currentPrice = $cartItem->product->price;
+            // If you have stock management (add this field to products table)
+            // if (isset($product->stock) && $product->stock < $cartItem->quantity) {
+            //     throw new \Exception("Insufficient stock for '{$product->name}'. Only {$product->stock} left.");
+            // }
+
+            $currentPrice = $product->price;
+
+            // Update cart price if product price changed
             if (abs($cartItem->price - $currentPrice) > 0.01) {
+                DB::table('carts')
+                    ->where('id', $cartItem->id)
+                    ->update(['price' => $currentPrice, 'updated_at' => now()]);
                 $cartItem->price = $currentPrice;
-                $cartItem->save();
             }
 
             $totalAmount += $currentPrice * $cartItem->quantity;
             $totalItems += $cartItem->quantity;
+
+            // Decrement stock if you have stock management
+            // DB::table('products')
+            //     ->where('id', $product->id)
+            //     ->decrement('stock', $cartItem->quantity);
         }
 
         return [

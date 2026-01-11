@@ -143,10 +143,23 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function calculateTotalAmount(array $products): float
     {
+        if (empty($products)) {
+            return 0;
+        }
+
         $total = 0;
+        $productIds = array_column($products, 'product_id');
+
+        // Fetch all products in a single query
+        $productsMap = $this->product->query()
+            ->whereIn('id', $productIds)
+            ->where('status', true)
+            ->get(['id', 'price'])
+            ->keyBy('id');
 
         foreach ($products as $item) {
-            $product = $this->product->find($item['product_id']);
+            $product = $productsMap->get($item['product_id']);
+
             if ($product) {
                 $quantity = (int) $item['quantity'];
                 $unitPrice = $product->price ?? 0;
