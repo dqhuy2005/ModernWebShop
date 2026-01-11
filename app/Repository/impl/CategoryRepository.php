@@ -38,16 +38,19 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
                         ->active()
                         ->where('is_hot', true)
                         ->with([
-                            'images:id,product_id,path,sort_order',
-                            'category:id,name,image',
-                            'approvedReviews:id,product_id,rating'
+                            'images' => function($imgQuery) {
+                                $imgQuery->select('id', 'product_id', 'path', 'sort_order')
+                                    ->orderBy('sort_order')
+                                    ->limit(1);
+                            }
                         ])
                         ->withCount('approvedReviews')
-                        ->withAvg('approvedReviews', 'rating')
+                        ->withAvg('approvedReviews as reviews_avg_rating', 'rating')
                         ->latest('updated_at')
                         ->limit($productsLimit);
                 }
             ])
+            ->withCount(['products' => fn($q) => $q->active()])
             ->limit($limit)
             ->get();
     }
