@@ -17,9 +17,10 @@ class CartRepository implements CartRepositoryInterface
         return $this->model->query()
             ->where('user_id', $userId)
             ->with([
-                'product:id,name,slug,price,status,category_id',
-                'product.images:id,product_id,path,sort_order',
-                'product.category:id,name,slug'
+               'product' => function($q) {
+                     $q->select('id', 'name', 'slug', 'price', 'status', 'category_id');
+                        $q->with(['images' => fn($imgQ) => $imgQ->select('id', 'product_id', 'path', 'sort_order')->orderBy('sort_order')->limit(1)]);
+               }
             ])
             ->get();
     }
