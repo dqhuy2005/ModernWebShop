@@ -56,10 +56,8 @@ class HomeController extends Controller
             $filters = $request->getFilters();
             $perPage = min((int) $request->input('per_page', 12), 100);
 
-            // Get cached filtered products (returns Collection)
             $allProducts = $this->categoryService->getFilteredProductsCollection($category->id, $filters);
 
-            // Manual pagination from collection
             $currentPage = $request->input('page', 1);
             $products = new \Illuminate\Pagination\LengthAwarePaginator(
                 $allProducts->forPage($currentPage, $perPage),
@@ -78,7 +76,7 @@ class HomeController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, 'Danh mục không tồn tại');
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Category page error', [
+            Log::error('Category page error', [
                 'slug' => $slug,
                 'error' => $e->getMessage()
             ]);
@@ -94,13 +92,10 @@ class HomeController extends Controller
             $filters = $request->getFilters();
             $perPage = $request->getPerPage();
 
-            // Save search history asynchronously
             $this->searchHistoryService->saveSearchHistory($keyword, session()->getId());
 
-            // Get cached search results (returns Collection, not Query)
             $allProducts = $this->productRepository->getSearchResults($keyword, $filters);
 
-            // Manual pagination from collection
             $currentPage = $request->input('page', 1);
             $products = new \Illuminate\Pagination\LengthAwarePaginator(
                 $allProducts->forPage($currentPage, $perPage),
@@ -110,7 +105,6 @@ class HomeController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
 
-            // Cache categories list (used in filter sidebar)
             $categories = app(\App\Services\impl\RedisService::class)->remember(
                 'search_categories_list',
                 1800,

@@ -192,15 +192,17 @@ class ProductRepository extends BaseRepository implements IProductRepository
 
     public function getSearchResults(string $keyword, array $filters = [])
     {
+        // Create a sanitized cache key
         $sanitizedKeyword = preg_replace('/[^a-z0-9]/i', '', $keyword);
         $cacheKey = 'search_results:' . $sanitizedKeyword . ':' . md5(json_encode($filters));
 
+        // Store and retrieve from Redis
         return $this->redis->remember($cacheKey, 600, function () use ($keyword, $filters) {
             $query = $this->model
+                ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order' => fn($q) => $q->orderBy('sort_order')->limit(1)])
                 ->select('products.id', 'products.name', 'products.slug', 'products.price', 'products.category_id', 'products.status', 'products.is_hot', 'products.views', 'products.specifications', 'products.created_at')
                 ->where('products.status', true)
-                ->where('products.name', 'LIKE', '%' . $keyword . '%')
-                ->with(['category:id,name,slug', 'images:id,product_id,path,sort_order']);
+                ->where('products.name', 'LIKE', '%' . $keyword . '%');
 
             if (!empty($filters['price_range'])) {
                 $query = $this->filterByPrice($query, $filters['price_range']);
